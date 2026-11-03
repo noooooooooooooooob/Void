@@ -47,28 +47,31 @@
 ### 아직 미구현/미정 (구현 전 확인 필요)
 키워드(버리기·연결 등), 덱 코스트·장수 제한, 2층 이상·공허 깊이, 이벤트/상점/휴식 효과, 궁극기 게이지, 패시브, 흐트러짐 게이지, 친밀도·협공, 장비 숙련도·등급(노말→레어→유니크→유물)
 
-## Project Structure (기능 단위)
+## Project Structure
 ```
 res://
-  addons/        # 서드파티 플러그인 (GoPeak 등)
-  autoload/      # 싱글톤 — 전역 상태/이벤트 버스만
-  entities/      # 캐릭터, 적 (씬+스크립트+에셋 같은 폴더)
-  battle/        # 전투 격자, 턴 흐름
-  cards/         # 카드 Resource 정의와 데이터 (.tres)
-  commission/    # 의뢰 스테이지 격자, 노드
-  world_map/
-  ui/            # HUD, 메뉴, 덱 편집, theme/
-  components/    # 재사용 노드
-  shared/        # 공용 audio/, shaders/, fonts/
-  tests/
+  Scripts/       # 모든 게임 스크립트(.gd) — 사용자 결정. 안은 기능별 폴더
+    battle/      #   전투 로직 (턴, 피해, 상태, 이벤트)
+    cards/       #   카드 데이터·비용·조건·효과·배율 부품
+    statuses/    #   상태·보정·트리거·장비
+    ui/          #   화면 스크립트 (card_view, card_gallery …)
+  cards/         # 카드 데이터 .tres (data/<덱>/, keywords/, art/) — 카드 가져오기로 생성
+  statuses/      # 상태(data/)·장비(equipment/) .tres
+  entities/      # 캐릭터·적 데이터 .tres (units/)
+  ui/            # 화면 씬 .tscn (card_view/, card_gallery/ …)
+  addons/        # 플러그인 (GUT, GoPeak, card_importer) — 플러그인 스크립트는 여기 그대로
+  tests/         # GUT 테스트 (Scripts/ 와 같은 기능별 폴더)
+  docs/          # 설계·계획·진행 상황
 ```
+- 게임 스크립트는 반드시 `Scripts/` 아래에 둔다. 씬(.tscn)·데이터(.tres)는 기능 폴더에 두고 스크립트를 참조한다
+- 예외: 플러그인 스크립트(`addons/`), 테스트(`tests/`)
 - 폴더는 필요할 때 만든다. 미리 다 만들지 않는다
 - 원본 작업 파일(.aseprite, .psd 등)은 `.gdignore` 폴더에 둔다
 
 ## Godot 에디터 우선 원칙 (필수)
 - **Godot 에디터에서 만들 수 있는 것은 무조건 에디터 자산으로 만든다.** 노드·UI 배치·스타일은 `.tscn` 씬 안의 노드로, 게임 데이터(카드·상태·장비·유닛)는 `.tres` 리소스로 만든다
 - 스크립트에서 노드를 `new()`/`add_child()`로 조립하지 않는다. 예외: 데이터 개수만큼 반복 생성하는 항목(카드 목록 등) — 이때도 틀은 씬으로 만들고 instantiate/duplicate 한다
-- Godot 에디터가 켜져 있으면 GoPeak MCP 에디터 도구로 씬·노드를 추가하고, 안 되면 Godot 이 직접 `.tscn`/`.tres` 를 저장하게 한다 (손으로 텍스트 작성 금지)
+- Godot 에디터가 켜져 있으면 GoPeak MCP 에디터 도구로 씬·노드를 추가하고, 안 되면 (에디터를 끈 상태에서) Godot 이 직접 `.tscn`/`.tres` 를 저장하게 한다 (손으로 텍스트 작성 금지)
 - 순수 로직(전투 계산 등 `RefCounted`)과 테스트 코드는 예외
 
 ## 주석 원칙 (필수, 테스트 코드 제외)
@@ -79,11 +82,16 @@ res://
 - 서드파티 애드온(`addons/gut`, `addons/godot_mcp_*`, `addons/auto_reload`)은 손대지 않는다
 
 ## Godot Conventions
-- 파일/폴더명: snake_case (`player.tscn`, `player.gd` — 씬과 스크립트는 같은 폴더·같은 이름)
+- 파일/폴더명: snake_case (`player.tscn` / `Scripts/…/player.gd` — 씬과 스크립트는 같은 이름). 예외: 최상위 `Scripts/` 폴더
 - 노드 이름: PascalCase
 - 시그널: snake_case 과거형 (`health_changed`, `card_played`)
 - 게임 데이터(카드, 스탯, 적)는 커스텀 `Resource` + `.tres`로
 - 파일 이동/이름 변경은 Godot 에디터 FileSystem 독에서 (참조 깨짐 방지)
+
+## 에디터 켜짐 중 작업 규칙 (필수 — 2026-11-04 에디터 크래시 2회 원인)
+- 에디터가 켜져 있으면 바깥에서 `res://` 의 `.tscn`/`.tres`/폴더를 쓰거나 옮기거나 지우지 않는다. 리소스는 MCP 로 에디터 안에서 만든다
+- MCP 로 안 되는 것(리소스 안에 리소스 넣기, 파일 이동 등)은 에디터를 끈 상태에서 하거나, 인스펙터 작업 순서를 안내한다
+- 테스트·헤드리스 스크립트는 프로젝트 **복사본**에서 실행한다 (같은 프로젝트로 `--import` 하면 에디터가 둘이 되어 `.godot` 캐시가 충돌). 복사본에서는 MCP 플러그인·MCPRuntime 을 끄고 `--log-file` 로 로그를 따로 둔다
 
 ## Workflow
 - **진행 상황은 `docs/progress.md` 에 기록한다** (팀 공유용, 커밋함). 작업 단계가 끝날 때마다 갱신

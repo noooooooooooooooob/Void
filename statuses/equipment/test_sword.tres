@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="EquipmentData" format=3]
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://e7iwe4eets7q"]
 
-[ext_resource type="Script" path="res://statuses/equipment_data.gd" id="1_oxuun"]
-[ext_resource type="Script" path="res://statuses/status_data.gd" id="2_mn7of"]
-[ext_resource type="Script" path="res://statuses/stat_modifier.gd" id="3_y45ex"]
-[ext_resource type="Script" path="res://statuses/status_trigger.gd" id="4_gskuo"]
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_oxuun"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="2_mn7of"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="3_y45ex"]
+[ext_resource type="Script" uid="uid://ccs11dk06ac8p" path="res://Scripts/statuses/status_trigger.gd" id="4_gskuo"]
 
 [sub_resource type="Resource" id="Resource_beibj"]
 script = ExtResource("3_y45ex")

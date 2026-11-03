@@ -290,27 +290,27 @@ CardData "피의 참격"
 
 ## 5. 폴더 배치
 
+게임 스크립트는 모두 `Scripts/` 아래에 둔다 (사용자 결정, 2026-11-04). 씬·데이터(.tres)·테스트는 제자리.
+
 ```
 res://
-  battle/
-    battle_manager.gd
-    battle_events.gd
-    turn_order.gd
-    battle_unit.gd
-    stat_block.gd
+  Scripts/
+    battle/      battle.gd, battle_events.gd, turn_order.gd, battle_unit.gd, ...
+    cards/       card_data.gd, card_cost.gd, card_condition.gd, card_effect.gd
+      costs/       status_cost.gd
+      conditions/  has_status_condition.gd
+      effects/     damage_effect.gd, block_effect.gd, ...
+      values/      fixed_value.gd, consumed_value.gd, ...
+    statuses/    status_data.gd, status_trigger.gd, stat_modifier.gd, equipment_data.gd
+    ui/          card_view.gd, card_gallery.gd
   cards/
-    card_data.gd
-    card_play.gd
-    costs/       sp_cost.gd, status_cost.gd
-    conditions/  melee_target_exists.gd, has_status.gd
-    effects/     damage_effect.gd, block_effect.gd, ...
-    values/      fixed_value.gd, consumed_value.gd, ...
-    data/        *.tres (실제 카드)
+    data/        *.tres (실제 카드, 카드 가져오기로 생성)
+    keywords/    *.tres
   statuses/
-    status_data.gd
-    status_trigger.gd
-    stat_modifier.gd
     data/        *.tres (출혈, 혈갑 등)
+    equipment/   *.tres
+  entities/units/  *.tres (캐릭터·적)
+  ui/            *.tscn
   tests/
 ```
 

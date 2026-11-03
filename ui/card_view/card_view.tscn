@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cctjoo3l04gvq"]
 
-[ext_resource type="Script" uid="uid://c1kppjq0ggvof" path="res://ui/card_view/card_view.gd" id="1_eto4x"]
+[ext_resource type="Script" uid="uid://c1kppjq0ggvof" path="res://Scripts/ui/card_view.gd" id="1_eto4x"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_clnob"]
 resource_local_to_scene = true

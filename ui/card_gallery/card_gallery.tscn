@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bp6gbf7qqfhhj"]
 
-[ext_resource type="Script" uid="uid://cwxkx1c4ln6oa" path="res://ui/card_gallery/card_gallery.gd" id="1_nnqkx"]
+[ext_resource type="Script" uid="uid://cwxkx1c4ln6oa" path="res://Scripts/ui/card_gallery.gd" id="1_nnqkx"]
 
 [node name="CardGallery" type="Control" unique_id=1032504302]
 layout_mode = 3

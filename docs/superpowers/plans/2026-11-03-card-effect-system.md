@@ -39,8 +39,10 @@
 
 ## 파일 구조
 
+게임 스크립트는 모두 `Scripts/` 아래에 둔다(사용자 결정, 2026-11-04). 씬·데이터(.tres)·테스트·애드온은 제자리.
+
 ```
-battle/
+Scripts/battle/
   battle_types.gd        # 열거형·상수 (Task 1)
   battle_event.gd        # 이벤트 1건 (Task 2)
   battle_events.gd       # 구독·발행 (Task 2)
@@ -50,7 +52,7 @@ battle/
   effect_context.gd      # 효과 1회 실행 컨텍스트 (스펙의 CardPlay) (Task 3)
   battle.gd              # 격자·피해·상태·카드·턴·이동·적 AI (Task 4~10)
   turn_order.gd          # 속도 순 행동 순서 (Task 7)
-cards/
+Scripts/cards/
   card_data.gd           # (Task 3)
   card_cost.gd, card_condition.gd, card_effect.gd   # 기반 클래스 (Task 3)
   costs/status_cost.gd                              # (Task 6)
@@ -60,13 +62,13 @@ cards/
           script_effect.gd (Task 5), draw_effect.gd (Task 7)
   values/value_source.gd, fixed_value.gd, stack_count_value.gd,
          consumed_value.gd, event_amount_value.gd, missing_hp_percent_value.gd  # (Task 3)
-statuses/
+Scripts/statuses/
   status_data.gd, status_trigger.gd, stat_modifier.gd   # (Task 3)
   equipment_data.gd                                     # (Task 3)
 tests/
   helpers/fixture.gd       # 유닛·카드·상태 생성 도우미 (Task 3에서 시작, 이후 확장)
   helpers/flag_script.gd   # ScriptEffect 테스트용 (Task 5)
-  test_smoke.gd, battle/test_*.gd, cards/test_*.gd
+  test_smoke.gd, battle/test_*.gd, cards/test_*.gd, data/test_*.gd, ui/test_*.gd
 ```
 
 `battle.gd`는 한 파일이지만 Task마다 섹션 주석(`# --- 격자 ---` 등)으로 나눠 추가한다. 600줄을 넘으면 그 Task에서 분리를 제안한다.
@@ -76,7 +78,7 @@ tests/
 ### Task 1: 브랜치, GUT 설치, 공통 타입
 
 **Files:**
-- Create: `addons/gut/` (GUT v9.7.1), `battle/battle_types.gd`, `tests/test_smoke.gd`
+- Create: `addons/gut/` (GUT v9.7.1), `Scripts/battle/battle_types.gd`, `tests/test_smoke.gd`
 - Commit 포함: 스펙, 이 계획서, `CLAUDE.md`, `addons/godot_mcp_*`, `addons/auto_reload`
 
 **Interfaces:**
@@ -107,7 +109,7 @@ func test_constants():
 
 Run: 전체 테스트 → FAIL (`BattleTypes` 없음)
 
-- [ ] **Step 4: `battle/battle_types.gd` 작성** (`class_name BattleTypes extends RefCounted`) — 값은 그대로:
+- [ ] **Step 4: `Scripts/battle/battle_types.gd` 작성** (`class_name BattleTypes extends RefCounted`) — 값은 그대로:
 
 ```gdscript
 enum Side { ALLY, ENEMY }
@@ -145,7 +147,7 @@ git commit -m "chore: add GUT, battle types, card-effect spec and plan"
 ### Task 2: 이벤트 관리자
 
 **Files:**
-- Create: `battle/battle_event.gd`, `battle/battle_events.gd`
+- Create: `Scripts/battle/battle_event.gd`, `Scripts/battle/battle_events.gd`
 - Test: `tests/battle/test_battle_events.gd`
 
 **Interfaces:**
@@ -181,7 +183,7 @@ Run: `-gtest=res://tests/battle/test_battle_events.gd` → FAIL
 ### Task 3: 데이터 모델, 유닛, 스탯, 상태 중첩, 배율
 
 **Files:**
-- Create: `battle/unit_data.gd`, `battle/battle_unit.gd`, `battle/status_instance.gd`, `battle/effect_context.gd`, `cards/card_data.gd`, `cards/card_cost.gd`, `cards/card_condition.gd`, `cards/card_effect.gd`, `cards/values/*.gd` (6개), `statuses/status_data.gd`, `statuses/status_trigger.gd`, `statuses/stat_modifier.gd`, `statuses/equipment_data.gd`
+- Create: `Scripts/battle/unit_data.gd`, `Scripts/battle/battle_unit.gd`, `Scripts/battle/status_instance.gd`, `Scripts/battle/effect_context.gd`, `Scripts/cards/card_data.gd`, `Scripts/cards/card_cost.gd`, `Scripts/cards/card_condition.gd`, `Scripts/cards/card_effect.gd`, `Scripts/cards/values/*.gd` (6개), `Scripts/statuses/status_data.gd`, `Scripts/statuses/status_trigger.gd`, `Scripts/statuses/stat_modifier.gd`, `Scripts/statuses/equipment_data.gd`
 - Create: `tests/helpers/fixture.gd`
 - Test: `tests/battle/test_battle_unit.gd`, `tests/cards/test_value_sources.gd`
 
@@ -248,7 +250,7 @@ Run: 두 파일 → FAIL
 ### Task 4: Battle 기본 — 격자, 피해, 회복, 방어도, 상태 API
 
 **Files:**
-- Create: `battle/battle.gd`
+- Create: `Scripts/battle/battle.gd`
 - Test: `tests/battle/test_battle_grid.gd`, `tests/battle/test_battle_damage.gd`
 
 **Interfaces:**
@@ -311,7 +313,7 @@ func test_apply_status_events():
 
 Run → FAIL
 
-- [ ] **Step 2: `battle/battle.gd` 구현**
+- [ ] **Step 2: `Scripts/battle/battle.gd` 구현**
 - [ ] **Step 3: 통과 확인** → PASS
 - [ ] **Step 4: Commit** — `git commit -m "feat: battle grid, damage pipeline, block, stamina, status API"`
 
@@ -320,7 +322,7 @@ Run → FAIL
 ### Task 5: 효과 부품
 
 **Files:**
-- Create: `cards/effects/damage_effect.gd`, `block_effect.gd`, `heal_effect.gd`, `apply_status_effect.gd`, `modify_stacks_effect.gd`, `script_effect.gd`, `tests/helpers/flag_script.gd`
+- Create: `Scripts/cards/effects/damage_effect.gd`, `block_effect.gd`, `heal_effect.gd`, `apply_status_effect.gd`, `modify_stacks_effect.gd`, `script_effect.gd`, `tests/helpers/flag_script.gd`
 - Test: `tests/cards/test_effects.gd`
 
 **Interfaces:**
@@ -366,8 +368,8 @@ Run → FAIL
 ### Task 6: 카드 사용 — 조건, 비용, 대상, 대체
 
 **Files:**
-- Create: `cards/costs/status_cost.gd`, `cards/conditions/has_status_condition.gd`
-- Modify: `battle/battle.gd` (`# --- 카드 ---` 섹션)
+- Create: `Scripts/cards/costs/status_cost.gd`, `Scripts/cards/conditions/has_status_condition.gd`
+- Modify: `Scripts/battle/battle.gd` (`# --- 카드 ---` 섹션)
 - Test: `tests/cards/test_card_play.gd`
 
 **Interfaces:**
@@ -408,8 +410,8 @@ Run → FAIL
 ### Task 7: 덱과 턴 진행
 
 **Files:**
-- Create: `battle/turn_order.gd`, `cards/effects/draw_effect.gd`
-- Modify: `battle/battle.gd` (`# --- 덱 ---`, `# --- 턴 ---` 섹션, `_on_unit_died` 확장, 상태 변경 후 속도 확인)
+- Create: `Scripts/battle/turn_order.gd`, `Scripts/cards/effects/draw_effect.gd`
+- Modify: `Scripts/battle/battle.gd` (`# --- 덱 ---`, `# --- 턴 ---` 섹션, `_on_unit_died` 확장, 상태 변경 후 속도 확인)
 - Test: `tests/battle/test_turn_order.gd`, `tests/battle/test_turn_flow.gd`
 
 **Interfaces:**
@@ -465,7 +467,7 @@ Run → FAIL
 ### Task 8: 상태 트리거, 패시브·장비 적용
 
 **Files:**
-- Modify: `battle/battle.gd` (`apply_status`에서 구독, `remove_status`/제거 시 해제, `start_battle`에서 패시브·장비 적용)
+- Modify: `Scripts/battle/battle.gd` (`apply_status`에서 구독, `remove_status`/제거 시 해제, `start_battle`에서 패시브·장비 적용)
 - Test: `tests/battle/test_status_triggers.gd`
 
 **Interfaces:**
@@ -500,7 +502,7 @@ Run → FAIL
 ### Task 9: 이동
 
 **Files:**
-- Modify: `battle/battle.gd` (`# --- 이동 ---`)
+- Modify: `Scripts/battle/battle.gd` (`# --- 이동 ---`)
 - Test: `tests/battle/test_movement.gd`
 
 **Interfaces:**
@@ -529,7 +531,7 @@ Run → FAIL
 ### Task 10: 적 행동
 
 **Files:**
-- Modify: `battle/battle.gd` (`# --- 적 ---`, `begin_turn`의 보스 분기)
+- Modify: `Scripts/battle/battle.gd` (`# --- 적 ---`, `begin_turn`의 보스 분기)
 - Test: `tests/battle/test_enemy_ai.gd`
 
 **Interfaces:**

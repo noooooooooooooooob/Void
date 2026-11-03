@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="CardData" format=3]
 
-[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_00s7u"]
-[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_3nkkh"]
-[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_uvwso"]
-[ext_resource type="Script" path="res://cards/card_data.gd" id="4_bxeyv"]
+[ext_resource type="Script" path="res://Scripts/cards/card_condition.gd" id="1_00s7u"]
+[ext_resource type="Script" path="res://Scripts/cards/card_cost.gd" id="2_3nkkh"]
+[ext_resource type="Script" path="res://Scripts/cards/card_effect.gd" id="3_uvwso"]
+[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="4_bxeyv"]
 
 [resource]
 script = ExtResource("4_bxeyv")
