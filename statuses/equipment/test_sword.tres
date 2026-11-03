@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://statuses/equipment_data.gd" id="1_oxuun"]
+[ext_resource type="Script" path="res://statuses/status_data.gd" id="2_mn7of"]
+[ext_resource type="Script" path="res://statuses/stat_modifier.gd" id="3_y45ex"]
+[ext_resource type="Script" path="res://statuses/status_trigger.gd" id="4_gskuo"]
+
+[sub_resource type="Resource" id="Resource_beibj"]
+script = ExtResource("3_y45ex")
+kind = 1
+amount = 5.0
+
+[sub_resource type="Resource" id="Resource_b5xxo"]
+script = ExtResource("2_mn7of")
+id = "test_sword_bonus"
+display_name = "시험용 검: 공격 +5"
+tag = 2
+uses_stacks = false
+modifiers = Array[ExtResource("3_y45ex")]([SubResource("Resource_beibj")])
+
+[resource]
+script = ExtResource("1_oxuun")
+display_name = "시험용 검"
+statuses = Array[ExtResource("2_mn7of")]([SubResource("Resource_b5xxo")])
