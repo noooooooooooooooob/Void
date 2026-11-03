@@ -65,6 +65,12 @@ res://
 - 폴더는 필요할 때 만든다. 미리 다 만들지 않는다
 - 원본 작업 파일(.aseprite, .psd 등)은 `.gdignore` 폴더에 둔다
 
+## Godot 에디터 우선 원칙 (필수)
+- **Godot 에디터에서 만들 수 있는 것은 무조건 에디터 자산으로 만든다.** 노드·UI 배치·스타일은 `.tscn` 씬 안의 노드로, 게임 데이터(카드·상태·장비·유닛)는 `.tres` 리소스로 만든다
+- 스크립트에서 노드를 `new()`/`add_child()`로 조립하지 않는다. 예외: 데이터 개수만큼 반복 생성하는 항목(카드 목록 등) — 이때도 틀은 씬으로 만들고 instantiate/duplicate 한다
+- Godot 에디터가 켜져 있으면 GoPeak MCP 에디터 도구로 씬·노드를 추가하고, 안 되면 Godot 이 직접 `.tscn`/`.tres` 를 저장하게 한다 (손으로 텍스트 작성 금지)
+- 순수 로직(전투 계산 등 `RefCounted`)과 테스트 코드는 예외
+
 ## Godot Conventions
 - 파일/폴더명: snake_case (`player.tscn`, `player.gd` — 씬과 스크립트는 같은 폴더·같은 이름)
 - 노드 이름: PascalCase
@@ -73,6 +79,7 @@ res://
 - 파일 이동/이름 변경은 Godot 에디터 FileSystem 독에서 (참조 깨짐 방지)
 
 ## Workflow
+- **진행 상황은 `docs/progress.md` 에 기록한다** (팀 공유용, 커밋함). 작업 단계가 끝날 때마다 갱신
 - 새 기능: brainstorming → writing-plans → TDD → 구현 → 직접 실행 확인
 - 설계 스펙은 `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` (Notion 카드/의뢰 페이지가 이 경로를 참조함)
 - 버그: systematic-debugging 먼저
