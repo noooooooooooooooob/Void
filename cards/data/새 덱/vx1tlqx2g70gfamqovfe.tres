@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_wdpd6"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_inv3q"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_yjs50"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_r207a"]
+
+[resource]
+script = ExtResource("4_r207a")
+id = "vx1tlqx2g70gfamqovfe"
+deck_id = "9gqu9v1d185ayv1n77d8"
+name_ko = "일점 폭발"
+description_ko = "핏방울을 소모하고 일점 폭발(ATK 500 ~ 600%) 대미지"
+sp = 2
+cost = 10
+attack_type = "ranged"
+keywords = PackedStringArray()

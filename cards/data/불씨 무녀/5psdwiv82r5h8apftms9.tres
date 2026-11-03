@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_k4806"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_5er8d"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_jbn6f"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_kbsa1"]
+
+[resource]
+script = ExtResource("4_kbsa1")
+id = "5psdwiv82r5h8apftms9"
+deck_id = "c60x5olk64yzdy03rwtm"
+name_ko = "꺼지지 않는 불"
+description_ko = "3턴 동안 카드를 태울 때마다 무작위 적에게 공격력의 40% 피해."
+category = "special"
+attack_type = "self"
+keywords = PackedStringArray()

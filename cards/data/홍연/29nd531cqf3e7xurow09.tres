@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_k1wyb"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_qsf66"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_2wheu"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_dtu7j"]
+
+[resource]
+script = ExtResource("4_dtu7j")
+id = "29nd531cqf3e7xurow09"
+deck_id = "yosts0edamxi6ct05ezs"
+name_ko = "피의 방패"
+description_ko = "자신의 HP 비율(0% ~ 100%) 에 비례하여 쉴드(방어력의 200% ~ 0 %) 획득"
+category = "skill"
+attack_type = "self"
+keywords = PackedStringArray()

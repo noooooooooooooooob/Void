@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_x8y2y"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_8rg2j"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_ajkmh"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_vjfn7"]
+
+[resource]
+script = ExtResource("4_vjfn7")
+id = "q1alcd7da9kafak6hvld"
+deck_id = "c60x5olk64yzdy03rwtm"
+name_ko = "재의 기도"
+description_ko = "이번 차례 종료 시 남은 손패를 모두 태우고, 1장당 불씨 1을 얻는다."
+sp = 2
+cost = 2
+category = "skill"
+attack_type = "self"
+keywords = PackedStringArray()

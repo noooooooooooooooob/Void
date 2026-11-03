@@ -1,0 +1,414 @@
+[gd_scene format=3 uid="uid://cctjoo3l04gvq"]
+
+[ext_resource type="Script" uid="uid://c1kppjq0ggvof" path="res://ui/card_view/card_view.gd" id="1_eto4x"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_clnob"]
+resource_local_to_scene = true
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.9843137, 0.98039216, 0.96862745, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.7647059, 0.25490198, 0.22745098, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j4p4s"]
+bg_color = Color(0.90588236, 0.89411765, 0.93333334, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.827451, 0.8117647, 0.8627451, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qkyg3"]
+resource_local_to_scene = true
+bg_color = Color(0.7647059, 0.25490198, 0.22745098, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9843137, 0.98039216, 0.96862745, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sfajf"]
+bg_color = Color(0.11372549, 0.105882354, 0.14117648, 1)
+border_color = Color(0.11372549, 0.105882354, 0.14117648, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vvq4k"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.9843137, 0.98039216, 0.96862745, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.827451, 0.8117647, 0.8627451, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_meaii"]
+resource_local_to_scene = true
+bg_color = Color(0.7647059, 0.25490198, 0.22745098, 1)
+border_color = Color(0.11372549, 0.105882354, 0.14117648, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xf3ra"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8627451, 0.8509804, 0.8901961, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="CardView" type="PanelContainer" unique_id=1500508533]
+custom_minimum_size = Vector2(200, 280)
+theme_override_styles/panel = SubResource("StyleBoxFlat_clnob")
+script = ExtResource("1_eto4x")
+
+[node name="Column" type="VBoxContainer" parent="." unique_id=1007031298]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Name" type="Label" parent="Column" unique_id=287029141]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11372549, 0.105882354, 0.14117648, 1)
+theme_override_font_sizes/font_size = 17
+text = "카드 이름"
+horizontal_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="ArtBox" type="Control" parent="Column" unique_id=1921104199]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ArtFrame" type="Panel" parent="Column/ArtBox" unique_id=1049679119]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 4.0
+offset_right = -26.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_j4p4s")
+
+[node name="Art" type="TextureRect" parent="Column/ArtBox/ArtFrame" unique_id=2130624369]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SpCircle" type="Panel" parent="Column/ArtBox" unique_id=1140081540]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -2.0
+offset_top = -4.0
+offset_right = 28.0
+offset_bottom = 26.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qkyg3")
+
+[node name="Sp" type="Label" parent="Column/ArtBox/SpCircle" unique_id=1963577550]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Side" type="VBoxContainer" parent="Column/ArtBox" unique_id=307805179]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -22.0
+offset_top = 2.0
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="AttackBadge" type="Label" parent="Column/ArtBox/Side" unique_id=1557212856]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9843137, 0.98039216, 0.96862745, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_sfajf")
+text = "근"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AreaFrame" type="PanelContainer" parent="Column/ArtBox/Side" unique_id=762409176]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vvq4k")
+
+[node name="AreaGrid" type="GridContainer" parent="Column/ArtBox/Side/AreaFrame" unique_id=153628643]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/h_separation = 1
+theme_override_constants/v_separation = 1
+columns = 5
+
+[node name="Cell0" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1167452033]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell1" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1150341267]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell2" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1130928106]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell3" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1715419997]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell4" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1638687785]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell5" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1193486344]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell6" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=2115375670]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell7" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1526534814]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell8" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1583149383]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell9" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1409891333]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell10" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=616968367]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell11" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=244597940]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell12" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1807833355]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell13" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1002657760]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell14" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=730135658]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell15" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=426978193]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell16" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1524893472]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell17" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=368796445]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell18" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1140044986]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell19" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1429281841]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell20" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1085696519]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell21" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=470150829]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell22" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1275507986]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell23" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=778167885]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="Cell24" type="ColorRect" parent="Column/ArtBox/Side/AreaFrame/AreaGrid" unique_id=1038067294]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.827451, 0.8117647, 0.8627451, 1)
+
+[node name="UpgradeBadge" type="Label" parent="Column/ArtBox/Side" unique_id=469698582]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_meaii")
+text = "+1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Keywords" type="Label" parent="Column" unique_id=1967821245]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6901961, 0.4, 0.101960786, 1)
+theme_override_font_sizes/font_size = 12
+text = "키워드"
+autowrap_mode = 3
+
+[node name="Description" type="Label" parent="Column" unique_id=1151187380]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.11372549, 0.105882354, 0.14117648, 1)
+theme_override_font_sizes/font_size = 12
+text = "카드 설명"
+autowrap_mode = 3
+clip_text = true
+
+[node name="Cost" type="Label" parent="Column" unique_id=1959590908]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11372549, 0.105882354, 0.14117648, 1)
+theme_override_font_sizes/font_size = 11
+text = "코스트 0"
+
+[node name="Tooltip" type="PanelContainer" parent="." unique_id=1191914840]
+unique_name_in_owner = true
+visible = false
+top_level = true
+z_index = 10
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xf3ra")
+
+[node name="TooltipBox" type="VBoxContainer" parent="Tooltip" unique_id=946668950]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="KeywordEntry" type="VBoxContainer" parent="Tooltip/TooltipBox" unique_id=1378053659]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="KeywordTitle" type="Label" parent="Tooltip/TooltipBox/KeywordEntry" unique_id=527933733]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6901961, 0.4, 0.101960786, 1)
+theme_override_font_sizes/font_size = 13
+text = "키워드"
+
+[node name="KeywordBody" type="Label" parent="Tooltip/TooltipBox/KeywordEntry" unique_id=874627100]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11372549, 0.105882354, 0.14117648, 1)
+theme_override_font_sizes/font_size = 12
+text = "키워드 설명"
+autowrap_mode = 3

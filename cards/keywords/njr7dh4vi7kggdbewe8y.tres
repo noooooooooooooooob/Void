@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="KeywordData" format=3]
+
+[ext_resource type="Script" path="res://cards/keyword_data.gd" id="1_dctkp"]
+
+[resource]
+script = ExtResource("1_dctkp")
+id = "njr7dh4vi7kggdbewe8y"
+name_ko = "불씨"

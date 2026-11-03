@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_tupaf"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_3x8mf"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_an7pe"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_i4tvn"]
+
+[resource]
+script = ExtResource("4_i4tvn")
+id = "8l16av5mmmdftttq86k3"
+deck_id = "yosts0edamxi6ct05ezs"
+name_ko = "피의 서약"
+description_ko = "아군 한 명을 지정. 현재 체력 20%를 소모하고 2턴간 공격력을 20% 증가 시킴."
+cost = 5
+category = "special"
+attack_type = "ally"
+keywords = PackedStringArray()

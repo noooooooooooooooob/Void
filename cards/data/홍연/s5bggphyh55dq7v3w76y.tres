@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_wv3yv"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_6tifi"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_3dj5j"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_hdpgv"]
+
+[resource]
+script = ExtResource("4_hdpgv")
+id = "s5bggphyh55dq7v3w76y"
+deck_id = "yosts0edamxi6ct05ezs"
+name_ko = "혈갑 해체: 활"
+description_ko = " 혈갑 전부 소모. 소모 수치에 따라 공격"
+attack_type = "ranged"
+keywords = PackedStringArray()

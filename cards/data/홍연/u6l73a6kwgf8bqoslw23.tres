@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_eebvf"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_whg1a"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_ep5vj"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_xbphr"]
+
+[resource]
+script = ExtResource("4_xbphr")
+id = "u6l73a6kwgf8bqoslw23"
+deck_id = "yosts0edamxi6ct05ezs"
+name_ko = "피의 응고"
+description_ko = "hp 소모 후 혈갑 증가"
+sp = 0
+category = "special"
+attack_type = "self"
+keywords = PackedStringArray()

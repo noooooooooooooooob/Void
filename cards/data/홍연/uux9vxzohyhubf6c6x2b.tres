@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_agrlg"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_qvwc2"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_xerek"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_e8qkl"]
+
+[resource]
+script = ExtResource("4_e8qkl")
+id = "uux9vxzohyhubf6c6x2b"
+deck_id = "yosts0edamxi6ct05ezs"
+name_ko = "혈갑 : 공격태세"
+description_ko = "혈갑 : 공격태세를 얻음"
+sp = 0
+category = "special"
+attack_type = "self"
+keywords = PackedStringArray()

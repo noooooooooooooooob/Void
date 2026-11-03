@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_xrt4j"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_gb22b"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_j21sb"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_qrnjq"]
+
+[resource]
+script = ExtResource("4_qrnjq")
+id = "hongyeon-dismantle-scythe"
+deck_id = "yosts0edamxi6ct05ezs"
+name_ko = "혈갑 해체: 낫"
+description_ko = "혈갑을 일정 소모. 대상과 좌우 1칸에 ATK 200%, 대미지의 10% 회복
+"
+sp = 2
+cost = 2
+area = Array[Vector2i]([Vector2i(0, -1), Vector2i(0, 0), Vector2i(0, 1)])
+keywords = PackedStringArray()

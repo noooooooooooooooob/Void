@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_komb2"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_6ofj8"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_sgrxa"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_j7dnb"]
+
+[resource]
+script = ExtResource("4_j7dnb")
+id = "23ox4ubj7dsdla6ftqmb"
+deck_id = "9gqu9v1d185ayv1n77d8"
+name_ko = "굶주림"
+description_ko = "자신의 다음 턴까지 받는 대미지를 축적. 다음 턴 시작 시 이를 핏방울로 전환"
+sp = 0
+cost = 10
+category = "skill"
+attack_type = "ally"
+keywords = PackedStringArray()

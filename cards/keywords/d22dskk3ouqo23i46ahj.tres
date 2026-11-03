@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="KeywordData" format=3]
+
+[ext_resource type="Script" path="res://cards/keyword_data.gd" id="1_dy45a"]
+
+[resource]
+script = ExtResource("1_dy45a")
+id = "d22dskk3ouqo23i46ahj"
+name_ko = "개전"
+description_ko = "전투 시작시 첫 드로우에 무조건 들어가는 카드"

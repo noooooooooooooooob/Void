@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_7wa64"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_874ry"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_ukjk4"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_gylli"]
+
+[resource]
+script = ExtResource("4_gylli")
+id = "12ti4nm7cblpn3dv610s"
+name_ko = "사격"
+name_en = "shoot"
+description_ko = "ATK 100%"
+description_en = "ATK 100%"
+attack_type = "ranged"
+keywords = PackedStringArray()
+art = "res://cards/art/12e2845ea502944c5e8dfc356b2d1cea.png"

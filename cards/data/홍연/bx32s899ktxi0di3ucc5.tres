@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_owoh0"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_ettyr"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_y4dng"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_1ttbu"]
+
+[resource]
+script = ExtResource("4_1ttbu")
+id = "bx32s899ktxi0di3ucc5"
+deck_id = "yosts0edamxi6ct05ezs"
+name_ko = "피의 참격"
+description_ko = "자신의 HP 비율(0% ~ 100%) 에 비례하여 (ATK 150% ~ 50 %)으로 공격"
+keywords = PackedStringArray()

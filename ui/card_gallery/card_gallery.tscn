@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://bp6gbf7qqfhhj"]
+
+[ext_resource type="Script" uid="uid://cwxkx1c4ln6oa" path="res://ui/card_gallery/card_gallery.gd" id="1_nnqkx"]
+
+[node name="CardGallery" type="Control" unique_id=1032504302]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nnqkx")
+
+[node name="Background" type="ColorRect" parent="." unique_id=637312246]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.9490196, 0.94509804, 0.9607843, 1)
+
+[node name="Layout" type="VBoxContainer" parent="." unique_id=187382283]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 0
+
+[node name="TabsMargin" type="MarginContainer" parent="Layout" unique_id=1482072356]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 24
+
+[node name="DeckTabs" type="TabBar" parent="Layout/TabsMargin" unique_id=2074903998]
+unique_name_in_owner = true
+layout_mode = 2
+clip_tabs = false
+
+[node name="Scroll" type="ScrollContainer" parent="Layout" unique_id=1084706429]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Margin" type="MarginContainer" parent="Layout/Scroll" unique_id=176177619]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="Sections" type="VBoxContainer" parent="Layout/Scroll/Margin" unique_id=905110298]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="EmptyLabel" type="Label" parent="Layout/Scroll/Margin/Sections" unique_id=629071062]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.40784314, 0.39607844, 0.46666667, 1)
+text = "카드가 없어요. 프로젝트 → 도구 → 카드 가져오기... 로 먼저 가져오세요."

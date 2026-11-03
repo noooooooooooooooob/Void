@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://ymrh2beluqkq"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://cards/card_condition.gd" id="1_1wp00"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://cards/card_cost.gd" id="2_26kn5"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://cards/card_effect.gd" id="3_1uct8"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://cards/card_data.gd" id="4_guaxh"]
+
+[sub_resource type="Resource" id="Resource_a6m11"]
+script = ExtResource("4_guaxh")
+name_ko = "향로 휘두르기+"
+description_ko = "공격력의 70% 피해. 이번 차례에 태운 카드 1장당 +40%."
+area = Array[Vector2i]([Vector2i(2, -1), Vector2i(2, 0), Vector2i(2, 1)])
+keywords = PackedStringArray()
+
+[resource]
+script = ExtResource("4_guaxh")
+id = "kx8vpvtebqwq0j34mlgu"
+deck_id = "c60x5olk64yzdy03rwtm"
+name_ko = "향로 휘두르기"
+description_ko = "공격력의 70% 피해. 이번 차례에 태운 카드 1장당 +20%."
+area = Array[Vector2i]([Vector2i(2, -1), Vector2i(2, 0), Vector2i(2, 1)])
+keywords = PackedStringArray()
+upgrades = Array[ExtResource("4_guaxh")]([SubResource("Resource_a6m11")])

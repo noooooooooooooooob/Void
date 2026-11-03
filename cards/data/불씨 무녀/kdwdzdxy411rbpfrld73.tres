@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardData" format=3]
+
+[ext_resource type="Script" path="res://cards/card_condition.gd" id="1_wfos2"]
+[ext_resource type="Script" path="res://cards/card_cost.gd" id="2_rgtll"]
+[ext_resource type="Script" path="res://cards/card_effect.gd" id="3_aib7t"]
+[ext_resource type="Script" path="res://cards/card_data.gd" id="4_sghxy"]
+
+[resource]
+script = ExtResource("4_sghxy")
+id = "kdwdzdxy411rbpfrld73"
+deck_id = "c60x5olk64yzdy03rwtm"
+name_ko = "재로 돌아가라"
+description_ko = "공격력의 350% 피해. 이번 차례에 3장 이상 태웠다면 SP 0."
+sp = 3
+cost = 3
+attack_type = "ranged"
+area = Array[Vector2i]([Vector2i(0, 0)])
+keywords = PackedStringArray()
