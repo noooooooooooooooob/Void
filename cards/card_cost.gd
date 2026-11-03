@@ -8,11 +8,11 @@ extends Resource
 
 
 ## 지금 이 비용을 낼 수 있는지. 하나라도 false 면 카드를 쓸 수 없다.
-## ctx: 이번 카드 사용의 정보(EffectContext — 사용자, 카드, 대상 등)
-func can_pay(_ctx) -> bool:
+## ctx: 이번 카드 사용의 정보 (사용자, 카드, 대상 등)
+func can_pay(_ctx: EffectContext) -> bool:
 	return true
 
 
 ## 비용을 실제로 지불한다. 지불한 양은 ctx.values 에 기록해서 효과가 참조할 수 있게 한다.
-func pay(_ctx) -> void:
+func pay(_ctx: EffectContext) -> void:
 	pass

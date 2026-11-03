@@ -8,6 +8,6 @@ extends Resource
 
 
 ## 조건을 만족하는지. 하나라도 false 면 카드를 쓸 수 없다.
-## ctx: 이번 카드 사용의 정보(EffectContext)
-func check(_ctx) -> bool:
+## ctx: 이번 카드 사용의 정보
+func check(_ctx: EffectContext) -> bool:
 	return true
