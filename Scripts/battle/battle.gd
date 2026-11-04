@@ -6,7 +6,8 @@ extends RefCounted
 ## 이 파일은 구현 계획의 Task 4~10 에 걸쳐 섹션별로 채워진다.
 ##   Task 4: 격자, 피해, 회복, 방어도, 상태 API
 ##   Task 6: 카드 사용 (조건, 비용, 대상, 대체, 소멸→제외)
-##   Task 7: 덱과 턴 진행 (행동마다 속도, 즉시 재정렬, 드로우, 방어도 초기화, 전투 종료) / Task 8: 상태 트리거 / Task 9: 이동 / Task 10: 적 행동
+##   Task 7: 덱과 턴 진행 (행동마다 속도, 즉시 재정렬, 드로우, 방어도 초기화, 전투 종료)
+##   Task 8: 상태 트리거 구독·해제, 패시브·장비 적용 / Task 9: 이동 / Task 10: 적 행동
 ## 규칙 출처: docs/superpowers/specs/2026-11-03-card-effect-system-design.md (3장, 4장)
 ##
 ## 격자 좌표: 편마다 따로인 격자의 Vector2i(열, 행). 열 0 = 뒤, 열 (그 편의 열 수 - 1) = 맨 앞(상대 쪽).
@@ -66,7 +67,10 @@ func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
 #                    → (행동: 카드 사용·이동) → END_PHASE → 손패 전부 버림 → TURN_END
 #   한쪽이 전멸하면 전투 종료
 
-## 전투를 시작한다: 각 유닛의 덱을 데이터에서 복사해 섞고, 손패·버린 더미·제외 더미를 비운 뒤 첫 라운드를 연다.
+## 전투를 시작한다.
+## 1. 각 유닛의 덱을 데이터에서 복사해 섞고, 손패·버린 더미·제외 더미를 비운다.
+## 2. 패시브와 장비의 상태를 붙인다 (건 유닛 = 자신, 수치 0 — 쌓는 패시브가 0 부터 세도록).
+## 3. BATTLE_START → 첫 라운드
 func start_battle() -> void:
 	for u in units:
 		u.deck = u.data.deck.duplicate()
@@ -74,6 +78,16 @@ func start_battle() -> void:
 		u.hand.clear()
 		u.discard.clear()
 		u.exiled.clear()
+	for u in units:
+		for status in u.data.passives:
+			if status:
+				apply_status(u, status, 0, u)
+		for equip in u.data.equipment:
+			if equip == null:
+				continue
+			for status in equip.statuses:
+				if status:
+					apply_status(u, status, 0, u)
 	events.emit(BattleEvent.make(BattleTypes.Event.BATTLE_START))
 	start_round()
 
@@ -445,11 +459,15 @@ func add_block(target: BattleUnit, amount: int, source = null) -> void:
 
 # --- 상태 ---
 # 상태를 붙이고 떼는 것은 항상 이 함수들을 통한다.
-# (이벤트 발행, 트리거 구독(Task 8), 행동 순서 갱신(Task 7)을 한곳에서 처리하기 위해)
+# (이벤트 발행, 트리거 구독·해제, 행동 순서 갱신을 한곳에서 처리하기 위해)
 
 ## target 에 상태를 붙인다. 이미 있으면 수치를 합치고 건 유닛을 갱신한다. STATUS_APPLIED 발행.
+## 새로 붙은 상태면 그 상태의 트리거들을 이벤트에 구독한다 (합칠 때는 다시 구독하지 않는다).
 func apply_status(target: BattleUnit, status: StatusData, stacks: int, applier: BattleUnit) -> StatusInstance:
+	var is_new := target.get_status(status.id) == null
 	var inst := target.add_status(status, stacks, applier)
+	if is_new:
+		_subscribe_triggers(inst)
 	events.emit(BattleEvent.make(BattleTypes.Event.STATUS_APPLIED, applier, target, stacks, status))
 	_refresh_speeds()
 	return inst
@@ -472,10 +490,55 @@ func remove_status(target: BattleUnit, id: String) -> void:
 		_on_status_removed(target, inst)
 
 
-## 상태가 사라진 뒤 공통 처리. (Task 8 에서 트리거 구독 해제를 여기에 더한다)
+## 상태가 사라진 뒤 공통 처리: 트리거 구독을 전부 해제하고 STATUS_REMOVED 발행.
 func _on_status_removed(target: BattleUnit, inst: StatusInstance) -> void:
+	for id in inst.subscription_ids:
+		events.unsubscribe(id)
+	inst.subscription_ids.clear()
 	events.emit(BattleEvent.make(BattleTypes.Event.STATUS_REMOVED, null, target, 0, inst.data))
 	_refresh_speeds()
+
+
+## 상태의 트리거마다 그 이벤트에 구독한다. 구독 id 는 상태 인스턴스에 기록해 두고, 제거될 때 해제한다.
+## 같은 이벤트의 구독자는 구독한 순서(= 대체로 상태를 얻은 순서)대로 실행된다. (기획 결정)
+func _subscribe_triggers(inst: StatusInstance) -> void:
+	for trigger in inst.data.triggers:
+		if trigger == null:
+			continue
+		var id := events.subscribe(trigger.event, _on_trigger.bind(inst, trigger))
+		inst.subscription_ids.append(id)
+
+
+## 트리거가 구독한 이벤트가 왔을 때. (설계 문서 4.5)
+## 1. 이미 사라진 상태면 무시
+## 2. 필터: ANY / OWNER_IS_ACTOR(주인이 이벤트를 일으킴) / OWNER_IS_TARGET(주인이 이벤트를 받음)
+## 3. 출처 필터: source_status_id 가 있으면 이벤트 출처가 그 상태일 때만 (예: 핏방울은 출혈 피해에만)
+## 4. 실행 정보: 행위자 = 상태를 건 유닛(죽었으면 없음), 주인 = 상태를 가진 유닛, 출처 = 상태 데이터
+##    → 그래서 출혈 피해의 "준 쪽"은 출혈을 건 유닛이 되고, 그 유닛이 스태미너를 회복한다.
+func _on_trigger(e: BattleEvent, inst: StatusInstance, trigger: StatusTrigger) -> void:
+	if not inst.active:
+		return
+	match trigger.filter:
+		BattleTypes.Filter.OWNER_IS_ACTOR:
+			if e.actor != inst.owner:
+				return
+		BattleTypes.Filter.OWNER_IS_TARGET:
+			if e.target != inst.owner:
+				return
+	if trigger.source_status_id != "":
+		if not (e.source is StatusData and e.source.id == trigger.source_status_id):
+			return
+	var ctx := EffectContext.new()
+	ctx.battle = self
+	ctx.actor = inst.applier if inst.applier and inst.applier.alive else null
+	ctx.owner = inst.owner
+	ctx.source = inst.data
+	ctx.event = e
+	if e.target is BattleUnit:
+		ctx.targets.append(e.target)
+	for effect in trigger.effects:
+		if effect:
+			effect.apply(ctx)
 
 
 ## 상태 변화로 속도가 바뀌었으면 남은 행동 순서를 즉시 다시 정렬하고 TURN_ORDER_CHANGED 발행.
