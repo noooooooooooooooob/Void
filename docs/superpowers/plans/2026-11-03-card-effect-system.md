@@ -396,7 +396,8 @@ func test_ranged_origin_must_be_enemy():        # ranged인데 origin=아군 →
 func test_has_status_condition():               # 수치 부족 → "condition"
 func test_card_moves_to_discard_and_sp_spent(): # play 후 hand에 없음, discard에 있음, sp −카드.sp
 func test_play_events_order():                  # BEFORE_CARD_PLAYED → DAMAGE_DEALT → AFTER_CARD_PLAYED
-func test_card_replacement():                   # 상태 replacements {A: B} → A를 내면 B의 효과 실행, discard에는 A
+func test_card_replacement():                   # 상태 replacements {A: B} → A를 내면 B의 효과 실행, discard에는 A (사용 후 원래 카드로)
+func test_replacement_only_while_status_held(): # 손패의 A: 상태 있으면 effective_card == B, 상태 제거 후엔 A (손패 안에서 원래대로)
 ```
 
 Run → FAIL
