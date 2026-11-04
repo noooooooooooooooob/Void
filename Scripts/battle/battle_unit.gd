@@ -28,6 +28,8 @@ var hand: Array[CardData] = []
 var discard: Array[CardData] = []
 ## 이번 차례에 남은 이동력 (칸)
 var move_left: int = 0
+## 이번 라운드에 행동마다 굴린 속도 (보정 전 값). roll_speeds 가 채운다. 크기 = 행동 횟수.
+var speed_rolls: Array[int] = []
 ## 보스가 다음에 쓸 카드의 순번 (보스는 덱 순서대로 쓴다)
 var boss_index: int = 0
 ## 전투에 들어온 순서. 속도가 같을 때 순서를 정하는 기준.
@@ -41,12 +43,12 @@ const _BASE_FIELDS := {
 	BattleTypes.Stat.SP: "max_sp",
 	BattleTypes.Stat.ATTACK: "attack",
 	BattleTypes.Stat.DEFENSE: "defense",
-	BattleTypes.Stat.SPEED: "speed",
 	BattleTypes.Stat.MOVE: "move",
 	BattleTypes.Stat.CRIT_RATE: "crit_rate",
 	BattleTypes.Stat.CRIT_DAMAGE: "crit_damage",
 	BattleTypes.Stat.AGGRO: "aggro",
 	BattleTypes.Stat.STAMINA: "max_stamina",
+	BattleTypes.Stat.ACTIONS: "actions_per_round",
 }
 
 
@@ -63,7 +65,36 @@ func _init(unit_data: UnitData, unit_side: int, unit_cell: Vector2i) -> void:
 ## 공식 (기획 결정): floor(기본 × (1 + %보정 합 / 100)) + 고정보정 합
 ## 값을 저장해 두지 않고 매번 계산한다 (HP 에 따라 변하는 보정이 있으므로).
 func get_stat(stat: int) -> int:
-	var base: int = data.get(_BASE_FIELDS[stat])
+	if stat == BattleTypes.Stat.SPEED:
+		# 속도는 범위라 기본값이 하나가 아니다. 굴린 값에 보정을 적용하는 action_speed 를 쓴다.
+		push_error("BattleUnit.get_stat(SPEED) 는 쓰지 않는다. action_speed(i) / modified_speed(v) 를 쓸 것")
+		return 0
+	return _modified(stat, data.get(_BASE_FIELDS[stat]))
+
+
+## 이번 라운드의 속도를 굴린다: 행동 횟수만큼, 속도 범위(최소~최대) 안에서 하나씩. (기획 결정)
+## rng 는 전투의 난수 생성기 (같은 시드면 같은 결과).
+func roll_speeds(rng: RandomNumberGenerator) -> void:
+	speed_rolls.clear()
+	var lo := mini(data.speed_min, data.speed_max)
+	var hi := maxi(data.speed_min, data.speed_max)
+	for i in maxi(0, get_stat(BattleTypes.Stat.ACTIONS)):
+		speed_rolls.append(rng.randi_range(lo, hi))
+
+
+## i 번째 행동의 지금 속도 = 굴린 값에 속도 보정(감속·가속)을 적용한 값.
+func action_speed(i: int) -> int:
+	return modified_speed(speed_rolls[i])
+
+
+## 속도 값 하나에 지금 붙어 있는 속도 보정을 적용한다.
+func modified_speed(rolled: int) -> int:
+	return _modified(BattleTypes.Stat.SPEED, rolled)
+
+
+## 기본값 base 에 붙어 있는 모든 상태의 stat 보정을 적용한다.
+## 공식 (기획 결정): floor(기본 × (1 + %보정 합 / 100)) + 고정보정 합
+func _modified(stat: int, base: float) -> int:
 	var percent := 0.0
 	var flat := 0.0
 	# 보정의 배율(scale)은 이 유닛 기준으로 계산한다.

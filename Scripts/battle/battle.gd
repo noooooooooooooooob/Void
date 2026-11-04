@@ -8,7 +8,8 @@ extends RefCounted
 ##   Task 6: 카드 사용 / Task 7: 덱과 턴 / Task 8: 상태 트리거 / Task 9: 이동 / Task 10: 적 행동
 ## 규칙 출처: docs/superpowers/specs/2026-11-03-card-effect-system-design.md (3장, 4장)
 ##
-## 격자 좌표: 편마다 따로인 격자의 Vector2i(열, 행). 열 0 = 뒤, 열 GRID_COLS-1 = 맨 앞(상대 쪽).
+## 격자 좌표: 편마다 따로인 격자의 Vector2i(열, 행). 열 0 = 뒤, 열 (그 편의 열 수 - 1) = 맨 앞(상대 쪽).
+## 격자 크기는 전투마다 정한다. 행 수는 양쪽 공통, 열 수는 편마다 다를 수 있다. (기획 결정)
 ## 아군·적 모두 같은 규칙이라, 광역 오프셋의 +x 는 항상 "앞쪽"이다.
 ## (화면에서 아군은 왼쪽·적은 오른쪽에 그리는 것은 UI 의 몫)
 
@@ -20,19 +21,44 @@ var events := BattleEvents.new()
 var rng := RandomNumberGenerator.new()
 ## 스태미너가 0이 됐을 때 붙일 상태 (기절·탈진 등, 기획 미정이라 비워 둘 수 있음)
 var stamina_break_status: StatusData = null
+## 격자 행 수 (양쪽 편 공통)
+var grid_rows: int = BattleTypes.DEFAULT_GRID_ROWS
+## 편 → 그 편 격자의 열 수
+var grid_cols := {
+	BattleTypes.Side.ALLY: BattleTypes.DEFAULT_GRID_COLS,
+	BattleTypes.Side.ENEMY: BattleTypes.DEFAULT_GRID_COLS,
+}
 
 
 ## units: 참여 유닛들. 배열 순서가 initial_index 가 된다 (속도가 같을 때 순서 기준).
 ## battle_seed: 난수 시드. 0 이어도 고정 시드로 동작한다(테스트 재현용).
-func _init(battle_units: Array[BattleUnit], battle_seed: int = 0) -> void:
+## rows / ally_cols / enemy_cols: 이 전투의 격자 크기. 생략하면 기본 3행 × 4열.
+## (전투 데이터에서 크기를 정해 넘겨 준다 — 전투 데이터 리소스는 나중에 만든다)
+func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
+		rows: int = BattleTypes.DEFAULT_GRID_ROWS,
+		ally_cols: int = BattleTypes.DEFAULT_GRID_COLS,
+		enemy_cols: int = BattleTypes.DEFAULT_GRID_COLS) -> void:
 	units = battle_units
 	rng.seed = battle_seed
+	grid_rows = rows
+	grid_cols[BattleTypes.Side.ALLY] = ally_cols
+	grid_cols[BattleTypes.Side.ENEMY] = enemy_cols
 	for i in units.size():
 		units[i].battle = self
 		units[i].initial_index = i
 
 
 # --- 격자 ---
+
+## 그 편 격자의 열 수
+func cols_of(side: int) -> int:
+	return grid_cols[side]
+
+
+## 칸이 그 편 격자 안인지 (열 0 ~ 열 수-1, 행 0 ~ 행 수-1)
+func in_grid(side: int, cell: Vector2i) -> bool:
+	return cell.x >= 0 and cell.x < cols_of(side) and cell.y >= 0 and cell.y < grid_rows
+
 
 ## 그 편의 그 칸에 있는 살아 있는 유닛. 없으면 null.
 func unit_at(side: int, cell: Vector2i) -> BattleUnit:
@@ -65,7 +91,7 @@ func enemies_of(u: BattleUnit) -> Array[BattleUnit]:
 ## 그 행에 적이 없으면 null (= 근접 카드를 쓸 수 없음). (노션 구현 확정)
 func melee_target(u: BattleUnit) -> BattleUnit:
 	var enemy_side := _other_side(u.side)
-	for col in range(BattleTypes.GRID_COLS - 1, -1, -1):
+	for col in range(cols_of(enemy_side) - 1, -1, -1):
 		var hit := unit_at(enemy_side, Vector2i(col, u.cell.y))
 		if hit:
 			return hit
@@ -80,7 +106,7 @@ func area_targets(origin: BattleUnit, area: Array[Vector2i]) -> Array[BattleUnit
 	var out: Array[BattleUnit] = []
 	for offset in area:
 		var cell := origin.cell + offset
-		if not _in_grid(cell):
+		if not in_grid(origin.side, cell):
 			continue
 		var u := unit_at(origin.side, cell)
 		if u and not out.has(u):
@@ -191,7 +217,3 @@ func _on_unit_died(u: BattleUnit) -> void:
 func _other_side(side: int) -> int:
 	return BattleTypes.Side.ENEMY if side == BattleTypes.Side.ALLY else BattleTypes.Side.ALLY
 
-
-## 칸이 한쪽 편 격자(GRID_COLS × GRID_ROWS) 안인지
-func _in_grid(cell: Vector2i) -> bool:
-	return cell.x >= 0 and cell.x < BattleTypes.GRID_COLS and cell.y >= 0 and cell.y < BattleTypes.GRID_ROWS

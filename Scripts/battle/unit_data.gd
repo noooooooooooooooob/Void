@@ -17,8 +17,12 @@ extends Resource
 @export var attack: int = 10
 ## 방어. 방어도 효과의 기준 스탯. 받는 피해를 줄이지는 않는다 (기획 결정).
 @export var defense: int = 10
-## 속도. 클수록 먼저 행동한다. 전투 중 바뀌면 행동 순서가 즉시 다시 정렬된다.
-@export var speed: int = 10
+## 속도 범위 (최소~최대). 매 라운드 행동마다 이 범위에서 속도를 굴리고, 클수록 먼저 행동한다.
+## 감속·가속 보정은 굴린 값에 적용되고, 라운드 중에 바뀌면 행동 순서가 즉시 다시 정렬된다.
+@export var speed_min: int = 1
+@export var speed_max: int = 10
+## 행동 횟수. 한 라운드에 몇 번 행동하는지. 행동마다 속도를 따로 굴린다. 버프·장비로 바뀔 수 있다.
+@export var actions_per_round: int = 1
 ## 이동속도. 자기 차례에 움직일 수 있는 칸 수 (상하좌우 한 칸 = 1).
 @export var move: int = 2
 ## 치명확률 (%). 피해 효과에만, 맞는 유닛마다 따로 판정.

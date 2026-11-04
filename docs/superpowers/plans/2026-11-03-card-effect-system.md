@@ -33,7 +33,7 @@
 2. 출혈로 자기 차례 드로우 페이즈에 죽은 유닛은 그 차례를 진행하면 안 된다 → Task 8 `test_unit_killed_by_bleed_loses_turn`
 3. 덱과 버린 카드 더미가 둘 다 비었을 때 드로우가 오류 없이 멈춰야 한다 → Task 7 `test_draw_stops_when_deck_and_discard_empty`
 4. 출혈을 건 유닛이 죽은 뒤에도 출혈 피해는 들어가고, 스태미너 회복은 아무도 받지 않는다 → Task 8 `test_bleed_with_dead_applier`
-5. 이미 이번 라운드에 행동한 유닛은 속도가 올라도 다시 행동하지 않는다 → Task 7 `test_acted_unit_not_readded_on_speed_up`
+5. 이번 라운드에 이미 쓴 행동은 속도가 올라도 다시 들어오지 않는다 (남은 행동은 유지) → Task 7 `test_used_action_not_readded_on_speed_up`
 
 ---
 
@@ -199,7 +199,7 @@ Run: `-gtest=res://tests/battle/test_battle_events.gd` → FAIL
   - `StatusTrigger extends Resource`: `event: int`, `filter: int = Filter.ANY`, `source_status_id: String = ""`, `effects: Array[CardEffect]`
   - `StatusData extends Resource`: `id: String`, `tag: int`, `uses_stacks: bool = true`, `keeps_block: bool = false`, `triggers: Array[StatusTrigger]`, `modifiers: Array[StatModifier]`, `replacements: Dictionary`(CardData → CardData)
   - `EquipmentData extends Resource`: `statuses: Array[StatusData]`
-  - `UnitData extends Resource`: `display_name`, `max_hp = 100`, `max_sp = 3`, `attack = 10`, `defense = 10`, `speed = 10`, `move = 2`, `crit_rate = 0`(%), `crit_damage = 150`, `aggro = 0`, `max_stamina = 100`, `draw_count = DEFAULT_DRAW`, `is_boss = false`, `deck: Array[CardData]`, `passives: Array[StatusData]`, `equipment: Array[EquipmentData]`
+  - `UnitData extends Resource`: `display_name`, `max_hp = 100`, `max_sp = 3`, `attack = 10`, `defense = 10`, `speed_min = 1`, `speed_max = 10`, `actions_per_round = 1`, `move = 2`, `crit_rate = 0`(%), `crit_damage = 150`, `aggro = 0`, `max_stamina = 100`, `draw_count = DEFAULT_DRAW`, `is_boss = false`, `deck: Array[CardData]`, `passives: Array[StatusData]`, `equipment: Array[EquipmentData]`
   - `StatusInstance extends RefCounted`: `data: StatusData`, `owner: BattleUnit`, `applier: BattleUnit`, `stacks: int`, `active: bool = true`, `subscription_ids: Array[int]`
   - `EffectContext extends RefCounted`: `battle`(Variant), `actor: BattleUnit`, `owner: BattleUnit`, `card: CardData`, `source`(Variant), `targets: Array[BattleUnit]`, `values: Dictionary`, `event: BattleEvent`; `func who(w: int) -> BattleUnit`
   - `BattleUnit extends RefCounted`: `_init(data: UnitData, side: int, cell: Vector2i)`; 필드 `data, side, cell, hp, sp, block = 0, stamina, alive = true, statuses: Array[StatusInstance], deck/hand/discard: Array[CardData], move_left = 0, boss_index = 0, initial_index = 0, battle`(Variant); 생성 시 hp=max_hp, stamina=max_stamina
@@ -258,7 +258,7 @@ Run: 두 파일 → FAIL
 - Produces: `class_name Battle extends RefCounted`
   - `_init(units: Array[BattleUnit], seed: int = 0)` — `unit.battle = self`, `initial_index` = 배열 순서. 필드 `units`, `events: BattleEvents`, `rng: RandomNumberGenerator`(seed 적용), `stamina_break_status: StatusData = null`
   - 격자: `unit_at(side: int, cell: Vector2i) -> BattleUnit`(살아 있는 유닛만), `living(side: int) -> Array[BattleUnit]`, `allies_of(u) -> Array[BattleUnit]`(자신 포함), `enemies_of(u) -> Array[BattleUnit]`, `melee_target(u: BattleUnit) -> BattleUnit`, `area_targets(origin: BattleUnit, area: Array[Vector2i]) -> Array[BattleUnit]`
-  - 좌표: 각 편 격자의 `Vector2i(열, 행)`, 열 0 = 뒤, 열 `GRID_COLS-1` = 맨 앞(양 편 동일). 오프셋 +x = 앞쪽
+  - 좌표: 각 편 격자의 `Vector2i(열, 행)`, 열 0 = 뒤, 열 `cols_of(편)-1` = 맨 앞(양 편 동일 규칙). 오프셋 +x = 앞쪽. 격자 크기는 생성 인자(rows, ally_cols, enemy_cols)
   - 피해: `apply_damage(actor: BattleUnit, target: BattleUnit, amount: int, source = null) -> void`
   - `heal(target: BattleUnit, amount: int, source = null) -> void`, `add_block(target: BattleUnit, amount: int, source = null) -> void`
   - 상태: `apply_status(target: BattleUnit, status: StatusData, stacks: int, applier: BattleUnit) -> StatusInstance`(STATUS_APPLIED 발행), `change_stacks(target, id: String, delta: int) -> void`(제거되면 STATUS_REMOVED), `remove_status(target, id: String) -> void`
@@ -416,16 +416,19 @@ Run → FAIL
 
 **Interfaces:**
 - Produces:
-  - `TurnOrder extends RefCounted`: `start_round(units: Array[BattleUnit]) -> void`, `pop_next() -> BattleUnit`(없으면 null), `resort() -> void`, `remove(u: BattleUnit) -> void`, `remaining() -> Array[BattleUnit]`, `is_round_over() -> bool`. 정렬 키: 속도(`get_stat(SPEED)`) 내림차순 → ALLY 먼저 → `initial_index` 오름차순. 안정 정렬
-  - `Battle.turn_order: TurnOrder`, `Battle.current: BattleUnit`
+  - `TurnOrder extends RefCounted` — 항목 = 행동 `{unit: BattleUnit, index: int}` (index = 그 유닛의 몇 번째 행동)
+    - `start_round(units: Array[BattleUnit], rng: RandomNumberGenerator) -> void` — 각 유닛 `roll_speeds(rng)` 후 행동마다 항목 추가
+    - `pop_next() -> Dictionary`(없으면 `{}`), `resort() -> void`, `remove(u: BattleUnit) -> void`(그 유닛의 남은 행동 전부), `remaining() -> Array`(항목들), `remaining_units() -> Array[BattleUnit]`(순서대로, 중복 가능), `is_round_over() -> bool`
+    - 정렬 키: `unit.action_speed(index)` 내림차순 → ALLY 먼저 → `initial_index` 오름차순 → `index` 오름차순. 안정 정렬
+  - `Battle.turn_order: TurnOrder`, `Battle.current: BattleUnit` (지금 차례인 유닛)
   - `Battle.start_battle() -> void` — 각 유닛 `deck = data.deck` 복사 후 rng로 섞기 → BATTLE_START → `start_round()`
-  - `Battle.start_round() -> void` — 방어도 초기화(`keeps_block` 상태가 없는 유닛만, block>0이면 BLOCK_RESET 발행) → ROUND_START → `turn_order.start_round(살아 있는 유닛)`
-  - `Battle.next_turn() -> BattleUnit` — 라운드가 끝났으면 ROUND_END → `start_round()`. 다음 유닛을 꺼내 `current`로 두고 반환(begin_turn은 호출하지 않음)
+  - `Battle.start_round() -> void` — 방어도 초기화(`keeps_block` 상태가 없는 유닛만, block>0이면 BLOCK_RESET 발행) → ROUND_START → `turn_order.start_round(살아 있는 유닛, rng)`
+  - `Battle.next_turn() -> BattleUnit` — 라운드가 끝났으면 ROUND_END → `start_round()`. 다음 **행동**을 꺼내 그 유닛을 `current`로 두고 반환(begin_turn은 호출하지 않음). 행동 하나 = 온전한 차례 하나(사용자 결정): 같은 유닛이 행동 횟수만큼 반환된다
   - `Battle.begin_turn(u) -> bool` — TURN_START → `sp = get_stat(SP)` → `move_left = get_stat(MOVE)` → 드로우(아군 `data.draw_count`, 적 1장; 보스는 Task 10) → DRAW_PHASE → STANDBY_PHASE. 반환 = `u.alive`
   - `Battle.end_turn(u) -> void` — END_PHASE → 손패 전부 discard(장마다 CARD_DISCARDED) → TURN_END
   - `Battle.draw(u, n: int) -> void` — 덱이 비면 discard를 rng로 섞어 덱으로. 둘 다 비면 멈춤. 장마다 CARD_DRAWN
   - `DrawEffect extends CardEffect`: `count: int = 1` — 대상마다 `draw`
-  - 속도 즉시 반영: `apply_status`/`change_stacks`/`remove_status` 끝에서 `_refresh_speeds()` — 남은 유닛의 속도를 이전 값(딕셔너리 캐시)과 비교해 하나라도 바뀌면 `turn_order.resort()` + TURN_ORDER_CHANGED
+  - 속도 즉시 반영: `apply_status`/`change_stacks`/`remove_status` 끝에서 `_refresh_speeds()` — 남은 행동들의 `action_speed`를 이전 값과 비교해 하나라도 바뀌면 `turn_order.resort()` + TURN_ORDER_CHANGED
   - `_on_unit_died`: `turn_order.remove(u)` 추가. 그 뒤 `winner()`가 −1이 아니면 BATTLE_END(amount = 이긴 편) 1회 발행
   - `Battle.winner() -> int` — 한쪽 편이 전멸했으면 남은 편(`Side`), 아니면 −1
 - 섞기: `rng`를 쓰는 Fisher–Yates를 `Battle._shuffle(arr: Array) -> void`로
@@ -433,12 +436,14 @@ Run → FAIL
 - [ ] **Step 1: 실패하는 테스트** `test_turn_order.gd`
 
 ```gdscript
-func test_sorted_by_speed():                     # 속도 5,9,7 → 9,7,5
+func test_sorted_by_speed():                     # 속도 범위를 한 값으로 고정(min=max) 5,9,7 → 9,7,5
 func test_tie_ally_first_then_initial_index():   # 같은 속도: 적(idx0), 아군(idx1), 아군(idx2) → 아군1, 아군2, 적0
+func test_multiple_actions_each_with_own_speed(): # A 행동 2회(굴림 [8,2] 고정), B 속도 5 → 순서 A, B, A
+func test_speeds_rerolled_each_round():          # 시드 고정, 두 라운드의 굴림이 범위 안에서 새로 정해짐
 func test_round_progression():                   # 3명: next_turn 3회 각각 한 번씩, 4번째 호출에서 ROUND_END·ROUND_START 발행 후 첫 유닛
-func test_speed_down_resorts_immediately():      # A10(행동함) / 남은 B(적)8, C(아군)6 → B에 속도 −50% 상태 → remaining == [C, B], TURN_ORDER_CHANGED 발행
-func test_acted_unit_not_readded_on_speed_up():  # 이미 꺼낸 A에 속도 +100% → remaining에 A 없음
-func test_dead_unit_removed():                   # 남은 B 사망 → remaining에 B 없음
+func test_speed_down_resorts_immediately():      # A10(행동함) / 남은 B(적)8, C(아군)6 → B에 속도 −50% 상태 → remaining_units == [C, B], TURN_ORDER_CHANGED 발행
+func test_used_action_not_readded_on_speed_up(): # A 행동 1회를 꺼낸 뒤 A에 속도 +100% → remaining 에 A 없음 / A 행동 2회면 남은 1회는 유지
+func test_dead_unit_removed():                   # 남은 B(행동 2회) 사망 → remaining 에 B 행동 하나도 없음
 func test_battle_end_when_side_wiped():          # 적 1명 사망 → winner() == ALLY, BATTLE_END 1회 (amount == ALLY)
 ```
 
@@ -507,7 +512,7 @@ Run → FAIL
 
 **Interfaces:**
 - Produces: `Battle.move_unit(u: BattleUnit, to: Vector2i) -> bool`, `Battle.path_length(u: BattleUnit, to: Vector2i) -> int`(도달 불가 -1)
-- 규칙: 자기 편 격자 안, 상하좌우 한 칸 = 1, 다른 살아 있는 유닛 칸은 지나가거나 들어갈 수 없음(BFS). `path_length ≤ move_left`면 이동, `move_left -= 길이`, UNIT_MOVED(actor=u, amount=길이)
+- 규칙: 자기 편 격자 안(`in_grid(u.side, cell)` — 크기는 전투마다 다름), 상하좌우 한 칸 = 1, 다른 살아 있는 유닛 칸은 지나가거나 들어갈 수 없음(BFS). `path_length ≤ move_left`면 이동, `move_left -= 길이`, UNIT_MOVED(actor=u, amount=길이)
 
 - [ ] **Step 1: 실패하는 테스트**
 

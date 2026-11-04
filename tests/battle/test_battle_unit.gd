@@ -19,9 +19,38 @@ func test_stat_percent_then_flat():
 	])
 	assert_eq(u.get_stat(S.ATTACK), 145)
 
-func test_stat_negative_percent():
-	var u := _with_mods({"speed": 10}, [Fixture.modifier(S.SPEED, K.PERCENT, -50)])
-	assert_eq(u.get_stat(S.SPEED), 5)
+func test_speed_modifier_applies_to_rolled_speed():
+	var u := _with_mods({}, [Fixture.modifier(S.SPEED, K.PERCENT, -50)])
+	assert_eq(u.modified_speed(10), 5)
+
+func test_roll_speeds_one_per_action_within_range():
+	var u := Fixture.unit(BattleTypes.Side.ALLY, Vector2i.ZERO, {"speed_min": 3, "speed_max": 7, "actions_per_round": 2})
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1
+	u.roll_speeds(rng)
+	assert_eq(u.speed_rolls.size(), 2)
+	for v in u.speed_rolls:
+		assert_between(v, 3, 7)
+
+func test_roll_speeds_same_seed_same_result():
+	var a := Fixture.unit(BattleTypes.Side.ALLY, Vector2i.ZERO, {"speed_min": 1, "speed_max": 10, "actions_per_round": 3})
+	var b := Fixture.unit(BattleTypes.Side.ALLY, Vector2i.ZERO, {"speed_min": 1, "speed_max": 10, "actions_per_round": 3})
+	var r1 := RandomNumberGenerator.new()
+	r1.seed = 42
+	var r2 := RandomNumberGenerator.new()
+	r2.seed = 42
+	a.roll_speeds(r1)
+	b.roll_speeds(r2)
+	assert_eq(a.speed_rolls, b.speed_rolls)
+
+func test_action_speed_uses_modifiers():
+	var u := _with_mods({"speed_min": 8, "speed_max": 8}, [Fixture.modifier(S.SPEED, K.FLAT, -3)])
+	u.roll_speeds(RandomNumberGenerator.new())
+	assert_eq(u.action_speed(0), 5)
+
+func test_actions_per_round_is_a_modifiable_stat():
+	var u := _with_mods({"actions_per_round": 1}, [Fixture.modifier(S.ACTIONS, K.FLAT, 1)])
+	assert_eq(u.get_stat(S.ACTIONS), 2)
 
 func test_stat_without_modifiers_is_base():
 	var u := Fixture.unit(BattleTypes.Side.ALLY, Vector2i.ZERO, {"defense": 7, "move": 3})
