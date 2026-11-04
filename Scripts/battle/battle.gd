@@ -5,7 +5,8 @@ extends RefCounted
 ##
 ## 이 파일은 구현 계획의 Task 4~10 에 걸쳐 섹션별로 채워진다.
 ##   Task 4: 격자, 피해, 회복, 방어도, 상태 API
-##   Task 6: 카드 사용 (조건, 비용, 대상, 대체, 소멸→제외) / Task 7: 덱과 턴 / Task 8: 상태 트리거 / Task 9: 이동 / Task 10: 적 행동
+##   Task 6: 카드 사용 (조건, 비용, 대상, 대체, 소멸→제외)
+##   Task 7: 덱과 턴 진행 (행동마다 속도, 즉시 재정렬, 드로우, 방어도 초기화, 전투 종료) / Task 8: 상태 트리거 / Task 9: 이동 / Task 10: 적 행동
 ## 규칙 출처: docs/superpowers/specs/2026-11-03-card-effect-system-design.md (3장, 4장)
 ##
 ## 격자 좌표: 편마다 따로인 격자의 Vector2i(열, 행). 열 0 = 뒤, 열 (그 편의 열 수 - 1) = 맨 앞(상대 쪽).
@@ -23,6 +24,12 @@ var rng := RandomNumberGenerator.new()
 var stamina_break_status: StatusData = null
 ## 격자 행 수 (양쪽 편 공통)
 var grid_rows: int = BattleTypes.DEFAULT_GRID_ROWS
+## 이번 라운드의 행동 순서 (속도 순, 행동 단위)
+var turn_order := TurnOrder.new()
+## 지금 차례인 유닛 (next_turn 이 정한다)
+var current: BattleUnit = null
+## 전투 종료 이벤트를 이미 냈는지 (한 번만 내기 위해)
+var _ended := false
 ## 키워드 데이터 폴더. 카드의 키워드 id 로 키워드의 규칙 부품(예: 소멸 → 사용 후 제외)을 찾는다.
 var keyword_dir := "res://cards/keywords"
 ## 키워드 id → KeywordData. 한 번 읽은 키워드를 담아 둔다 (테스트에서는 직접 채워 넣는다).
@@ -50,6 +57,130 @@ func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
 	for i in units.size():
 		units[i].battle = self
 		units[i].initial_index = i
+
+
+# --- 전투·라운드·차례 진행 ---
+# 규칙 (설계 문서 3.1, 사용자 결정 2026-11-04):
+#   라운드 시작 → 방어도 초기화 → 행동마다 속도 굴려 줄 세우기
+#   차례(행동 하나): TURN_START → SP 가득 → 이동력 = 이동속도 → 드로우 → DRAW_PHASE → STANDBY_PHASE
+#                    → (행동: 카드 사용·이동) → END_PHASE → 손패 전부 버림 → TURN_END
+#   한쪽이 전멸하면 전투 종료
+
+## 전투를 시작한다: 각 유닛의 덱을 데이터에서 복사해 섞고, 손패·버린 더미·제외 더미를 비운 뒤 첫 라운드를 연다.
+func start_battle() -> void:
+	for u in units:
+		u.deck = u.data.deck.duplicate()
+		_shuffle(u.deck)
+		u.hand.clear()
+		u.discard.clear()
+		u.exiled.clear()
+	events.emit(BattleEvent.make(BattleTypes.Event.BATTLE_START))
+	start_round()
+
+
+## 새 라운드를 연다.
+## 1. 방어도 초기화: "방어도 유지" 상태(keeps_block)가 없는 유닛만. 방어도가 있었으면 BLOCK_RESET 발행.
+## 2. ROUND_START 발행 → 3. 살아 있는 유닛들이 행동마다 속도를 굴려 행동 순서를 정한다.
+func start_round() -> void:
+	for u in units:
+		if u.alive and u.block > 0 and not _keeps_block(u):
+			u.block = 0
+			events.emit(BattleEvent.make(BattleTypes.Event.BLOCK_RESET, null, u))
+	events.emit(BattleEvent.make(BattleTypes.Event.ROUND_START))
+	turn_order.start_round(living_all(), rng)
+
+
+## 다음 차례(행동 하나)의 유닛을 정해서 돌려준다. 차례 진행(begin_turn)은 부르는 쪽이 한다.
+## 라운드의 행동을 다 썼으면 ROUND_END → 새 라운드. 전투가 끝났거나 행동할 유닛이 없으면 null.
+## 행동 횟수가 2 인 유닛은 한 라운드에 두 번 반환된다 (행동 하나 = 온전한 차례 하나).
+func next_turn() -> BattleUnit:
+	if winner() != -1:
+		return null
+	if turn_order.is_round_over():
+		events.emit(BattleEvent.make(BattleTypes.Event.ROUND_END))
+		start_round()
+	var entry := turn_order.pop_next()
+	current = entry.get("unit") if not entry.is_empty() else null
+	return current
+
+
+## 차례를 시작한다: TURN_START → SP 가득 회복 → 이동력 = 이동속도 → 드로우 → DRAW_PHASE → STANDBY_PHASE.
+## 드로우: 아군은 draw_count 장, 적은 1장. (출혈 같은 DRAW_PHASE 효과로 죽을 수 있다)
+## 반환: 차례를 이어갈 수 있으면 true (유닛이 살아 있음). false 면 부르는 쪽이 이 차례를 건너뛴다.
+func begin_turn(u: BattleUnit) -> bool:
+	events.emit(BattleEvent.make(BattleTypes.Event.TURN_START, u))
+	u.sp = u.get_stat(BattleTypes.Stat.SP)
+	u.move_left = u.get_stat(BattleTypes.Stat.MOVE)
+	draw(u, u.data.draw_count if u.side == BattleTypes.Side.ALLY else 1)
+	events.emit(BattleEvent.make(BattleTypes.Event.DRAW_PHASE, u))
+	if u.alive:
+		events.emit(BattleEvent.make(BattleTypes.Event.STANDBY_PHASE, u))
+	return u.alive
+
+
+## 차례를 끝낸다: END_PHASE → 손패를 전부 버린다(장마다 CARD_DISCARDED) → TURN_END.
+func end_turn(u: BattleUnit) -> void:
+	events.emit(BattleEvent.make(BattleTypes.Event.END_PHASE, u))
+	var hand := u.hand.duplicate()
+	u.hand.clear()
+	for c in hand:
+		u.discard.append(c)
+		events.emit(BattleEvent.make(BattleTypes.Event.CARD_DISCARDED, u, null, 0, null, c))
+	events.emit(BattleEvent.make(BattleTypes.Event.TURN_END, u))
+
+
+## 이긴 편 (BattleTypes.Side). 아직 양쪽 다 살아 있으면 −1.
+func winner() -> int:
+	var allies := living(BattleTypes.Side.ALLY).size()
+	var enemies := living(BattleTypes.Side.ENEMY).size()
+	if allies > 0 and enemies == 0:
+		return BattleTypes.Side.ALLY
+	if enemies > 0 and allies == 0:
+		return BattleTypes.Side.ENEMY
+	return -1
+
+
+## 살아 있는 모든 유닛 (전투 참여 순서)
+func living_all() -> Array[BattleUnit]:
+	var out: Array[BattleUnit] = []
+	for u in units:
+		if u.alive:
+			out.append(u)
+	return out
+
+
+# --- 덱 ---
+
+## u 가 카드를 n 장 뽑는다. 덱이 비면 버린 더미를 섞어 덱으로 만든다(제외 더미는 쓰지 않는다).
+## 둘 다 비면 거기서 멈춘다. 장마다 CARD_DRAWN 발행.
+func draw(u: BattleUnit, n: int) -> void:
+	for i in n:
+		if u.deck.is_empty():
+			if u.discard.is_empty():
+				return
+			u.deck = u.discard.duplicate()
+			u.discard.clear()
+			_shuffle(u.deck)
+		var c: CardData = u.deck.pop_front()
+		u.hand.append(c)
+		events.emit(BattleEvent.make(BattleTypes.Event.CARD_DRAWN, u, null, 0, null, c))
+
+
+## 배열을 전투의 난수로 섞는다 (Fisher–Yates). 같은 시드면 같은 결과.
+func _shuffle(arr: Array) -> void:
+	for i in range(arr.size() - 1, 0, -1):
+		var j := rng.randi_range(0, i)
+		var tmp = arr[i]
+		arr[i] = arr[j]
+		arr[j] = tmp
+
+
+## u 에게 "방어도 유지" 상태가 있는지
+func _keeps_block(u: BattleUnit) -> bool:
+	for inst in u.statuses:
+		if inst.data.keeps_block:
+			return true
+	return false
 
 
 # --- 격자 ---
@@ -317,6 +448,7 @@ func add_block(target: BattleUnit, amount: int, source = null) -> void:
 func apply_status(target: BattleUnit, status: StatusData, stacks: int, applier: BattleUnit) -> StatusInstance:
 	var inst := target.add_status(status, stacks, applier)
 	events.emit(BattleEvent.make(BattleTypes.Event.STATUS_APPLIED, applier, target, stacks, status))
+	_refresh_speeds()
 	return inst
 
 
@@ -327,6 +459,7 @@ func change_stacks(target: BattleUnit, id: String, delta: int) -> void:
 		return
 	if target.change_stacks(id, delta):
 		_on_status_removed(target, inst)
+	_refresh_speeds()
 
 
 ## target 의 상태를 뗀다. 있었으면 STATUS_REMOVED 발행.
@@ -339,14 +472,26 @@ func remove_status(target: BattleUnit, id: String) -> void:
 ## 상태가 사라진 뒤 공통 처리. (Task 8 에서 트리거 구독 해제를 여기에 더한다)
 func _on_status_removed(target: BattleUnit, inst: StatusInstance) -> void:
 	events.emit(BattleEvent.make(BattleTypes.Event.STATUS_REMOVED, null, target, 0, inst.data))
+	_refresh_speeds()
+
+
+## 상태 변화로 속도가 바뀌었으면 남은 행동 순서를 즉시 다시 정렬하고 TURN_ORDER_CHANGED 발행.
+func _refresh_speeds() -> void:
+	if turn_order.refresh():
+		events.emit(BattleEvent.make(BattleTypes.Event.TURN_ORDER_CHANGED))
 
 
 # --- 사망 ---
 
-## 유닛이 죽었을 때 공통 처리. (Task 7 에서 행동 순서 제거·전투 종료 판정을 여기에 더한다)
+## 유닛이 죽었을 때 공통 처리: 남은 행동을 순서에서 빼고, 한쪽이 전멸했으면 전투 종료(한 번만).
 func _on_unit_died(u: BattleUnit) -> void:
 	u.alive = false
+	turn_order.remove(u)
 	events.emit(BattleEvent.make(BattleTypes.Event.UNIT_DIED, null, u))
+	var w := winner()
+	if w != -1 and not _ended:
+		_ended = true
+		events.emit(BattleEvent.make(BattleTypes.Event.BATTLE_END, null, null, w))
 
 
 # --- 내부 도우미 ---
