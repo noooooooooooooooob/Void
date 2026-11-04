@@ -7,7 +7,8 @@ extends CardEffect
 ##   일반:   공격 × percent/100 × 배율 × (치명이면 치명피해/100) → 마지막에 내림, 최소 1
 ##   고정값: flat × 배율 × (치명) → 출혈 같은 고정 피해. 고정 피해도 방어도·치명·스태미너 규칙을 똑같이 따른다
 ##   배율이 0 이하이면 아무것도 하지 않는다.
-## 치명: 피해 효과에만, 맞는 유닛마다 따로 판정. 행위자가 없으면(상태를 건 유닛이 죽음) 치명 없음.
+## 치명: 피해 효과에만, 맞는 유닛마다 따로 판정. 행위자가 없으면(상태로 생긴 피해) 치명 없음.
+## 상태로 생긴 피해(출혈 등)는 행위자가 없으므로 아무도 스태미너를 회복하지 않는다 (사용자 결정).
 ## 예) 피의 참격: percent 40, multiplier = 소모한 핏방울 수 → 공격 100, 5 소모면 200 피해
 
 ## 공격 스탯의 몇 % 인지 (100 = 공격과 같은 값). use_flat 이면 무시.
@@ -42,4 +43,4 @@ func apply(ctx: EffectContext) -> void:
 			var rate := ctx.actor.get_stat(BattleTypes.Stat.CRIT_RATE)
 			if ctx.battle.rng.randf() * 100.0 < rate:
 				value *= ctx.actor.get_stat(BattleTypes.Stat.CRIT_DAMAGE) / 100.0
-		ctx.battle.apply_damage(ctx.actor, t, final_amount(value), ctx.source)
+		ctx.battle.apply_damage(ctx.actor, t, final_amount(value), ctx.source, ctx.applier)

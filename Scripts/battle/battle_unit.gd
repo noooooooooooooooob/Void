@@ -55,12 +55,20 @@ const _BASE_FIELDS := {
 
 
 ## 유닛을 만든다. HP 와 스태미너는 최대치로 시작한다.
+## 장비는 착용하고 있으면 항상 적용되므로(사용자 결정), 만드는 순간 장비의 상태를 붙인다.
+## (전투 밖 — 예: 파티 화면 — 에서 스탯을 봐도 장비가 반영된다. 장비 트리거는 전투가 구독을 연결한다)
 func _init(unit_data: UnitData, unit_side: int, unit_cell: Vector2i) -> void:
 	data = unit_data
 	side = unit_side
 	cell = unit_cell
 	hp = data.max_hp
 	stamina = data.max_stamina
+	for equip in data.equipment:
+		if equip == null:
+			continue
+		for status in equip.statuses:
+			if status:
+				add_status(status, 0, self)
 
 
 ## 지금 스탯 값. 기본값에 붙어 있는 모든 상태의 보정을 적용한다.

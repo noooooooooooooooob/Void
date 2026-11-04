@@ -55,16 +55,36 @@ func _blood_drop() -> StatusData:
 	m.multiplier = EventAmountValue.new()
 	m.target = T.OWNER
 	var st := Fixture.status("blood_drop", false)
-	st.triggers.assign([_trigger(Ev.DAMAGE_DEALT, F.OWNER_IS_ACTOR, [m], "bleed")])
+	st.triggers.assign([_trigger(Ev.DAMAGE_DEALT, F.OWNER_IS_APPLIER, [m], "bleed")])
 	return st
 
 
 func test_bleed_ticks_on_owner_draw_phase():
 	a.stamina = 50
+	b.stamina = 50
 	battle.apply_status(b, _bleed(), 4, a)
 	battle.begin_turn(b)
 	assert_eq(b.hp, 96)
-	assert_eq(a.stamina, 52)  # 출혈 피해를 "준 쪽" = 출혈을 건 A
+	# 상태로 생긴 피해는 아무도 "준" 것이 아니다 → 건 유닛도, 주인도 스태미너를 회복하지 않는다 (사용자 결정)
+	assert_eq(a.stamina, 50)
+	assert_eq(b.stamina, 46)  # 맞은 쪽은 피해만큼 깎인다
+
+func test_status_damage_event_has_no_actor_but_remembers_applier():
+	var seen := []
+	battle.events.subscribe(Ev.DAMAGE_DEALT, func(e): seen.append(e))
+	battle.apply_status(b, _bleed(), 4, a)
+	battle.begin_turn(b)
+	assert_eq(seen.size(), 1)
+	assert_null(seen[0].actor)
+	assert_same(seen[0].applier, a)
+	assert_same(seen[0].target, b)
+
+func test_status_damage_never_crits():
+	a.data.crit_rate = 100
+	b.data.crit_rate = 100
+	battle.apply_status(b, _bleed(), 4, a)
+	battle.begin_turn(b)
+	assert_eq(b.hp, 96)
 
 func test_bleed_does_not_tick_on_other_units_turn():
 	battle.apply_status(b, _bleed(), 4, a)
@@ -137,17 +157,47 @@ func test_owner_is_target_filter():
 	battle.apply_damage(b, a, 5)  # b 가 준 피해 → 반응 없음
 	assert_eq(b.block, 1)
 
-func test_equipment_flat_attack_at_battle_start():
-	var u := Fixture.unit(A, Vector2i(3, 1), {"attack": 10})
+func _sword_data() -> UnitData:
 	var bonus := Fixture.status("sword", false)
 	bonus.modifiers.assign([Fixture.modifier(BattleTypes.Stat.ATTACK, BattleTypes.ModKind.FLAT, 5)])
 	var eq := EquipmentData.new()
 	eq.statuses.assign([bonus])
-	u.data.equipment.assign([eq])
+	var data := UnitData.new()
+	data.attack = 10
+	data.equipment.assign([eq])
+	return data
+
+func test_equipment_always_applies_even_outside_battle():
+	# 장비는 착용하고 있으면 항상 적용 (전투 밖에서도) — 사용자 결정
+	var u := BattleUnit.new(_sword_data(), A, Vector2i(3, 1))
+	assert_eq(u.get_stat(BattleTypes.Stat.ATTACK), 15)
+
+func test_equipment_not_doubled_in_battle():
+	var u := BattleUnit.new(_sword_data(), A, Vector2i(3, 1))
 	var units: Array[BattleUnit] = [u, Fixture.unit(E, Vector2i(3, 1))]
 	var bt := Battle.new(units)
 	bt.start_battle()
 	assert_eq(u.get_stat(BattleTypes.Stat.ATTACK), 15)
+
+func test_equipment_trigger_works_in_battle():
+	# 장비의 트리거도 전투에서 동작: 차례 종료 시 방어도 2
+	var bl := BlockEffect.new()
+	bl.use_flat = true
+	bl.flat = 2
+	bl.target = T.OWNER
+	var st := Fixture.status("shield_gear", false)
+	st.triggers.assign([_trigger(Ev.TURN_END, F.OWNER_IS_ACTOR, [bl])])
+	var eq := EquipmentData.new()
+	eq.statuses.assign([st])
+	var data := UnitData.new()
+	data.equipment.assign([eq])
+	var u := BattleUnit.new(data, A, Vector2i(3, 1))
+	var units: Array[BattleUnit] = [u, Fixture.unit(E, Vector2i(3, 1))]
+	var bt := Battle.new(units)
+	bt.start_battle()
+	bt.begin_turn(u)
+	bt.end_turn(u)
+	assert_eq(u.block, 2)
 
 func test_passive_applied_at_battle_start():
 	var u := Fixture.unit(A, Vector2i(3, 1))

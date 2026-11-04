@@ -7,7 +7,7 @@ extends RefCounted
 ##   Task 4: 격자, 피해, 회복, 방어도, 상태 API
 ##   Task 6: 카드 사용 (조건, 비용, 대상, 대체, 소멸→제외)
 ##   Task 7: 덱과 턴 진행 (행동마다 속도, 즉시 재정렬, 드로우, 방어도 초기화, 전투 종료)
-##   Task 8: 상태 트리거 구독·해제, 패시브·장비 적용 / Task 9: 이동 / Task 10: 적 행동
+##   Task 8: 상태 트리거 구독·해제, 패시브 적용, 장비 트리거 연결 (장비 스탯은 유닛 생성 시부터 항상) / Task 9: 이동 / Task 10: 적 행동
 ## 규칙 출처: docs/superpowers/specs/2026-11-03-card-effect-system-design.md (3장, 4장)
 ##
 ## 격자 좌표: 편마다 따로인 격자의 Vector2i(열, 행). 열 0 = 뒤, 열 (그 편의 열 수 - 1) = 맨 앞(상대 쪽).
@@ -69,8 +69,9 @@ func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
 
 ## 전투를 시작한다.
 ## 1. 각 유닛의 덱을 데이터에서 복사해 섞고, 손패·버린 더미·제외 더미를 비운다.
-## 2. 패시브와 장비의 상태를 붙인다 (건 유닛 = 자신, 수치 0 — 쌓는 패시브가 0 부터 세도록).
-## 3. BATTLE_START → 첫 라운드
+## 2. 이미 붙어 있는 상태(장비 — 유닛을 만들 때 붙음)의 트리거를 이벤트에 연결한다.
+## 3. 패시브 상태를 붙인다 (건 유닛 = 자신, 수치 0 — 쌓는 패시브가 0 부터 세도록).
+## 4. BATTLE_START → 첫 라운드
 func start_battle() -> void:
 	for u in units:
 		u.deck = u.data.deck.duplicate()
@@ -79,15 +80,12 @@ func start_battle() -> void:
 		u.discard.clear()
 		u.exiled.clear()
 	for u in units:
+		for inst in u.statuses:
+			if inst.subscription_ids.is_empty():
+				_subscribe_triggers(inst)
 		for status in u.data.passives:
 			if status:
 				apply_status(u, status, 0, u)
-		for equip in u.data.equipment:
-			if equip == null:
-				continue
-			for status in equip.statuses:
-				if status:
-					apply_status(u, status, 0, u)
 	events.emit(BattleEvent.make(BattleTypes.Event.BATTLE_START))
 	start_round()
 
@@ -403,9 +401,10 @@ func _keyword(id: String) -> KeywordData:
 # --- 피해·회복·방어도 ---
 
 ## actor 가 target 에게 amount 만큼 피해를 준다. (설계 문서 3.5~3.6, 기획 결정)
-## actor 는 null 일 수 있다 (예: 출혈을 건 유닛이 이미 죽음). source 는 이벤트에 담길 출처.
+## actor 는 null 일 수 있다: 상태로 생긴 피해(출혈 등)는 아무도 "준" 것이 아니다 → 스태미너 회복 없음.
+## source 는 이벤트에 담길 출처, applier 는 상태로 생긴 피해일 때 그 상태를 건 유닛(이벤트에 기록만).
 ## 순서: 방어도 → HP / 대상 스태미너 감소 / 준 쪽 스태미너 회복 / 이벤트 / 사망
-func apply_damage(actor: BattleUnit, target: BattleUnit, amount: int, source = null) -> void:
+func apply_damage(actor: BattleUnit, target: BattleUnit, amount: int, source = null, applier: BattleUnit = null) -> void:
 	if amount <= 0 or target == null or not target.alive:
 		return
 
@@ -429,8 +428,8 @@ func apply_damage(actor: BattleUnit, target: BattleUnit, amount: int, source = n
 		actor.stamina = mini(max_stamina, actor.stamina + amount / 2)
 
 	# 4. 이벤트: 준 쪽 기준(DEALT) → 받은 쪽 기준(TAKEN) 순서.
-	events.emit(BattleEvent.make(BattleTypes.Event.DAMAGE_DEALT, actor, target, amount, source))
-	events.emit(BattleEvent.make(BattleTypes.Event.DAMAGE_TAKEN, actor, target, amount, source))
+	events.emit(BattleEvent.make(BattleTypes.Event.DAMAGE_DEALT, actor, target, amount, source, null, applier))
+	events.emit(BattleEvent.make(BattleTypes.Event.DAMAGE_TAKEN, actor, target, amount, source, null, applier))
 
 	# 5. 사망
 	if target.alive and target.hp <= 0:
@@ -512,9 +511,11 @@ func _subscribe_triggers(inst: StatusInstance) -> void:
 ## 트리거가 구독한 이벤트가 왔을 때. (설계 문서 4.5)
 ## 1. 이미 사라진 상태면 무시
 ## 2. 필터: ANY / OWNER_IS_ACTOR(주인이 이벤트를 일으킴) / OWNER_IS_TARGET(주인이 이벤트를 받음)
+##          / OWNER_IS_APPLIER(이벤트를 일으킨 상태를 주인이 걸었음 — 예: 핏방울은 내가 건 출혈의 피해)
 ## 3. 출처 필터: source_status_id 가 있으면 이벤트 출처가 그 상태일 때만 (예: 핏방울은 출혈 피해에만)
-## 4. 실행 정보: 행위자 = 상태를 건 유닛(죽었으면 없음), 주인 = 상태를 가진 유닛, 출처 = 상태 데이터
-##    → 그래서 출혈 피해의 "준 쪽"은 출혈을 건 유닛이 되고, 그 유닛이 스태미너를 회복한다.
+## 4. 실행 정보: 행위자 = 없음, 주인 = 상태를 가진 유닛, 건 유닛 = 기억만, 출처 = 상태 데이터
+##    상태로 생긴 효과는 아무도 "준" 것이 아니다 (사용자 결정): 출혈 피해로는 누구도 스태미너를 회복하지
+##    않고 치명도 없다. 수치 계산은 주인의 스탯으로 한다.
 func _on_trigger(e: BattleEvent, inst: StatusInstance, trigger: StatusTrigger) -> void:
 	if not inst.active:
 		return
@@ -525,12 +526,16 @@ func _on_trigger(e: BattleEvent, inst: StatusInstance, trigger: StatusTrigger) -
 		BattleTypes.Filter.OWNER_IS_TARGET:
 			if e.target != inst.owner:
 				return
+		BattleTypes.Filter.OWNER_IS_APPLIER:
+			if e.applier != inst.owner:
+				return
 	if trigger.source_status_id != "":
 		if not (e.source is StatusData and e.source.id == trigger.source_status_id):
 			return
 	var ctx := EffectContext.new()
 	ctx.battle = self
-	ctx.actor = inst.applier if inst.applier and inst.applier.alive else null
+	ctx.actor = null
+	ctx.applier = inst.applier
 	ctx.owner = inst.owner
 	ctx.source = inst.data
 	ctx.event = e

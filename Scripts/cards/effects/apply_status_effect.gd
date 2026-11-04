@@ -3,6 +3,7 @@ class_name ApplyStatusEffect
 extends CardEffect
 ## 상태 부여 효과. 대상에게 상태를 건다. 이미 있으면 수치를 합치고, 건 유닛(행위자)을 기억한다.
 ## 수치: floor(stacks × 배율). 배율 0 이하이거나 결과가 0 이하면 아무것도 안 함.
+## 건 유닛: 카드면 사용한 유닛, 상태 발동이면 그 상태의 주인.
 ## 예) 출혈 3 부여: status = 출혈.tres, stacks 3
 
 ## 걸 상태 데이터 (statuses/data/*.tres)
@@ -20,4 +21,4 @@ func apply(ctx: EffectContext) -> void:
 	if amount <= 0:
 		return
 	for t in resolve_targets(ctx):
-		ctx.battle.apply_status(t, status, amount, ctx.actor)
+		ctx.battle.apply_status(t, status, amount, ctx.actor if ctx.actor else ctx.owner)
