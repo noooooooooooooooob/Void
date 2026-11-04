@@ -177,6 +177,19 @@ func test_keywords_written_and_removed():
 	_import(_export([], []))
 	assert_false(FileAccess.file_exists(root.path_join("keywords/k1.tres")))
 
+func test_reimport_keeps_keyword_godot_fields():
+	var kw := {"id": "k1", "name": {"ko": "소멸", "en": "Exhaust"}, "description": {"ko": "사용시 제외", "en": ""}}
+	_import(_export([], [kw]))
+	var path := root.path_join("keywords/k1.tres")
+	var data: KeywordData = _load(path)
+	data.exile_after_use = true
+	ResourceSaver.save(data, path)
+	kw["description"] = {"ko": "사용하면 이번 전투에서 제외", "en": ""}
+	_import(_export([], [kw]))
+	data = _load(path)
+	assert_true(data.exile_after_use)
+	assert_eq(data.description_ko, "사용하면 이번 전투에서 제외")
+
 func test_read_zip():
 	var zip_path := root.path_join("in.zip")
 	DirAccess.make_dir_recursive_absolute(root)

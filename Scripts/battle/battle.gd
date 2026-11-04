@@ -4,8 +4,8 @@ extends RefCounted
 ## 화면(씬) 없이 동작하는 순수 로직이라 테스트에서 바로 만들어 쓸 수 있다.
 ##
 ## 이 파일은 구현 계획의 Task 4~10 에 걸쳐 섹션별로 채워진다.
-##   Task 4: 격자, 피해, 회복, 방어도, 상태 API (지금)
-##   Task 6: 카드 사용 / Task 7: 덱과 턴 / Task 8: 상태 트리거 / Task 9: 이동 / Task 10: 적 행동
+##   Task 4: 격자, 피해, 회복, 방어도, 상태 API
+##   Task 6: 카드 사용 (조건, 비용, 대상, 대체, 소멸→제외) / Task 7: 덱과 턴 / Task 8: 상태 트리거 / Task 9: 이동 / Task 10: 적 행동
 ## 규칙 출처: docs/superpowers/specs/2026-11-03-card-effect-system-design.md (3장, 4장)
 ##
 ## 격자 좌표: 편마다 따로인 격자의 Vector2i(열, 행). 열 0 = 뒤, 열 (그 편의 열 수 - 1) = 맨 앞(상대 쪽).
@@ -23,6 +23,10 @@ var rng := RandomNumberGenerator.new()
 var stamina_break_status: StatusData = null
 ## 격자 행 수 (양쪽 편 공통)
 var grid_rows: int = BattleTypes.DEFAULT_GRID_ROWS
+## 키워드 데이터 폴더. 카드의 키워드 id 로 규칙(예: 소멸 = 사용 후 제외)을 찾는다.
+var keyword_dir := "res://cards/keywords"
+## 키워드 id → KeywordData. 한 번 읽은 키워드를 담아 둔다 (테스트에서는 직접 채워 넣는다).
+var keyword_cache: Dictionary = {}
 ## 편 → 그 편 격자의 열 수
 var grid_cols := {
 	BattleTypes.Side.ALLY: BattleTypes.DEFAULT_GRID_COLS,
@@ -112,6 +116,131 @@ func area_targets(origin: BattleUnit, area: Array[Vector2i]) -> Array[BattleUnit
 		if u and not out.has(u):
 			out.append(u)
 	return out
+
+
+# --- 카드 ---
+# 카드 사용 규칙 (설계 문서 3.3, 4.1~4.3, 노션 구현 확정)
+
+## u 가 손패의 card 를 볼 때·쓸 때 실제로 적용되는 카드.
+## u 의 상태 중 replacements 에 card 가 있으면 대체 카드, 없으면 그대로.
+## 대체는 손패에 있는 동안만이며, 사용 후 묘지·제외로 갈 때는 원래 카드로 간다. (사용자 확정)
+## 그때그때 상태로 판단하므로, 상태가 사라지면 손패 안에서도 원래 카드로 돌아온다.
+func effective_card(u: BattleUnit, card: CardData) -> CardData:
+	for inst in u.statuses:
+		if inst.data.replacements.has(card):
+			return inst.data.replacements[card]
+	return card
+
+
+## u 가 card 를 쓸 수 있는지. "" 면 가능, 아니면 이유(UI 툴팁용):
+## "dead" 죽음 / "not_in_hand" 손패에 없음 / "sp" SP 부족 / "melee_target" 같은 행에 적 없음 /
+## "origin" 대상 지정이 잘못됨 / "cost" 추가 비용 부족 / "condition" 사용 조건 불만족
+## origin: 원거리·아군 카드의 기준 유닛 (근접·자신 카드는 무시)
+func can_play(u: BattleUnit, card: CardData, origin: BattleUnit = null) -> String:
+	if not u.alive:
+		return "dead"
+	if not u.hand.has(card):
+		return "not_in_hand"
+	var eff := effective_card(u, card)
+	if u.sp < eff.sp:
+		return "sp"
+	var target_reason := _origin_error(u, eff, origin)
+	if target_reason != "":
+		return target_reason
+	var ctx := _card_context(u, eff)
+	for cost in eff.costs:
+		if not cost.can_pay(ctx):
+			return "cost"
+	for cond in eff.conditions:
+		if not cond.check(ctx):
+			return "condition"
+	return ""
+
+
+## u 가 card 를 쓴다. 쓸 수 없으면 아무것도 바꾸지 않고 false.
+## 순서: BEFORE_CARD_PLAYED → SP 지불 → 추가 비용 지불(소모량 기록) → 범위 안 대상 정하기 →
+##       효과를 위에서부터 차례로 → 원래 카드를 버린 더미(또는 제외 더미)로 → AFTER_CARD_PLAYED
+func play_card(u: BattleUnit, card: CardData, origin: BattleUnit = null) -> bool:
+	if can_play(u, card, origin) != "":
+		return false
+	var eff := effective_card(u, card)
+	var base := _resolve_origin(u, eff, origin)
+	var ctx := _card_context(u, eff)
+	events.emit(BattleEvent.make(BattleTypes.Event.BEFORE_CARD_PLAYED, u, base, 0, eff, eff))
+
+	# 1. 비용: SP 는 카드의 sp 값, 추가 비용은 costs 순서대로
+	u.sp -= eff.sp
+	for cost in eff.costs:
+		cost.pay(ctx)
+
+	# 2. 대상: 기준 유닛 주변의 범위 (범위가 비면 기준 유닛 하나)
+	ctx.targets = area_targets(base, eff.area)
+
+	# 3. 효과
+	for effect in eff.effects:
+		effect.apply(ctx)
+
+	# 4. 카드 이동: 원래 카드가 간다 (대체 카드가 아니라). 소멸 키워드면 제외 더미로.
+	u.hand.erase(card)
+	if _exiles(eff):
+		u.exiled.append(card)
+		events.emit(BattleEvent.make(BattleTypes.Event.CARD_EXILED, u, null, 0, eff, card))
+	else:
+		u.discard.append(card)
+	events.emit(BattleEvent.make(BattleTypes.Event.AFTER_CARD_PLAYED, u, base, 0, eff, eff))
+	return true
+
+
+## 카드 사용용 실행 정보: 행위자 = 주인 = 사용자, 출처 = 실제로 쓰는 카드
+func _card_context(u: BattleUnit, eff: CardData) -> EffectContext:
+	var ctx := EffectContext.new()
+	ctx.battle = self
+	ctx.actor = u
+	ctx.owner = u
+	ctx.card = eff
+	ctx.source = eff
+	return ctx
+
+
+## 대상 지정이 잘못됐으면 이유, 맞으면 "".
+func _origin_error(u: BattleUnit, eff: CardData, origin: BattleUnit) -> String:
+	match eff.attack_type:
+		"melee":
+			return "" if melee_target(u) else "melee_target"
+		"ranged":
+			return "" if origin and origin.alive and origin.side != u.side else "origin"
+		"ally":
+			return "" if origin and origin.alive and origin.side == u.side else "origin"
+		"self":
+			return ""
+	return "origin"
+
+
+## 공격 종류에 따른 기준 유닛: 근접 = 같은 행 맨 앞 적(자동), 원거리·아군 = 지정한 유닛, 자신 = 사용자
+func _resolve_origin(u: BattleUnit, eff: CardData, origin: BattleUnit) -> BattleUnit:
+	match eff.attack_type:
+		"melee":
+			return melee_target(u)
+		"self":
+			return u
+	return origin
+
+
+## 이 카드가 사용 후 제외되는지: 붙은 키워드 중 하나라도 "사용 후 제외"(소멸 등)면 true
+func _exiles(card: CardData) -> bool:
+	for id in card.keywords:
+		var kw := _keyword(id)
+		if kw and kw.exile_after_use:
+			return true
+	return false
+
+
+## 키워드 id → 키워드 데이터 (keyword_dir/<id>.tres). 없으면 null. 한 번 읽으면 캐시에 둔다.
+func _keyword(id: String) -> KeywordData:
+	if not keyword_cache.has(id):
+		var path := keyword_dir.path_join(id + ".tres")
+		keyword_cache[id] = load(path) as KeywordData if ResourceLoader.exists(path) else null
+	return keyword_cache[id]
 
 
 # --- 피해·회복·방어도 ---

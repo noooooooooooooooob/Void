@@ -14,3 +14,8 @@ extends Resource
 ## 키워드 설명 (한국어 / 영어). 툴팁에 표시된다.
 @export_multiline var description_ko: String
 @export_multiline var description_en: String
+
+@export_group("Godot")
+## 이 키워드가 붙은 카드는 사용 후 버린 더미 대신 제외 더미로 간다 (예: 소멸).
+## 웹 에디터에는 없는 Godot 쪽 칸이라 카드 가져오기를 다시 해도 유지된다.
+@export var exile_after_use: bool = false

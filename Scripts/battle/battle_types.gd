@@ -24,6 +24,7 @@ enum Event {
 	DAMAGE_DEALT, DAMAGE_TAKEN, HEALED, BLOCK_GAINED, BLOCK_RESET,  # 피해·회복·방어도
 	STATUS_APPLIED, STATUS_REMOVED, UNIT_MOVED, UNIT_DIED, STAMINA_BROKEN,  # 상태·이동·사망·스태미너 0
 	TURN_ORDER_CHANGED,  # 속도 변화로 행동 순서가 바뀜 (화면의 순서 표시 갱신용)
+	CARD_EXILED,  # 카드가 제외 더미로 감 (소멸 키워드 등). ※ 새 이벤트는 맨 뒤에 붙인다 (.tres 에 숫자로 저장됨)
 }
 
 ## 효과가 누구에게 적용되는지.

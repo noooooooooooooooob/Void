@@ -26,6 +26,8 @@ var statuses: Array[StatusInstance] = []
 var deck: Array[CardData] = []
 var hand: Array[CardData] = []
 var discard: Array[CardData] = []
+## 제외 더미: 이번 전투에서 다시 돌아오지 않는 카드 (소멸 키워드 등). 덱을 다시 섞을 때도 쓰지 않는다.
+var exiled: Array[CardData] = []
 ## 이번 차례에 남은 이동력 (칸)
 var move_left: int = 0
 ## 이번 라운드에 행동마다 굴린 속도 (보정 전 값). roll_speeds 가 채운다. 크기 = 행동 횟수.
