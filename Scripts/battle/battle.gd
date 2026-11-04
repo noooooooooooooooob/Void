@@ -216,4 +216,3 @@ func _on_unit_died(u: BattleUnit) -> void:
 ## 상대 편
 func _other_side(side: int) -> int:
 	return BattleTypes.Side.ENEMY if side == BattleTypes.Side.ALLY else BattleTypes.Side.ALLY
-
