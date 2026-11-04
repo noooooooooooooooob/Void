@@ -179,7 +179,7 @@ func test_replacement_only_while_status_held():
 func test_exile_keyword_sends_card_to_exile():
 	var kw := KeywordData.new()
 	kw.id = "k_exile"
-	kw.exile_after_use = true
+	kw.rules.assign([ExileAfterUseRule.new()])
 	battle.keyword_cache["k_exile"] = kw
 	var c := _in_hand(_card())
 	c.keywords = PackedStringArray(["k_exile"])
@@ -191,7 +191,7 @@ func test_exile_keyword_sends_card_to_exile():
 func test_replaced_card_with_exile_returns_original_to_exile():
 	var kw := KeywordData.new()
 	kw.id = "k_exile"
-	kw.exile_after_use = true
+	kw.rules.assign([ExileAfterUseRule.new()])
 	battle.keyword_cache["k_exile"] = kw
 	var orig := _in_hand(_card())
 	var repl := _card()
@@ -202,6 +202,15 @@ func test_replaced_card_with_exile_returns_original_to_exile():
 	battle.play_card(me, orig)
 	assert_true(me.exiled.has(orig))
 	assert_false(me.exiled.has(repl))
+
+func test_keyword_without_exile_rule_goes_to_discard():
+	var kw := KeywordData.new()
+	kw.id = "k_plain"
+	battle.keyword_cache["k_plain"] = kw
+	var c := _in_hand(_card())
+	c.keywords = PackedStringArray(["k_plain"])
+	battle.play_card(me, c)
+	assert_true(me.discard.has(c))
 
 func test_area_around_ranged_origin():
 	var c := _in_hand(_card("ranged"))

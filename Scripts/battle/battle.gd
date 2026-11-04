@@ -23,7 +23,7 @@ var rng := RandomNumberGenerator.new()
 var stamina_break_status: StatusData = null
 ## 격자 행 수 (양쪽 편 공통)
 var grid_rows: int = BattleTypes.DEFAULT_GRID_ROWS
-## 키워드 데이터 폴더. 카드의 키워드 id 로 규칙(예: 소멸 = 사용 후 제외)을 찾는다.
+## 키워드 데이터 폴더. 카드의 키워드 id 로 키워드의 규칙 부품(예: 소멸 → 사용 후 제외)을 찾는다.
 var keyword_dir := "res://cards/keywords"
 ## 키워드 id → KeywordData. 한 번 읽은 키워드를 담아 둔다 (테스트에서는 직접 채워 넣는다).
 var keyword_cache: Dictionary = {}
@@ -226,12 +226,15 @@ func _resolve_origin(u: BattleUnit, eff: CardData, origin: BattleUnit) -> Battle
 	return origin
 
 
-## 이 카드가 사용 후 제외되는지: 붙은 키워드 중 하나라도 "사용 후 제외"(소멸 등)면 true
+## 이 카드가 사용 후 제외되는지: 붙은 키워드의 규칙 중 하나라도 "사용 후 제외"(소멸 등)면 true
 func _exiles(card: CardData) -> bool:
 	for id in card.keywords:
 		var kw := _keyword(id)
-		if kw and kw.exile_after_use:
-			return true
+		if kw == null:
+			continue
+		for rule in kw.rules:
+			if rule and rule.exiles_after_use():
+				return true
 	return false
 
 

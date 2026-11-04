@@ -182,12 +182,13 @@ func test_reimport_keeps_keyword_godot_fields():
 	_import(_export([], [kw]))
 	var path := root.path_join("keywords/k1.tres")
 	var data: KeywordData = _load(path)
-	data.exile_after_use = true
+	data.rules.assign([ExileAfterUseRule.new()])
 	ResourceSaver.save(data, path)
 	kw["description"] = {"ko": "사용하면 이번 전투에서 제외", "en": ""}
 	_import(_export([], [kw]))
 	data = _load(path)
-	assert_true(data.exile_after_use)
+	assert_eq(data.rules.size(), 1)
+	assert_true(data.rules[0] is ExileAfterUseRule)
 	assert_eq(data.description_ko, "사용하면 이번 전투에서 제외")
 
 func test_read_zip():

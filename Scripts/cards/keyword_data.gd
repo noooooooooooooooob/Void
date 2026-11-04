@@ -16,6 +16,7 @@ extends Resource
 @export_multiline var description_en: String
 
 @export_group("Godot")
-## 이 키워드가 붙은 카드는 사용 후 버린 더미 대신 제외 더미로 간다 (예: 소멸).
+## 이 키워드의 동작 부품 목록 (카드의 Effects 와 같은 방식). 특별한 동작이 없는 키워드는 비워 둔다.
+## 예) 소멸 → [ExileAfterUseRule] (사용 후 제외)
 ## 웹 에디터에는 없는 Godot 쪽 칸이라 카드 가져오기를 다시 해도 유지된다.
-@export var exile_after_use: bool = false
+@export var rules: Array[KeywordRule] = []
