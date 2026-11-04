@@ -124,3 +124,34 @@ func test_draw_effect():
 	ctx.owner = me
 	d.apply(ctx)
 	assert_eq(me.hand.size(), 2)
+
+
+func test_draw_effect_during_action_does_not_reshuffle():
+	# 행동 중 드로우: 덱이 비면 버린 더미를 섞지 않고 못 뽑는다 (사용자 결정)
+	battle.start_battle()
+	me.deck = [] as Array[CardData]
+	me.discard = _cards(3, "d")
+	var d := DrawEffect.new()
+	d.count = 2
+	d.target = BattleTypes.Target.SELF
+	var ctx := EffectContext.new()
+	ctx.battle = battle
+	ctx.actor = me
+	ctx.owner = me
+	d.apply(ctx)
+	assert_eq([me.hand.size(), me.discard.size()], [0, 3])
+
+func test_draw_effect_stops_when_deck_runs_out():
+	battle.start_battle()
+	me.deck = _cards(1)
+	me.discard = _cards(3, "d")
+	battle.draw(me, 3, false)
+	assert_eq([me.hand.size(), me.deck.size(), me.discard.size()], [1, 0, 3])
+
+func test_draw_phase_still_reshuffles():
+	battle.start_battle()
+	me.deck = _cards(2)
+	me.discard = _cards(5, "d")
+	battle.begin_turn(me)
+	assert_eq(me.hand.size(), 5)
+

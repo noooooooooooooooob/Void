@@ -151,12 +151,15 @@ func living_all() -> Array[BattleUnit]:
 
 # --- 덱 ---
 
-## u 가 카드를 n 장 뽑는다. 덱이 비면 버린 더미를 섞어 덱으로 만든다(제외 더미는 쓰지 않는다).
-## 둘 다 비면 거기서 멈춘다. 장마다 CARD_DRAWN 발행.
-func draw(u: BattleUnit, n: int) -> void:
+## u 가 카드를 n 장 뽑는다. 장마다 CARD_DRAWN 발행.
+## reshuffle: 덱이 비었을 때 버린 더미를 섞어 덱으로 만들지 (제외 더미는 절대 쓰지 않는다).
+##   - 드로우 페이즈(차례 시작): true → 섞어서 계속 뽑는다
+##   - 행동 중 드로우(카드 효과 등): false → 덱이 비면 더 못 뽑는다 (사용자 결정 2026-11-04)
+## 더 뽑을 카드가 없으면 거기서 멈춘다.
+func draw(u: BattleUnit, n: int, reshuffle: bool = true) -> void:
 	for i in n:
 		if u.deck.is_empty():
-			if u.discard.is_empty():
+			if not reshuffle or u.discard.is_empty():
 				return
 			u.deck = u.discard.duplicate()
 			u.discard.clear()
