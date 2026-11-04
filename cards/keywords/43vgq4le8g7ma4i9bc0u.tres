@@ -7,3 +7,4 @@ script = ExtResource("1_21ig6")
 id = "43vgq4le8g7ma4i9bc0u"
 name_ko = "소멸"
 description_ko = "사용시 카드가 제외됨"
+exile_after_use = true
