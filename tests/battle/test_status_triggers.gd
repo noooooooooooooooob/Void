@@ -47,7 +47,7 @@ func _blood_armor() -> StatusData:
 	st.triggers.assign([_trigger(Ev.TURN_END, F.OWNER_IS_ACTOR, [bl])])
 	return st
 
-# 핏방울(패시브): 주인이 출혈 피해를 줄 때마다 그 피해량만큼 쌓임
+# 핏방울(패시브): 적이 출혈 피해를 받을 때마다(누가 걸었든) 그 피해량만큼 쌓임 (사용자 결정)
 func _blood_drop() -> StatusData:
 	var m := ModifyStacksEffect.new()
 	m.status_id = "blood_drop"
@@ -55,7 +55,7 @@ func _blood_drop() -> StatusData:
 	m.multiplier = EventAmountValue.new()
 	m.target = T.OWNER
 	var st := Fixture.status("blood_drop", false)
-	st.triggers.assign([_trigger(Ev.DAMAGE_DEALT, F.OWNER_IS_APPLIER, [m], "bleed")])
+	st.triggers.assign([_trigger(Ev.DAMAGE_TAKEN, F.TARGET_IS_ENEMY_OF_OWNER, [m], "bleed")])
 	return st
 
 
@@ -142,6 +142,24 @@ func test_blood_drop_counts_only_bleed_damage():
 	a.sp = 3
 	assert_true(battle.play_card(a, card))
 	assert_eq(a.stacks_of("blood_drop"), 4)
+
+func test_blood_drop_counts_bleed_applied_by_anyone():
+	var ally := Fixture.unit(A, Vector2i(2, 0))
+	battle.units.append(ally)
+	ally.battle = battle
+	battle.apply_status(a, _blood_drop(), 0, a)
+	battle.apply_status(b, _bleed(), 3, ally)  # 다른 아군이 건 출혈
+	battle.begin_turn(b)
+	assert_eq(a.stacks_of("blood_drop"), 3)
+
+func test_blood_drop_ignores_bleed_on_allies():
+	var ally := Fixture.unit(A, Vector2i(2, 0))
+	battle.units.append(ally)
+	ally.battle = battle
+	battle.apply_status(a, _blood_drop(), 0, a)
+	battle.apply_status(ally, _bleed(), 3, b)  # 아군이 받은 출혈은 세지 않음
+	battle.begin_turn(ally)
+	assert_eq(a.stacks_of("blood_drop"), 0)
 
 func test_owner_is_target_filter():
 	# 피격 시 방어도 1: 주인이 피해를 받을 때만

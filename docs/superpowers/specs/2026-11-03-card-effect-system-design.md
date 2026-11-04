@@ -237,7 +237,7 @@ CardData "피의 참격"
 |---|---|
 | 출혈 | trigger: `DRAW_PHASE` / `OWNER_IS_ACTOR` → `DamageEffect`(고정값 = 수치) |
 | 혈갑 | trigger: `TURN_END` / `OWNER_IS_ACTOR` → `BlockEffect`(배율 = 수치) |
-| 핏방울 | trigger: `DAMAGE_DEALT` / 필터 `OWNER_IS_APPLIER`(주인이 건 출혈) / 출처 "bleed" → `ModifyStacks`(+피해량) |
+| 핏방울 | trigger: `DAMAGE_TAKEN` / 필터 `TARGET_IS_ENEMY_OF_OWNER`(적이 받은 피해, 누가 걸었든) / 출처 "bleed" → `ModifyStacks`(+피해량) — 2026-11-04 사용자 확정 |
 | 혈갑: 공격태세 | modifier: 공격 +%(배율 = 혈갑 수치), replacements: 혈갑 해체 카드 → 피의 참격 |
 | 피의 갈망 | modifier: 공격 +%(배율 = 잃은 HP 비율), trigger: `DAMAGE_DEALT` → 회복·혈갑 부여 |
 

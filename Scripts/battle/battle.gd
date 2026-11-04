@@ -511,7 +511,8 @@ func _subscribe_triggers(inst: StatusInstance) -> void:
 ## 트리거가 구독한 이벤트가 왔을 때. (설계 문서 4.5)
 ## 1. 이미 사라진 상태면 무시
 ## 2. 필터: ANY / OWNER_IS_ACTOR(주인이 이벤트를 일으킴) / OWNER_IS_TARGET(주인이 이벤트를 받음)
-##          / OWNER_IS_APPLIER(이벤트를 일으킨 상태를 주인이 걸었음 — 예: 핏방울은 내가 건 출혈의 피해)
+##          / OWNER_IS_APPLIER(이벤트를 일으킨 상태를 주인이 걸었음)
+##          / TARGET_IS_ENEMY_OF_OWNER(이벤트 대상이 주인의 적 — 예: 핏방울은 적이 받은 출혈 피해 전부)
 ## 3. 출처 필터: source_status_id 가 있으면 이벤트 출처가 그 상태일 때만 (예: 핏방울은 출혈 피해에만)
 ## 4. 실행 정보: 행위자 = 없음, 주인 = 상태를 가진 유닛, 건 유닛 = 기억만, 출처 = 상태 데이터
 ##    상태로 생긴 효과는 아무도 "준" 것이 아니다 (사용자 결정): 출혈 피해로는 누구도 스태미너를 회복하지
@@ -528,6 +529,9 @@ func _on_trigger(e: BattleEvent, inst: StatusInstance, trigger: StatusTrigger) -
 				return
 		BattleTypes.Filter.OWNER_IS_APPLIER:
 			if e.applier != inst.owner:
+				return
+		BattleTypes.Filter.TARGET_IS_ENEMY_OF_OWNER:
+			if not (e.target is BattleUnit and e.target.side != inst.owner.side):
 				return
 	if trigger.source_status_id != "":
 		if not (e.source is StatusData and e.source.id == trigger.source_status_id):
