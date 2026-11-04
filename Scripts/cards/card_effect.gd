@@ -37,3 +37,20 @@ func resolve_targets(ctx: EffectContext) -> Array[BattleUnit]:
 		if u != null and u.alive:
 			out.append(u)
 	return out
+
+
+# --- 하위 효과들이 같이 쓰는 계산 (설계 문서 4.4, 기획 결정) ---
+
+## 배율 값. 비어 있으면 1. 효과는 배율이 0 이하이면 아무것도 하지 않는다.
+func scale_of(ctx: EffectContext, multiplier: ValueSource) -> float:
+	return multiplier.evaluate(ctx) if multiplier else 1.0
+
+
+## 수치 계산에 쓸 스탯의 주인: 행위자, 없으면(예: 상태를 건 유닛이 죽음) 상태 주인.
+func stat_unit(ctx: EffectContext) -> BattleUnit:
+	return ctx.actor if ctx.actor else ctx.owner
+
+
+## 최종 수치: 모두 곱한 값을 마지막에 내림하고, 최소 1. (기획 결정: 내림은 마지막에 한 번)
+func final_amount(value: float) -> int:
+	return maxi(1, floori(value))
