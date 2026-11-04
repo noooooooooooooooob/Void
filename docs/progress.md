@@ -2,6 +2,8 @@
 
 마지막 갱신: 2026-11-04
 
+코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
+
 ## 완료된 기능
 
 | 기능 | 내용 | 위치 |
