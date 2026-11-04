@@ -7,7 +7,8 @@ extends RefCounted
 ##   Task 4: 격자, 피해, 회복, 방어도, 상태 API
 ##   Task 6: 카드 사용 (조건, 비용, 대상, 대체, 소멸→제외)
 ##   Task 7: 덱과 턴 진행 (행동마다 속도, 즉시 재정렬, 드로우, 방어도 초기화, 전투 종료)
-##   Task 8: 상태 트리거 구독·해제, 패시브 적용, 장비 트리거 연결 (장비 스탯은 유닛 생성 시부터 항상) / Task 9: 이동 / Task 10: 적 행동
+##   Task 8: 상태 트리거 구독·해제, 패시브 적용, 장비 트리거 연결 (장비 스탯은 유닛 생성 시부터 항상)
+##   Task 9: 이동 (규칙은 battle_movement.gd) / Task 10: 적 행동
 ## 규칙 출처: docs/superpowers/specs/2026-11-03-card-effect-system-design.md (3장, 4장)
 ##
 ## 격자 좌표: 편마다 따로인 격자의 Vector2i(열, 행). 열 0 = 뒤, 열 (그 편의 열 수 - 1) = 맨 앞(상대 쪽).
@@ -27,6 +28,8 @@ var stamina_break_status: StatusData = null
 var grid_rows: int = BattleTypes.DEFAULT_GRID_ROWS
 ## 이번 라운드의 행동 순서 (속도 순, 행동 단위)
 var turn_order := TurnOrder.new()
+## 격자 이동 규칙 (battle_movement.gd)
+var movement: BattleMovement
 ## 지금 차례인 유닛 (next_turn 이 정한다)
 var current: BattleUnit = null
 ## 전투 종료 이벤트를 이미 냈는지 (한 번만 내기 위해)
@@ -55,6 +58,7 @@ func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
 	grid_rows = rows
 	grid_cols[BattleTypes.Side.ALLY] = ally_cols
 	grid_cols[BattleTypes.Side.ENEMY] = enemy_cols
+	movement = BattleMovement.new(self)
 	for i in units.size():
 		units[i].battle = self
 		units[i].initial_index = i
@@ -262,6 +266,19 @@ func area_targets(origin: BattleUnit, area: Array[Vector2i]) -> Array[BattleUnit
 		if u and not out.has(u):
 			out.append(u)
 	return out
+
+
+# --- 이동 ---
+# 이동 규칙은 battle_movement.gd 에 있다. 여기는 다른 코드가 Battle 하나만 보고 쓸 수 있게 이어 주는 창구.
+
+## u 를 to 칸으로 옮긴다 (이동속도 안에서, 상하좌우, 다른 유닛 칸 통과 불가). 옮겼으면 true.
+func move_unit(u: BattleUnit, to: Vector2i) -> bool:
+	return movement.move(u, to)
+
+
+## u 가 to 까지 가는 가장 짧은 길의 칸 수. 갈 수 없으면 −1.
+func path_length(u: BattleUnit, to: Vector2i) -> int:
+	return movement.path_length(u, to)
 
 
 # --- 카드 ---
