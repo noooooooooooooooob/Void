@@ -6,5 +6,7 @@ extends KeywordRule
 ## 카드 대체로 바뀐 카드를 썼다면, 제외 더미에는 원래 카드가 들어간다.
 
 
-func exiles_after_use() -> bool:
+## 카드를 사용한 직후: 버린 더미 대신 제외 더미로 보낸다.
+func after_use(ctx: EffectContext, card: CardData) -> bool:
+	ctx.battle.exile_card(ctx.actor, card)
 	return true

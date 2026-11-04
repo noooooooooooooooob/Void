@@ -180,12 +180,10 @@ func play_card(u: BattleUnit, card: CardData, origin: BattleUnit = null) -> bool
 	for effect in eff.effects:
 		effect.apply(ctx)
 
-	# 4. 카드 이동: 원래 카드가 간다 (대체 카드가 아니라). 소멸 키워드면 제외 더미로.
+	# 4. 카드 이동: 원래 카드가 간다 (대체 카드가 아니라).
+	#    키워드 규칙(예: 소멸 → 사용 후 제외)이 먼저 카드를 옮길 기회를 갖고, 아무도 안 옮기면 버린 더미로.
 	u.hand.erase(card)
-	if _exiles(eff):
-		u.exiled.append(card)
-		events.emit(BattleEvent.make(BattleTypes.Event.CARD_EXILED, u, null, 0, eff, card))
-	else:
+	if not _run_after_use_rules(ctx, eff, card):
 		u.discard.append(card)
 	events.emit(BattleEvent.make(BattleTypes.Event.AFTER_CARD_PLAYED, u, base, 0, eff, eff))
 	return true
@@ -226,14 +224,22 @@ func _resolve_origin(u: BattleUnit, eff: CardData, origin: BattleUnit) -> Battle
 	return origin
 
 
-## 이 카드가 사용 후 제외되는지: 붙은 키워드의 규칙 중 하나라도 "사용 후 제외"(소멸 등)면 true
-func _exiles(card: CardData) -> bool:
-	for id in card.keywords:
+## u 의 card 를 제외 더미로 보낸다 (이번 전투에서 다시 돌아오지 않음). CARD_EXILED 발행.
+## 키워드 규칙(ExileAfterUseRule 등)이 부른다.
+func exile_card(u: BattleUnit, card: CardData) -> void:
+	u.exiled.append(card)
+	events.emit(BattleEvent.make(BattleTypes.Event.CARD_EXILED, u, null, 0, null, card))
+
+
+## 실제로 쓴 카드(eff)에 붙은 키워드들의 규칙에 "사용 직후" 시점을 알린다.
+## 규칙 중 하나라도 카드(원래 카드 card)를 옮겼으면 true. 한 번 옮겨지면 나머지 규칙은 묻지 않는다.
+func _run_after_use_rules(ctx: EffectContext, eff: CardData, card: CardData) -> bool:
+	for id in eff.keywords:
 		var kw := _keyword(id)
 		if kw == null:
 			continue
 		for rule in kw.rules:
-			if rule and rule.exiles_after_use():
+			if rule and rule.after_use(ctx, card):
 				return true
 	return false
 
