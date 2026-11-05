@@ -41,13 +41,30 @@ func test_enemy_plays_drawn_card():
 	assert_eq(played, ["할퀴기"])
 	assert_eq(turn_ends, [foe])
 
-func test_enemy_skips_unplayable():
-	_setup([_card("할퀴기")], false, 2)  # 적이 2행 → 같은 행에 아군 없음
+func test_enemy_skips_when_extra_card_also_unplayable():
+	_setup([_card("할퀴기"), _card("물기")], false, 2)  # 적이 2행 → 근접 카드 둘 다 못 씀
 	battle.run_enemy_turn(foe)
 	assert_eq(hero.hp, 100)
 	assert_eq(played, [])
-	assert_eq(foe.discard.size(), 1)
+	assert_eq(foe.discard.size(), 2)  # 처음 카드 + 한 장 더 뽑은 카드 모두 버려짐
 	assert_eq(turn_ends, [foe])
+
+func test_enemy_draws_one_more_when_unplayable():
+	# 처음 뽑은 근접 카드는 못 씀 → 한 장 더 뽑아서(원거리) 사용 (사용자 결정)
+	_setup([_card("할퀴기"), _card("가시", "ranged")], false, 2)
+	foe.deck.assign([foe.data.deck[0], foe.data.deck[1]])  # 순서 고정: 근접 → 원거리
+	battle.run_enemy_turn(foe)
+	assert_eq(played, ["가시"])
+	assert_eq(hero.hp, 90)
+
+func test_enemy_extra_draw_does_not_reshuffle():
+	# 추가 드로우는 행동 중 드로우 → 덱이 비면 버린 더미를 섞지 않는다
+	_setup([_card("할퀴기"), _card("가시", "ranged")], false, 2)
+	foe.deck.assign([foe.data.deck[0]])
+	foe.discard.assign([foe.data.deck[1]])
+	battle.run_enemy_turn(foe)
+	assert_eq(played, [])
+	assert_eq(hero.hp, 100)
 
 func test_enemy_ranged_targets_a_living_hero():
 	_setup([_card("가시", "ranged")], false, 2)
@@ -72,14 +89,14 @@ func test_boss_follows_sequence():
 		battle.run_enemy_turn(foe)
 	assert_eq(played, ["A", "B", "A"])
 
-func test_boss_unplayable_advances():
+func test_boss_unplayable_takes_next_card_now():
 	var melee := _card("A", "melee")
 	var ranged := _card("B", "ranged")
-	_setup([melee, ranged], true, 2)  # 근접 A 는 대상 없음
-	battle.run_enemy_turn(foe)
-	assert_eq(played, [])
+	_setup([melee, ranged], true, 2)  # 근접 A 는 대상 없음 → 순서상 다음 카드 B 를 바로 꺼내 씀
 	battle.run_enemy_turn(foe)
 	assert_eq(played, ["B"])
+	battle.run_enemy_turn(foe)  # 다시 A(못 씀) → B
+	assert_eq(played, ["B", "B"])
 
 func test_boss_deck_not_shuffled_or_drawn():
 	_setup([_card("A"), _card("B"), _card("C")], true)
@@ -105,3 +122,48 @@ func test_enemy_killed_by_bleed_does_nothing():
 	assert_false(foe.alive)
 	assert_eq(hero.hp, 100)
 	assert_eq(played, [])
+
+
+func _heroes_with_aggro(aggros: Array) -> Array[BattleUnit]:
+	var hs: Array[BattleUnit] = []
+	for i in aggros.size():
+		hs.append(Fixture.unit(A, Vector2i(0, i), {"aggro": aggros[i]}))
+	return hs
+
+func _ranged_battle(hs: Array[BattleUnit]) -> void:
+	foe = Fixture.unit(E, Vector2i(3, 0))
+	var units: Array[BattleUnit] = []
+	units.append_array(hs)
+	units.append(foe)
+	battle = Battle.new(units, 11)
+
+func test_ranged_target_never_zero_aggro_when_others_have_aggro():
+	var hs := _heroes_with_aggro([0, 0, 100])
+	_ranged_battle(hs)
+	for i in 50:
+		assert_same(battle.enemy_ai.pick_ranged_target(foe), hs[2])
+
+func test_ranged_target_weighted_by_aggro():
+	var hs := _heroes_with_aggro([100, 300])
+	_ranged_battle(hs)
+	var counts := {hs[0]: 0, hs[1]: 0}
+	for i in 2000:
+		counts[battle.enemy_ai.pick_ranged_target(foe)] += 1
+	var ratio := float(counts[hs[1]]) / 2000.0
+	assert_between(ratio, 0.70, 0.80)  # 기대값 0.75
+
+func test_ranged_target_uniform_when_all_aggro_zero():
+	var hs := _heroes_with_aggro([0, 0])
+	_ranged_battle(hs)
+	var seen := {}
+	for i in 200:
+		seen[battle.enemy_ai.pick_ranged_target(foe)] = true
+	assert_eq(seen.size(), 2)
+
+func test_ranged_target_ignores_dead():
+	var hs := _heroes_with_aggro([999, 1])
+	hs[0].alive = false
+	_ranged_battle(hs)
+	for i in 20:
+		assert_same(battle.enemy_ai.pick_ranged_target(foe), hs[1])
+

@@ -133,7 +133,7 @@ func begin_turn(u: BattleUnit) -> bool:
 	u.sp = u.get_stat(BattleTypes.Stat.SP)
 	u.move_left = u.get_stat(BattleTypes.Stat.MOVE)
 	if u.data.is_boss:
-		_draw_boss_card(u)
+		draw_boss_card(u)
 	else:
 		draw(u, u.data.draw_count if u.side == BattleTypes.Side.ALLY else 1)
 	events.emit(BattleEvent.make(BattleTypes.Event.DRAW_PHASE, u))
@@ -194,8 +194,8 @@ func draw(u: BattleUnit, n: int, reshuffle: bool = true) -> void:
 
 
 ## 보스는 덱을 섞지 않고 정해진 순서대로 1장씩 손패에 넣는다. 끝까지 쓰면 처음으로 돌아간다.
-## 쓸 수 없는 카드였어도 순번은 넘어간다 (다음 차례에는 다음 카드).
-func _draw_boss_card(u: BattleUnit) -> void:
+## 쓸 수 없는 카드였으면 적 행동(enemy_ai)이 이 함수를 한 번 더 불러 순서상 다음 카드를 바로 꺼낸다.
+func draw_boss_card(u: BattleUnit) -> void:
 	if u.data.deck.is_empty():
 		return
 	var c: CardData = u.data.deck[u.boss_index % u.data.deck.size()]

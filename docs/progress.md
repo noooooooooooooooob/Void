@@ -62,7 +62,8 @@
 
 - 전투 Task 9: 이동 규칙은 `Scripts/battle/battle_movement.gd` 로 분리 (battle.gd 600줄 제한). 죽은 유닛은 길을 막지 않음
 
-- 전투 Task 10: 적 행동은 `Scripts/battle/enemy_ai.gd` 로 분리. 적 원거리 대상은 어그로 규칙이 정해질 때까지 무작위
+- 전투 Task 10: 적 행동은 `Scripts/battle/enemy_ai.gd` 로 분리
+- 2026-11-05 (사용자 결정): 적이 뽑은 카드를 못 쓰면 한 장 더 뽑아서 사용(보스는 순서상 다음 카드). 적 원거리 대상 = 아군 어그로 비율 가중 랜덤(모두 0이면 균등)
 
 ## 구조 변경
 
