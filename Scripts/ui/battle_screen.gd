@@ -36,6 +36,8 @@ const CARD_VIEW := preload("res://ui/card_view/card_view.tscn")
 var session: BattleSession
 ## 지금 고른 카드 (없으면 null)
 var selected: CardData = null
+## 고른 카드의 손패 번호 (없으면 -1). 같은 카드 리소스가 여러 장 있어도(타격 4장 등) 한 장만 고르기 위해 번호로 기억한다.
+var selected_index := -1
 
 # --- 씬의 노드 ---
 @onready var _round_label: Label = %RoundLabel
@@ -89,7 +91,7 @@ func select_card(index: int) -> bool:
 	if not _input_ok() or index < 0 or index >= session.active.hand.size():
 		return false
 	var card := session.active.hand[index]
-	if card == selected:
+	if index == selected_index:
 		# 같은 카드를 다시 누름: 자신 카드 = 사용, 근접 카드 = 자동 대상에 사용
 		var kind := _attack_type(card)
 		if kind == "self" or kind == "melee":
@@ -98,6 +100,7 @@ func select_card(index: int) -> bool:
 	if session.targets_for(card).is_empty():
 		return false
 	selected = card
+	selected_index = index
 	refresh()
 	return true
 
@@ -127,6 +130,7 @@ func click_cell(side: int, cell: Vector2i) -> bool:
 ## 고른 카드를 내려놓는다.
 func cancel() -> void:
 	selected = null
+	selected_index = -1
 	_dragging = false
 	refresh()
 
@@ -136,6 +140,7 @@ func press_end_turn() -> void:
 	if not _input_ok():
 		return
 	selected = null
+	selected_index = -1
 	session.end_player_turn()
 
 
@@ -151,6 +156,7 @@ func _start(s: BattleSession) -> void:
 	_enemy_timer.stop()
 	session = s
 	selected = null
+	selected_index = -1
 	_round = 0
 	_log_texts.clear()
 	_result.visible = false
@@ -235,6 +241,7 @@ func _on_enemy_timer() -> void:
 func _on_finished(winner: int) -> void:
 	_enemy_timer.stop()
 	selected = null
+	selected_index = -1
 	_result_label.text = "승리" if winner == BattleTypes.Side.ALLY else "패배"
 	_result.visible = true
 
@@ -337,7 +344,7 @@ func _draw_hand() -> void:
 		v.show_amount(session.card_preview(card))
 		v.set_dimmed(session.targets_for(card).is_empty())
 		# 고른 카드는 손패 줄 위쪽에 붙어서 올라와 보이고, 나머지는 아래쪽에 붙는다.
-		v.size_flags_vertical = Control.SIZE_SHRINK_BEGIN if card == selected else Control.SIZE_SHRINK_END
+		v.size_flags_vertical = Control.SIZE_SHRINK_BEGIN if i == selected_index else Control.SIZE_SHRINK_END
 		v.gui_input.connect(_on_card_input.bind(i))
 
 
@@ -405,7 +412,7 @@ func _update_arrow() -> void:
 func _selected_view() -> CardView:
 	if session.active == null:
 		return null
-	var i := session.active.hand.find(selected)
+	var i := selected_index
 	return _hand.get_child(i) as CardView if i >= 0 and i < _hand.get_child_count() else null
 
 
@@ -423,6 +430,7 @@ func _unit_under(pos: Vector2) -> BattleUnit:
 func _play(origin: BattleUnit) -> void:
 	var card := selected
 	selected = null
+	selected_index = -1
 	_dragging = false
 	if not session.play(card, origin):
 		refresh()

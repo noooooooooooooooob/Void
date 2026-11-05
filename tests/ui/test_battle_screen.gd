@@ -178,3 +178,23 @@ func test_restart_resets_screen():
 	assert_false(s.get_node("%ResultOverlay").visible)
 	for u in s.session.battle.units:
 		assert_eq(u.hp, u.data.max_hp)
+
+# 같은 카드 리소스를 여러 장 넣은 덱 (실제 시험 덱처럼 타격 4장이 한 .tres 를 가리킴)
+func _shared_data() -> BattleData:
+	var shot := _card("사격", "ranged", _dmg())
+	var hero := _unit_data("홍연", {"speed_min": 10, "speed_max": 10, "attack": 10}, [shot, shot, shot, shot, shot])
+	var d := _data()
+	d.allies[0].unit = hero
+	return d
+
+func test_same_card_copies_are_selected_separately():
+	var s := _screen(_shared_data())
+	assert_true(s.select_card(0))
+	assert_true(s.select_card(1))  # 다른 장을 누르면 선택만 바뀐다 (사용하지 않음)
+	assert_eq(s.session.active.hand.size(), 5)
+	var raised := 0
+	for v in s.get_node("%Hand").get_children():
+		if v.size_flags_vertical == Control.SIZE_SHRINK_BEGIN:
+			raised += 1
+	assert_eq(raised, 1)
+	assert_eq(s.selected_index, 1)
