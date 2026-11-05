@@ -13,6 +13,7 @@
 | 카드 갤러리 | 에디터에서 열기만 해도 카드가 보임. 인스펙터 Deck 으로 덱별 보기, 실행(F6) 시 탭 | `ui/card_gallery/card_gallery.tscn` |
 | 테스트 도구 | GUT 9.7.1 (실행 방법은 CLAUDE.md) | `addons/gut`, `tests/` |
 | 예시 데이터 | 유닛 홍연(덱 10장, 패시브 피의 갈망, 장비 시험용 검), 상태 피의 갈망(잃은 HP 1%당 공격 +0.5%, 임시 값), 장비 시험용 검(공격 +5) | `entities/units/hongyeon.tres`, `statuses/data/`, `statuses/equipment/` |
+| 상태 데이터 | 출혈(드로우 페이즈 고정 피해 × 수치), 혈갑(차례 종료 방어도 × 수치), 핏방울(패시브, 적이 받은 출혈 피해만큼 쌓임) — 에디터 인스펙터로 제작 | `statuses/data/` |
 
 ## 진행 중: 전투 시스템 (카드·효과·턴)
 

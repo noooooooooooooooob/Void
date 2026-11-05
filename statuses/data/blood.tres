@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="StatusData" format=3 uid="uid://cyk6ri76lk4mm"]
+
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="1_2bvjp"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="2_cpfvv"]
+[ext_resource type="Script" uid="uid://ccs11dk06ac8p" path="res://Scripts/statuses/status_trigger.gd" id="3_i267i"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="4_cpfvv"]
+[ext_resource type="Script" uid="uid://dad2j14vp834v" path="res://Scripts/cards/values/stack_count_value.gd" id="5_fy3j7"]
+[ext_resource type="Script" uid="uid://bubrtaft5lcun" path="res://Scripts/cards/effects/damage_effect.gd" id="5_i267i"]
+
+[sub_resource type="Resource" id="Resource_n3deb"]
+script = ExtResource("5_fy3j7")
+status_id = "bleed"
+metadata/_custom_type_script = "uid://dad2j14vp834v"
+
+[sub_resource type="Resource" id="Resource_cpfvv"]
+script = ExtResource("5_i267i")
+use_flat = true
+flat = 1
+multiplier = SubResource("Resource_n3deb")
+target = 2
+metadata/_custom_type_script = "uid://bubrtaft5lcun"
+
+[sub_resource type="Resource" id="Resource_2bvjp"]
+script = ExtResource("3_i267i")
+event = 5
+filter = 1
+effects = Array[ExtResource("4_cpfvv")]([SubResource("Resource_cpfvv")])
+metadata/_custom_type_script = "uid://ccs11dk06ac8p"
+
+[resource]
+script = ExtResource("2_cpfvv")
+id = "bleed"
+display_name = "출혈"
+description = "드로우 턴에 수치만큼 대미지"
+tag = 1
+triggers = Array[ExtResource("3_i267i")]([SubResource("Resource_2bvjp")])
+metadata/_custom_type_script = "uid://n76kyaheekpc"

@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="StatusData" format=3 uid="uid://bhpo5p88rh73s"]
+
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="1_mpj2j"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="2_kmaki"]
+[ext_resource type="Script" uid="uid://ccs11dk06ac8p" path="res://Scripts/statuses/status_trigger.gd" id="3_xf72u"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="4_kmaki"]
+[ext_resource type="Script" uid="uid://dad2j14vp834v" path="res://Scripts/cards/values/stack_count_value.gd" id="5_lx0vw"]
+[ext_resource type="Script" uid="uid://c7o0uvntceaq8" path="res://Scripts/cards/effects/block_effect.gd" id="5_xf72u"]
+
+[sub_resource type="Resource" id="Resource_nnqkx"]
+script = ExtResource("5_lx0vw")
+status_id = "blood_armor"
+metadata/_custom_type_script = "uid://dad2j14vp834v"
+
+[sub_resource type="Resource" id="Resource_kmaki"]
+script = ExtResource("5_xf72u")
+use_flat = true
+flat = 1
+multiplier = SubResource("Resource_nnqkx")
+target = 2
+metadata/_custom_type_script = "uid://c7o0uvntceaq8"
+
+[sub_resource type="Resource" id="Resource_mpj2j"]
+script = ExtResource("3_xf72u")
+filter = 1
+effects = Array[ExtResource("4_kmaki")]([SubResource("Resource_kmaki")])
+metadata/_custom_type_script = "uid://ccs11dk06ac8p"
+
+[resource]
+script = ExtResource("2_kmaki")
+id = "blood_armor"
+display_name = "혈갑"
+description = "수치에 따라 턴 종료시 쉴드"
+triggers = Array[ExtResource("3_xf72u")]([SubResource("Resource_mpj2j")])
+metadata/_custom_type_script = "uid://n76kyaheekpc"
