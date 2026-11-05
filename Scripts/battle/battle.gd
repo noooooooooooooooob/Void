@@ -10,6 +10,7 @@ extends RefCounted
 ##   Task 8: 상태 트리거 구독·해제, 패시브 적용, 장비 트리거 연결 (장비 스탯은 유닛 생성 시부터 항상)
 ##   Task 9: 이동 (규칙은 battle_movement.gd)
 ##   Task 10: 적 행동 (규칙은 enemy_ai.gd), 보스 순서 드로우
+## 덱 규칙(준비·드로우·섞기)은 battle_deck.gd, 카드 사용 규칙은 battle_card_play.gd 로 분리 (2026-11-05)
 ## 규칙 출처: docs/superpowers/specs/2026-11-03-card-effect-system-design.md (3장, 4장)
 ##
 ## 격자 좌표: 편마다 따로인 격자의 Vector2i(열, 행). 열 0 = 뒤, 열 (그 편의 열 수 - 1) = 맨 앞(상대 쪽).
@@ -33,6 +34,10 @@ var turn_order := TurnOrder.new()
 var movement: BattleMovement
 ## 적 행동 (enemy_ai.gd)
 var enemy_ai: EnemyAI
+## 덱 규칙 (battle_deck.gd)
+var deck_rules: BattleDeck
+## 카드 사용 규칙 (battle_card_play.gd)
+var card_play: BattleCardPlay
 ## 지금 차례인 유닛 (next_turn 이 정한다)
 var current: BattleUnit = null
 ## 전투 종료 이벤트를 이미 냈는지 (한 번만 내기 위해)
@@ -63,6 +68,8 @@ func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
 	grid_cols[BattleTypes.Side.ENEMY] = enemy_cols
 	movement = BattleMovement.new(self)
 	enemy_ai = EnemyAI.new(self)
+	deck_rules = BattleDeck.new(self)
+	card_play = BattleCardPlay.new(self)
 	for i in units.size():
 		units[i].battle = self
 		units[i].initial_index = i
@@ -85,11 +92,7 @@ func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
 ## 6. BATTLE_START → 첫 라운드
 func start_battle() -> void:
 	for u in units:
-		u.deck = u.data.deck.duplicate()
-		_shuffle(u.deck)
-		u.hand.clear()
-		u.discard.clear()
-		u.exiled.clear()
+		deck_rules.prepare(u)
 	for u in units:
 		u.stamina = u.get_stat(BattleTypes.Stat.STAMINA)
 		u.block = 0
@@ -183,43 +186,17 @@ func living_all() -> Array[BattleUnit]:
 
 
 # --- 덱 ---
+# 덱 규칙은 battle_deck.gd 에 있다. 여기는 다른 코드(효과, 적 행동)가 Battle 하나만 보고 쓸 수 있게 이어 주는 창구.
 
-## u 가 카드를 n 장 뽑는다. 장마다 CARD_DRAWN 발행.
-## reshuffle: 덱이 비었을 때 버린 더미를 섞어 덱으로 만들지 (제외 더미는 절대 쓰지 않는다).
-##   - 드로우 페이즈(차례 시작): true → 섞어서 계속 뽑는다
-##   - 행동 중 드로우(카드 효과 등): false → 덱이 비면 더 못 뽑는다 (사용자 결정 2026-11-04)
-## 더 뽑을 카드가 없으면 거기서 멈춘다.
+## u 가 카드를 n 장 뽑는다. reshuffle = 덱이 비면 버린 더미를 섞어 채울지
+## (드로우 페이즈 true, 행동 중 드로우 false). 자세한 규칙은 BattleDeck.draw.
 func draw(u: BattleUnit, n: int, reshuffle: bool = true) -> void:
-	for i in n:
-		if u.deck.is_empty():
-			if not reshuffle or u.discard.is_empty():
-				return
-			u.deck = u.discard.duplicate()
-			u.discard.clear()
-			_shuffle(u.deck)
-		var c: CardData = u.deck.pop_front()
-		u.hand.append(c)
-		events.emit(BattleEvent.make(BattleTypes.Event.CARD_DRAWN, u, null, 0, null, c))
+	deck_rules.draw(u, n, reshuffle)
 
 
-## 보스는 덱을 섞지 않고 정해진 순서대로 1장씩 손패에 넣는다. 끝까지 쓰면 처음으로 돌아간다.
-## 쓸 수 없는 카드였으면 적 행동(enemy_ai)이 이 함수를 한 번 더 불러 순서상 다음 카드를 바로 꺼낸다.
+## 보스가 정해진 순서의 다음 카드 1장을 손패에 넣는다. 자세한 규칙은 BattleDeck.draw_boss_card.
 func draw_boss_card(u: BattleUnit) -> void:
-	if u.data.deck.is_empty():
-		return
-	var c: CardData = u.data.deck[u.boss_index % u.data.deck.size()]
-	u.boss_index += 1
-	u.hand.append(c)
-	events.emit(BattleEvent.make(BattleTypes.Event.CARD_DRAWN, u, null, 0, null, c))
-
-
-## 배열을 전투의 난수로 섞는다 (Fisher–Yates). 같은 시드면 같은 결과.
-func _shuffle(arr: Array) -> void:
-	for i in range(arr.size() - 1, 0, -1):
-		var j := rng.randi_range(0, i)
-		var tmp = arr[i]
-		arr[i] = arr[j]
-		arr[j] = tmp
+	deck_rules.draw_boss_card(u)
 
 
 ## u 의 장비들이 붙여 주는 상태 데이터 목록
@@ -329,137 +306,28 @@ func path_length(u: BattleUnit, to: Vector2i) -> int:
 
 
 # --- 카드 ---
-# 카드 사용 규칙 (설계 문서 3.3, 4.1~4.3, 노션 구현 확정)
+# 카드 사용 규칙은 battle_card_play.gd 에 있다. 여기는 다른 코드(화면, 적 행동, 키워드 규칙)가
+# Battle 하나만 보고 쓸 수 있게 이어 주는 창구.
 
-## u 가 손패의 card 를 볼 때·쓸 때 실제로 적용되는 카드.
-## u 의 상태 중 replacements 에 card 가 있으면 대체 카드, 없으면 그대로.
-## 대체는 손패에 있는 동안만이며, 사용 후 묘지·제외로 갈 때는 원래 카드로 간다. (사용자 확정)
-## 그때그때 상태로 판단하므로, 상태가 사라지면 손패 안에서도 원래 카드로 돌아온다.
+## u 가 손패의 card 를 볼 때·쓸 때 실제로 적용되는 카드 (카드 대체 반영, 손패에서만).
 func effective_card(u: BattleUnit, card: CardData) -> CardData:
-	for inst in u.statuses:
-		if inst.data.replacements.has(card):
-			return inst.data.replacements[card]
-	return card
+	return card_play.effective_card(u, card)
 
 
-## u 가 card 를 쓸 수 있는지. "" 면 가능, 아니면 이유(UI 툴팁용):
-## "dead" 죽음 / "not_in_hand" 손패에 없음 / "sp" SP 부족 / "melee_target" 같은 행에 적 없음 /
-## "origin" 대상 지정이 잘못됨 / "cost" 추가 비용 부족 / "condition" 사용 조건 불만족
-## origin: 원거리·아군 카드의 기준 유닛 (근접·자신 카드는 무시)
+## u 가 card 를 쓸 수 있는지. "" 면 가능, 아니면 이유 ("dead" / "not_in_hand" / "sp" /
+## "melee_target" / "origin" / "cost" / "condition"). origin: 원거리·아군 카드의 기준 유닛.
 func can_play(u: BattleUnit, card: CardData, origin: BattleUnit = null) -> String:
-	if not u.alive:
-		return "dead"
-	if not u.hand.has(card):
-		return "not_in_hand"
-	var eff := effective_card(u, card)
-	if u.sp < eff.sp:
-		return "sp"
-	var target_reason := _origin_error(u, eff, origin)
-	if target_reason != "":
-		return target_reason
-	var ctx := _card_context(u, eff)
-	for cost in eff.costs:
-		if not cost.can_pay(ctx):
-			return "cost"
-	for cond in eff.conditions:
-		if not cond.check(ctx):
-			return "condition"
-	return ""
+	return card_play.can_play(u, card, origin)
 
 
 ## u 가 card 를 쓴다. 쓸 수 없으면 아무것도 바꾸지 않고 false.
-## 순서: BEFORE_CARD_PLAYED → SP 지불 → 추가 비용 지불(소모량 기록) → 범위 안 대상 정하기 →
-##       효과를 위에서부터 차례로 → 원래 카드를 버린 더미(또는 제외 더미)로 → AFTER_CARD_PLAYED
 func play_card(u: BattleUnit, card: CardData, origin: BattleUnit = null) -> bool:
-	if can_play(u, card, origin) != "":
-		return false
-	var eff := effective_card(u, card)
-	var base := _resolve_origin(u, eff, origin)
-	var ctx := _card_context(u, eff)
-	events.emit(BattleEvent.make(BattleTypes.Event.BEFORE_CARD_PLAYED, u, base, 0, eff, eff))
-
-	# 1. 비용: SP 는 카드의 sp 값, 추가 비용은 costs 순서대로
-	u.sp -= eff.sp
-	for cost in eff.costs:
-		cost.pay(ctx)
-
-	# 2. 대상: 기준 유닛 주변의 범위 (범위가 비면 기준 유닛 하나)
-	ctx.targets = area_targets(base, eff.area)
-
-	# 3. 효과
-	for effect in eff.effects:
-		effect.apply(ctx)
-
-	# 4. 카드 이동: 원래 카드가 간다 (대체 카드가 아니라).
-	#    키워드 규칙(예: 소멸 → 사용 후 제외)이 먼저 카드를 옮길 기회를 갖고, 아무도 안 옮기면 버린 더미로.
-	u.hand.erase(card)
-	if not _run_after_use_rules(ctx, eff, card):
-		u.discard.append(card)
-	events.emit(BattleEvent.make(BattleTypes.Event.AFTER_CARD_PLAYED, u, base, 0, eff, eff))
-	return true
+	return card_play.play_card(u, card, origin)
 
 
-## 카드 사용용 실행 정보: 행위자 = 주인 = 사용자, 출처 = 실제로 쓰는 카드
-func _card_context(u: BattleUnit, eff: CardData) -> EffectContext:
-	var ctx := EffectContext.new()
-	ctx.battle = self
-	ctx.actor = u
-	ctx.owner = u
-	ctx.card = eff
-	ctx.source = eff
-	return ctx
-
-
-## 대상 지정이 잘못됐으면 이유, 맞으면 "".
-func _origin_error(u: BattleUnit, eff: CardData, origin: BattleUnit) -> String:
-	match eff.attack_type:
-		"melee":
-			return "" if melee_target(u) else "melee_target"
-		"ranged":
-			return "" if origin and origin.alive and origin.side != u.side else "origin"
-		"ally":
-			return "" if origin and origin.alive and origin.side == u.side else "origin"
-		"self":
-			return ""
-	return "origin"
-
-
-## 공격 종류에 따른 기준 유닛: 근접 = 같은 행 맨 앞 적(자동), 원거리·아군 = 지정한 유닛, 자신 = 사용자
-func _resolve_origin(u: BattleUnit, eff: CardData, origin: BattleUnit) -> BattleUnit:
-	match eff.attack_type:
-		"melee":
-			return melee_target(u)
-		"self":
-			return u
-	return origin
-
-
-## u 의 card 를 제외 더미로 보낸다 (이번 전투에서 다시 돌아오지 않음). CARD_EXILED 발행.
-## 키워드 규칙(ExileAfterUseRule 등)이 부른다.
+## u 의 card 를 제외 더미로 보낸다 (이번 전투에서 다시 돌아오지 않음). 키워드 규칙이 부른다.
 func exile_card(u: BattleUnit, card: CardData) -> void:
-	u.exiled.append(card)
-	events.emit(BattleEvent.make(BattleTypes.Event.CARD_EXILED, u, null, 0, null, card))
-
-
-## 실제로 쓴 카드(eff)에 붙은 키워드들의 규칙에 "사용 직후" 시점을 알린다.
-## 규칙 중 하나라도 카드(원래 카드 card)를 옮겼으면 true. 한 번 옮겨지면 나머지 규칙은 묻지 않는다.
-func _run_after_use_rules(ctx: EffectContext, eff: CardData, card: CardData) -> bool:
-	for id in eff.keywords:
-		var kw := _keyword(id)
-		if kw == null:
-			continue
-		for rule in kw.rules:
-			if rule and rule.after_use(ctx, card):
-				return true
-	return false
-
-
-## 키워드 id → 키워드 데이터 (keyword_dir/<id>.tres). 없으면 null. 한 번 읽으면 캐시에 둔다.
-func _keyword(id: String) -> KeywordData:
-	if not keyword_cache.has(id):
-		var path := keyword_dir.path_join(id + ".tres")
-		keyword_cache[id] = load(path) as KeywordData if ResourceLoader.exists(path) else null
-	return keyword_cache[id]
+	card_play.exile_card(u, card)
 
 
 # --- 피해·회복·방어도 ---

@@ -67,6 +67,8 @@
 
 - 2026-11-05 리뷰 반영: 죽은 유닛의 상태 트리거는 반응하지 않음 / 같은 유닛으로 다음 전투를 열면 스태미너·방어도 리셋, 장비 외 상태 제거, 패시브 새로 시작, HP 는 유지 / 패시브(태그 PASSIVE)는 수치 0 이 되어도 사라지지 않음
 
+- 2026-11-05: `battle.gd` 분리 — 덱 규칙은 `battle_deck.gd`, 카드 사용은 `battle_card_play.gd` (이동 `battle_movement.gd`, 적 행동 `enemy_ai.gd` 와 같은 방식). battle.gd 508줄
+
 ## 구조 변경
 
 - 2026-11-04: 게임 스크립트를 모두 `Scripts/` 폴더로 옮김 (`Scripts/battle`, `Scripts/cards`, `Scripts/statuses`, `Scripts/ui`). 씬·데이터·테스트·플러그인은 제자리
