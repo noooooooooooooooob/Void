@@ -2,6 +2,20 @@
 
 [ext_resource type="Script" path="res://Scripts/ui/unit_status_row.gd" id="1_h1bts"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h1bts"]
+bg_color = Color(0.16470589, 0.15294118, 0.2, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_agksi"]
+bg_color = Color(0.7882353, 0.30980393, 0.3529412, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="UnitStatusRow" type="PanelContainer" unique_id=533676070]
 custom_minimum_size = Vector2(300, 0)
 script = ExtResource("1_h1bts")
@@ -20,6 +34,8 @@ vertical_alignment = 1
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_h1bts")
+theme_override_styles/fill = SubResource("StyleBoxFlat_agksi")
 show_percentage = false
 
 [node name="Hp" type="Label" parent="Box" unique_id=1455887689]
