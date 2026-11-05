@@ -6,7 +6,9 @@ extends Resource
 ## (설계 문서 4.5)
 ##
 ## 예) 출혈: event DRAW_PHASE, filter OWNER_IS_ACTOR(주인의 드로우 페이즈) → 수치만큼 고정 피해
-##     핏방울: event DAMAGE_DEALT, filter OWNER_IS_ACTOR, source_status_id "bleed"(출혈 피해만) → 핏방울 + 피해량
+##     핏방울: event DAMAGE_TAKEN, filter TARGET_IS_ENEMY_OF_OWNER, source_status_id "bleed"
+##             (적이 받은 출혈 피해만, 누가 걸었든) → 핏방울 + 피해량
+## 주의: 상태로 생긴 피해(출혈 등)는 행위자가 없다. 그래서 OWNER_IS_ACTOR 필터로는 상태 피해에 반응할 수 없다.
 
 ## 반응할 이벤트 (BattleTypes.Event)
 @export var event: BattleTypes.Event = BattleTypes.Event.TURN_END

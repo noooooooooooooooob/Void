@@ -18,7 +18,8 @@ extends Resource
 ## 종류 (BUFF 버프 / DEBUFF 디버프 / PASSIVE 패시브). 규칙에는 영향 없고 분류·표시용.
 @export var tag: BattleTypes.StatusTag = BattleTypes.StatusTag.BUFF
 ## 수치를 쓰는 상태인지. true 면 수치가 0 이하가 되는 순간 사라진다.
-## 패시브처럼 수치 없이 계속 유지되는 상태는 false.
+## 단, 태그가 PASSIVE 면 0 이 되어도 사라지지 않는다 (핏방울처럼 쌓았다 쓰는 카운터용).
+## 수치 없이 계속 유지되는 상태는 false.
 @export var uses_stacks: bool = true
 ## 새 라운드 시작 시 방어도가 초기화되지 않게 하는 상태인지 (방어도 유지 예외용).
 @export var keeps_block: bool = false

@@ -155,12 +155,17 @@ func stacks_of(id: String) -> int:
 
 
 ## 상태 수치를 delta 만큼 바꾼다. 수치를 쓰는 상태가 0 이하가 되면 제거한다.
+## 단, 패시브(태그 PASSIVE)는 0 이 되어도 남는다 — 핏방울처럼 쌓았다가 비용으로 전부 쓰는 카운터가
+## 사라지면 그 전투 동안 다시 쌓이지 않기 때문 (수치는 0 아래로 내려가지 않는다).
 ## 반환: 이번에 제거됐으면 true.
 func change_stacks(id: String, delta: int) -> bool:
 	var inst := get_status(id)
 	if inst == null:
 		return false
 	inst.stacks += delta
+	if inst.stacks <= 0 and inst.data.tag == BattleTypes.StatusTag.PASSIVE:
+		inst.stacks = 0
+		return false
 	if inst.data.uses_stacks and inst.stacks <= 0:
 		remove_status(id)
 		return true

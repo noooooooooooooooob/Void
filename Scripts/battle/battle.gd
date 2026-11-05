@@ -75,11 +75,14 @@ func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
 #                    → (행동: 카드 사용·이동) → END_PHASE → 손패 전부 버림 → TURN_END
 #   한쪽이 전멸하면 전투 종료
 
-## 전투를 시작한다.
-## 1. 각 유닛의 덱을 데이터에서 복사해 섞고, 손패·버린 더미·제외 더미를 비운다.
-## 2. 이미 붙어 있는 상태(장비 — 유닛을 만들 때 붙음)의 트리거를 이벤트에 연결한다.
-## 3. 패시브 상태를 붙인다 (건 유닛 = 자신, 수치 0 — 쌓는 패시브가 0 부터 세도록).
-## 4. BATTLE_START → 첫 라운드
+## 전투를 시작한다. 같은 BattleUnit 을 다음 전투에 다시 써도 되도록 전투 상태를 새로 맞춘다.
+## (의뢰 안에서는 HP 가 이어진다 — HP 는 건드리지 않는다)
+## 1. 덱을 데이터에서 복사해 섞고, 손패·버린 더미·제외 더미를 비운다.
+## 2. 스태미너는 최대치, 방어도는 0 (스태미너는 전투마다 리셋 — 설계 문서 3.6).
+## 3. 장비가 아닌 상태(지난 전투의 출혈·패시브 등)를 뗀다. 장비 상태는 항상 붙어 있으므로 남긴다.
+## 4. 남은 장비 상태의 트리거를 이 전투의 이벤트에 새로 연결한다 (지난 전투의 구독 id 는 버린다).
+## 5. 패시브 상태를 새로 붙인다 (건 유닛 = 자신, 수치 0 — 쌓는 패시브가 0 부터 세도록).
+## 6. BATTLE_START → 첫 라운드
 func start_battle() -> void:
 	for u in units:
 		u.deck = u.data.deck.duplicate()
@@ -88,9 +91,15 @@ func start_battle() -> void:
 		u.discard.clear()
 		u.exiled.clear()
 	for u in units:
+		u.stamina = u.get_stat(BattleTypes.Stat.STAMINA)
+		u.block = 0
+		var gear := _equipment_statuses(u)
+		for inst in u.statuses.duplicate():
+			if not gear.has(inst.data):
+				u.remove_status(inst.data.id)
 		for inst in u.statuses:
-			if inst.subscription_ids.is_empty():
-				_subscribe_triggers(inst)
+			inst.subscription_ids.clear()
+			_subscribe_triggers(inst)
 		for status in u.data.passives:
 			if status:
 				apply_status(u, status, 0, u)
@@ -211,6 +220,17 @@ func _shuffle(arr: Array) -> void:
 		var tmp = arr[i]
 		arr[i] = arr[j]
 		arr[j] = tmp
+
+
+## u 의 장비들이 붙여 주는 상태 데이터 목록
+func _equipment_statuses(u: BattleUnit) -> Array[StatusData]:
+	var out: Array[StatusData] = []
+	for equip in u.data.equipment:
+		if equip:
+			for status in equip.statuses:
+				if status:
+					out.append(status)
+	return out
 
 
 ## u 에게 "방어도 유지" 상태가 있는지
@@ -553,7 +573,7 @@ func _subscribe_triggers(inst: StatusInstance) -> void:
 
 
 ## 트리거가 구독한 이벤트가 왔을 때. (설계 문서 4.5)
-## 1. 이미 사라진 상태면 무시
+## 1. 이미 사라진 상태이거나 주인이 죽었으면 무시 (죽은 캐릭터의 패시브·장비는 멈춘다)
 ## 2. 필터: ANY / OWNER_IS_ACTOR(주인이 이벤트를 일으킴) / OWNER_IS_TARGET(주인이 이벤트를 받음)
 ##          / OWNER_IS_APPLIER(이벤트를 일으킨 상태를 주인이 걸었음)
 ##          / TARGET_IS_ENEMY_OF_OWNER(이벤트 대상이 주인의 적 — 예: 핏방울은 적이 받은 출혈 피해 전부)
@@ -562,7 +582,7 @@ func _subscribe_triggers(inst: StatusInstance) -> void:
 ##    상태로 생긴 효과는 아무도 "준" 것이 아니다 (사용자 결정): 출혈 피해로는 누구도 스태미너를 회복하지
 ##    않고 치명도 없다. 수치 계산은 주인의 스탯으로 한다.
 func _on_trigger(e: BattleEvent, inst: StatusInstance, trigger: StatusTrigger) -> void:
-	if not inst.active:
+	if not inst.active or inst.owner == null or not inst.owner.alive:
 		return
 	match trigger.filter:
 		BattleTypes.Filter.OWNER_IS_ACTOR:
