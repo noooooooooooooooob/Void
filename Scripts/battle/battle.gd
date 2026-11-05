@@ -40,6 +40,8 @@ var deck_rules: BattleDeck
 var card_play: BattleCardPlay
 ## 지금 차례인 유닛 (next_turn 이 정한다)
 var current: BattleUnit = null
+## 지금 차례(행동)의 속도 — 행동 순서 표시용. 라운드 중 재정렬돼도 이미 시작한 차례의 값은 그대로.
+var current_speed: int = 0
 ## 전투 종료 이벤트를 이미 냈는지 (한 번만 내기 위해)
 var _ended := false
 ## 키워드 데이터 폴더. 카드의 키워드 id 로 키워드의 규칙 부품(예: 소멸 → 사용 후 제외)을 찾는다.
@@ -135,6 +137,7 @@ func next_turn() -> BattleUnit:
 		start_round()
 	var entry := turn_order.pop_next()
 	current = entry.get("unit") if not entry.is_empty() else null
+	current_speed = entry.get("speed", 0)
 	return current
 
 

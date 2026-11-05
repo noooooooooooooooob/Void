@@ -10,6 +10,17 @@ extends CardEffect
 @export var multiplier: ValueSource
 
 
+## 손패 표시용 회복 수치: 공격 × percent/100 × 배율. 배율 0 이하면 0, 스탯 주인이 없으면 -1.
+func preview_amount(ctx: EffectContext) -> int:
+	var mult := scale_of(ctx, multiplier)
+	if mult <= 0.0:
+		return 0
+	var who := stat_unit(ctx)
+	if who == null:
+		return -1
+	return final_amount(who.get_stat(BattleTypes.Stat.ATTACK) * percent / 100.0 * mult)
+
+
 func apply(ctx: EffectContext) -> void:
 	var mult := scale_of(ctx, multiplier)
 	var who := stat_unit(ctx)

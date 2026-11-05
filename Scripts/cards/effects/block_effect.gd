@@ -15,6 +15,19 @@ extends CardEffect
 @export var multiplier: ValueSource
 
 
+## 손패 표시용 방어도 수치: 방어 × percent/100 × 배율. 배율 0 이하면 0, 스탯 주인이 없으면 -1.
+func preview_amount(ctx: EffectContext) -> int:
+	var mult := scale_of(ctx, multiplier)
+	if mult <= 0.0:
+		return 0
+	var who := stat_unit(ctx)
+	if use_flat:
+		return final_amount(flat * mult)
+	if who == null:
+		return -1
+	return final_amount(who.get_stat(BattleTypes.Stat.DEFENSE) * percent / 100.0 * mult)
+
+
 func apply(ctx: EffectContext) -> void:
 	var mult := scale_of(ctx, multiplier)
 	if mult <= 0.0:

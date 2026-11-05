@@ -39,6 +39,12 @@ func resolve_targets(ctx: EffectContext) -> Array[BattleUnit]:
 	return out
 
 
+## 전투 화면 손패에 보여 줄 계산된 수치 (CLAUDE.md "전투 중엔 계산된 수치").
+## 치명·대상과 무관한 기본값. 수치를 보여 줄 게 없는 효과는 -1.
+func preview_amount(_ctx: EffectContext) -> int:
+	return -1
+
+
 # --- 하위 효과들이 같이 쓰는 계산 (설계 문서 4.4, 기획 결정) ---
 
 ## 배율 값. 비어 있으면 1. 효과는 배율이 0 이하이면 아무것도 하지 않는다.

@@ -165,3 +165,21 @@ func test_script_effect():
 	var c := _ctx([])
 	s.apply(c)
 	assert_true(c.values.get("ran", false))
+
+func test_preview_amount_damage_block_heal():
+	var ctx := _ctx([])
+	assert_eq(_damage(40, FixedValue.new(5)).preview_amount(ctx), 200)
+	var b := BlockEffect.new()
+	b.percent = 50
+	assert_eq(b.preview_amount(ctx), 25)
+	var h := HealEffect.new()
+	h.percent = 10
+	assert_eq(h.preview_amount(ctx), 10)
+	assert_eq(CardEffect.new().preview_amount(ctx), -1)
+
+func test_preview_amount_has_no_crit():
+	me.data.crit_rate = 100
+	assert_eq(_damage(100).preview_amount(_ctx([])), 100)
+
+func test_preview_amount_zero_multiplier_is_zero():
+	assert_eq(_damage(100, FixedValue.new(0)).preview_amount(_ctx([])), 0)
