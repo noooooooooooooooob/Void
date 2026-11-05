@@ -23,7 +23,7 @@ func _save(sub: String, id: String, name_ko: String) -> void:
 	ResourceSaver.save(c, data_dir.path_join("%s/%s.tres" % [sub, id]))
 
 func _gallery(deck := CardGallery.ALL) -> CardGallery:
-	var g: CardGallery = preload("res://ui/card_gallery/card_gallery.tscn").instantiate()
+	var g: CardGallery = preload("res://Scenes/ui/card_gallery/card_gallery.tscn").instantiate()
 	g.data_dir = data_dir
 	g.deck = deck
 	add_child_autofree(g)

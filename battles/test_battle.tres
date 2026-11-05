@@ -1,10 +1,11 @@
 [gd_resource type="Resource" script_class="BattleData" format=3 uid="uid://bil5d8b8oetor"]
 
-[ext_resource type="Script" path="res://Scripts/battle/battle_slot.gd" id="1_r251t"]
-[ext_resource type="Resource" path="res://entities/units/test/test_hongyeon.tres" id="2_2pcsf"]
-[ext_resource type="Resource" path="res://entities/units/test/test_enemy_a.tres" id="3_y2g4p"]
-[ext_resource type="Resource" path="res://entities/units/test/test_enemy_b.tres" id="4_xt4bk"]
-[ext_resource type="Script" path="res://Scripts/battle/battle_data.gd" id="5_82yrc"]
+[ext_resource type="Script" uid="uid://bdkb4lvbm8n5j" path="res://Scripts/battle/battle_slot.gd" id="1_r251t"]
+[ext_resource type="Resource" uid="uid://vv4lak7p21rq" path="res://entities/units/test/test_hongyeon.tres" id="2_2pcsf"]
+[ext_resource type="PackedScene" uid="uid://goar44l5p1ya" path="res://Scenes/backgrounds/mountain_shrine.tscn" id="3_2pcsf"]
+[ext_resource type="Resource" uid="uid://y0jambaxxf4u" path="res://entities/units/test/test_enemy_a.tres" id="3_y2g4p"]
+[ext_resource type="Resource" uid="uid://cq8wrkbmrw82u" path="res://entities/units/test/test_enemy_b.tres" id="4_xt4bk"]
+[ext_resource type="Script" uid="uid://eybl28yfjnt7" path="res://Scripts/battle/battle_data.gd" id="5_82yrc"]
 
 [sub_resource type="Resource" id="Resource_5xjpn"]
 script = ExtResource("1_r251t")
@@ -25,3 +26,4 @@ cell = Vector2i(2, 2)
 script = ExtResource("5_82yrc")
 allies = Array[ExtResource("1_r251t")]([SubResource("Resource_5xjpn")])
 enemies = Array[ExtResource("1_r251t")]([SubResource("Resource_wnmxg"), SubResource("Resource_c7fog")])
+background = ExtResource("3_2pcsf")

@@ -11,7 +11,7 @@ extends Control
 ##   덱 제목과 카드 줄(HFlowContainer)은 덱 수만큼 생기므로 여기서 만든다.
 
 ## 카드 한 장을 그릴 씬
-const CARD_VIEW := preload("res://ui/card_view/card_view.tscn")
+const CARD_VIEW := preload("res://Scenes/ui/card_view/card_view.tscn")
 ## "모든 덱" 선택지 이름
 const ALL := "전체"
 ## 공용 카드 폴더 이름과 화면에 보일 이름

@@ -25,12 +25,12 @@ extends Control
 ## 전투 기록에 남길 줄 수
 @export var log_lines := 8
 
-const GRID_CELL := preload("res://ui/battle_screen/grid_cell.tscn")
-const UNIT_TOKEN := preload("res://ui/battle_screen/unit_token.tscn")
-const TURN_PORTRAIT := preload("res://ui/battle_screen/turn_portrait.tscn")
-const STATUS_ROW := preload("res://ui/battle_screen/unit_status_row.tscn")
-const FLOAT_NUMBER := preload("res://ui/battle_screen/float_number.tscn")
-const CARD_VIEW := preload("res://ui/card_view/card_view.tscn")
+const GRID_CELL := preload("res://Scenes/ui/battle_screen/grid_cell.tscn")
+const UNIT_TOKEN := preload("res://Scenes/ui/battle_screen/unit_token.tscn")
+const TURN_PORTRAIT := preload("res://Scenes/ui/battle_screen/turn_portrait.tscn")
+const STATUS_ROW := preload("res://Scenes/ui/battle_screen/unit_status_row.tscn")
+const FLOAT_NUMBER := preload("res://Scenes/ui/battle_screen/float_number.tscn")
+const CARD_VIEW := preload("res://Scenes/ui/card_view/card_view.tscn")
 
 ## 지금 진행 중인 세션
 var session: BattleSession
@@ -40,6 +40,7 @@ var selected: CardData = null
 var selected_index := -1
 
 # --- 씬의 노드 ---
+@onready var _bg_layer: Control = %BackgroundLayer
 @onready var _round_label: Label = %RoundLabel
 @onready var _banner: Label = %TurnBanner
 @onready var _turn_queue: HBoxContainer = %TurnQueue
@@ -77,6 +78,9 @@ func _ready() -> void:
 	_enemy_timer.timeout.connect(_on_enemy_timer)
 	_arrow.visible = false
 	_result.visible = false
+	# 배경 씬은 전투 데이터마다 다르다. 없으면 뒤의 단색만 보인다
+	if battle_data and battle_data.background:
+		_bg_layer.add_child(battle_data.background.instantiate())
 	if battle_data == null:
 		push_warning("BattleScreen: battle_data 가 비어 있어요")
 		return

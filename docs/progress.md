@@ -75,6 +75,8 @@
 ## 구조 변경
 
 - 2026-11-04: 게임 스크립트를 모두 `Scripts/` 폴더로 옮김 (`Scripts/battle`, `Scripts/cards`, `Scripts/statuses`, `Scripts/ui`). 씬·데이터·테스트·플러그인은 제자리
+- 2026-11-06: 전투 배경 = 배경 씬. `BattleData.background`(PackedScene) → 전투 화면이 `Background/BackgroundLayer` 에 붙임. 배경 씬은 `Scenes/backgrounds/` (첫 배경: `mountain_shrine.tscn`, 겹 1장). 패럴랙스·마우스 따라 움직이기는 나중에 배경 씬 안에서
+- 2026-11-06: 씬을 모두 `Scenes/` 로 옮김 (`ui/…` → `Scenes/ui/…`). 그림은 `Art/` (characters/<이름>, enemies/<이름>, ui, backgrounds, vfx), 원본 `.aseprite`·`.psd` 는 `Art_src/` (`.gdignore`). 카드 그림은 카드 가져오기가 관리하므로 `cards/art/` 그대로. 빈 `battle/` 폴더 삭제
 - 2026-11-05: 프로젝트 기본 해상도 1920×1080 (창은 1600×900), Figma 목업 기준에 맞춤
 - 2026-11-05: 리소스 안에 리소스가 필요한 데이터와 화면 씬은 에디터를 끈 상태에서 Godot 헤드리스 스크립트로 저장 (MCP 로는 중첩 리소스를 못 넣음)
 - 2026-11-04: Godot 에디터가 두 번 꺼진 원인 — 에디터가 켜진 동안 바깥에서 리소스 파일을 바꾸거나 옮김, 같은 프로젝트로 두 번째 Godot 을 띄워 테스트. 테스트는 이제 프로젝트 복사본에서 실행

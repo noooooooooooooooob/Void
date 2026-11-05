@@ -1,10 +1,10 @@
 [gd_resource type="Resource" script_class="CardData" format=3 uid="uid://8tur81lky8gg"]
 
-[ext_resource type="Script" path="res://Scripts/cards/card_condition.gd" id="1_7wa64"]
-[ext_resource type="Script" path="res://Scripts/cards/card_cost.gd" id="2_874ry"]
-[ext_resource type="Script" path="res://Scripts/cards/card_effect.gd" id="3_ukjk4"]
-[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="4_gylli"]
-[ext_resource type="Script" path="res://Scripts/cards/effects/damage_effect.gd" id="4_piwkk"]
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_7wa64"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_874ry"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_ukjk4"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_gylli"]
+[ext_resource type="Script" uid="uid://bubrtaft5lcun" path="res://Scripts/cards/effects/damage_effect.gd" id="4_piwkk"]
 
 [sub_resource type="Resource" id="Resource_vlson"]
 script = ExtResource("4_piwkk")

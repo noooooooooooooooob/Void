@@ -17,6 +17,9 @@ extends Resource
 @export var allies: Array[BattleSlot] = []
 ## 적 배치
 @export var enemies: Array[BattleSlot] = []
+## 전투 화면 배경 씬 (보통 res://Scenes/backgrounds/*.tscn, 루트는 Control).
+## 겹·패럴랙스·마우스 따라 움직이기는 배경 씬 안에서 만든다. 비우면 배경 단색만 보인다.
+@export var background: PackedScene
 
 
 ## 아군 + 적 배치로 새 전투 유닛들을 만든다 (아군이 먼저). 부를 때마다 새 유닛이다.

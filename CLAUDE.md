@@ -66,15 +66,20 @@ res://
   cards/         # 카드 데이터 .tres (data/<덱>/, keywords/, art/) — 카드 가져오기로 생성
   statuses/      # 상태(data/)·장비(equipment/) .tres
   entities/      # 캐릭터·적 데이터 .tres (units/)
-  ui/            # 화면 씬 .tscn (card_view/, card_gallery/ …)
+  Scenes/        # 모든 씬 .tscn — 안은 Scripts/ 와 같은 기능별 폴더 (ui/battle_screen/, ui/card_view/ …)
+    backgrounds/ #   전투 배경 씬 (루트 Control, 겹·패럴랙스는 씬 안에서). BattleData.background 가 가리킴
+  Art/           # 게임에 들어가는 그림 (.png) — 종류별 폴더, 캐릭터·적은 이름별로
+    characters/<이름>/  enemies/<이름>/  ui/  backgrounds/  vfx/
+  Art_src/       # 원본 작업 파일 (.aseprite, .psd) — .gdignore 로 Godot 이 무시
   addons/        # 플러그인 (GUT, GoPeak, card_importer) — 플러그인 스크립트는 여기 그대로
   tests/         # GUT 테스트 (Scripts/ 와 같은 기능별 폴더)
   docs/          # 설계·계획·진행 상황
 ```
-- 게임 스크립트는 반드시 `Scripts/` 아래에 둔다. 씬(.tscn)·데이터(.tres)는 기능 폴더에 두고 스크립트를 참조한다
-- 예외: 플러그인 스크립트(`addons/`), 테스트(`tests/`)
+- 게임 스크립트는 반드시 `Scripts/` 아래, 씬(.tscn)은 `Scenes/` 아래에 둔다. 데이터(.tres)는 기능 폴더(cards/, statuses/ …)에 둔다
+- 예외: 플러그인 스크립트(`addons/`), 테스트(`tests/`), 카드 그림(`cards/art/` — 카드 가져오기가 관리)
+- 그림은 `Art/`, 원본은 `Art_src/`. 파일 이름 snake_case (`hongyeon_portrait.png`)
+- 픽셀 아트는 쓰는 노드의 Texture Filter 를 Nearest 로 (프로젝트 기본은 일러스트용 Linear 유지)
 - 폴더는 필요할 때 만든다. 미리 다 만들지 않는다
-- 원본 작업 파일(.aseprite, .psd 등)은 `.gdignore` 폴더에 둔다
 
 ## Godot 에디터 우선 원칙 (필수)
 - **Godot 에디터에서 만들 수 있는 것은 무조건 에디터 자산으로 만든다.** 노드·UI 배치·스타일은 `.tscn` 씬 안의 노드로, 게임 데이터(카드·상태·장비·유닛)는 `.tres` 리소스로 만든다
@@ -90,7 +95,7 @@ res://
 - 서드파티 애드온(`addons/gut`, `addons/godot_mcp_*`, `addons/auto_reload`)은 손대지 않는다
 
 ## Godot Conventions
-- 파일/폴더명: snake_case (`player.tscn` / `Scripts/…/player.gd` — 씬과 스크립트는 같은 이름). 예외: 최상위 `Scripts/` 폴더
+- 파일/폴더명: snake_case (`player.tscn` / `Scripts/…/player.gd` — 씬과 스크립트는 같은 이름). 예외: 최상위 `Scripts/`·`Scenes/`·`Art/`·`Art_src/` 폴더
 - 노드 이름: PascalCase
 - 시그널: snake_case 과거형 (`health_changed`, `card_played`)
 - 게임 데이터(카드, 스탯, 적)는 커스텀 `Resource` + `.tres`로

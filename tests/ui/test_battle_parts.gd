@@ -14,7 +14,7 @@ func _unit(side := E, hp := 45) -> BattleUnit:
 
 
 func test_grid_cell_click_emits_side_and_cell():
-	var c: GridCell = _scene("res://ui/battle_screen/grid_cell.tscn")
+	var c: GridCell = _scene("res://Scenes/ui/battle_screen/grid_cell.tscn")
 	c.setup(E, Vector2i(2, 1))
 	watch_signals(c)
 	var ev := InputEventMouseButton.new()
@@ -24,7 +24,7 @@ func test_grid_cell_click_emits_side_and_cell():
 	assert_signal_emitted_with_parameters(c, "pressed", [E, Vector2i(2, 1)])
 
 func test_grid_cell_marks():
-	var c: GridCell = _scene("res://ui/battle_screen/grid_cell.tscn")
+	var c: GridCell = _scene("res://Scenes/ui/battle_screen/grid_cell.tscn")
 	c.set_mark(GridCell.Mark.NONE)
 	var none := c.mark_color()
 	c.set_mark(GridCell.Mark.MOVE)
@@ -33,7 +33,7 @@ func test_grid_cell_marks():
 	assert_ne(c.mark_color(), none)
 
 func test_unit_token_shows_hp_block_and_dims_when_dead():
-	var t: UnitToken = _scene("res://ui/battle_screen/unit_token.tscn")
+	var t: UnitToken = _scene("res://Scenes/ui/battle_screen/unit_token.tscn")
 	var u := _unit()
 	t.set_unit(u)
 	assert_eq(t.get_node("%Hp").text, "45/45")
@@ -47,7 +47,7 @@ func test_unit_token_shows_hp_block_and_dims_when_dead():
 	assert_lt(t.modulate.a, 1.0)
 
 func test_unit_token_click_emits_unit():
-	var t: UnitToken = _scene("res://ui/battle_screen/unit_token.tscn")
+	var t: UnitToken = _scene("res://Scenes/ui/battle_screen/unit_token.tscn")
 	var u := _unit()
 	t.set_unit(u)
 	watch_signals(t)
@@ -58,7 +58,7 @@ func test_unit_token_click_emits_unit():
 	assert_signal_emitted_with_parameters(t, "pressed", [u])
 
 func test_turn_portrait_current_and_speed():
-	var p: TurnPortrait = _scene("res://ui/battle_screen/turn_portrait.tscn")
+	var p: TurnPortrait = _scene("res://Scenes/ui/battle_screen/turn_portrait.tscn")
 	p.set_entry(_unit(), 7, true)
 	assert_eq(p.get_node("%Speed").text, "7")
 	assert_true(p.is_current)
@@ -66,7 +66,7 @@ func test_turn_portrait_current_and_speed():
 	assert_false(p.is_current)
 
 func test_status_row_shows_hp_and_statuses():
-	var r: UnitStatusRow = _scene("res://ui/battle_screen/unit_status_row.tscn")
+	var r: UnitStatusRow = _scene("res://Scenes/ui/battle_screen/unit_status_row.tscn")
 	var u := _unit()
 	var st := Fixture.status("bleed")
 	st.display_name = "출혈"
@@ -76,7 +76,7 @@ func test_status_row_shows_hp_and_statuses():
 	assert_string_contains(r.get_node("%Statuses").text, "출혈 3")
 
 func test_status_row_hides_empty_passive():
-	var r: UnitStatusRow = _scene("res://ui/battle_screen/unit_status_row.tscn")
+	var r: UnitStatusRow = _scene("res://Scenes/ui/battle_screen/unit_status_row.tscn")
 	var u := _unit()
 	var st := Fixture.status("blood_drop")
 	st.display_name = "핏방울"
@@ -86,7 +86,7 @@ func test_status_row_hides_empty_passive():
 	assert_false(r.get_node("%Statuses").text.contains("핏방울"))
 
 func test_float_number_frees_itself():
-	var f: FloatNumber = load("res://ui/battle_screen/float_number.tscn").instantiate()
+	var f: FloatNumber = load("res://Scenes/ui/battle_screen/float_number.tscn").instantiate()
 	add_child(f)
 	f.duration = 0.05
 	f.pop("-9", Color.RED)

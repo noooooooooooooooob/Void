@@ -50,7 +50,7 @@ func _data(enemy_hp := 45) -> BattleData:
 	return d
 
 func _screen(data := _data()) -> BattleScreen:
-	var s: BattleScreen = load("res://ui/battle_screen/battle_screen.tscn").instantiate()
+	var s: BattleScreen = load("res://Scenes/ui/battle_screen/battle_screen.tscn").instantiate()
 	s.battle_data = data
 	s.enemy_delay = 0.0  # 테스트에서는 적 차례를 직접 진행
 	add_child_autofree(s)
@@ -198,3 +198,20 @@ func test_same_card_copies_are_selected_separately():
 			raised += 1
 	assert_eq(raised, 1)
 	assert_eq(s.selected_index, 1)
+
+func test_background_scene_from_battle_data():
+	var root := Control.new()
+	root.name = "TestBackground"
+	var ps := PackedScene.new()
+	ps.pack(root)
+	root.free()
+	var d := _data()
+	d.background = ps
+	var s := _screen(d)
+	var layer: Control = s.get_node("%BackgroundLayer")
+	assert_eq(layer.get_child_count(), 1)
+	assert_eq(layer.get_child(0).name, &"TestBackground")
+
+func test_no_background_leaves_layer_empty():
+	var s := _screen()
+	assert_eq(s.get_node("%BackgroundLayer").get_child_count(), 0)

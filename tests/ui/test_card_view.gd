@@ -29,7 +29,7 @@ func _card() -> CardData:
 	return c
 
 func _view(card: CardData) -> CardView:
-	var v: CardView = add_child_autofree(preload("res://ui/card_view/card_view.tscn").instantiate())
+	var v: CardView = add_child_autofree(preload("res://Scenes/ui/card_view/card_view.tscn").instantiate())
 	v.keyword_dir = kw_dir
 	v.set_card(card)
 	return v
