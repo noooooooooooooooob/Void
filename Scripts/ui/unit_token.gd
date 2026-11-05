@@ -22,7 +22,11 @@ var unit: BattleUnit
 var _highlight := false
 
 
-## 보여 줄 유닛을 정하고 바로 그린다.
+func _ready() -> void:
+	refresh()  # 트리에 들어가기 전에 set_unit 을 불렀으면 여기서 그린다
+
+
+## 보여 줄 유닛을 정하고 바로 그린다 (트리에 들어가기 전이면 _ready 에서 그린다).
 func set_unit(u: BattleUnit) -> void:
 	unit = u
 	refresh()
@@ -30,7 +34,7 @@ func set_unit(u: BattleUnit) -> void:
 
 ## 유닛의 지금 값으로 다시 그린다.
 func refresh() -> void:
-	if unit == null:
+	if unit == null or not is_node_ready():
 		return
 	_name.text = unit.data.display_name
 	_hp.text = "%d/%d" % [unit.hp, unit.get_stat(BattleTypes.Stat.HP)]
