@@ -8,7 +8,8 @@ extends RefCounted
 ##   Task 6: 카드 사용 (조건, 비용, 대상, 대체, 소멸→제외)
 ##   Task 7: 덱과 턴 진행 (행동마다 속도, 즉시 재정렬, 드로우, 방어도 초기화, 전투 종료)
 ##   Task 8: 상태 트리거 구독·해제, 패시브 적용, 장비 트리거 연결 (장비 스탯은 유닛 생성 시부터 항상)
-##   Task 9: 이동 (규칙은 battle_movement.gd) / Task 10: 적 행동
+##   Task 9: 이동 (규칙은 battle_movement.gd)
+##   Task 10: 적 행동 (규칙은 enemy_ai.gd), 보스 순서 드로우
 ## 규칙 출처: docs/superpowers/specs/2026-11-03-card-effect-system-design.md (3장, 4장)
 ##
 ## 격자 좌표: 편마다 따로인 격자의 Vector2i(열, 행). 열 0 = 뒤, 열 (그 편의 열 수 - 1) = 맨 앞(상대 쪽).
@@ -30,6 +31,8 @@ var grid_rows: int = BattleTypes.DEFAULT_GRID_ROWS
 var turn_order := TurnOrder.new()
 ## 격자 이동 규칙 (battle_movement.gd)
 var movement: BattleMovement
+## 적 행동 (enemy_ai.gd)
+var enemy_ai: EnemyAI
 ## 지금 차례인 유닛 (next_turn 이 정한다)
 var current: BattleUnit = null
 ## 전투 종료 이벤트를 이미 냈는지 (한 번만 내기 위해)
@@ -59,6 +62,7 @@ func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
 	grid_cols[BattleTypes.Side.ALLY] = ally_cols
 	grid_cols[BattleTypes.Side.ENEMY] = enemy_cols
 	movement = BattleMovement.new(self)
+	enemy_ai = EnemyAI.new(self)
 	for i in units.size():
 		units[i].battle = self
 		units[i].initial_index = i
@@ -121,13 +125,17 @@ func next_turn() -> BattleUnit:
 
 
 ## 차례를 시작한다: TURN_START → SP 가득 회복 → 이동력 = 이동속도 → 드로우 → DRAW_PHASE → STANDBY_PHASE.
-## 드로우: 아군은 draw_count 장, 적은 1장. (출혈 같은 DRAW_PHASE 효과로 죽을 수 있다)
+## 드로우: 아군은 draw_count 장, 일반 적은 1장, 보스는 정해진 순서의 다음 카드 1장.
+## (출혈 같은 DRAW_PHASE 효과로 죽을 수 있다)
 ## 반환: 차례를 이어갈 수 있으면 true (유닛이 살아 있음). false 면 부르는 쪽이 이 차례를 건너뛴다.
 func begin_turn(u: BattleUnit) -> bool:
 	events.emit(BattleEvent.make(BattleTypes.Event.TURN_START, u))
 	u.sp = u.get_stat(BattleTypes.Stat.SP)
 	u.move_left = u.get_stat(BattleTypes.Stat.MOVE)
-	draw(u, u.data.draw_count if u.side == BattleTypes.Side.ALLY else 1)
+	if u.data.is_boss:
+		_draw_boss_card(u)
+	else:
+		draw(u, u.data.draw_count if u.side == BattleTypes.Side.ALLY else 1)
 	events.emit(BattleEvent.make(BattleTypes.Event.DRAW_PHASE, u))
 	if u.alive:
 		events.emit(BattleEvent.make(BattleTypes.Event.STANDBY_PHASE, u))
@@ -183,6 +191,17 @@ func draw(u: BattleUnit, n: int, reshuffle: bool = true) -> void:
 		var c: CardData = u.deck.pop_front()
 		u.hand.append(c)
 		events.emit(BattleEvent.make(BattleTypes.Event.CARD_DRAWN, u, null, 0, null, c))
+
+
+## 보스는 덱을 섞지 않고 정해진 순서대로 1장씩 손패에 넣는다. 끝까지 쓰면 처음으로 돌아간다.
+## 쓸 수 없는 카드였어도 순번은 넘어간다 (다음 차례에는 다음 카드).
+func _draw_boss_card(u: BattleUnit) -> void:
+	if u.data.deck.is_empty():
+		return
+	var c: CardData = u.data.deck[u.boss_index % u.data.deck.size()]
+	u.boss_index += 1
+	u.hand.append(c)
+	events.emit(BattleEvent.make(BattleTypes.Event.CARD_DRAWN, u, null, 0, null, c))
 
 
 ## 배열을 전투의 난수로 섞는다 (Fisher–Yates). 같은 시드면 같은 결과.
@@ -266,6 +285,14 @@ func area_targets(origin: BattleUnit, area: Array[Vector2i]) -> Array[BattleUnit
 		if u and not out.has(u):
 			out.append(u)
 	return out
+
+
+# --- 적 ---
+# 적 행동 규칙은 enemy_ai.gd 에 있다.
+
+## 적 u 의 차례를 처음부터 끝까지 진행한다 (드로우한 카드를 쓸 수 있으면 쓰고, 아니면 넘김).
+func run_enemy_turn(u: BattleUnit) -> void:
+	enemy_ai.run_turn(u)
 
 
 # --- 이동 ---
