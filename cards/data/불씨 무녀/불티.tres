@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://dksjkgy47rcwc"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_352uy"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_thfc6"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_db5v6"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_xv30w"]
+
+[sub_resource type="Resource" id="Resource_6hi3t"]
+script = ExtResource("4_xv30w")
+name_ko = "불티+"
+description_ko = "공격력의 100% 피해. 불씨 1을 소모하면 +100%."
+cost = 1
+attack_type = "ranged"
+area = Array[Vector2i]([Vector2i(0, 0)])
+keywords = PackedStringArray()
+
+[resource]
+script = ExtResource("4_xv30w")
+id = "zv4h0prcftwaoj8pvr1l"
+deck_id = "c60x5olk64yzdy03rwtm"
+name_ko = "불티"
+description_ko = "공격력의 100% 피해. 불씨 1을 소모하면 +50%."
+cost = 1
+attack_type = "ranged"
+area = Array[Vector2i]([Vector2i(0, 0)])
+keywords = PackedStringArray()
+upgrades = Array[ExtResource("4_xv30w")]([SubResource("Resource_6hi3t")])

@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://bmud0tetgl1r8"]
+
+[ext_resource type="Script" path="res://Scripts/ui/unit_status_row.gd" id="1_h1bts"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h1bts"]
+bg_color = Color(0.16470589, 0.15294118, 0.2, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_agksi"]
+bg_color = Color(0.7882353, 0.30980393, 0.3529412, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="UnitStatusRow" type="PanelContainer" unique_id=533676070]
+custom_minimum_size = Vector2(300, 0)
+script = ExtResource("1_h1bts")
+
+[node name="Box" type="VBoxContainer" parent="." unique_id=1098586393]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="Box" unique_id=499056556]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "이름"
+vertical_alignment = 1
+
+[node name="HpBar" type="ProgressBar" parent="Box" unique_id=772034664]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_h1bts")
+theme_override_styles/fill = SubResource("StyleBoxFlat_agksi")
+show_percentage = false
+
+[node name="Hp" type="Label" parent="Box" unique_id=1455887689]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "0/0"
+vertical_alignment = 1
+
+[node name="Line" type="HBoxContainer" parent="Box" unique_id=1909453005]
+layout_mode = 2
+
+[node name="Block" type="Label" parent="Box/Line" unique_id=1649268708]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "방어도 0"
+vertical_alignment = 1
+
+[node name="Stamina" type="Label" parent="Box/Line" unique_id=395490428]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "스태미너 0"
+vertical_alignment = 1
+
+[node name="Statuses" type="Label" parent="Box" unique_id=62847230]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9411765, 0.6392157, 0.36862746, 1)
+vertical_alignment = 1
+autowrap_mode = 3

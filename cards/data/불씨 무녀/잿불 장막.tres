@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://dhpqqqpy6kwa2"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_h04eo"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_kyt4w"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_00aau"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_jpvm4"]
+
+[resource]
+script = ExtResource("4_jpvm4")
+id = "m08rd2pwzz5gyf2mwi1s"
+deck_id = "c60x5olk64yzdy03rwtm"
+name_ko = "잿불 장막"
+description_ko = "방어력의 120% 방어. 보유한 불씨 1당 +20%."
+cost = 1
+category = "skill"
+attack_type = "self"
+keywords = PackedStringArray()

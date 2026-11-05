@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://0umhkwcmxk35"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_754sh"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_alnjs"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_mk08x"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_5reo5"]
+
+[resource]
+script = ExtResource("4_5reo5")
+id = "1yqevpt3ca74q7m2jw0h"
+deck_id = "9gqu9v1d185ayv1n77d8"
+name_ko = "응혈 폭발"
+description_ko = "핏방울을 소모하고 ATK(200 ~ 300%) 로 공격"
+sp = 2
+cost = 10
+attack_type = "ranged"
+area = Array[Vector2i]([Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(-1, 1), Vector2i(0, 1), Vector2i(1, 1)])
+keywords = PackedStringArray()

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="KeywordData" format=3 uid="uid://cks3bed2yw1fk"]
+
+[ext_resource type="Script" uid="uid://6o5cnx55818b" path="res://Scripts/cards/keyword_data.gd" id="1_dctkp"]
+[ext_resource type="Script" uid="uid://diwqjbi2s724l" path="res://Scripts/cards/keyword_rules/keyword_rule.gd" id="1_oaf5l"]
+
+[resource]
+script = ExtResource("1_dctkp")
+id = "njr7dh4vi7kggdbewe8y"
+name_ko = "불씨"

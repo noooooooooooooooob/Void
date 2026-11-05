@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://goar44l5p1ya"]
+
+[ext_resource type="Texture2D" uid="uid://cicqadp7rjhib" path="res://Art/Terrian/안개 낀 산중 신사의 테라스.png" id="1_rlmvk"]
+
+[node name="MountainShrine" type="Control" unique_id=796481465]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FarLayer" type="TextureRect" parent="." unique_id=1537245811]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("1_rlmvk")
+expand_mode = 1
+stretch_mode = 6

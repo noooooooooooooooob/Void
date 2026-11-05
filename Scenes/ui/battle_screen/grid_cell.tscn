@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://djk0rr812mnud"]
+
+[ext_resource type="Script" path="res://Scripts/ui/grid_cell.gd" id="1_mjceh"]
+
+[node name="GridCell" type="ColorRect" unique_id=1422608363]
+custom_minimum_size = Vector2(120, 120)
+color = Color(0.16470589, 0.15294118, 0.2, 1)
+script = ExtResource("1_mjceh")
+
+[node name="Mark" type="ColorRect" parent="." unique_id=2089981287]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0)

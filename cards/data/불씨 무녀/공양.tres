@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://gxtjqcr6ec5o"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_sgpca"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_tjo0y"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_urul1"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_0bl50"]
+
+[sub_resource type="Resource" id="Resource_156io"]
+script = ExtResource("4_0bl50")
+name_ko = "공양+"
+description_ko = "손패 1장을 태운다. 불씨 2을 얻는다"
+category = "skill"
+attack_type = "self"
+keywords = PackedStringArray()
+
+[resource]
+script = ExtResource("4_0bl50")
+id = "33se3nq2s7xc1hjl86as"
+deck_id = "c60x5olk64yzdy03rwtm"
+name_ko = "공양"
+description_ko = "손패 1장을 태운다. 불씨 1을 얻는다"
+cost = 1
+category = "skill"
+attack_type = "self"
+keywords = PackedStringArray()
+upgrades = Array[ExtResource("4_0bl50")]([SubResource("Resource_156io")])

@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://jexoivr7n6g5"]
+
+[ext_resource type="Script" path="res://Scripts/ui/target_arrow.gd" id="1_noi8e"]
+
+[node name="TargetArrow" type="Node2D" unique_id=1135533263]
+top_level = true
+z_index = 100
+script = ExtResource("1_noi8e")
+
+[node name="Line" type="Line2D" parent="." unique_id=1968278898]
+width = 8.0
+default_color = Color(0.9098039, 0.8862745, 0.9411765, 1)
+joint_mode = 2
+begin_cap_mode = 2
+
+[node name="Head" type="Polygon2D" parent="." unique_id=278504300]
+color = Color(0.9098039, 0.8862745, 0.9411765, 1)
+polygon = PackedVector2Array(8, 0, -18, -14, -18, 14)

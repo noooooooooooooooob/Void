@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="KeywordData" format=3 uid="uid://db4fl18ogydne"]
+
+[ext_resource type="Script" uid="uid://6o5cnx55818b" path="res://Scripts/cards/keyword_data.gd" id="1_dy45a"]
+[ext_resource type="Script" uid="uid://diwqjbi2s724l" path="res://Scripts/cards/keyword_rules/keyword_rule.gd" id="1_wp1x8"]
+
+[resource]
+script = ExtResource("1_dy45a")
+id = "d22dskk3ouqo23i46ahj"
+name_ko = "개전"
+description_ko = "전투 시작시 첫 드로우에 무조건 들어가는 카드"

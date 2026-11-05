@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://b6yccpq0rarg8"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_00s7u"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_3nkkh"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_uvwso"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_bxeyv"]
+
+[resource]
+script = ExtResource("4_bxeyv")
+id = "hongyeon-dismantle-chain"
+deck_id = "yosts0edamxi6ct05ezs"
+name_ko = "혈갑 해체: 사슬"
+description_ko = "혈갑을 일정 소모. ATK 70%. 속박 부여 혈갑 수치
+"
+cost = 1
+attack_type = "ranged"
+keywords = PackedStringArray()

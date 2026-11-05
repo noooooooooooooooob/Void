@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://hgxecy5umc0r"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_hx2mk"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_k15px"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_mfc5w"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_5ghqp"]
+[ext_resource type="Script" uid="uid://c7o0uvntceaq8" path="res://Scripts/cards/effects/block_effect.gd" id="4_ohdkh"]
+
+[sub_resource type="Resource" id="Resource_jy8m3"]
+script = ExtResource("4_ohdkh")
+target = 1
+
+[resource]
+script = ExtResource("4_5ghqp")
+id = "3b7asor29yhlmm7jreze"
+name_ko = "방어"
+description_ko = "벙어력 100%"
+category = "skill"
+attack_type = "self"
+keywords = PackedStringArray()
+effects = Array[ExtResource("3_mfc5w")]([SubResource("Resource_jy8m3")])

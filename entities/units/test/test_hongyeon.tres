@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://vv4lak7p21rq"]
+
+[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="1_m68oq"]
+[ext_resource type="Resource" path="res://cards/data/common/타격.tres" id="2_jlno6"]
+[ext_resource type="Resource" path="res://cards/data/common/사격.tres" id="3_d73ro"]
+[ext_resource type="Resource" path="res://cards/data/common/방어.tres" id="4_srylm"]
+[ext_resource type="Script" path="res://Scripts/statuses/equipment_data.gd" id="5_2srp8"]
+[ext_resource type="Script" path="res://Scripts/statuses/status_data.gd" id="6_jq8xh"]
+[ext_resource type="Script" path="res://Scripts/battle/unit_data.gd" id="7_y68u3"]
+
+[resource]
+script = ExtResource("7_y68u3")
+display_name = "홍연 (시험)"
+crit_rate = 1
+crit_damage = 175
+aggro = 100
+deck = Array[ExtResource("1_m68oq")]([ExtResource("2_jlno6"), ExtResource("2_jlno6"), ExtResource("2_jlno6"), ExtResource("2_jlno6"), ExtResource("3_d73ro"), ExtResource("3_d73ro"), ExtResource("3_d73ro"), ExtResource("4_srylm"), ExtResource("4_srylm"), ExtResource("4_srylm")])

@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="StatusData" format=3 uid="uid://bl44oxutg7u20"]
+
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="1_e6ncw"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="2_mlaub"]
+[ext_resource type="Script" uid="uid://ccs11dk06ac8p" path="res://Scripts/statuses/status_trigger.gd" id="3_imq88"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="4_mlaub"]
+[ext_resource type="Script" uid="uid://ddpylucaasb2q" path="res://Scripts/cards/values/event_amount_value.gd" id="5_063vn"]
+[ext_resource type="Script" uid="uid://cqxwuf5rg0o6d" path="res://Scripts/cards/effects/modify_stacks_effect.gd" id="5_imq88"]
+
+[sub_resource type="Resource" id="Resource_imq88"]
+script = ExtResource("5_063vn")
+metadata/_custom_type_script = "uid://ddpylucaasb2q"
+
+[sub_resource type="Resource" id="Resource_mlaub"]
+script = ExtResource("5_imq88")
+status_id = "blood_drop"
+multiplier = SubResource("Resource_imq88")
+target = 2
+metadata/_custom_type_script = "uid://cqxwuf5rg0o6d"
+
+[sub_resource type="Resource" id="Resource_e6ncw"]
+script = ExtResource("3_imq88")
+event = 14
+filter = 4
+source_status_id = "bleed"
+effects = Array[ExtResource("4_mlaub")]([SubResource("Resource_mlaub")])
+metadata/_custom_type_script = "uid://ccs11dk06ac8p"
+
+[resource]
+script = ExtResource("2_mlaub")
+id = "blood_drop"
+display_name = "핏방울"
+description = "적의 출혈 스택 대미지 만큼 스택. 특정 카드에 소모"
+tag = 2
+triggers = Array[ExtResource("3_imq88")]([SubResource("Resource_e6ncw")])
+metadata/_custom_type_script = "uid://n76kyaheekpc"

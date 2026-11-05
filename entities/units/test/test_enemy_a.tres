@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://y0jambaxxf4u"]
+
+[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="1_e0ap3"]
+[ext_resource type="Resource" path="res://cards/data/common/타격.tres" id="2_51hmm"]
+[ext_resource type="Resource" path="res://cards/data/common/사격.tres" id="3_e73to"]
+[ext_resource type="Resource" path="res://cards/data/common/방어.tres" id="4_aa45t"]
+[ext_resource type="Script" path="res://Scripts/statuses/equipment_data.gd" id="5_d6m68"]
+[ext_resource type="Script" path="res://Scripts/statuses/status_data.gd" id="6_be6ww"]
+[ext_resource type="Script" path="res://Scripts/battle/unit_data.gd" id="7_5ovx3"]
+
+[resource]
+script = ExtResource("7_5ovx3")
+display_name = "시험용 적 A"
+max_hp = 45
+attack = 9
+defense = 6
+speed_min = 2
+speed_max = 8
+deck = Array[ExtResource("1_e0ap3")]([ExtResource("2_51hmm"), ExtResource("2_51hmm"), ExtResource("3_e73to"), ExtResource("4_aa45t")])

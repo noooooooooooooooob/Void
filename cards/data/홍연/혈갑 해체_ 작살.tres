@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://ywcfftndmfrt"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_h77sd"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_cosxh"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_pejhr"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_xp4sr"]
+
+[resource]
+script = ExtResource("4_xp4sr")
+id = "94gyx3u0y9v4q38tglk6"
+deck_id = "yosts0edamxi6ct05ezs"
+name_ko = "혈갑 해체: 작살"
+description_ko = "혈갑 전부 소모. 소모 수치에 따라 공격"
+sp = 2
+cost = 10
+attack_type = "ranged"
+area = Array[Vector2i]([Vector2i(-2, 0), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0)])
+keywords = PackedStringArray()
