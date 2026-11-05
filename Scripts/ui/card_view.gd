@@ -41,6 +41,7 @@ var card: CardData
 @onready var attack_badge: Label = %AttackBadge     ## 오른쪽 위 공격 종류 배지
 @onready var upgrade_badge: Label = %UpgradeBadge   ## 강화 단계 수 배지 (+N)
 @onready var art_rect: TextureRect = %Art           ## 카드 그림
+@onready var amount_label: Label = %Amount       ## 전투 중 계산된 수치 (큰 숫자, 기본 숨김)
 @onready var tooltip: PanelContainer = %Tooltip     ## 키워드 설명 툴팁 (top_level 이라 카드 밖에 그려짐)
 @onready var _sp_circle: Panel = %SpCircle
 @onready var _area_grid: GridContainer = %AreaGrid  # 칸 25개 (ColorRect), 왼쪽 위부터 줄 순서
@@ -115,6 +116,19 @@ func set_card(c: CardData) -> void:
 	keywords_label.text = "  ".join(names)
 	keywords_label.visible = not _keywords.is_empty()
 	hide_keyword_tooltip()
+
+
+## 전투 화면에서 계산된 수치(피해·방어도·회복)를 카드 가운데에 크게 보여 준다.
+## CLAUDE.md "전투 중엔 계산된 수치, 덱 편집 화면에선 % 표시" — 갤러리·덱 편집에서는 부르지 않는다.
+## value 가 0 미만이면 숨긴다.
+func show_amount(value: int) -> void:
+	amount_label.visible = value >= 0
+	amount_label.text = str(value)
+
+
+## 지금 쓸 수 없는 카드를 어둡게 표시한다 (전투 화면 손패).
+func set_dimmed(on: bool) -> void:
+	modulate = Color(0.45, 0.45, 0.45) if on else Color.WHITE
 
 
 ## 지금 테두리 색 (테스트용)

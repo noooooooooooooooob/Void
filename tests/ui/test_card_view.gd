@@ -84,3 +84,27 @@ func test_no_tooltip_without_keywords():
 	c.upgrades = [] as Array[CardData]
 	v.set_card(c)
 	assert_false(v.upgrade_badge.visible)
+
+func test_show_amount_visible_with_value():
+	var v := _view(_card())
+	v.show_amount(9)
+	var amount: Label = v.get_node("%Amount")
+	assert_true(amount.visible)
+	assert_eq(amount.text, "9")
+
+func test_show_amount_negative_hides():
+	var v := _view(_card())
+	v.show_amount(9)
+	v.show_amount(-1)
+	assert_false(v.get_node("%Amount").visible)
+
+func test_gallery_default_has_no_amount():
+	var v := _view(_card())
+	assert_false(v.get_node("%Amount").visible)
+
+func test_set_dimmed():
+	var v := _view(_card())
+	v.set_dimmed(true)
+	assert_lt(v.modulate.v, 1.0)
+	v.set_dimmed(false)
+	assert_eq(v.modulate, Color.WHITE)
