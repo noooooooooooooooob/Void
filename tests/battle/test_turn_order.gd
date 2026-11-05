@@ -151,3 +151,13 @@ func test_next_turn_null_when_nobody_left():
 	bt.turn_order.remove(a)
 	bt.turn_order.remove(e)
 	assert_null(bt.next_turn())
+
+func test_round_start_emitted_after_order_is_rolled():
+	# ROUND_START 를 받는 쪽(화면)이 이번 라운드 순서표를 바로 읽을 수 있어야 한다
+	var a := _u(A, 5)
+	var e := _u(E, 7)
+	var bt := _battle([a, e])
+	var seen := []
+	bt.events.subscribe(Ev.ROUND_START, func(_ev): seen.append(bt.turn_order.remaining().size()))
+	bt.start_battle()
+	assert_eq(seen, [2])

@@ -112,14 +112,16 @@ func start_battle() -> void:
 
 ## 새 라운드를 연다.
 ## 1. 방어도 초기화: "방어도 유지" 상태(keeps_block)가 없는 유닛만. 방어도가 있었으면 BLOCK_RESET 발행.
-## 2. ROUND_START 발행 → 3. 살아 있는 유닛들이 행동마다 속도를 굴려 행동 순서를 정한다.
+## 2. 살아 있는 유닛들이 행동마다 속도를 굴려 행동 순서를 정한다.
+## 3. ROUND_START 발행 — 순서가 정해진 뒤라서 받는 쪽(화면 등)이 이번 라운드 순서표를 바로 읽을 수 있다.
+##    ROUND_START 반응으로 속도가 바뀌면 상태 변경 시 재정렬(_refresh_speeds)이 처리한다.
 func start_round() -> void:
 	for u in units:
 		if u.alive and u.block > 0 and not _keeps_block(u):
 			u.block = 0
 			events.emit(BattleEvent.make(BattleTypes.Event.BLOCK_RESET, null, u))
-	events.emit(BattleEvent.make(BattleTypes.Event.ROUND_START))
 	turn_order.start_round(living_all(), rng)
+	events.emit(BattleEvent.make(BattleTypes.Event.ROUND_START))
 
 
 ## 다음 차례(행동 하나)의 유닛을 정해서 돌려준다. 차례 진행(begin_turn)은 부르는 쪽이 한다.
