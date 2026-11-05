@@ -5,7 +5,8 @@ extends RefCounted
 ##
 ## zip 구성: cards.json(카드·덱·키워드 목록) + art/(카드 그림).
 ## 만드는 파일 (root 기본값 res://cards 기준):
-##   data/<덱 이름>/<카드 id>.tres   카드 (공용 카드는 data/common/)
+##   data/<덱 이름>/<카드 이름>.tres 카드 (공용 카드는 data/common/)
+##     같은 폴더에 이름이 같은 카드가 있으면 뒤 카드는 <카드 이름>_<id>.tres
 ##   keywords/<키워드 id>.tres        키워드 이름·설명
 ##   art/<파일 이름>                  그림
 ##
@@ -13,6 +14,8 @@ extends RefCounted
 ##   - 웹 에디터가 담당하는 칸(이름, 설명, SP, 코스트, 분류, 공격 종류, 범위, 키워드, 그림)만 덮어쓴다.
 ##   - Godot 에서 붙인 costs / conditions / effects 는 그대로 둔다. 강화 단계도 같은 규칙.
 ##   - 웹 에디터에서 지운 카드·키워드, 더 이상 쓰지 않는 그림은 지운다.
+##   - 카드 파일은 파일 이름이 아니라 파일 안의 id 로 찾는다. 이름·덱이 바뀌면 파일을 옮긴다(이름 바꾸기).
+##     새로 만들지 않고 옮기기 때문에 파일 안의 uid 가 유지되어 유닛 덱 등의 참조가 끊기지 않는다.
 ##
 ## 사용 순서: read_zip() 또는 load_export() → preview()로 확인 → apply().
 ## 에디터 메뉴(plugin.gd)와 테스트가 이 클래스를 같이 쓴다.
@@ -68,7 +71,7 @@ func read_zip(path: String) -> String:
 ## 반환: { added: 새로 생길 카드 이름들, updated: 덮어쓸 카드 이름들,
 ##         removed: [{ name: 이름, has_effects: Godot 에서 붙인 효과가 있는지 }] }
 func preview() -> Dictionary:
-	var existing := _existing_files(root.path_join("data"))
+	var existing := _existing_cards(root.path_join("data"))
 	var added := PackedStringArray()
 	var updated := PackedStringArray()
 	var incoming := {}  # 이번 zip 에 있는 카드 id 집합
@@ -106,32 +109,49 @@ func apply() -> void:
 
 ## 카드 .tres 를 만들거나 갱신하고, zip 에 없는 카드 파일은 지운다.
 func _apply_cards(used_art: Dictionary) -> void:
-	var existing := _existing_files(root.path_join("data"))  # 카드 id → 현재 파일 경로
-	var folders := _deck_folders()  # 덱 id → 폴더 이름
+	var existing := _existing_cards(root.path_join("data"))  # 카드 id → 현재 파일 경로
+	var targets := _card_paths()  # 카드 id → 저장할 경로
+
+	# 1. 옮겨야 하는 기존 파일은 먼저 전부 임시 이름으로 비켜 둔다.
+	#    (A 의 새 이름이 B 의 옛 이름인 경우처럼 서로 자리를 바꿔도 덮어쓰지 않게)
+	var moving := {}  # 카드 id → 임시 경로
+	var held := {}  # 카드 id → 메모리에 이미 올라와 있던 리소스 (에디터가 열어 둔 카드 등)
+	for id in targets:
+		if existing.has(id) and existing[id] != targets[id]:
+			# 에디터가 옛 경로로 들고 있는 객체는 나중에 그대로 옛 경로에 다시 저장되어 중복 파일이 생긴다.
+			# 그래서 파일과 함께 이 객체의 경로도 새 경로로 옮긴다 (아래 2단계).
+			if ResourceLoader.has_cached(existing[id]):
+				held[id] = ResourceLoader.load(existing[id])
+			var tmp: String = existing[id] + ".moving"
+			DirAccess.rename_absolute(existing[id], tmp)
+			moving[id] = tmp
 
 	for c in _list("cards"):
 		var id := str(c.get("id", ""))
-		if id.is_empty():
+		if not targets.has(id):
 			continue
-
-		# 1. 저장할 경로 정하기: 공용 카드는 common, 덱 전용은 덱 이름 폴더.
-		#    덱 목록에 없는 덱 id 면 id 를 폴더 이름으로 쓴다.
+		var path: String = targets[id]
 		var deck = c.get("deck")
 		var deck_id := "" if deck == null else str(deck)
-		var folder := "common" if deck_id.is_empty() else folders.get(deck_id, _safe_name(deck_id, deck_id))
-		var path := root.path_join("data/%s/%s.tres" % [folder, id])
 
-		# 2. 기존 파일이 있으면 그걸 불러와서 고친다 → Godot 쪽 칸(effects 등)이 유지된다.
+		# 2. 비켜 둔 파일을 새 경로로 옮긴다 (파일째 옮기므로 uid 유지).
+		if moving.has(id):
+			DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+			DirAccess.rename_absolute(moving[id], path)
+			if held.has(id):
+				held[id].take_over_path(path)
+
+		# 3. 기존 파일이 있으면 그걸 불러와서 고친다 → Godot 쪽 칸(effects 등)이 유지된다.
 		var card: CardData = null
 		if existing.has(id):
-			card = _load(existing[id]) as CardData
+			card = _load(path) as CardData
 		if card == null:
 			card = CardData.new()
 		_fill(card, c, used_art)
 		card.id = id
 		card.deck_id = deck_id
 
-		# 3. 강화 단계: 같은 순번의 기존 강화 데이터를 재사용해서 효과를 유지한다.
+		# 4. 강화 단계: 같은 순번의 기존 강화 데이터를 재사용해서 효과를 유지한다.
 		#    zip 의 강화 단계가 줄었으면 남는 단계는 버린다.
 		var faces: Array = c.get("upgrades", [])
 		var ups: Array[CardData] = []
@@ -141,16 +161,36 @@ func _apply_cards(used_art: Dictionary) -> void:
 			ups.append(up)
 		card.upgrades = ups
 
-		# 4. 저장. 덱이 바뀌어 경로가 달라졌으면 옛 파일은 지운다(= 파일 이동).
 		_save(card, path)
-		if existing.has(id) and existing[id] != path:
-			_delete(existing[id])
 		existing.erase(id)
 
 	# 여기까지 남은 파일 = zip 에 없는 카드 → 삭제. 비게 된 덱 폴더도 정리.
 	for id in existing:
 		_delete(existing[id])
 	_remove_empty_dirs(root.path_join("data"))
+
+
+## 카드 id → 저장할 경로 표를 만든다.
+## 경로: data/<덱 폴더>/<카드 이름>.tres. 공용 카드는 common, 덱 목록에 없는 덱 id 는 id 를 폴더 이름으로.
+## 같은 폴더에서 이름이 겹치면 뒤에 오는 카드에 "_<id>" 를 붙인다. 이름이 비면 id 를 쓴다.
+func _card_paths() -> Dictionary:
+	var folders := _deck_folders()  # 덱 id → 폴더 이름
+	var out := {}
+	var taken := {}  # 이미 쓴 경로
+	for c in _list("cards"):
+		var id := str(c.get("id", ""))
+		if id.is_empty():
+			continue
+		var deck = c.get("deck")
+		var deck_id := "" if deck == null else str(deck)
+		var folder := "common" if deck_id.is_empty() else folders.get(deck_id, _safe_name(deck_id, deck_id))
+		var file := _safe_name(_text(c, "name", "ko"), id)
+		var path := root.path_join("data/%s/%s.tres" % [folder, file])
+		if taken.has(path):
+			path = root.path_join("data/%s/%s_%s.tres" % [folder, file, id])
+		taken[path] = true
+		out[id] = path
+	return out
 
 
 ## 덱 id → 폴더 이름(덱의 한국어 이름) 표를 만든다.
@@ -171,7 +211,7 @@ func _deck_folders() -> Dictionary:
 	return out
 
 
-## 폴더 이름으로 못 쓰는 문자(\ / : * ? " < > |)를 _ 로 바꾼다.
+## 폴더·파일 이름으로 못 쓰는 문자(\ / : * ? " < > |)를 _ 로 바꾼다.
 ## Windows 는 끝의 점·공백을 허용하지 않아 지운다. 결과가 비면 fallback 을 쓴다.
 func _safe_name(name: String, fallback: String) -> String:
 	var s := name.strip_edges()
@@ -278,8 +318,35 @@ func _has_godot_parts(card: CardData) -> bool:
 	return false
 
 
-## 폴더 아래 모든 .tres 를 재귀로 찾아 { 파일 이름(= id): 경로 } 로 돌려준다.
-## 카드가 어느 덱 폴더에 있든 id 로 찾을 수 있게 하려는 것.
+## 폴더 아래 모든 카드 .tres 를 재귀로 찾아 { 카드 id: 경로 } 로 돌려준다.
+## id 는 파일 안의 CardData.id 를 쓴다 (파일 이름은 카드 이름이라 바뀔 수 있음).
+## id 가 비어 있으면 파일 이름을 id 로 본다.
+func _existing_cards(dir_path: String) -> Dictionary:
+	var out := {}
+	for path in _tres_paths(dir_path):
+		var card := _load(path) as CardData
+		var id: String = card.id if card and not card.id.is_empty() else path.get_file().get_basename()
+		out[id] = path
+	return out
+
+
+## 폴더 아래 모든 .tres 경로를 재귀로 모은다.
+## (카드 이름은 덱마다 겹칠 수 있어서 파일 이름이 아니라 경로 목록으로 돌려준다)
+func _tres_paths(dir_path: String) -> PackedStringArray:
+	var out := PackedStringArray()
+	var dir := DirAccess.open(dir_path)
+	if dir == null:
+		return out
+	for sub in dir.get_directories():
+		out.append_array(_tres_paths(dir_path.path_join(sub)))
+	for f in dir.get_files():
+		if f.get_extension() == "tres":
+			out.append(dir_path.path_join(f))
+	return out
+
+
+## 폴더 아래 모든 .tres 를 재귀로 찾아 { 파일 이름(확장자 뺌): 경로 } 로 돌려준다.
+## 키워드는 파일 이름 = 키워드 id. 카드는 _existing_cards 를 쓴다.
 func _existing_files(dir_path: String) -> Dictionary:
 	var out := {}
 	var dir := DirAccess.open(dir_path)

@@ -1,7 +1,7 @@
 @tool
 class_name CardData
 extends Resource
-## 카드 한 장의 데이터. cards/data/<덱 이름>/<카드 id>.tres 로 저장된다.
+## 카드 한 장의 데이터. cards/data/<덱 이름>/<카드 이름>.tres 로 저장된다.
 ##
 ## 칸은 두 그룹으로 나뉜다.
 ## - "웹 에디터" 그룹: 웹 카드 에디터가 담당. 카드 가져오기 때마다 덮어쓴다. 여기서 고쳐도 다음 가져오기에 사라진다.
