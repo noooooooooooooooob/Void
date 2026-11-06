@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://4j0800vekvrf"]
+
+[ext_resource type="Script" uid="uid://gb44x6igk73j" path="res://Scenes/ui/title_screen/title_screen.gd" id="1_s84n8"]
+[ext_resource type="PackedScene" uid="uid://b5k3ixvdrl8bf" path="res://Scenes/ui/stage_map/stage_map.tscn" id="2_22d8f"]
+
+[node name="TitleScreen" type="Control" unique_id=1423069208]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s84n8")
+next_scene = ExtResource("2_22d8f")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1057805360]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.24740553, 0.20598522, 0.23438382, 1)
+
+[node name="Menu" type="VBoxContainer" parent="Background" unique_id=1802245950]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -29.0
+offset_right = 20.0
+offset_bottom = 29.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="Background/Menu" unique_id=1267742775]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="StartButton" type="Button" parent="Background/Menu" unique_id=1474107256]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "시작"
+
+[connection signal="pressed" from="Background/Menu/StartButton" to="." method="_on_start_button_pressed"]
