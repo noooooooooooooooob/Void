@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b5k3ixvdrl8bf"]
 
-[ext_resource type="Script" uid="uid://cjpok1xaq1hbm" path="res://Scenes/ui/stage_map/stage_map.gd" id="1_8a64l"]
+[ext_resource type="Script" path="res://Scripts/ui/stage_map.gd" id="1_8a64l"]
 
 [node name="StageMap" type="Control" unique_id=73011930]
 layout_mode = 3
@@ -23,5 +23,7 @@ color = Color(0.19607843, 0.1764706, 0.14509805, 1)
 [node name="Map" type="Control" parent="." unique_id=1326271321]
 unique_name_in_owner = true
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 310.0
+offset_top = 360.0
+offset_right = 350.0
+offset_bottom = 400.0

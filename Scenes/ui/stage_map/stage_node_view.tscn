@@ -1,15 +1,13 @@
 [gd_scene format=3 uid="uid://bpnmtu6aovw6a"]
 
-[ext_resource type="Script" uid="uid://b3upgdn2pg7rl" path="res://Scenes/ui/stage_map/stage_node_view.gd" id="1_ahcln"]
+[ext_resource type="Script" path="res://Scripts/ui/stage_node_view.gd" id="1_ahcln"]
 
 [node name="StageNodeView" type="Control" unique_id=501065213]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -1840.0
-offset_bottom = -1000.0
+anchors_preset = 0
+offset_right = 80.0
+offset_bottom = 80.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ahcln")
@@ -31,3 +29,5 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1
