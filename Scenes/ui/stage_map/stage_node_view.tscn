@@ -2,6 +2,18 @@
 
 [ext_resource type="Script" path="res://Scripts/ui/stage_node_view.gd" id="1_ahcln"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ahcln"]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.9490196, 0.81960785, 0.41960785, 1)
+expand_margin_left = 6.0
+expand_margin_top = 6.0
+expand_margin_right = 6.0
+expand_margin_bottom = 6.0
+
 [node name="StageNodeView" type="Control" unique_id=501065213]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 3
@@ -20,6 +32,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="KindLabel" type="Label" parent="." unique_id=354494018]
 unique_name_in_owner = true
@@ -31,3 +44,25 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Ring" type="Panel" parent="." unique_id=541683048]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ahcln")
+
+[node name="HereMark" type="Label" parent="." unique_id=1284776453]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_right = 1.0
+offset_left = -20.0
+offset_top = -34.0
+offset_right = 20.0
+offset_bottom = -8.0
+theme_override_colors/font_color = Color(0.9490196, 0.81960785, 0.41960785, 1)
+text = "▼ 현재"
+horizontal_alignment = 1

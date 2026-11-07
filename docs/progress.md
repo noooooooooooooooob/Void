@@ -1,6 +1,6 @@
 # Project Void 개발 진행 상황
 
-마지막 갱신: 2026-11-05
+마지막 갱신: 2026-11-07
 
 코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
 
@@ -16,6 +16,8 @@
 | 상태 데이터 | 출혈(드로우 페이즈 고정 피해 × 수치), 혈갑(차례 종료 방어도 × 수치), 핏방울(패시브, 적이 받은 출혈 피해만큼 쌓임) — 에디터 인스펙터로 제작 | `statuses/data/` |
 | 전투 화면 (시험판) | 시험용 홍연(타격 4·사격 3·방어 3) vs 시험용 적 A·B 한 판을 직접 플레이. 원거리·근접 카드는 휜 화살표로 대상 지정, 자신 카드는 두 번 클릭/끌어 올리기, 빈 칸 클릭으로 이동, 적 차례 0.7초 간격 자동, 떠오르는 숫자·전투 기록, 승리/패배 → 다시 하기. 손패에 계산된 수치 표시 | `ui/battle_screen/battle_screen.tscn` 열고 F6. 데이터 `battles/test_battle.tres` |
 | 전투 데이터 | 격자 크기 + 아군/적 배치 리소스 (`BattleData`), 진행 담당 `BattleSession` (의뢰 파티를 밖에서 넣을 수 있음) | `Scripts/battle/battle_data.gd`, `battle_session.gd` |
+| 시작 화면 | 게임 메인 씬. 시작 버튼 → 스테이지 지도 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
+| 의뢰 스테이지 (시험판, 2026-11-07) | 랜덤 지도(시작 → 3×3 전투6·이벤트3 → 상점 → 보스, 첫 열 전투) + 선. W/S·클릭으로 고르고 스페이스/엔터·다시 클릭으로 실행. 전투·보스 = 시험 전투(파티 HP 유지, 승리 → 지도 / 패배 → 시작 화면), 이벤트 = A/B 선택(효과 없음), 상점 = 다음 버튼, 보스 승리 → 의뢰 성공 화면 | `Scripts/stage/` (StageNode·StageGenerator·StageProgress·StageRun 자동 로드), `Scenes/ui/stage_map/`, `Scenes/ui/room_screen/` |
 
 ## 진행 중: 전투 시스템 (카드·효과·턴)
 
@@ -73,6 +75,10 @@
 - 2026-11-05: `battle.gd` 분리 — 덱 규칙은 `battle_deck.gd`, 카드 사용은 `battle_card_play.gd` (이동 `battle_movement.gd`, 적 행동 `enemy_ai.gd` 와 같은 방식). battle.gd 508줄
 
 ## 구조 변경
+
+- 2026-11-07: 자동 로드 `StageRun`(`Scripts/stage/stage_run.gd`) 추가 — 씬이 바뀌어도 지도·현재 위치·파티가 남는다. 입력 맵 `map_up`(W/↑)·`map_down`(S/↓) 추가. 전투 화면은 지도에서 들어오면 의뢰 모드(결과 버튼 계속/처음으로), 그냥 F6 으로 열면 예전처럼 "다시 하기"
+- 2026-11-07: 의뢰 1층 규칙 변경(사용자 결정) — 3열×3행(전투 6·이벤트 3) + 상점 + 보스, 보스 전 휴식 대신 상점. CLAUDE.md 반영, **노션 1층 설계는 아직 안 고침**
+- 2026-11-07: 헤드리스 스크립트로 씬을 저장하면 씬 uid 가 빠진다 → `ResourceSaver.set_uid(path, 원래 uid)` 로 되살린다. 자동 로드 이름(StageRun)을 쓰는 스크립트는 `_init` 대신 `_initialize` 에서 한 프레임 기다린 뒤 불러야 컴파일된다
 
 - 2026-11-04: 게임 스크립트를 모두 `Scripts/` 폴더로 옮김 (`Scripts/battle`, `Scripts/cards`, `Scripts/statuses`, `Scripts/ui`). 씬·데이터·테스트·플러그인은 제자리
 - 2026-11-06: 전투 배경 = 배경 씬. `BattleData.background`(PackedScene) → 전투 화면이 `Background/BackgroundLayer` 에 붙임. 배경 씬은 `Scenes/backgrounds/` (첫 배경: `mountain_shrine.tscn`, 겹 1장). 패럴랙스·마우스 따라 움직이기는 나중에 배경 씬 안에서

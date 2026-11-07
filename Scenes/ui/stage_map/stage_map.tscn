@@ -27,3 +27,9 @@ offset_left = 310.0
 offset_top = 360.0
 offset_right = 350.0
 offset_bottom = 400.0
+
+[node name="LinkTemplate" type="Line2D" parent="Map" unique_id=2115176433]
+unique_name_in_owner = true
+visible = false
+width = 6.0
+default_color = Color(0.43137255, 0.4, 0.3372549, 1)
