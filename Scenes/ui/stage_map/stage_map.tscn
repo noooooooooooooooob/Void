@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b5k3ixvdrl8bf"]
 
-[ext_resource type="Script" path="res://Scripts/ui/stage_map.gd" id="1_8a64l"]
+[ext_resource type="Script" uid="uid://cjpok1xaq1hbm" path="res://Scripts/ui/stage_map.gd" id="1_8a64l"]
 
 [node name="StageMap" type="Control" unique_id=73011930]
 layout_mode = 3
