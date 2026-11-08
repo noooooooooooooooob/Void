@@ -12,6 +12,8 @@ extends Control
 ## - 근접 카드: 화살표가 자동 대상에 고정 → 대상 클릭 또는 카드를 한 번 더 누르면 사용.
 ## - 자신 카드: 한 번 더 누르거나 손패 위로 끌어 올려 놓으면 사용.
 ## - 우클릭 / ESC: 취소. 카드를 안 고른 상태에서 빛나는 칸 클릭: 이동.
+## - ESC (고른 카드가 없을 때): 설정 메뉴(PauseMenu) 열고 닫기. 메뉴가 열려 있는 동안 입력·적 차례는 멈춘다.
+##   메뉴: 계속하기 / 전투 스킵(그 자리에서 승리 — 플레이테스트용, 개발 빌드에서만 보임)
 ## - 적 차례는 enemy_delay 초 간격으로 자동 진행. 그동안 입력은 무시한다.
 ##
 ## 의뢰 모드: 스테이지 지도에서 전투 노드로 들어오면(StageRun.in_battle()) battle_data 대신 의뢰의 전투 데이터와
@@ -66,6 +68,9 @@ var selected_index := -1
 @onready var _result_label: Label = %ResultLabel
 @onready var _restart_button: Button = %RestartButton
 @onready var _enemy_timer: Timer = %EnemyTimer
+@onready var _pause_menu: Control = %PauseMenu     # ESC 설정 메뉴 (반투명 덮개)
+@onready var _resume_button: Button = %ResumeButton
+@onready var _skip_button: Button = %SkipButton    # 전투 스킵 — 개발 빌드에서만 보임
 
 var _cells := {}        # Vector3i(편, 열, 행) → GridCell
 var _tokens := {}       # BattleUnit → UnitToken
@@ -84,6 +89,11 @@ func _ready() -> void:
 	_enemy_timer.timeout.connect(_on_enemy_timer)
 	_arrow.visible = false
 	_result.visible = false
+	# 설정 메뉴: 처음엔 닫힘. 전투 스킵은 플레이테스트용이라 출시용 빌드에서는 숨긴다
+	_pause_menu.visible = false
+	_resume_button.pressed.connect(toggle_menu)
+	_skip_button.pressed.connect(skip_battle)
+	_skip_button.visible = OS.is_debug_build()
 	# 의뢰 지도에서 전투 노드로 들어왔으면 의뢰의 전투 데이터와 파티(HP 유지)를 쓴다
 	_stage_mode = StageRun.in_battle()
 	if _stage_mode:
@@ -413,7 +423,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		cancel()
 	elif event.is_action_pressed("ui_cancel"):
-		cancel()
+		# ESC: 메뉴가 열려 있으면 닫기 → 고른 카드가 있으면 취소 → 아니면 메뉴 열기
+		if _pause_menu.visible:
+			toggle_menu()
+		elif selected != null or _dragging:
+			cancel()
+		elif not _result.visible:
+			toggle_menu()
 	elif event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and _dragging:
 		_release_drag()
 
@@ -474,7 +490,24 @@ func _play(origin: BattleUnit) -> void:
 
 
 func _input_ok() -> bool:
-	return session != null and session.active != null and not session.is_finished()
+	return session != null and session.active != null and not session.is_finished() and not _pause_menu.visible
+
+
+## 설정 메뉴를 열거나 닫는다. 열려 있는 동안 적 차례 타이머도 멈춘다
+func toggle_menu() -> void:
+	_pause_menu.visible = not _pause_menu.visible
+	_enemy_timer.paused = _pause_menu.visible
+	if _pause_menu.visible:
+		cancel()
+		_resume_button.grab_focus()
+
+
+## 전투 스킵 (플레이테스트용): 메뉴를 닫고 그 자리에서 아군 승리로 끝낸다 → 결과 창(의뢰 모드면 "계속" → 스테이지 지도)
+func skip_battle() -> void:
+	if _pause_menu.visible:
+		toggle_menu()
+	if session and not session.is_finished():
+		session.force_finish(BattleTypes.Side.ALLY)
 
 
 func _attack_type(card: CardData) -> String:

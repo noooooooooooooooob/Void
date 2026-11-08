@@ -1,8 +1,9 @@
 [gd_scene format=3 uid="uid://0v6xwnruplme"]
 
-[ext_resource type="Script" uid="uid://debrvnsyyps0h" path="res://Scripts/ui/battle_screen.gd" id="1_t8gdv"]
-[ext_resource type="Resource" uid="uid://bil5d8b8oetor" path="res://battles/test_battle.tres" id="2_rwkbd"]
-[ext_resource type="PackedScene" uid="uid://jexoivr7n6g5" path="res://Scenes/ui/battle_screen/target_arrow.tscn" id="3_h06ft"]
+[ext_resource type="Script" path="res://Scripts/ui/battle_screen.gd" id="1_t8gdv"]
+[ext_resource type="Resource" path="res://battles/test_battle.tres" id="2_rwkbd"]
+[ext_resource type="PackedScene" path="res://Scenes/ui/battle_screen/target_arrow.tscn" id="3_h06ft"]
+[ext_resource type="Script" path="res://Scripts/ui/target_arrow.gd" id="4_5dyec"]
 
 [node name="BattleScreen" type="Control" unique_id=1934429999]
 layout_mode = 3
@@ -184,8 +185,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="TargetArrow" parent="." unique_id=1135533263 instance=ExtResource("3_h06ft")]
+[node name="TargetArrow" type="Node2D" parent="." unique_id=1135533263 instance=ExtResource("3_h06ft")]
 unique_name_in_owner = true
+top_level = true
+z_index = 100
+script = ExtResource("4_5dyec")
 
 [node name="ResultOverlay" type="ColorRect" parent="." unique_id=910010746]
 unique_name_in_owner = true
@@ -219,6 +223,46 @@ custom_minimum_size = Vector2(280, 72)
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "다시 하기"
+
+[node name="PauseMenu" type="ColorRect" parent="." unique_id=1811135849]
+unique_name_in_owner = true
+visible = false
+z_index = 100
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="Box" type="VBoxContainer" parent="PauseMenu" unique_id=2103388839]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="MenuTitle" type="Label" parent="PauseMenu/Box" unique_id=1840867869]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "설정"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="PauseMenu/Box" unique_id=1406376047]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 72)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "계속하기"
+
+[node name="SkipButton" type="Button" parent="PauseMenu/Box" unique_id=2136478742]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 72)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "전투 스킵 (승리)"
 
 [node name="EnemyTimer" type="Timer" parent="." unique_id=136294226]
 unique_name_in_owner = true

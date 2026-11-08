@@ -197,6 +197,18 @@ func is_finished() -> bool:
 	return _finished
 
 
+## 전투를 그 자리에서 끝낸다 (개발용 전투 스킵). winner 편(BattleTypes.Side)이 이긴 것으로 finished 를 한 번 낸다.
+## 이미 끝난 전투면 아무것도 하지 않는다. 유닛 HP 등 전투 상태는 건드리지 않는다.
+func force_finish(winner: int) -> void:
+	if _finished:
+		return
+	_finished = true
+	active = null
+	_pending = null
+	finished.emit(winner)
+	changed.emit()
+
+
 ## 같은 전투 데이터로 새 세션을 만든다 (시험판 "다시 하기"). 시드는 1 늘려서 다른 판이 나오게 한다.
 ## 부르는 쪽이 start() 를 부른다.
 func restart() -> BattleSession:

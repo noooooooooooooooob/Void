@@ -215,3 +215,51 @@ func test_background_scene_from_battle_data():
 func test_no_background_leaves_layer_empty():
 	var s := _screen()
 	assert_eq(s.get_node("%BackgroundLayer").get_child_count(), 0)
+
+
+func _esc() -> InputEventAction:
+	var e := InputEventAction.new()
+	e.action = "ui_cancel"
+	e.pressed = true
+	return e
+
+func test_esc_opens_menu_when_nothing_selected():
+	var s := _screen()
+	assert_false(s.get_node("%PauseMenu").visible)
+	s._unhandled_input(_esc())
+	assert_true(s.get_node("%PauseMenu").visible)
+	s._unhandled_input(_esc())
+	assert_false(s.get_node("%PauseMenu").visible)
+
+func test_esc_cancels_selection_before_menu():
+	var s := _screen()
+	s.select_card(_index_of(s, "사격"))
+	s._unhandled_input(_esc())
+	assert_eq(s.selected, null)
+	assert_false(s.get_node("%PauseMenu").visible)
+
+func test_menu_blocks_input():
+	var s := _screen()
+	s.toggle_menu()
+	assert_false(s.select_card(_index_of(s, "사격")))
+
+func test_skip_button_visible_in_debug_build():
+	var s := _screen()
+	assert_eq(s.get_node("%SkipButton").visible, OS.is_debug_build())
+
+func test_skip_wins_battle():
+	var s := _screen()
+	s.toggle_menu()
+	s.skip_battle()
+	assert_true(s.session.is_finished())
+	assert_false(s.get_node("%PauseMenu").visible)
+	assert_true(s.get_node("%ResultOverlay").visible)
+	assert_eq(s.get_node("%ResultLabel").text, "승리")
+
+func test_session_force_finish_emits_once():
+	var s := _screen()
+	watch_signals(s.session)
+	s.session.force_finish(A)
+	s.session.force_finish(E)
+	assert_signal_emit_count(s.session, "finished", 1)
+	assert_null(s.session.active)
