@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://drm7rhpxxcacc"]
 
+[ext_resource type="Texture2D" path="res://Art/characters/bram_welburn/bram_welburn_pixel.png" id="1_08hrn"]
 [ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="1_e7lks"]
 [ext_resource type="Resource" path="res://cards/data/브람/돌주먹.tres" id="2_08hrn"]
 [ext_resource type="Resource" path="res://cards/data/브람/바위 팔 막기.tres" id="3_bbsqc"]
@@ -18,4 +19,5 @@
 [resource]
 script = ExtResource("14_04rbb")
 display_name = "브람 웰번"
+battle_sprite = ExtResource("1_08hrn")
 deck = Array[ExtResource("1_e7lks")]([ExtResource("2_08hrn"), ExtResource("3_bbsqc"), ExtResource("4_t7mrm"), ExtResource("5_y1gjr"), ExtResource("6_0i37n"), ExtResource("7_lnq7u"), ExtResource("8_ruoax"), ExtResource("9_3pc2t"), ExtResource("10_a2syn"), ExtResource("11_t0ili")])

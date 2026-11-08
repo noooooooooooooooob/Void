@@ -37,6 +37,10 @@ extends Resource
 @export_group("덱")
 ## 자기 차례에 뽑는 카드 수 (아군 기준. 적은 1장).
 @export var draw_count: int = BattleTypes.DEFAULT_DRAW
+
+@export_group("화면")
+## 전투 화면에 서 있는 픽셀 캐릭터 그림 (Art/characters/<id>/<id>_pixel.png). 비우면 네모 상자로 그린다 (지금 적들)
+@export var battle_sprite: Texture2D
 ## 보스면 덱을 섞지 않고 덱 순서대로 한 장씩 쓴다.
 @export var is_boss: bool = false
 ## 전투에 들고 가는 카드들

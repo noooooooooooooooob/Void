@@ -15,11 +15,15 @@ enum Room { EVENT, SHOP, CLEAR }
 
 ## 지금은 모든 전투(보스 포함)가 이 시험 전투의 적 구성을 쓴다. 노드별 전투 데이터는 나중에
 const DEFAULT_BATTLE := preload("res://battles/test_battle.tres")
-## 사원 명부. 파티는 전투 유닛이 있는 캐릭터를 앞에서부터 전투 데이터의 아군 자리 수만큼
+## 사원 명부. 파티를 따로 고르지 않으면(개발용 바로가기 등) 전투 유닛이 있는 캐릭터를 앞에서부터 쓴다
 const ROSTER := preload("res://entities/roster.tres")
+## 파티가 서는 자리 (고른 순서대로). 아군 앞줄(열 3): 가운데 → 위 → 아래. 이 수가 최대 인원
+const PARTY_CELLS: Array[Vector2i] = [Vector2i(3, 1), Vector2i(3, 0), Vector2i(3, 2)]
 
 ## 지도 진행 상태. 의뢰 중이 아니면 null
 var progress: StageProgress = null
+## 공허 지도에서 고른 뒤 파티 선택 화면으로 넘길 공허 (파티 선택이 이걸로 start_run 한다)
+var pending_site: VoidSiteData = null
 ## 지금 들어가 있는 공허 (개발용으로 공허 없이 시작하면 null)
 var site: VoidSiteData = null
 ## 의뢰 파티 (전투마다 같은 유닛을 다시 넣어서 HP 를 유지한다)
@@ -37,17 +41,22 @@ func is_active() -> bool:
 	return progress != null
 
 
-## p_site 공허로 새 의뢰를 시작한다: 지도를 새로 만들고 사원 명부 캐릭터로 파티를 가득 찬 체력으로 새로 만든다.
+## p_site 공허로 새 의뢰를 시작한다: 지도를 새로 만들고 파티를 가득 찬 체력으로 새로 만든다.
 ## p_site: 들어갈 공허 (null 이면 공허 없이 — 배경은 전투 데이터 것). seed_value: 0 이면 매번 다른 지도
-func start_run(p_site: VoidSiteData = null, seed_value: int = 0) -> void:
+## p_party: 데려갈 유닛 (고른 순서). 비면 명부의 전투 가능 캐릭터 앞에서부터. 최대 PARTY_CELLS 수
+func start_run(p_site: VoidSiteData = null, seed_value: int = 0, p_party: Array[UnitData] = []) -> void:
 	site = p_site
 	progress = StageProgress.new(StageGenerator.new(seed_value).generate())
-	# 파티: 명부 캐릭터를 전투 데이터의 아군 자리에 앞에서부터 하나씩
+	# 파티: 고른 순서대로 PARTY_CELLS 자리에 하나씩
 	party.clear()
-	var slots := DEFAULT_BATTLE.allies
-	var units := ROSTER.playable_units()
-	for i in mini(units.size(), slots.size()):
-		party.append(BattleUnit.new(units[i], BattleTypes.Side.ALLY, slots[i].cell))
+	var units := p_party if not p_party.is_empty() else ROSTER.playable_units()
+	for i in mini(units.size(), PARTY_CELLS.size()):
+		party.append(BattleUnit.new(units[i], BattleTypes.Side.ALLY, PARTY_CELLS[i]))
+
+
+## 다른 화면에서 화면을 바꿀 때 (navigate 가 false 면 기록만 — 테스트용)
+func go_to(screen: int) -> void:
+	_go(screen)
 
 
 ## 의뢰를 끝내고 상태를 비운다 (다음 start_run 에서 전원 회복된 파티로 시작)

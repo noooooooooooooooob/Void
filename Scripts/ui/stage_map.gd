@@ -8,6 +8,7 @@ extends Control
 ##   - W / ↑, S / ↓ : 갈 수 있는 다음 노드 사이에서 커서를 위·아래로 옮긴다
 ##   - 마우스 클릭   : 갈 수 있는 노드를 누르면 커서가 그리로. 커서가 있는 노드를 한 번 더 누르면 실행
 ##   - 스페이스 / 엔터 : 커서가 있는 노드를 실행
+##   - ESC          : 공용 ESC 메뉴(계속하기 / 의뢰 포기 → 공허 지도)
 ## 노드 모양은 stage_node_view.tscn, 선 모양은 이 씬의 Map/LinkTemplate(숨겨 둔 Line2D 틀)에서 고친다.
 
 ## 노드 하나를 그리는 틀 씬
@@ -33,6 +34,7 @@ var _links := {}  # [출발 노드, 도착 노드] → Line2D
 
 @onready var _map: Control = %Map
 @onready var _link_template: Line2D = %LinkTemplate
+@onready var _pause_menu: PauseMenu = %PauseMenu   # 공용 ESC 메뉴 (씬에서 show_abandon 켬)
 
 
 func _ready() -> void:
@@ -51,7 +53,9 @@ func _ready() -> void:
 		view.position = cell_position(node) - view.size / 2
 		view.clicked.connect(_on_view_clicked)
 		views.append(view)
-	# 4. 현재 위치·커서·지나온 길 표시
+	# 4. ESC 메뉴: 의뢰 포기 = 의뢰 실패와 같다 (정화 기록 없이 공허 지도로)
+	_pause_menu.abandon_requested.connect(StageRun.fail_run)
+	# 5. 현재 위치·커서·지나온 길 표시
 	refresh()
 
 
@@ -94,6 +98,13 @@ func refresh() -> void:
 # --- 입력 ---
 
 func _unhandled_input(event: InputEvent) -> void:
+	# ESC: 메뉴 열고 닫기. 메뉴가 열려 있는 동안 지도 입력은 받지 않는다
+	if event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		_pause_menu.toggle()
+		return
+	if _pause_menu.visible:
+		return
 	if event.is_action_pressed("map_up"):
 		StageRun.progress.move_cursor(-1)
 		refresh()
@@ -109,6 +120,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## 노드 클릭: 커서가 있는 노드면 실행, 갈 수 있는 다른 노드면 커서만 옮긴다
 func _on_view_clicked(view: StageNodeView) -> void:
+	if _pause_menu.visible:
+		return
 	var progress := StageRun.progress
 	if view.node == progress.selected():
 		StageRun.enter_selected()

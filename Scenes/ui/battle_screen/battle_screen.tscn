@@ -4,6 +4,8 @@
 [ext_resource type="Resource" path="res://battles/test_battle.tres" id="2_rwkbd"]
 [ext_resource type="PackedScene" path="res://Scenes/ui/battle_screen/target_arrow.tscn" id="3_h06ft"]
 [ext_resource type="Script" path="res://Scripts/ui/target_arrow.gd" id="4_5dyec"]
+[ext_resource type="PackedScene" path="res://Scenes/ui/pause_menu/pause_menu.tscn" id="5_myjti"]
+[ext_resource type="Script" path="res://Scripts/ui/pause_menu.gd" id="6_056op"]
 
 [node name="BattleScreen" type="Control" unique_id=1934429999]
 layout_mode = 3
@@ -80,27 +82,38 @@ offset_right = 1896.0
 offset_bottom = 520.0
 theme_override_constants/separation = 8
 
-[node name="AllyGrid" type="GridContainer" parent="." unique_id=1490610946]
+[node name="AllyFloor" type="Node2D" parent="." unique_id=1778738437]
+position = Vector2(370, 360)
+scale = Vector2(1, 0.72)
+skew = -0.3
+
+[node name="AllyGrid" type="GridContainer" parent="AllyFloor" unique_id=1490610946]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 420.0
-offset_top = 220.0
-offset_right = 924.0
-offset_bottom = 596.0
+offset_right = 504.0
+offset_bottom = 376.0
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 4
 
-[node name="EnemyGrid" type="GridContainer" parent="." unique_id=319191806]
+[node name="EnemyFloor" type="Node2D" parent="." unique_id=147432290]
+position = Vector2(990, 360)
+scale = Vector2(1, 0.72)
+skew = -0.3
+
+[node name="EnemyGrid" type="GridContainer" parent="EnemyFloor" unique_id=319191806]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 996.0
-offset_top = 220.0
-offset_right = 1500.0
-offset_bottom = 596.0
+offset_right = 504.0
+offset_bottom = 376.0
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 4
+
+[node name="UnitLayer" type="Control" parent="." unique_id=2102093282]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
 
 [node name="Log" type="Label" parent="." unique_id=321385293]
 unique_name_in_owner = true
@@ -224,45 +237,15 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "다시 하기"
 
-[node name="PauseMenu" type="ColorRect" parent="." unique_id=1811135849]
+[node name="PauseMenu" type="ColorRect" parent="." unique_id=1336071484 instance=ExtResource("5_myjti")]
 unique_name_in_owner = true
-visible = false
 z_index = 100
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0, 0, 0, 0.6)
-
-[node name="Box" type="VBoxContainer" parent="PauseMenu" unique_id=2103388839]
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 24
-alignment = 1
-
-[node name="MenuTitle" type="Label" parent="PauseMenu/Box" unique_id=1840867869]
-layout_mode = 2
-theme_override_font_sizes/font_size = 64
-text = "설정"
-horizontal_alignment = 1
-
-[node name="ResumeButton" type="Button" parent="PauseMenu/Box" unique_id=1406376047]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 72)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "계속하기"
-
-[node name="SkipButton" type="Button" parent="PauseMenu/Box" unique_id=2136478742]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 72)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "전투 스킵 (승리)"
+script = ExtResource("6_056op")
+show_skip = true
 
 [node name="EnemyTimer" type="Timer" parent="." unique_id=136294226]
 unique_name_in_owner = true

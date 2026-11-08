@@ -2,7 +2,7 @@ class_name VoidMap
 extends Control
 ## 공허 지도 화면 (월드맵). void_map.tscn 의 스크립트. 사무소의 "의뢰/출발"에서 온다.
 ## 세계 지도 그림 위에 공허 표식을 놓고, 표식을 고르면 오른쪽 정보 패널에 이름·설명·층·정화 여부와 "들어가기"가 뜬다.
-## 들어가기 → 그 공허로 새 의뢰 시작 → 스테이지 지도. 의뢰가 끝나면(성공/실패) 여기로 돌아온다.
+## 들어가기 → 파티 선택 화면(그 공허로 의뢰 시작) → 스테이지 지도. 의뢰가 끝나면(성공/실패) 여기로 돌아온다.
 ## 조작: 표식 클릭으로 고르기, 엔터 = 들어가기, ESC = 사무소로
 
 ## 표식 하나를 그리는 틀 씬
@@ -53,12 +53,12 @@ func select(site: VoidSiteData) -> void:
 	_enter.grab_focus()
 
 
-## 고른 공허로 새 의뢰를 시작하고 스테이지 지도로
+## 고른 공허를 넘기고 파티 선택 화면으로 (파티 선택이 의뢰를 시작한다)
 func enter() -> void:
 	if selected == null:
 		return
-	StageRun.start_run(selected)
-	Router.goto(Router.Screen.STAGE_MAP)
+	StageRun.pending_site = selected
+	Router.goto(Router.Screen.PARTY_SELECT)
 
 
 ## 엔터: 들어가기(고른 공허가 있을 때), ESC: 사무소로

@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://c4tdlyo03m5h2"]
 
+[ext_resource type="Texture2D" path="res://Art/characters/favilla/favilla_pixel.png" id="1_eney5"]
 [ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="1_jabvv"]
 [ext_resource type="Resource" path="res://cards/data/불씨 무녀/공양.tres" id="2_eney5"]
 [ext_resource type="Resource" path="res://cards/data/불씨 무녀/꺼지지 않는 불.tres" id="3_1dnyl"]
@@ -17,4 +18,5 @@
 [resource]
 script = ExtResource("13_o5fnu")
 display_name = "파빌라"
+battle_sprite = ExtResource("1_eney5")
 deck = Array[ExtResource("1_jabvv")]([ExtResource("2_eney5"), ExtResource("3_1dnyl"), ExtResource("4_jujq5"), ExtResource("5_8o2ky"), ExtResource("6_5n51s"), ExtResource("7_aeqfm"), ExtResource("8_83wml"), ExtResource("9_i5uxy"), ExtResource("10_ec7ll")])

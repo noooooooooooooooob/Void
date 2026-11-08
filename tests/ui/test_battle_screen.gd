@@ -245,7 +245,24 @@ func test_menu_blocks_input():
 
 func test_skip_button_visible_in_debug_build():
 	var s := _screen()
-	assert_eq(s.get_node("%SkipButton").visible, OS.is_debug_build())
+	s.toggle_menu()
+	var pm: PauseMenu = s.get_node("%PauseMenu")
+	assert_eq(pm.get_node("%SkipButton").visible, OS.is_debug_build())
+	assert_false(pm.get_node("%AbandonButton").visible)
+
+func test_tokens_live_on_unit_layer():
+	var s := _screen()
+	for u in s.session.battle.units:
+		assert_eq(s._tokens[u].get_parent(), s.get_node("%UnitLayer"))
+
+func test_unit_with_sprite_shows_sprite():
+	var d := _data()
+	var img := Image.create(8, 16, false, Image.FORMAT_RGBA8)
+	d.allies[0].unit.battle_sprite = ImageTexture.create_from_image(img)
+	var s := _screen(d)
+	var hero: BattleUnit = s.session.battle.living(A)[0]
+	assert_true(s._tokens[hero].get_node("%Sprite").visible)
+	assert_false(s._tokens[_enemy(s, "적A")].get_node("%Sprite").visible)
 
 func test_skip_wins_battle():
 	var s := _screen()

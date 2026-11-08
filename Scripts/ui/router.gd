@@ -4,7 +4,7 @@ extends Node
 ## 씬 파일을 옮기면 이 표(PATHS)만 고치면 된다. (테스트가 표의 모든 경로에 씬이 있는지 확인한다)
 
 ## 게임의 화면들
-enum Screen { TITLE, OFFICE, STORAGE, ROSTER, CARD_WORKSHOP, VOID_MAP, STAGE_MAP, BATTLE, ROOM }
+enum Screen { TITLE, OFFICE, STORAGE, ROSTER, CARD_WORKSHOP, VOID_MAP, STAGE_MAP, BATTLE, ROOM, PARTY_SELECT }
 
 ## 화면 → 씬 경로
 const PATHS := {
@@ -17,6 +17,7 @@ const PATHS := {
 	Screen.STAGE_MAP: "res://Scenes/ui/stage_map/stage_map.tscn",
 	Screen.BATTLE: "res://Scenes/ui/battle_screen/battle_screen.tscn",
 	Screen.ROOM: "res://Scenes/ui/room_screen/room_screen.tscn",
+	Screen.PARTY_SELECT: "res://Scenes/ui/party_select/party_select.tscn",
 }
 
 

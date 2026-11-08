@@ -12,8 +12,11 @@ extends Control
 ## - 근접 카드: 화살표가 자동 대상에 고정 → 대상 클릭 또는 카드를 한 번 더 누르면 사용.
 ## - 자신 카드: 한 번 더 누르거나 손패 위로 끌어 올려 놓으면 사용.
 ## - 우클릭 / ESC: 취소. 카드를 안 고른 상태에서 빛나는 칸 클릭: 이동.
-## - ESC (고른 카드가 없을 때): 설정 메뉴(PauseMenu) 열고 닫기. 메뉴가 열려 있는 동안 입력·적 차례는 멈춘다.
-##   메뉴: 계속하기 / 전투 스킵(그 자리에서 승리 — 플레이테스트용, 개발 빌드에서만 보임)
+## - ESC (고른 카드가 없을 때): 공용 ESC 메뉴(pause_menu.tscn) 열고 닫기. 메뉴가 열려 있는 동안 입력·적 차례는 멈춘다.
+##   메뉴: 계속하기 / 전투 스킵(그 자리에서 승리 — 플레이테스트용, 개발 빌드에서만) / 의뢰 포기(의뢰 전투일 때만)
+##
+## 화면 배치 (사선): 아군·적 격자는 AllyFloor / EnemyFloor(Node2D) 안에서 세로로 눌리고 기울어져 있다.
+## 유닛은 칸 안이 아니라 기울지 않은 UnitLayer 위에 서고, 발(UnitToken.foot_offset)이 칸 가운데에 오게 놓는다.
 ## - 적 차례는 enemy_delay 초 간격으로 자동 진행. 그동안 입력은 무시한다.
 ##
 ## 의뢰 모드: 스테이지 지도에서 전투 노드로 들어오면(StageRun.in_battle()) battle_data 대신 의뢰의 전투 데이터와
@@ -68,9 +71,8 @@ var selected_index := -1
 @onready var _result_label: Label = %ResultLabel
 @onready var _restart_button: Button = %RestartButton
 @onready var _enemy_timer: Timer = %EnemyTimer
-@onready var _pause_menu: Control = %PauseMenu     # ESC 설정 메뉴 (반투명 덮개)
-@onready var _resume_button: Button = %ResumeButton
-@onready var _skip_button: Button = %SkipButton    # 전투 스킵 — 개발 빌드에서만 보임
+@onready var _pause_menu: PauseMenu = %PauseMenu  # 공용 ESC 메뉴 (씬에서 show_skip 켬, show_abandon 은 의뢰 전투일 때)
+@onready var _unit_layer: Control = %UnitLayer      # 유닛들이 서는 층 (기울지 않음)
 
 var _cells := {}        # Vector3i(편, 열, 행) → GridCell
 var _tokens := {}       # BattleUnit → UnitToken
@@ -89,13 +91,16 @@ func _ready() -> void:
 	_enemy_timer.timeout.connect(_on_enemy_timer)
 	_arrow.visible = false
 	_result.visible = false
-	# 설정 메뉴: 처음엔 닫힘. 전투 스킵은 플레이테스트용이라 출시용 빌드에서는 숨긴다
-	_pause_menu.visible = false
-	_resume_button.pressed.connect(toggle_menu)
-	_skip_button.pressed.connect(skip_battle)
-	_skip_button.visible = OS.is_debug_build()
+	# ESC 메뉴: 계속하기 → 적 차례 다시 진행, 전투 스킵, 의뢰 포기
+	_pause_menu.resumed.connect(func(): _enemy_timer.paused = false)
+	_pause_menu.skip_requested.connect(skip_battle)
+	_pause_menu.abandon_requested.connect(_abandon)
+	# 격자 배치가 끝나면(칸 위치가 정해지면) 유닛을 칸 위에 다시 놓는다
+	_ally_grid.sort_children.connect(_place_tokens)
+	_enemy_grid.sort_children.connect(_place_tokens)
 	# 의뢰 지도에서 전투 노드로 들어왔으면 의뢰의 전투 데이터와 파티(HP 유지)를 쓴다
 	_stage_mode = StageRun.in_battle()
+	_pause_menu.show_abandon = _stage_mode
 	if _stage_mode:
 		battle_data = StageRun.battle_data()
 	# 배경 씬: 의뢰 전투면 들어간 공허의 배경, 아니면 전투 데이터의 배경. 없으면 뒤의 단색만 보인다
@@ -202,7 +207,7 @@ func _start(s: BattleSession) -> void:
 
 ## 격자 칸·유닛 박스·상태 줄을 데이터 크기만큼 새로 깐다.
 func _build_board() -> void:
-	for parent in [_ally_grid, _enemy_grid, _ally_panel, _enemy_panel]:
+	for parent in [_ally_grid, _enemy_grid, _ally_panel, _enemy_panel, _unit_layer]:
 		for c in parent.get_children():
 			parent.remove_child(c)
 			c.queue_free()
@@ -223,6 +228,7 @@ func _build_board() -> void:
 		var t: UnitToken = UNIT_TOKEN.instantiate()
 		t.set_unit(u)
 		t.pressed.connect(func(unit): click_unit(unit))
+		_unit_layer.add_child(t)
 		_tokens[u] = t
 		var row: UnitStatusRow = STATUS_ROW.instantiate()
 		(_ally_panel if u.side == BattleTypes.Side.ALLY else _enemy_panel).add_child(row)
@@ -315,14 +321,9 @@ func refresh() -> void:
 		targets = session.targets_for(selected)
 	for u in _tokens:
 		var t: UnitToken = _tokens[u]
-		var cell: GridCell = _cells.get(Vector3i(u.side, u.cell.x, u.cell.y))
-		if cell and t.get_parent() != cell:
-			if t.get_parent():
-				t.get_parent().remove_child(t)
-			cell.add_child(t)
-			t.position = (cell.custom_minimum_size - t.custom_minimum_size) * 0.5
 		t.set_highlight(targets.has(u))
 		t.visible = u.alive
+	_place_tokens()
 	for u in _rows:
 		_rows[u].refresh()
 	_draw_marks(targets, null)
@@ -495,19 +496,43 @@ func _input_ok() -> bool:
 
 ## 설정 메뉴를 열거나 닫는다. 열려 있는 동안 적 차례 타이머도 멈춘다
 func toggle_menu() -> void:
-	_pause_menu.visible = not _pause_menu.visible
+	_pause_menu.toggle()
 	_enemy_timer.paused = _pause_menu.visible
 	if _pause_menu.visible:
 		cancel()
-		_resume_button.grab_focus()
 
 
 ## 전투 스킵 (플레이테스트용): 메뉴를 닫고 그 자리에서 아군 승리로 끝낸다 → 결과 창(의뢰 모드면 "계속" → 스테이지 지도)
 func skip_battle() -> void:
 	if _pause_menu.visible:
 		toggle_menu()
+	_enemy_timer.paused = false
 	if session and not session.is_finished():
 		session.force_finish(BattleTypes.Side.ALLY)
+
+
+## 의뢰 포기 (ESC 메뉴, 의뢰 전투일 때만): 의뢰 실패와 같다 → 공허 지도
+func _abandon() -> void:
+	_pause_menu.close()
+	_enemy_timer.stop()
+	StageRun.fail_run()
+
+
+## 유닛을 칸 위에 놓는다: 기울어진 칸의 가운데(화면 좌표)에 유닛의 발을 맞추고,
+## 뒷줄(행 번호 작음)부터 그려서 앞줄 유닛이 위에 보이게 한다
+func _place_tokens() -> void:
+	var order: Array = []
+	for u in _tokens:
+		var t: UnitToken = _tokens[u]
+		var cell: GridCell = _cells.get(Vector3i(u.side, u.cell.x, u.cell.y))
+		if cell == null or not cell.is_inside_tree():
+			continue
+		var center: Vector2 = cell.get_global_transform() * (cell.size * 0.5)
+		t.global_position = center - t.foot_offset()
+		order.append([u.cell.y, t])
+	order.sort_custom(func(a, b): return a[0] < b[0])
+	for i in order.size():
+		_unit_layer.move_child(order[i][1], i)
 
 
 func _attack_type(card: CardData) -> String:

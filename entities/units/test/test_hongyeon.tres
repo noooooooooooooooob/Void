@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://vv4lak7p21rq"]
 
+[ext_resource type="Texture2D" path="res://Art/characters/hongyeon/hongyeon_pixel.png" id="1_jlno6"]
 [ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="1_m68oq"]
 [ext_resource type="Resource" path="res://cards/data/common/타격.tres" id="2_jlno6"]
 [ext_resource type="Resource" path="res://cards/data/common/사격.tres" id="3_d73ro"]
@@ -14,4 +15,5 @@ display_name = "홍연 (시험)"
 crit_rate = 1
 crit_damage = 175
 aggro = 100
+battle_sprite = ExtResource("1_jlno6")
 deck = Array[ExtResource("1_m68oq")]([ExtResource("2_jlno6"), ExtResource("2_jlno6"), ExtResource("2_jlno6"), ExtResource("2_jlno6"), ExtResource("3_d73ro"), ExtResource("3_d73ro"), ExtResource("3_d73ro"), ExtResource("4_srylm"), ExtResource("4_srylm"), ExtResource("4_srylm")])

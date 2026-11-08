@@ -1,21 +1,22 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://b0dqweeokxjet"]
 
-[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="1_3td4b"]
-[ext_resource type="Resource" uid="uid://bv3enj2skne0f" path="res://cards/data/홍연/29nd531cqf3e7xurow09.tres" id="2_b6ncs"]
-[ext_resource type="Resource" uid="uid://d3x87fx6byati" path="res://cards/data/홍연/8l16av5mmmdftttq86k3.tres" id="3_ip30j"]
-[ext_resource type="Resource" uid="uid://ywcfftndmfrt" path="res://cards/data/홍연/94gyx3u0y9v4q38tglk6.tres" id="4_2t3st"]
-[ext_resource type="Resource" uid="uid://dgpb8h35ty1cv" path="res://cards/data/홍연/bx32s899ktxi0di3ucc5.tres" id="5_83csd"]
-[ext_resource type="Resource" uid="uid://vjp3d22oqhak" path="res://cards/data/홍연/c3kbiqtz9jd15vysmoku.tres" id="6_5n5g0"]
-[ext_resource type="Resource" uid="uid://b6yccpq0rarg8" path="res://cards/data/홍연/hongyeon-dismantle-chain.tres" id="7_aakc6"]
-[ext_resource type="Resource" uid="uid://dxisc5b4kt4lr" path="res://cards/data/홍연/hongyeon-dismantle-scythe.tres" id="8_u3acd"]
-[ext_resource type="Resource" uid="uid://c8h3qjvtc63t5" path="res://cards/data/홍연/s5bggphyh55dq7v3w76y.tres" id="9_e851c"]
-[ext_resource type="Resource" uid="uid://c7s5r8uay7g2d" path="res://cards/data/홍연/u6l73a6kwgf8bqoslw23.tres" id="10_as77w"]
-[ext_resource type="Resource" uid="uid://dedjjd75wbww3" path="res://cards/data/홍연/uux9vxzohyhubf6c6x2b.tres" id="11_cf473"]
-[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="12_dat57"]
-[ext_resource type="Resource" uid="uid://e7iwe4eets7q" path="res://statuses/equipment/test_sword.tres" id="13_pqdb5"]
-[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="14_6tskh"]
-[ext_resource type="Resource" uid="uid://2qra6uu2owi6" path="res://statuses/data/blood_lust.tres" id="15_tcbq3"]
-[ext_resource type="Script" uid="uid://d1mc58d4xcsay" path="res://Scripts/battle/unit_data.gd" id="16_8hmqd"]
+[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="1_3td4b"]
+[ext_resource type="Texture2D" path="res://Art/characters/hongyeon/hongyeon_pixel.png" id="1_b6ncs"]
+[ext_resource type="Resource" path="res://cards/data/홍연/피의 방패.tres" id="2_b6ncs"]
+[ext_resource type="Resource" path="res://cards/data/홍연/피의 서약.tres" id="3_ip30j"]
+[ext_resource type="Resource" path="res://cards/data/홍연/혈갑 해체_ 작살.tres" id="4_2t3st"]
+[ext_resource type="Resource" path="res://cards/data/홍연/피의 참격.tres" id="5_83csd"]
+[ext_resource type="Resource" path="res://cards/data/홍연/할퀴기.tres" id="6_5n5g0"]
+[ext_resource type="Resource" path="res://cards/data/홍연/혈갑 해체_ 사슬.tres" id="7_aakc6"]
+[ext_resource type="Resource" path="res://cards/data/홍연/혈갑 해체_ 낫.tres" id="8_u3acd"]
+[ext_resource type="Resource" path="res://cards/data/홍연/혈갑 해체_ 활.tres" id="9_e851c"]
+[ext_resource type="Resource" path="res://cards/data/홍연/피의 응고.tres" id="10_as77w"]
+[ext_resource type="Resource" path="res://cards/data/홍연/혈갑 _ 공격태세.tres" id="11_cf473"]
+[ext_resource type="Script" path="res://Scripts/statuses/equipment_data.gd" id="12_dat57"]
+[ext_resource type="Resource" path="res://statuses/equipment/test_sword.tres" id="13_pqdb5"]
+[ext_resource type="Script" path="res://Scripts/statuses/status_data.gd" id="14_6tskh"]
+[ext_resource type="Resource" path="res://statuses/data/blood_lust.tres" id="15_tcbq3"]
+[ext_resource type="Script" path="res://Scripts/battle/unit_data.gd" id="16_8hmqd"]
 
 [resource]
 script = ExtResource("16_8hmqd")
@@ -23,6 +24,7 @@ display_name = "홍연"
 crit_rate = 1
 crit_damage = 175
 aggro = 100
+battle_sprite = ExtResource("1_b6ncs")
 deck = Array[ExtResource("1_3td4b")]([ExtResource("2_b6ncs"), ExtResource("3_ip30j"), ExtResource("4_2t3st"), ExtResource("5_83csd"), ExtResource("6_5n5g0"), ExtResource("7_aakc6"), ExtResource("8_u3acd"), ExtResource("9_e851c"), ExtResource("10_as77w"), ExtResource("11_cf473")])
 passives = Array[ExtResource("14_6tskh")]([ExtResource("15_tcbq3")])
 equipment = Array[ExtResource("12_dat57")]([ExtResource("13_pqdb5")])
