@@ -68,7 +68,7 @@ res://
     ui/          #   화면 스크립트 (card_view, card_gallery …)
   cards/         # 카드 데이터 .tres (data/<덱>/, keywords/, art/) — 카드 가져오기로 생성
   statuses/      # 상태(data/)·장비(equipment/) .tres
-  entities/      # 캐릭터·적 데이터 .tres (units/), 사원 명부 roster.tres
+  entities/      # 캐릭터·적 데이터 .tres (units/ 전투 유닛, characters/ 캐릭터 프로필), 사원 명부 roster.tres
   voids/         # 공허 장소 데이터 .tres (VoidSiteData — 이름·설명·지도 위치·전투 배경)
   Scenes/        # 모든 씬 .tscn — 안은 Scripts/ 와 같은 기능별 폴더 (ui/battle_screen/, ui/card_view/ …)
     backgrounds/ #   전투 배경 씬 (루트 Control, 겹·패럴랙스는 씬 안에서). VoidSiteData.background / BattleData.background 가 가리킴

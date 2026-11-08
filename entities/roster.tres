@@ -1,9 +1,18 @@
 [gd_resource type="Resource" script_class="RosterData" format=3 uid="uid://t88m31ygw35n"]
 
+[ext_resource type="Script" path="res://Scripts/characters/character_profile.gd" id="1_5e0fq"]
 [ext_resource type="Script" path="res://Scripts/battle/roster_data.gd" id="1_c3gon"]
-[ext_resource type="Script" path="res://Scripts/battle/unit_data.gd" id="2_mnccl"]
-[ext_resource type="Resource" path="res://entities/units/test/test_hongyeon.tres" id="3_mrjr4"]
+[ext_resource type="Resource" path="res://entities/characters/protagonist.tres" id="2_67t0y"]
+[ext_resource type="Resource" path="res://entities/characters/hongyeon.tres" id="3_qakve"]
+[ext_resource type="Resource" path="res://entities/characters/hayeon.tres" id="4_1a146"]
+[ext_resource type="Resource" path="res://entities/characters/edmund.tres" id="5_6olda"]
+[ext_resource type="Resource" path="res://entities/characters/favilla.tres" id="6_73aah"]
+[ext_resource type="Resource" path="res://entities/characters/bram_welburn.tres" id="7_4dl6s"]
+[ext_resource type="Resource" path="res://entities/characters/julian_marceu.tres" id="8_eqi1o"]
+[ext_resource type="Resource" path="res://entities/characters/cheongun.tres" id="9_nmltm"]
+[ext_resource type="Resource" path="res://entities/characters/serian.tres" id="10_oe0w3"]
+[ext_resource type="Resource" path="res://entities/characters/mo_liang.tres" id="11_pe3x7"]
 
 [resource]
 script = ExtResource("1_c3gon")
-units = Array[ExtResource("2_mnccl")]([ExtResource("3_mrjr4")])
+characters = Array[ExtResource("1_5e0fq")]([ExtResource("2_67t0y"), ExtResource("3_qakve"), ExtResource("4_1a146"), ExtResource("5_6olda"), ExtResource("6_73aah"), ExtResource("7_4dl6s"), ExtResource("8_eqi1o"), ExtResource("9_nmltm"), ExtResource("10_oe0w3"), ExtResource("11_pe3x7")])

@@ -26,9 +26,10 @@ func test_party_comes_from_roster():
 	StageRun.start_run(site, 3)
 	var roster: RosterData = load("res://entities/roster.tres")
 	assert_gt(StageRun.party.size(), 0)
-	assert_eq(StageRun.party[0].data, roster.units[0])
+	var unit: UnitData = roster.playable_units()[0]
+	assert_eq(StageRun.party[0].data, unit)
 	assert_eq(StageRun.party[0].side, BattleTypes.Side.ALLY)
-	assert_eq(StageRun.party[0].hp, roster.units[0].max_hp)
+	assert_eq(StageRun.party[0].hp, unit.max_hp)
 
 func test_battle_background_is_site_background():
 	StageRun.start_run(site, 3)

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CharacterProfile" format=3 uid="uid://bdi78op6t52gj"]
+
+[ext_resource type="Texture2D" path="res://Art/characters/protagonist/protagonist_illust.png" id="1_xbe5s"]
+[ext_resource type="Texture2D" path="res://Art/characters/protagonist/protagonist_pixel.png" id="2_mug0e"]
+[ext_resource type="Script" path="res://Scripts/characters/character_profile.gd" id="3_fcf80"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xbe5s"]
+atlas = ExtResource("1_xbe5s")
+region = Rect2(328, 61, 328, 328)
+
+[resource]
+script = ExtResource("3_fcf80")
+id = "protagonist"
+display_name = "주인공"
+role = "사무소 관리 · 전장 지원"
+affiliation = "정화 사무소"
+description = "공허를 여는 힘을 부모에게서 물려받았다. 첫 출정에서 팀이 전멸할 때 각성해 홀로 살아남았고, 사무소장에게 발견되어 사무소를 맡게 되었다."
+traits = PackedStringArray("공허 열기")
+illustration = ExtResource("1_xbe5s")
+pixel = ExtResource("2_mug0e")
+portrait = SubResource("AtlasTexture_xbe5s")

@@ -17,6 +17,7 @@
 | 전투 화면 (시험판) | 시험용 홍연(타격 4·사격 3·방어 3) vs 시험용 적 A·B 한 판을 직접 플레이. 원거리·근접 카드는 휜 화살표로 대상 지정, 자신 카드는 두 번 클릭/끌어 올리기, 빈 칸 클릭으로 이동, 적 차례 0.7초 간격 자동, 떠오르는 숫자·전투 기록, 승리/패배 → 다시 하기. 손패에 계산된 수치 표시 | `ui/battle_screen/battle_screen.tscn` 열고 F6. 데이터 `battles/test_battle.tres` |
 | 전투 데이터 | 격자 크기 + 아군/적 배치 리소스 (`BattleData`), 진행 담당 `BattleSession` (의뢰 파티를 밖에서 넣을 수 있음) | `Scripts/battle/battle_data.gd`, `battle_session.gd` |
 | 시작 화면 | 게임 메인 씬. 시작 버튼 → 사무소. 개발용 바로가기 패널(개발 빌드에서만): 사무소·창고·사원 명부·카드 공방·공허 지도·스테이지·시험 전투 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
+| 캐릭터 페이지 (2026-11-08) | 사원 명부를 목업처럼: 왼쪽 초상 목록(10명), 가운데 일러스트 + 프로필(픽셀·나이·키·소속·역할·설명·특성), 오른쪽 캐릭터 덱(4×2, 쪽 넘기기). 위 탭 줄(덱·장비·기록·설정은 준비 중). 프로필 글은 설정집 기반 임시 문구 | `Scenes/ui/roster/`, 데이터 `entities/characters/*.tres`(CharacterProfile), 그림 `Art/characters/<id>/`. 설계 `docs/superpowers/specs/2026-11-08-character-page-design.md` |
 | 전투 설정 메뉴·스킵 (2026-11-08) | 전투 중 ESC(고른 카드가 없을 때) → 설정 메뉴: 계속하기 / 전투 스킵(그 자리에서 승리, 개발 빌드에서만 보임). 메뉴가 열린 동안 입력·적 차례 멈춤 | `battle_screen.tscn` 의 PauseMenu, `BattleSession.force_finish()` |
 | 사무소·공허 지도 (2026-11-08) | 사무소 메뉴(창고·사원 명부·카드 공방·의뢰/출발·하루 마치기(준비 중)). 창고 = 빈 자리, 사원 명부 = 캐릭터 스탯·덱, 카드 공방 = 공용 카드. 의뢰/출발 → 공허 지도(세계 지도 위 공허 7곳) → 고르고 들어가기 → 스테이지. 공허마다 전투 배경이 다름. 의뢰가 끝나면 공허 지도로, 성공한 공허는 "정화됨" | `Scenes/ui/office/`, `roster/`, `storage/`, `card_workshop/`, `void_map/`, 데이터 `voids/*.tres`, `entities/roster.tres`. 설계 `docs/superpowers/specs/2026-11-08-office-hub-and-void-map-design.md` |
 | 의뢰 스테이지 (시험판, 2026-11-07) | 랜덤 지도(시작 → 3×3 전투6·이벤트3 → 상점 → 보스, 첫 열 전투) + 선. W/S·클릭으로 고르고 스페이스/엔터·다시 클릭으로 실행. 전투·보스 = 시험 전투(파티 HP 유지, 승리 → 지도 / 패배 → 공허 지도), 이벤트 = A/B 선택(효과 없음), 상점 = 다음 버튼, 보스 승리 → 의뢰 성공 화면 | `Scripts/stage/` (StageNode·StageGenerator·StageProgress·StageRun 자동 로드), `Scenes/ui/stage_map/`, `Scenes/ui/room_screen/` |
@@ -77,6 +78,8 @@
 - 2026-11-05: `battle.gd` 분리 — 덱 규칙은 `battle_deck.gd`, 카드 사용은 `battle_card_play.gd` (이동 `battle_movement.gd`, 적 행동 `enemy_ai.gd` 와 같은 방식). battle.gd 508줄
 
 ## 구조 변경
+
+- 2026-11-08: 캐릭터 = `CharacterProfile`(`Scripts/characters/`, `entities/characters/<id>.tres`) — 글·그림·초상(일러스트 얼굴 AtlasTexture)·전투 유닛. `RosterData.units` → `characters`, 파티는 `playable_units()`(유닛 있는 캐릭터: 홍연(시험), 파빌라(새 `entities/units/favilla.tres`, 불씨 무녀 덱)). 캐릭터 후보 그림 전부 `Art_src/characters/`(49MB), 쓰는 그림만 `Art/characters/<id>/<id>_illust.png`·`_pixel.png`
 
 - 2026-11-08: 자동 로드 `Router`(`Scripts/ui/router.gd`) — 화면 이름 → 씬 경로 표, `Router.goto(Router.Screen.X)`. 씬을 옮기면 이 표만 고친다. `StageRun.start_run(공허, seed)` 로 바뀜, 파티는 사원 명부(`entities/roster.tres`)에서. 의뢰 끝(성공·실패) → 공허 지도
 - 2026-11-08: `Art/Terrian/` → `Art/backgrounds/` (영어 이름). 배경 5장(`ProjectVoid_Assets/backgrounds`)과 공허 지도 그림(`Art/ui/void_map.png`, 임시) 추가. 배경 씬 7개 `Scenes/backgrounds/`

@@ -13,13 +13,54 @@ func test_office_end_day_is_disabled():
 	assert_true(o.get_node("%EndDayButton").disabled)
 	assert_false(o.get_node("%DepartButton").disabled)
 
-func test_roster_lists_units_and_shows_deck():
-	var r = add_child_autofree(load(Router.PATHS[Router.Screen.ROSTER]).instantiate())
-	assert_eq(r.unit_buttons.size(), r.roster.units.size())
-	var unit: UnitData = r.roster.units[0]
-	assert_eq(r.selected, unit)
-	assert_eq(r.card_views().size(), unit.deck.size())
-	assert_string_contains(r.get_node("%NameLabel").text, unit.display_name)
+func _roster():
+	return add_child_autofree(load(Router.PATHS[Router.Screen.ROSTER]).instantiate())
+
+func _find(r, id: String) -> CharacterProfile:
+	for c in r.roster.characters:
+		if c.id == id:
+			return c
+	return null
+
+func test_roster_lists_all_characters():
+	var r = _roster()
+	assert_eq(r.portrait_buttons.size(), r.roster.characters.size())
+	assert_eq(r.selected, r.roster.characters[0])
+	assert_true(r.portrait_buttons[0].button_pressed)
+
+func test_roster_select_shows_profile_and_art():
+	var r = _roster()
+	var c := _find(r, "bram_welburn")
+	r.select(c)
+	assert_eq(r.get_node("%NameLabel").text, c.display_name)
+	assert_eq(r.get_node("%Illustration").texture, c.illustration)
+	assert_eq(r.get_node("%RoleValue").text, c.role)
+	assert_eq(r.get_node("%TraitsRow").get_child_count() - 1, c.traits.size())
+	assert_true(r.portrait_buttons[r.roster.characters.find(c)].button_pressed)
+	assert_false(r.portrait_buttons[0].button_pressed)
+
+func test_roster_deck_pages():
+	var r = _roster()
+	var c := _find(r, "hongyeon")
+	r.select(c)
+	assert_eq(r.card_views().size(), 8)
+	assert_eq(r.page_count(), 2)
+	r.next_page()
+	assert_eq(r.card_views().size(), c.unit.deck.size() - 8)
+	r.next_page()
+	assert_eq(r.page, 1)
+	r.prev_page()
+	assert_eq(r.page, 0)
+
+func test_roster_character_without_unit_has_no_deck():
+	var r = _roster()
+	r.select(_find(r, "mo_liang"))
+	assert_eq(r.card_views().size(), 0)
+	assert_true(r.get_node("%DeckEmpty").visible)
+
+func test_roster_pixel_uses_nearest_filter():
+	var r = _roster()
+	assert_eq(r.get_node("%PixelImage").texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 
 func test_card_workshop_shows_only_common_cards():
 	var w = add_child_autofree(load(Router.PATHS[Router.Screen.CARD_WORKSHOP]).instantiate())

@@ -15,7 +15,7 @@ enum Room { EVENT, SHOP, CLEAR }
 
 ## 지금은 모든 전투(보스 포함)가 이 시험 전투의 적 구성을 쓴다. 노드별 전투 데이터는 나중에
 const DEFAULT_BATTLE := preload("res://battles/test_battle.tres")
-## 사원 명부. 파티는 앞에서부터 전투 데이터의 아군 자리 수만큼
+## 사원 명부. 파티는 전투 유닛이 있는 캐릭터를 앞에서부터 전투 데이터의 아군 자리 수만큼
 const ROSTER := preload("res://entities/roster.tres")
 
 ## 지도 진행 상태. 의뢰 중이 아니면 null
@@ -45,8 +45,9 @@ func start_run(p_site: VoidSiteData = null, seed_value: int = 0) -> void:
 	# 파티: 명부 캐릭터를 전투 데이터의 아군 자리에 앞에서부터 하나씩
 	party.clear()
 	var slots := DEFAULT_BATTLE.allies
-	for i in mini(ROSTER.units.size(), slots.size()):
-		party.append(BattleUnit.new(ROSTER.units[i], BattleTypes.Side.ALLY, slots[i].cell))
+	var units := ROSTER.playable_units()
+	for i in mini(units.size(), slots.size()):
+		party.append(BattleUnit.new(units[i], BattleTypes.Side.ALLY, slots[i].cell))
 
 
 ## 의뢰를 끝내고 상태를 비운다 (다음 start_run 에서 전원 회복된 파티로 시작)

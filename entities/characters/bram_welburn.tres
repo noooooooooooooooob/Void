@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CharacterProfile" format=3 uid="uid://b3t4cdq0p78vx"]
+
+[ext_resource type="Texture2D" path="res://Art/characters/bram_welburn/bram_welburn_illust.png" id="1_ikftp"]
+[ext_resource type="Script" path="res://Scripts/characters/character_profile.gd" id="2_sgoft"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ikftp"]
+atlas = ExtResource("1_ikftp")
+region = Rect2(348, 0, 328, 328)
+
+[resource]
+script = ExtResource("2_sgoft")
+id = "bram_welburn"
+display_name = "브람 웰번"
+role = "탱커 · 노동자"
+affiliation = "정화 사무소"
+age = "38"
+height = "198 cm"
+description = "공장과 부두에서 일하던 노동자. 공허에 노출되어 한쪽 팔이 바위처럼 굳었지만, 변함없는 힘으로 일한다. 주변을 잘 챙기는 맏형 같은 사람."
+traits = PackedStringArray("괴력", "방어", "동료")
+illustration = ExtResource("1_ikftp")
+portrait = SubResource("AtlasTexture_ikftp")
