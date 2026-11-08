@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://d1k4xijnw4kxx"]
+
+[ext_resource type="Script" path="res://Scripts/cards/card_condition.gd" id="1_rc8r6"]
+[ext_resource type="Script" path="res://Scripts/cards/card_cost.gd" id="2_yvf6l"]
+[ext_resource type="Script" path="res://Scripts/cards/card_effect.gd" id="3_jkpjy"]
+[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="4_wk3br"]
+
+[sub_resource type="Resource" id="Resource_gmjgp"]
+script = ExtResource("4_wk3br")
+name_ko = "내려찍기+"
+description_ko = "쉴드 전부 소모. 대상과 좌우 1칸에 소모한 쉴드의 200%만큼 피해"
+sp = 2
+cost = 10
+area = Array[Vector2i]([Vector2i(0, -1), Vector2i(0, 0), Vector2i(0, 1)])
+keywords = PackedStringArray()
+
+[resource]
+script = ExtResource("4_wk3br")
+id = "mgg1w103dgdzvgpmm82i"
+deck_id = "46zsw2bbgq4wyb3th9u7"
+name_ko = "내려찍기"
+description_ko = "쉴드 전부 소모. 대상과 좌우 1칸에 소모한 쉴드의 150%만큼 피해"
+sp = 2
+cost = 10
+area = Array[Vector2i]([Vector2i(0, -1), Vector2i(0, 0), Vector2i(0, 1)])
+keywords = PackedStringArray()
+upgrades = Array[ExtResource("4_wk3br")]([SubResource("Resource_gmjgp")])

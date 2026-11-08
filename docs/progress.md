@@ -79,6 +79,8 @@
 
 ## 구조 변경
 
+- 2026-11-08: 브람 덱 10장 + 키워드 도발(웹 에디터 내보내기 JSON `bram-deck.json`) → `cards/data/브람/`, 브람 유닛 `entities/units/bram_welburn.tres`. 가져오기 도구는 내보내기에 없는 카드를 지우므로 임시 폴더에 가져온 뒤 브람 것만 옮김. **웹 카드 에디터에는 아직 안 들어감** — 에디터에서 새로 만들면 id 가 달라져 다음 전체 가져오기 때 이 파일들이 지워지고 다시 생김(유닛 덱 연결 다시 필요). 카드 효과는 비어 있음
+
 - 2026-11-08: 캐릭터 = `CharacterProfile`(`Scripts/characters/`, `entities/characters/<id>.tres`) — 글·그림·초상(일러스트 얼굴 AtlasTexture)·전투 유닛. `RosterData.units` → `characters`, 파티는 `playable_units()`(유닛 있는 캐릭터: 홍연(시험), 파빌라(새 `entities/units/favilla.tres`, 불씨 무녀 덱)). 캐릭터 후보 그림 전부 `Art_src/characters/`(49MB), 쓰는 그림만 `Art/characters/<id>/<id>_illust.png`·`_pixel.png`
 
 - 2026-11-08: 자동 로드 `Router`(`Scripts/ui/router.gd`) — 화면 이름 → 씬 경로 표, `Router.goto(Router.Screen.X)`. 씬을 옮기면 이 표만 고친다. `StageRun.start_run(공허, seed)` 로 바뀜, 파티는 사원 명부(`entities/roster.tres`)에서. 의뢰 끝(성공·실패) → 공허 지도

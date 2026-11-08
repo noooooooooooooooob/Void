@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://drm7rhpxxcacc"]
+
+[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="1_e7lks"]
+[ext_resource type="Resource" path="res://cards/data/브람/돌주먹.tres" id="2_08hrn"]
+[ext_resource type="Resource" path="res://cards/data/브람/바위 팔 막기.tres" id="3_bbsqc"]
+[ext_resource type="Resource" path="res://cards/data/브람/굳은살.tres" id="4_t7mrm"]
+[ext_resource type="Resource" path="res://cards/data/브람/작업조.tres" id="5_y1gjr"]
+[ext_resource type="Resource" path="res://cards/data/브람/갈고리 걸기.tres" id="6_0i37n"]
+[ext_resource type="Resource" path="res://cards/data/브람/갈라치기.tres" id="7_lnq7u"]
+[ext_resource type="Resource" path="res://cards/data/브람/도발.tres" id="8_ruoax"]
+[ext_resource type="Resource" path="res://cards/data/브람/대신 맞기.tres" id="9_3pc2t"]
+[ext_resource type="Resource" path="res://cards/data/브람/돌 던지기.tres" id="10_a2syn"]
+[ext_resource type="Resource" path="res://cards/data/브람/내려찍기.tres" id="11_t0ili"]
+[ext_resource type="Script" path="res://Scripts/statuses/equipment_data.gd" id="12_v6es2"]
+[ext_resource type="Script" path="res://Scripts/statuses/status_data.gd" id="13_eoqry"]
+[ext_resource type="Script" path="res://Scripts/battle/unit_data.gd" id="14_04rbb"]
+
+[resource]
+script = ExtResource("14_04rbb")
+display_name = "브람 웰번"
+deck = Array[ExtResource("1_e7lks")]([ExtResource("2_08hrn"), ExtResource("3_bbsqc"), ExtResource("4_t7mrm"), ExtResource("5_y1gjr"), ExtResource("6_0i37n"), ExtResource("7_lnq7u"), ExtResource("8_ruoax"), ExtResource("9_3pc2t"), ExtResource("10_a2syn"), ExtResource("11_t0ili")])

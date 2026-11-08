@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://dfji7owybom8u"]
+
+[ext_resource type="Script" path="res://Scripts/cards/card_condition.gd" id="1_pnyld"]
+[ext_resource type="Script" path="res://Scripts/cards/card_cost.gd" id="2_ftd5q"]
+[ext_resource type="Script" path="res://Scripts/cards/card_effect.gd" id="3_52ucf"]
+[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="4_wr1vq"]
+
+[sub_resource type="Resource" id="Resource_maydt"]
+script = ExtResource("4_wr1vq")
+name_ko = "갈라치기+"
+description_ko = "대상의 쉴드를 모두 제거하고 ATK 160%로 공격"
+sp = 2
+cost = 2
+keywords = PackedStringArray()
+
+[resource]
+script = ExtResource("4_wr1vq")
+id = "vhs1k3aq6l6gt6mjxk87"
+deck_id = "46zsw2bbgq4wyb3th9u7"
+name_ko = "갈라치기"
+description_ko = "대상의 쉴드를 모두 제거하고 ATK 120%로 공격"
+sp = 2
+cost = 2
+keywords = PackedStringArray()
+upgrades = Array[ExtResource("4_wr1vq")]([SubResource("Resource_maydt")])

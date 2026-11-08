@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://c2yv6podqitn3"]
+
+[ext_resource type="Script" path="res://Scripts/cards/card_condition.gd" id="1_l78ry"]
+[ext_resource type="Script" path="res://Scripts/cards/card_cost.gd" id="2_171ea"]
+[ext_resource type="Script" path="res://Scripts/cards/card_effect.gd" id="3_f508e"]
+[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="4_8q4tn"]
+
+[sub_resource type="Resource" id="Resource_iw7wf"]
+script = ExtResource("4_8q4tn")
+name_ko = "대신 맞기+"
+description_ko = "아군 한 명을 지정. 1턴간 그 아군이 받을 공격을 브람이 대신 받고, 그 피해를 30% 줄임"
+cost = 5
+category = "special"
+attack_type = "ally"
+keywords = PackedStringArray()
+
+[resource]
+script = ExtResource("4_8q4tn")
+id = "q71n8mtzx272hpoevb9o"
+deck_id = "46zsw2bbgq4wyb3th9u7"
+name_ko = "대신 맞기"
+description_ko = "아군 한 명을 지정. 1턴간 그 아군이 받을 공격을 브람이 대신 받음"
+cost = 5
+category = "special"
+attack_type = "ally"
+keywords = PackedStringArray()
+upgrades = Array[ExtResource("4_8q4tn")]([SubResource("Resource_iw7wf")])
