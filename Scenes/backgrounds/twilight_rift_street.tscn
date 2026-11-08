@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://3ek4nb6v5udm"]
+
+[ext_resource type="Texture2D" path="res://Art/backgrounds/twilight_industrial_rift.png" id="1_an1qh"]
+
+[node name="TwilightRiftStreet" type="Control" unique_id=586333047]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="FarLayer" type="TextureRect" parent="." unique_id=911907675]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("1_an1qh")
+expand_mode = 1
+stretch_mode = 6

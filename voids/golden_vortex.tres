@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="VoidSiteData" format=3 uid="uid://c1j35hcqrnuy0"]
+
+[ext_resource type="PackedScene" path="res://Scenes/backgrounds/golden_vortex.tscn" id="1_6wwu5"]
+[ext_resource type="Script" path="res://Scripts/stage/void_site_data.gd" id="2_0rctl"]
+
+[resource]
+script = ExtResource("2_0rctl")
+id = "golden_vortex"
+display_name = "황금 소용돌이"
+description = "보랏빛 허공 한가운데서 금빛 소용돌이가 천천히 돈다."
+map_position = Vector2(300, 820)
+background = ExtResource("1_6wwu5")

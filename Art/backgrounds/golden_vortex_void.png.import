@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cicqadp7rjhib"
-path="res://.godot/imported/안개 낀 산중 신사의 테라스.png-d2b54d2aac1a7f735eba3d6a5a300def.ctex"
+uid="uid://ccbcgtgr0gh4r"
+path="res://.godot/imported/golden_vortex_void.png-50db06b37f2e5ea165b3c1f7d515f69b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Terrian/안개 낀 산중 신사의 테라스.png"
-dest_files=["res://.godot/imported/안개 낀 산중 신사의 테라스.png-d2b54d2aac1a7f735eba3d6a5a300def.ctex"]
+source_file="res://Art/backgrounds/golden_vortex_void.png"
+dest_files=["res://.godot/imported/golden_vortex_void.png-50db06b37f2e5ea165b3c1f7d515f69b.ctex"]
 
 [params]
 

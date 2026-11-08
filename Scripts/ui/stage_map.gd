@@ -2,7 +2,7 @@ class_name StageMap
 extends Control
 ## 스테이지 지도 화면. stage_map.tscn 의 스크립트.
 ## StageRun(자동 로드)의 지도를 그리고, 다음 노드 고르기·실행 입력을 받는다.
-## 의뢰 중이 아니면(시작 화면에서 막 들어왔거나 이 씬을 F6 으로 열었을 때) 새 의뢰를 시작한다.
+## 의뢰 중이 아니면(이 씬을 F6 으로 바로 열었을 때) 공허 없이 새 의뢰를 시작한다.
 ##
 ## 조작 (림버스 컴퍼니처럼):
 ##   - W / ↑, S / ↓ : 갈 수 있는 다음 노드 사이에서 커서를 위·아래로 옮긴다
@@ -38,7 +38,7 @@ var _links := {}  # [출발 노드, 도착 노드] → Line2D
 func _ready() -> void:
 	# 1. 의뢰 중이 아니면 새 의뢰(새 지도 + 새 파티)를 시작한다
 	if not StageRun.is_active():
-		StageRun.start_run(map_seed)
+		StageRun.start_run(null, map_seed)
 	nodes = StageRun.progress.nodes
 	# 2. 길(선)을 먼저 긋는다 → 나중에 놓는 노드 네모가 선 위에 덮여서, 선이 네모 밑에 깔린다
 	_draw_links()

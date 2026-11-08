@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://crcxu56sr44n3"]
+
+[ext_resource type="Texture2D" path="res://Art/backgrounds/crystal_flame_cave.png" id="1_e41dp"]
+
+[node name="CrystalFlameCave" type="Control" unique_id=718903480]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="FarLayer" type="TextureRect" parent="." unique_id=191675493]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("1_e41dp")
+expand_mode = 1
+stretch_mode = 6

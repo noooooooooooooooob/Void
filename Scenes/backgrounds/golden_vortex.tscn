@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://c3k5a8n76hh20"]
+
+[ext_resource type="Texture2D" path="res://Art/backgrounds/golden_vortex_void.png" id="1_5xqop"]
+
+[node name="GoldenVortex" type="Control" unique_id=1301159104]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="FarLayer" type="TextureRect" parent="." unique_id=280419662]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("1_5xqop")
+expand_mode = 1
+stretch_mode = 6

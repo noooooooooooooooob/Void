@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bdy2wk8h2cxqn"]
+
+[ext_resource type="Texture2D" path="res://Art/backgrounds/dream_mirror_cathedral.png" id="1_mop5s"]
+
+[node name="DreamMirrorCathedral" type="Control" unique_id=1246592905]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="FarLayer" type="TextureRect" parent="." unique_id=100912020]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("1_mop5s")
+expand_mode = 1
+stretch_mode = 6

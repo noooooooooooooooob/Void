@@ -15,7 +15,8 @@ extends Control
 ## - 적 차례는 enemy_delay 초 간격으로 자동 진행. 그동안 입력은 무시한다.
 ##
 ## 의뢰 모드: 스테이지 지도에서 전투 노드로 들어오면(StageRun.in_battle()) battle_data 대신 의뢰의 전투 데이터와
-## 파티(HP 유지)를 쓰고, 결과 버튼이 "계속"(승리 → 지도) / "처음으로"(패배 → 의뢰 실패) 가 된다.
+## 파티(HP 유지)를 쓰고, 결과 버튼이 "계속"(승리 → 스테이지 지도) / "공허 지도로"(패배 → 의뢰 실패) 가 된다.
+## 배경은 들어간 공허의 배경(StageRun.battle_background()).
 
 ## 플레이할 전투 데이터 (기본: battles/test_battle.tres)
 @export var battle_data: BattleData
@@ -73,7 +74,7 @@ var _round := 0         # 라운드 번호 (ROUND_START 를 셈)
 var _log_texts: Array[String] = []
 var _dragging := false  # 손패 카드를 누른 채 끌고 있는지
 var _press_pos := Vector2.ZERO
-var _stage_mode := false  # 의뢰(스테이지) 전투인지. 그러면 결과 버튼이 "다시 하기" 대신 지도로/처음으로 간다
+var _stage_mode := false  # 의뢰(스테이지) 전투인지. 그러면 결과 버튼이 "다시 하기" 대신 스테이지 지도/공허 지도로 간다
 var _won := false         # 마지막 전투를 이겼는지 (의뢰 모드 결과 버튼용)
 
 
@@ -87,9 +88,14 @@ func _ready() -> void:
 	_stage_mode = StageRun.in_battle()
 	if _stage_mode:
 		battle_data = StageRun.battle_data()
-	# 배경 씬은 전투 데이터마다 다르다. 없으면 뒤의 단색만 보인다
-	if battle_data and battle_data.background:
-		_bg_layer.add_child(battle_data.background.instantiate())
+	# 배경 씬: 의뢰 전투면 들어간 공허의 배경, 아니면 전투 데이터의 배경. 없으면 뒤의 단색만 보인다
+	var background: PackedScene = null
+	if _stage_mode:
+		background = StageRun.battle_background()
+	elif battle_data:
+		background = battle_data.background
+	if background:
+		_bg_layer.add_child(background.instantiate())
 	if battle_data == null:
 		push_warning("BattleScreen: battle_data 가 비어 있어요")
 		return
@@ -262,7 +268,7 @@ func _on_finished(winner: int) -> void:
 	_result_label.text = "승리" if _won else "패배"
 	# 의뢰 전투: 이기면 지도로 계속, 지면 의뢰 실패 → 시작 화면 (CLAUDE.md 의뢰 스테이지 규칙)
 	if _stage_mode:
-		_restart_button.text = "계속" if _won else "처음으로"
+		_restart_button.text = "계속" if _won else "공허 지도로"
 	_result.visible = true
 	_restart_button.grab_focus()
 

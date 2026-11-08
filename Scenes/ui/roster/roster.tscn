@@ -1,0 +1,101 @@
+[gd_scene format=3 uid="uid://bhwryx40ta72g"]
+
+[ext_resource type="Script" path="res://Scripts/ui/roster.gd" id="1_ldo33"]
+[ext_resource type="Resource" path="res://entities/roster.tres" id="2_cu16o"]
+
+[node name="Roster" type="Control" unique_id=1539056819]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_ldo33")
+roster = ExtResource("2_cu16o")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1849946028]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.118, 0.11, 0.133, 1)
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1875193053]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="Main" type="VBoxContainer" parent="Margin" unique_id=284262226]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Header" type="HBoxContainer" parent="Margin/Main" unique_id=1040248133]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="BackButton" type="Button" parent="Margin/Main/Header" unique_id=1929205268]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "← 뒤로"
+
+[node name="Title" type="Label" parent="Margin/Main/Header" unique_id=1898770238]
+layout_mode = 2
+theme_override_font_sizes/font_size = 44
+text = "사원 명부"
+
+[node name="Body" type="HBoxContainer" parent="Margin/Main" unique_id=2062086550]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 40
+
+[node name="UnitList" type="VBoxContainer" parent="Margin/Main/Body" unique_id=351395780]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="UnitButtonTemplate" type="Button" parent="Margin/Main/Body/UnitList" unique_id=1922724952]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(280, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "캐릭터"
+
+[node name="Detail" type="VBoxContainer" parent="Margin/Main/Body" unique_id=1544816980]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="NameLabel" type="Label" parent="Margin/Main/Body/Detail" unique_id=1012863290]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 44
+text = "이름"
+
+[node name="StatsLabel" type="Label" parent="Margin/Main/Body/Detail" unique_id=1327960590]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "스탯"
+
+[node name="DeckTitle" type="Label" parent="Margin/Main/Body/Detail" unique_id=1074750436]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "덱"
+
+[node name="DeckScroll" type="ScrollContainer" parent="Margin/Main/Body/Detail" unique_id=1976331735]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="DeckGrid" type="HFlowContainer" parent="Margin/Main/Body/Detail/DeckScroll" unique_id=1983542353]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 16

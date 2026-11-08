@@ -4,7 +4,7 @@ extends Control
 ## 지금은 효과가 없는 자리만 마련한 단계 (CLAUDE.md: 이벤트/상점 효과는 미정):
 ##   - 이벤트: A / B 선택지 중 아무거나 누르면 그냥 다음 (지도로)
 ##   - 상점: "다음" 버튼 → 지도로 (그다음은 보스)
-##   - 의뢰 성공(보스 승리 뒤): "처음으로" 버튼 → 시작 화면
+##   - 의뢰 성공(보스 승리 뒤): "공허 지도로" 버튼 → 정화 기록 후 공허 지도
 ## 어떤 방인지는 StageRun.room() 이 정한다. 글자·배치는 room_screen.tscn 에서 에디터로 고친다.
 
 @onready var _title: Label = %TitleLabel
@@ -38,7 +38,7 @@ func _ready() -> void:
 		StageRun.Room.CLEAR:
 			_title.text = "의뢰 성공"
 			_body.text = "보스를 쓰러뜨렸다."
-			_next.text = "처음으로"
+			_next.text = "공허 지도로"
 			_show_buttons(false, true)
 			_next.grab_focus()
 
@@ -55,7 +55,7 @@ func _on_choice() -> void:
 	StageRun.complete_node()
 
 
-## 상점 "다음" / 의뢰 성공 "처음으로"
+## 상점 "다음" / 의뢰 성공 "공허 지도로"
 func _on_next() -> void:
 	if room == StageRun.Room.CLEAR:
 		StageRun.finish_run()

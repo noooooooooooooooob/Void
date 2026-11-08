@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RosterData" format=3 uid="uid://t88m31ygw35n"]
+
+[ext_resource type="Script" path="res://Scripts/battle/roster_data.gd" id="1_c3gon"]
+[ext_resource type="Script" path="res://Scripts/battle/unit_data.gd" id="2_mnccl"]
+[ext_resource type="Resource" path="res://entities/units/test/test_hongyeon.tres" id="3_mrjr4"]
+
+[resource]
+script = ExtResource("1_c3gon")
+units = Array[ExtResource("2_mnccl")]([ExtResource("3_mrjr4")])

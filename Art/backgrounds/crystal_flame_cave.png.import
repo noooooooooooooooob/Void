@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2t116n65v2qu"
-path="res://.godot/imported/떠오른 흑수정과 불꽃의 동굴.png-5ff984289ffce06751c8f2a0b51d4c87.ctex"
+path="res://.godot/imported/crystal_flame_cave.png-c8bab8ed915baae659e6c243c955149e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/Terrian/떠오른 흑수정과 불꽃의 동굴.png"
-dest_files=["res://.godot/imported/떠오른 흑수정과 불꽃의 동굴.png-5ff984289ffce06751c8f2a0b51d4c87.ctex"]
+source_file="res://Art/backgrounds/crystal_flame_cave.png"
+dest_files=["res://.godot/imported/crystal_flame_cave.png-c8bab8ed915baae659e6c243c955149e.ctex"]
 
 [params]
 

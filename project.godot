@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 MCPRuntime="*uid://b4fws1txgk01y"
+Router="*res://Scripts/ui/router.gd"
 StageRun="*res://Scripts/stage/stage_run.gd"
 
 [display]
