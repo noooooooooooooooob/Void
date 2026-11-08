@@ -22,11 +22,8 @@
 
 ### 의뢰 스테이지 (1층)
 - 월드맵의 모든 노드는 **의뢰**. 진입 시 스테이지 격자 진행
-- 1층 (2026-11-07 사용자 결정, 노션의 3줄×5칸·휴식 규칙을 대체): 시작(2행) → **3열 × 3행 = 전투 6 + 이벤트 3** → 상점(2행) → 보스(2행). 진입마다 랜덤 + 규칙으로 새로 생성 (`Scripts/stage/stage_generator.gd`)
-  - 첫 열은 모두 전투, 한 행에 이벤트 최대 2개
-  - 시작은 첫 열 3개 모두와, 마지막 열 3개는 모두 상점과 이어짐. 가운데 노드는 다음 열 1~2개와 이어짐(같은 행 또는 바로 위/아래), 길은 엇갈리지 않고 모든 노드에 들어오는 길이 있음
-  - 조작(림버스식): W/S·↑/↓ 또는 클릭으로 다음 노드 고르기 → 스페이스/엔터 또는 고른 노드 다시 클릭으로 실행
-  - 지금은 이벤트(A/B 선택, 효과 없음)·상점(다음 버튼)은 자리만, 보스는 일반 전투와 같은 시험 전투
+- 1층: 시작 → **3줄 × 5칸** → 보스. 왼→오 이동, 다음 칸은 같은 줄 앞 또는 위/아래 대각선. 진입마다 새로 생성
+- 칸 비율: 전투 6 : 이벤트 2 : 상점 1, 첫 칸은 항상 전투, 마지막은 항상 보스이며 보스 전은 항상 휴
 - 의뢰 내 체력 유지, HP 0 파티원은 남은 전투 제외, 의뢰 종료 시 전원 회복
 - 보스 승리 = 성공(노드 클리어), 패배/도주 = 실패(월드맵 복귀). 전투 승리마다 아이템 1개
 
@@ -68,10 +65,9 @@ res://
     ui/          #   화면 스크립트 (card_view, card_gallery …)
   cards/         # 카드 데이터 .tres (data/<덱>/, keywords/, art/) — 카드 가져오기로 생성
   statuses/      # 상태(data/)·장비(equipment/) .tres
-  entities/      # 캐릭터·적 데이터 .tres (units/ 전투 유닛, characters/ 캐릭터 프로필), 사원 명부 roster.tres
-  voids/         # 공허 장소 데이터 .tres (VoidSiteData — 이름·설명·지도 위치·전투 배경)
+  entities/      # 캐릭터·적 데이터 .tres (units/)
   Scenes/        # 모든 씬 .tscn — 안은 Scripts/ 와 같은 기능별 폴더 (ui/battle_screen/, ui/card_view/ …)
-    backgrounds/ #   전투 배경 씬 (루트 Control, 겹·패럴랙스는 씬 안에서). VoidSiteData.background / BattleData.background 가 가리킴
+    backgrounds/ #   전투 배경 씬 (루트 Control, 겹·패럴랙스는 씬 안에서). BattleData.background 가 가리킴
   Art/           # 게임에 들어가는 그림 (.png) — 종류별 폴더, 캐릭터·적은 이름별로
     characters/<이름>/  enemies/<이름>/  ui/  backgrounds/  vfx/
   Art_src/       # 원본 작업 파일 (.aseprite, .psd) — .gdignore 로 Godot 이 무시

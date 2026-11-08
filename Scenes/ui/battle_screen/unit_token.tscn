@@ -10,18 +10,6 @@ offset_right = 100.0
 offset_bottom = 100.0
 script = ExtResource("1_0og7g")
 
-[node name="Sprite" type="TextureRect" parent="." unique_id=1097489248]
-unique_name_in_owner = true
-visible = false
-texture_filter = 1
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_bottom = -52.0
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 5
-
 [node name="Body" type="ColorRect" parent="." unique_id=1252728970]
 unique_name_in_owner = true
 layout_mode = 0
@@ -31,7 +19,6 @@ mouse_filter = 2
 color = Color(0.47843137, 0.18431373, 0.22745098, 1)
 
 [node name="Box" type="VBoxContainer" parent="." unique_id=1740090346]
-unique_name_in_owner = true
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -57,8 +44,8 @@ vertical_alignment = 1
 [node name="Block" type="Label" parent="Box" unique_id=1237649675]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.49803922, 0.72156864, 1, 1)
 theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.49803922, 0.72156864, 1, 1)
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://goar44l5p1ya"]
 
-[ext_resource type="Texture2D" path="res://Art/backgrounds/mountain_shrine_terrace.png" id="1_rlmvk"]
+[ext_resource type="Texture2D" uid="uid://cicqadp7rjhib" path="res://Art/Terrian/안개 낀 산중 신사의 테라스.png" id="1_rlmvk"]
 
 [node name="MountainShrine" type="Control" unique_id=796481465]
 layout_mode = 3

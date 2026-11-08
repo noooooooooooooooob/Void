@@ -1,6 +1,6 @@
 # Project Void 개발 진행 상황
 
-마지막 갱신: 2026-11-08
+마지막 갱신: 2026-11-05
 
 코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
 
@@ -16,12 +16,6 @@
 | 상태 데이터 | 출혈(드로우 페이즈 고정 피해 × 수치), 혈갑(차례 종료 방어도 × 수치), 핏방울(패시브, 적이 받은 출혈 피해만큼 쌓임) — 에디터 인스펙터로 제작 | `statuses/data/` |
 | 전투 화면 (시험판) | 시험용 홍연(타격 4·사격 3·방어 3) vs 시험용 적 A·B 한 판을 직접 플레이. 원거리·근접 카드는 휜 화살표로 대상 지정, 자신 카드는 두 번 클릭/끌어 올리기, 빈 칸 클릭으로 이동, 적 차례 0.7초 간격 자동, 떠오르는 숫자·전투 기록, 승리/패배 → 다시 하기. 손패에 계산된 수치 표시 | `ui/battle_screen/battle_screen.tscn` 열고 F6. 데이터 `battles/test_battle.tres` |
 | 전투 데이터 | 격자 크기 + 아군/적 배치 리소스 (`BattleData`), 진행 담당 `BattleSession` (의뢰 파티를 밖에서 넣을 수 있음) | `Scripts/battle/battle_data.gd`, `battle_session.gd` |
-| 시작 화면 | 게임 메인 씬. 시작 버튼 → 사무소. 개발용 바로가기 패널(개발 빌드에서만): 사무소·창고·사원 명부·카드 공방·공허 지도·스테이지·시험 전투 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
-| 파티 선택·공용 ESC 메뉴·사선 전투 (2026-11-08) | 공허 "들어가기" → 파티 선택(카드 있는 캐릭터: 홍연·파빌라·브람, 최대 3명, 고른 순서대로 앞줄 가운데→위→아래). ESC 메뉴는 공용 씬 하나(계속하기 / 전투 스킵(개발 빌드) / 의뢰 포기) — 전투 화면·스테이지 지도에서 씀. 전투 격자는 기울어진 바닥 + 아군 픽셀 캐릭터(적은 네모) | `Scenes/ui/party_select/`, `Scenes/ui/pause_menu/`, `UnitData.battle_sprite`. 설계 `docs/superpowers/specs/2026-11-08-party-select-pause-menu-battle-view-design.md` |
-| 캐릭터 페이지 (2026-11-08) | 사원 명부를 목업처럼: 왼쪽 초상 목록(10명), 가운데 일러스트 + 프로필(픽셀·나이·키·소속·역할·설명·특성), 오른쪽 캐릭터 덱(4×2, 쪽 넘기기). 위 탭 줄(덱·장비·기록·설정은 준비 중). 프로필 글은 설정집 기반 임시 문구 | `Scenes/ui/roster/`, 데이터 `entities/characters/*.tres`(CharacterProfile), 그림 `Art/characters/<id>/`. 설계 `docs/superpowers/specs/2026-11-08-character-page-design.md` |
-| 전투 설정 메뉴·스킵 (2026-11-08) | 전투 중 ESC(고른 카드가 없을 때) → 설정 메뉴: 계속하기 / 전투 스킵(그 자리에서 승리, 개발 빌드에서만 보임). 메뉴가 열린 동안 입력·적 차례 멈춤 | `battle_screen.tscn` 의 PauseMenu, `BattleSession.force_finish()` |
-| 사무소·공허 지도 (2026-11-08) | 사무소 메뉴(창고·사원 명부·카드 공방·의뢰/출발·하루 마치기(준비 중)). 창고 = 빈 자리, 사원 명부 = 캐릭터 스탯·덱, 카드 공방 = 공용 카드. 의뢰/출발 → 공허 지도(세계 지도 위 공허 7곳) → 고르고 들어가기 → 스테이지. 공허마다 전투 배경이 다름. 의뢰가 끝나면 공허 지도로, 성공한 공허는 "정화됨" | `Scenes/ui/office/`, `roster/`, `storage/`, `card_workshop/`, `void_map/`, 데이터 `voids/*.tres`, `entities/roster.tres`. 설계 `docs/superpowers/specs/2026-11-08-office-hub-and-void-map-design.md` |
-| 의뢰 스테이지 (시험판, 2026-11-07) | 랜덤 지도(시작 → 3×3 전투6·이벤트3 → 상점 → 보스, 첫 열 전투) + 선. W/S·클릭으로 고르고 스페이스/엔터·다시 클릭으로 실행. 전투·보스 = 시험 전투(파티 HP 유지, 승리 → 지도 / 패배 → 공허 지도), 이벤트 = A/B 선택(효과 없음), 상점 = 다음 버튼, 보스 승리 → 의뢰 성공 화면 | `Scripts/stage/` (StageNode·StageGenerator·StageProgress·StageRun 자동 로드), `Scenes/ui/stage_map/`, `Scenes/ui/room_screen/` |
 
 ## 진행 중: 전투 시스템 (카드·효과·턴)
 
@@ -79,18 +73,6 @@
 - 2026-11-05: `battle.gd` 분리 — 덱 규칙은 `battle_deck.gd`, 카드 사용은 `battle_card_play.gd` (이동 `battle_movement.gd`, 적 행동 `enemy_ai.gd` 와 같은 방식). battle.gd 508줄
 
 ## 구조 변경
-
-- 2026-11-08: 브람 덱 10장 + 키워드 도발(웹 에디터 내보내기 JSON `bram-deck.json`) → `cards/data/브람/`, 브람 유닛 `entities/units/bram_welburn.tres`. 가져오기 도구는 내보내기에 없는 카드를 지우므로 임시 폴더에 가져온 뒤 브람 것만 옮김. **웹 카드 에디터에는 아직 안 들어감** — 에디터에서 새로 만들면 id 가 달라져 다음 전체 가져오기 때 이 파일들이 지워지고 다시 생김(유닛 덱 연결 다시 필요). 카드 효과는 비어 있음
-
-- 2026-11-08: 캐릭터 = `CharacterProfile`(`Scripts/characters/`, `entities/characters/<id>.tres`) — 글·그림·초상(일러스트 얼굴 AtlasTexture)·전투 유닛. `RosterData.units` → `characters`, 파티는 `playable_units()`(유닛 있는 캐릭터: 홍연(시험), 파빌라(새 `entities/units/favilla.tres`, 불씨 무녀 덱)). 캐릭터 후보 그림 전부 `Art_src/characters/`(49MB), 쓰는 그림만 `Art/characters/<id>/<id>_illust.png`·`_pixel.png`
-
-- 2026-11-08: 자동 로드 `Router`(`Scripts/ui/router.gd`) — 화면 이름 → 씬 경로 표, `Router.goto(Router.Screen.X)`. 씬을 옮기면 이 표만 고친다. `StageRun.start_run(공허, seed)` 로 바뀜, 파티는 사원 명부(`entities/roster.tres`)에서. 의뢰 끝(성공·실패) → 공허 지도
-- 2026-11-08: `Art/Terrian/` → `Art/backgrounds/` (영어 이름). 배경 5장(`ProjectVoid_Assets/backgrounds`)과 공허 지도 그림(`Art/ui/void_map.png`, 임시) 추가. 배경 씬 7개 `Scenes/backgrounds/`
-- 2026-11-08: 사원 명부는 지금 `홍연 (시험)` 하나 — 진짜 `hongyeon.tres` 덱 카드는 효과가 비어 있어 전투가 안 됨. 카드 효과를 채우면 바꾼다
-
-- 2026-11-07: 자동 로드 `StageRun`(`Scripts/stage/stage_run.gd`) 추가 — 씬이 바뀌어도 지도·현재 위치·파티가 남는다. 입력 맵 `map_up`(W/↑)·`map_down`(S/↓) 추가. 전투 화면은 지도에서 들어오면 의뢰 모드(결과 버튼 계속/처음으로), 그냥 F6 으로 열면 예전처럼 "다시 하기"
-- 2026-11-07: 의뢰 1층 규칙 변경(사용자 결정) — 3열×3행(전투 6·이벤트 3) + 상점 + 보스, 보스 전 휴식 대신 상점. CLAUDE.md 반영, **노션 1층 설계는 아직 안 고침**
-- 2026-11-07: 헤드리스 스크립트로 씬을 저장하면 씬 uid 가 빠진다 → `ResourceSaver.set_uid(path, 원래 uid)` 로 되살린다. 자동 로드 이름(StageRun)을 쓰는 스크립트는 `_init` 대신 `_initialize` 에서 한 프레임 기다린 뒤 불러야 컴파일된다
 
 - 2026-11-04: 게임 스크립트를 모두 `Scripts/` 폴더로 옮김 (`Scripts/battle`, `Scripts/cards`, `Scripts/statuses`, `Scripts/ui`). 씬·데이터·테스트·플러그인은 제자리
 - 2026-11-06: 전투 배경 = 배경 씬. `BattleData.background`(PackedScene) → 전투 화면이 `Background/BackgroundLayer` 에 붙임. 배경 씬은 `Scenes/backgrounds/` (첫 배경: `mountain_shrine.tscn`, 겹 1장). 패럴랙스·마우스 따라 움직이기는 나중에 배경 씬 안에서

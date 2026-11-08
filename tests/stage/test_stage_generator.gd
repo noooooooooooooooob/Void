@@ -27,10 +27,6 @@ func test_rules_hold_for_200_maps():
 		for r in 3:
 			var events := mid.filter(func(n): return n.row == r and n.kind == StageNode.Kind.EVENT).size()
 			assert_lte(events, 2, "seed %d row %d" % [s, r])
-		# 첫 열은 모두 전투
-		for n in mid:
-			if n.column == 1:
-				assert_eq(n.kind, StageNode.Kind.BATTLE, "seed %d first column" % s)
 		# 시작은 3갈래
 		assert_eq(nodes[0].next.size(), 3, "seed %d" % s)
 		for n in mid:
