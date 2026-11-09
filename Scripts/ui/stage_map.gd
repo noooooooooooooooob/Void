@@ -5,6 +5,8 @@ extends Control
 
 ## 노드 하나를 그리는 틀 씬
 const NODE_VIEW := preload("res://Scenes/ui/stage_map/stage_node_view.tscn")
+## 길 하나를 그리는 틀 씬 (Line2D)
+const LINK_LINE := preload("res://Scenes/ui/stage_map/link_line.tscn")
 
 ## 열 사이 간격 (px, 노드 중심 기준)
 @export var column_gap := 260.0
@@ -19,7 +21,7 @@ var nodes: Array[StageNode] = []
 var views: Array[StageNodeView] = []
 
 @onready var _map: Control = %Map
-
+@onready var _links: Control = %Links
 
 func _ready() -> void:
 	# 1. 지도 데이터를 새로 만든다
@@ -32,7 +34,13 @@ func _ready() -> void:
 		# 위치는 노드 "중심" 기준이라 크기의 절반만큼 당긴다
 		view.position = cell_position(node) - view.size / 2
 		views.append(view)
-
+	# 3. 길마다 선을 하나씩 놓는다 (노드 중심 → 다음 노드 중심)
+	for node in nodes:
+		for next_node in node.next:
+			var line: Line2D = LINK_LINE.instantiate()
+			line.add_point(cell_position(node))
+			line.add_point(cell_position(next_node))
+			_links.add_child(line)
 
 ## 노드의 화면 위치 (Map 기준, 노드 중심). 열 → 가로, 행 → 세로
 func cell_position(node: StageNode) -> Vector2:

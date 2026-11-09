@@ -27,3 +27,10 @@ offset_left = 310.0
 offset_top = 360.0
 offset_right = 350.0
 offset_bottom = 400.0
+
+[node name="Links" type="Control" parent="Map" unique_id=419485905]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
