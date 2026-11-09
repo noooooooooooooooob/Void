@@ -171,13 +171,12 @@ func end_turn(u: BattleUnit) -> void:
 
 
 ## 이긴 편 (BattleTypes.Side). 아직 양쪽 다 살아 있으면 −1.
+## 양쪽이 동시에 전멸하면 패배 (적의 승리, 사용자 결정 2026-11-10).
 func winner() -> int:
-	var allies := living(BattleTypes.Side.ALLY).size()
-	var enemies := living(BattleTypes.Side.ENEMY).size()
-	if allies > 0 and enemies == 0:
-		return BattleTypes.Side.ALLY
-	if enemies > 0 and allies == 0:
+	if living(BattleTypes.Side.ALLY).is_empty():
 		return BattleTypes.Side.ENEMY
+	if living(BattleTypes.Side.ENEMY).is_empty():
+		return BattleTypes.Side.ALLY
 	return -1
 
 

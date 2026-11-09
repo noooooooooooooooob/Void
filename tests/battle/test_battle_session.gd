@@ -129,6 +129,19 @@ func test_player_kills_last_enemy_ends_immediately():
 	s.advance()
 	assert_signal_emit_count(s, "finished", 1)
 
+func test_both_sides_wiped_in_one_action_ends_in_defeat():
+	var s := _started()
+	watch_signals(s)
+	# 마지막 적이 먼저 죽어도, 행동이 끝났을 때 아군도 전멸이면 패배
+	for u in s.battle.living(E):
+		s.battle.apply_damage(null, u, 99999)
+	for u in s.battle.living(A):
+		s.battle.apply_damage(null, u, 99999)
+	s.end_player_turn()
+	assert_signal_emit_count(s, "finished", 1)
+	assert_signal_emitted_with_parameters(s, "finished", [E])
+	assert_null(s.active)
+
 func test_dead_at_draw_phase_skips_turn():
 	# 아군 차례 시작(드로우 페이즈)에 출혈로 죽으면 그 아군에서 멈추지 않는다 → 아군 전멸이면 패배
 	var d := DamageEffect.new()
