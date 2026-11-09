@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://dfcxlgclwkren"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_024we"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_sbdg5"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_7ylg6"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_aoxul"]
+
+[sub_resource type="Resource" id="Resource_b1d2g"]
+script = ExtResource("4_aoxul")
+name_ko = "작업조+"
+description_ko = "대상 아군과 상하좌우 1칸의 아군에게 쉴드(방어력의 120%)"
+cost = 1
+category = "skill"
+attack_type = "ally"
+area = Array[Vector2i]([Vector2i(0, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1)])
+keywords = PackedStringArray()
+
+[resource]
+script = ExtResource("4_aoxul")
+id = "zrenun5z3jqip98q1zxo"
+deck_id = "46zsw2bbgq4wyb3th9u7"
+name_ko = "작업조"
+description_ko = "대상 아군과 상하좌우 1칸의 아군에게 쉴드(방어력의 80%)"
+cost = 1
+category = "skill"
+attack_type = "ally"
+area = Array[Vector2i]([Vector2i(0, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1)])
+keywords = PackedStringArray()
+upgrades = Array[ExtResource("4_aoxul")]([SubResource("Resource_b1d2g")])

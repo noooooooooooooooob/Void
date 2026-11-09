@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://xo1dk0m2ntkb"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_pvlwi"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_hd6dg"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_lj44a"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_3epm0"]
+
+[sub_resource type="Resource" id="Resource_hcnbd"]
+script = ExtResource("4_3epm0")
+name_ko = "돌 던지기+"
+description_ko = "쉴드 전부 소모. 소모한 쉴드의 120%만큼 피해"
+attack_type = "ranged"
+keywords = PackedStringArray()
+
+[resource]
+script = ExtResource("4_3epm0")
+id = "oaedoecve6pr5n8i4p40"
+deck_id = "46zsw2bbgq4wyb3th9u7"
+name_ko = "돌 던지기"
+description_ko = "쉴드 전부 소모. 소모한 쉴드의 100%만큼 피해"
+attack_type = "ranged"
+keywords = PackedStringArray()
+upgrades = Array[ExtResource("4_3epm0")]([SubResource("Resource_hcnbd")])
