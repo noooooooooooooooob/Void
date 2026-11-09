@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://dq2lenauc53wa"]
+
+[ext_resource type="Script" uid="uid://dqn4t6mpv7w4t" path="res://Scripts/ui/room_screen.gd" id="1_5omc2"]
+
+[node name="RoomScreen" type="Control" unique_id=54825304]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_5omc2")
+
+[node name="Background" type="ColorRect" parent="." unique_id=947716271]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.118, 0.11, 0.133, 1)
+
+[node name="Box" type="VBoxContainer" parent="." unique_id=104260357]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Box" unique_id=741998520]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "이벤트"
+horizontal_alignment = 1
+
+[node name="BodyLabel" type="Label" parent="Box" unique_id=204531469]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "무언가 일어났다."
+horizontal_alignment = 1
+
+[node name="ChoiceA" type="Button" parent="Box" unique_id=15421881]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "A 선택지"
+
+[node name="ChoiceB" type="Button" parent="Box" unique_id=670871155]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "B 선택지"
+
+[node name="NextButton" type="Button" parent="Box" unique_id=961561099]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "다음"
