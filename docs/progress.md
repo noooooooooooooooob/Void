@@ -18,21 +18,21 @@
 | 전투 화면 (시험판) | 시험용 홍연(타격 4·사격 3·방어 3) vs 시험용 적 A·B 한 판을 직접 플레이. 원거리·근접 카드는 휜 화살표로 대상 지정, 자신 카드는 두 번 클릭/끌어 올리기, 빈 칸 클릭으로 이동, 적 차례 0.7초 간격 자동, 떠오르는 숫자·전투 기록, 승리/패배 → 다시 하기. 손패에 계산된 수치 표시 | `ui/battle_screen/battle_screen.tscn` 열고 F6. 데이터 `battles/test_battle.tres` |
 | 전투 데이터 | 격자 크기 + 아군/적 배치 리소스 (`BattleData`), 진행 담당 `BattleSession` (의뢰 파티를 밖에서 넣을 수 있음) | `Scripts/battle/battle_data.gd`, `battle_session.gd` |
 | 시작 화면 | 게임 메인 씬. 시작 버튼 → 스테이지 지도 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
-| 스테이지 지도 (시험판) | 들어올 때마다 랜덤 지도 생성(시작 → 3열×3행 전투 6·이벤트 3 → 상점 → 보스), 노드별 색상 표시. 연결선·이동·노드 진입은 아직 없음 | `Scenes/ui/stage_map/`, `Scripts/stage/` (StageNode·StageGenerator), 테스트 `tests/stage/` |
-| 브람 (2026-11-09) | 유닛 브람 웰번(덱 10장), 카드 10장·강화 10장 효과, 상태 도발·대신 맞기. 새 규칙: 쉴드 전부 소모(`BlockCost`), 현재 쉴드 비례(`CurrentBlockValue`), 쉴드 제거(`RemoveBlockEffect`), 끌어오기(`PullEffect`), 도발(`StatusData.taunts`), 대신 맞기(`StatusData.guarded_by_applier`). 아직 어떤 전투 데이터에도 배치 안 됨, 전투 그림 칸이 없어 그림 미연결 | `entities/units/bram_welburn.tres`, `cards/data/브람/`, `statuses/data/` |
+| 스테이지 지도 (시험판) | 들어올 때마다 랜덤 지도 생성(시작 → 3열×3행 전투 6·이벤트 3 → 상점 → 보스), 노드별 색상 표시. 연결선·이동·노드 진입은 아직 없음 | `Scenes/ui/stage_map/`, `Scripts/ui/`, `Scripts/stage/` (StageNode·StageGenerator), 테스트 `tests/stage/` |
+| 브람 (2026-11-09) | 유닛 브람 웰번(덱 10장), 카드 10장·강화 10장 효과, 상태 도발·대신 맞기. 새 규칙: 쉴드 전부 소모(`BlockCost`), 현재 쉴드 비례(`CurrentBlockValue`), 쉴드 제거(`RemoveBlockEffect`), 끌어오기(`PullEffect`), 도발(`StatusData.taunts`), 대신 맞기(`StatusData.guarded_by_applier`). 시험 전투(`battles/test_battle.tres`)에 배치됨, 전투 그림 칸이 없어 그림 미연결 | `entities/units/bram_welburn.tres`, `cards/data/브람/`, `statuses/data/` |
 | 그림 추가 (코드에서 아직 안 씀) | 캐릭터 10명 일러스트·픽셀 아트(`mo_liang` 은 일러스트만), 배경 5장, 공허 지도 | `Art/characters/`, `Art/backgrounds/`, `Art/ui/void_map.png` |
 
 ## 진행 중: 의뢰 스테이지·사무소 (`feat/office-hub`, 2026-11-07~09)
 
 - 2026-11-08: 사무소 허브, 로스터, 캐릭터 페이지, 카드 공방, 공허 지도, 파티 선택, ESC 메뉴, 비스듬한 전투 격자, 브람 덱·유닛을 만들었다가 **전부 되돌림** (`3a823f6`). 씬·데이터를 에디터가 아니라 헤드리스 스크립트로 만들었기 때문. 지금은 코드가 없고 git 기록에만 있음 (`eedcfb6`~`dd22343`). 그림 파일만 다시 넣음 (`f899b9c`)
-- `feat/stage` 브랜치에만 있고 `feat/office-hub` 에는 없는 것: 연결선·커서·노드 진입, `StageProgress`, `StageRun` 자동 로드, 전투 간 파티 HP 유지, 이벤트·상점 임시 방(`room_screen`), 전투 화면 의뢰 모드, 첫 열 전투 규칙
+- `feat/stage` 브랜치에만 있고 `feat/office-hub` 에는 없는 것: 연결선·커서·노드 진입, `StageProgress`, `StageRun` 자동 로드, 전투 간 파티 HP 유지, 이벤트·상점 임시 방(`room_screen`), 전투 화면 의뢰 모드
+- 2026-11-09: 머지 전 정리 — 생성기 "첫 열은 모두 전투" 규칙 추가, `CLAUDE.md` 1층 규칙을 새 규칙으로 수정, `title_screen.gd`·`stage_map.gd`·`stage_node_view.gd` 를 `Scripts/ui/` 로 이동, 잘리던 지도를 화면 가운데로 옮기고 노드 글자 가운데 정렬
 - 두 브랜치 모두 아직 `main` 에 머지되지 않음
+- 다음 할 일: `main` 머지 후 새 브랜치에서 의뢰 진행 복구. 로직은 `0c84bcc` 에서 가져오고 씬은 에디터에서 만든다. `feat/stage` 를 그대로 머지하면 revert 때문에 복구되지 않음
 
 남은 문제:
 
-- 1층 규칙 불일치: 생성기는 3열×3행(전투 6·이벤트 3) + 상점 + 보스, `feat/office-hub` 의 `CLAUDE.md` 는 3줄×5칸·보스 전 휴식. 새 규칙은 `feat/stage` 의 `CLAUDE.md` 에만 있고, 노션 1층 설계는 2026-11-07 기록 기준으로 아직 안 고침
-- 생성기에 "첫 열은 모두 전투" 검사가 없어 첫 열에 이벤트가 나올 수 있음 (`feat/stage` 에는 수정 있음)
-- `title_screen.gd`, `stage_map.gd`, `stage_node_view.gd` 가 `Scenes/ui/` 아래에 있음. 규칙상 `Scripts/ui/` 로 옮겨야 함 (`feat/stage` 에는 옮겨져 있음)
+- 노션 1층 설계는 2026-11-07 기록 기준으로 아직 3줄×5칸·휴식 규칙 그대로
 
 ## 진행 중: 전투 시스템 (카드·효과·턴)
 

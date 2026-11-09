@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://4j0800vekvrf"]
 
-[ext_resource type="Script" uid="uid://gb44x6igk73j" path="res://Scenes/ui/title_screen/title_screen.gd" id="1_s84n8"]
+[ext_resource type="Script" uid="uid://gb44x6igk73j" path="res://Scripts/ui/title_screen.gd" id="1_s84n8"]
 [ext_resource type="PackedScene" uid="uid://b5k3ixvdrl8bf" path="res://Scenes/ui/stage_map/stage_map.tscn" id="2_22d8f"]
 
 [node name="TitleScreen" type="Control" unique_id=1423069208]

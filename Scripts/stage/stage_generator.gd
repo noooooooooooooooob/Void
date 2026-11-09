@@ -4,7 +4,7 @@ extends RefCounted
 ##
 ## 규칙 (2026-11-07 사용자 결정):
 ##   - 3행. 시작(2행) → 가운데 3열 × 3행 = 전투 6 + 이벤트 3 → 상점(2행) → 보스(2행)
-##   - 한 행에 이벤트는 최대 2개
+##   - 첫 열은 모두 전투 (노션 1층 설계), 한 행에 이벤트는 최대 2개
 ##   - 시작은 첫 열 3개 모두와 이어지고, 마지막 열 3개는 모두 상점으로 모인다
 ##   - 가운데 노드는 다음 열의 1개 또는 2개와 이어진다 (같은 행 또는 바로 위/아래 행만)
 ##   - 모든 노드는 들어오는 길이 하나 이상 있고, 길끼리 X 자로 엇갈리지 않는다
@@ -70,7 +70,7 @@ func generate() -> Array[StageNode]:
 
 # --- 종류 정하기 ---
 
-## 가운데 9칸의 종류. 인덱스 = 행 * MID_COLUMNS + 열(0부터). 규칙: 한 행에 이벤트 최대 2개
+## 가운데 9칸의 종류. 인덱스 = 행 * MID_COLUMNS + 열(0부터). 규칙: 첫 열은 모두 전투, 한 행에 이벤트 최대 2개
 func _roll_kinds() -> Array:
 	var kinds: Array = []
 	for i in BATTLE_COUNT:
@@ -84,9 +84,13 @@ func _roll_kinds() -> Array:
 	return kinds
 
 
-## 모든 행의 이벤트 수가 MAX_EVENTS_PER_ROW 이하인지
+## 종류 배치가 규칙에 맞는지: 첫 열은 모두 전투 + 모든 행의 이벤트 수가 MAX_EVENTS_PER_ROW 이하
 func _kinds_ok(kinds: Array) -> bool:
 	for r in ROWS:
+		# 1. 첫 열(화면의 열 1)은 모두 전투 (노션 1층 설계: 첫 칸은 항상 전투)
+		if kinds[r * MID_COLUMNS] != StageNode.Kind.BATTLE:
+			return false
+		# 2. 이 행의 이벤트 수
 		var events := 0
 		for c in MID_COLUMNS:
 			if kinds[r * MID_COLUMNS + c] == StageNode.Kind.EVENT:
