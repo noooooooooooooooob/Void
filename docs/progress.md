@@ -20,6 +20,7 @@
 | 시작 화면 | 게임 메인 씬. 시작 버튼 → 스테이지 지도 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
 | 의뢰 진행 (시험판, 2026-11-10) | 의뢰마다 랜덤 지도(시작 → 3열×3행 전투 6·이벤트 3 → 상점 → 보스), 연결선, W/S·클릭으로 다음 노드 고르기, 스페이스·엔터로 실행. 전투 승리 → 지도, 패배 → 시작 화면, 보스 승리 → 의뢰 성공. 의뢰 안에서 HP 유지, HP 0 파티원 제외. 이벤트·상점은 자리만, 보스는 시험 전투 | `Scenes/ui/stage_map/`, `Scenes/ui/room_screen/`, `Scripts/stage/` (StageRun 자동 로드·StageProgress), 테스트 `tests/stage/`, `tests/ui/` |
 | 브람 (2026-11-09) | 유닛 브람 웰번(덱 10장), 카드 10장·강화 10장 효과, 상태 도발·대신 맞기. 새 규칙: 쉴드 전부 소모(`BlockCost`), 현재 쉴드 비례(`CurrentBlockValue`), 쉴드 제거(`RemoveBlockEffect`), 끌어오기(`PullEffect`), 도발(`StatusData.taunts`), 대신 맞기(`StatusData.guarded_by_applier`). 시험 전투(`battles/test_battle.tres`)에 배치됨, 전투 그림 칸이 없어 그림 미연결 | `entities/units/bram_welburn.tres`, `cards/data/브람/`, `statuses/data/` |
+| 전투 격자판 (2026-11-10) | 편마다 5×5 칸 판(`battle_board.tscn`)을 배경 씬에 아군용·적용으로 하나씩 넣고 칸 위치·크기·모양을 에디터에서 꾸민다. 전투가 시작되면 맞닿는 쪽 열·가운데 행부터 전투 크기만큼만 켜고 나머지는 숨김. 판이 없는 배경은 기존 정사각형 격자 | `Scenes/ui/battle_screen/battle_board.tscn`, `Scripts/ui/battle_board.gd` |
 | 그림 추가 (코드에서 아직 안 씀) | 캐릭터 10명 일러스트·픽셀 아트(`mo_liang` 은 일러스트만), 배경 5장, 공허 지도 | `Art/characters/`, `Art/backgrounds/`, `Art/ui/void_map.png` |
 
 ## 진행 중: 의뢰 스테이지 (`feat/stage-run`, 2026-11-07~10)

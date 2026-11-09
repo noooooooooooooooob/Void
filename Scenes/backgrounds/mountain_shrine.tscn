@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://goar44l5p1ya"]
 
 [ext_resource type="Texture2D" uid="uid://cicqadp7rjhib" path="res://Art/Terrian/안개 낀 산중 신사의 테라스.png" id="1_rlmvk"]
+[ext_resource type="PackedScene" uid="uid://c5yxjecsyp5ug" path="res://Scenes/ui/battle_screen/battle_board.tscn" id="2_u8l2e"]
 
 [node name="MountainShrine" type="Control" unique_id=796481465]
 layout_mode = 3
@@ -19,3 +20,18 @@ mouse_filter = 2
 texture = ExtResource("1_rlmvk")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="Ally Board" parent="." unique_id=1544493984 instance=ExtResource("2_u8l2e")]
+layout_mode = 0
+offset_left = 180.0
+offset_top = 269.0
+offset_right = 820.0
+offset_bottom = 909.0
+
+[node name="Enemy Board" parent="." unique_id=426616299 instance=ExtResource("2_u8l2e")]
+layout_mode = 0
+offset_left = 1007.0
+offset_top = 267.0
+offset_right = 1647.0
+offset_bottom = 907.0
+side = 1
