@@ -17,6 +17,7 @@
   `Godot_v4.7.2-stable_win64_console.exe --headless --path . --import` 후
   `... --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit`
 - 카드 데이터: 웹 카드 에디터 → 내보내기 zip → Godot **프로젝트 → 도구 → 카드 가져오기...** (`addons/card_importer`). `cards/data/` 의 `.tres` 는 웹 에디터 칸만 덮어쓰고 effects/costs/conditions 는 유지. 파일 이름 = 카드 이름(겹치면 `_<id>`), 찾을 때는 파일 안의 id 기준
+- 반대 방향: Godot **프로젝트 → 도구 → 카드 내보내기...** → 같은 형식의 zip → 웹 카드 에디터의 **가져오기** 버튼. 추가·변경만 하고 삭제하지 않음. effects/costs/conditions 는 웹 에디터에 없어서 나가지 않음
 
 ## 확정된 게임 규칙 (Notion "구현 확정", 2026-10-11)
 
