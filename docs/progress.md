@@ -1,6 +1,6 @@
 # Project Void 개발 진행 상황
 
-마지막 갱신: 2026-11-05
+마지막 갱신: 2026-11-09
 
 코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
 
@@ -9,6 +9,7 @@
 | 기능 | 내용 | 위치 |
 |---|---|---|
 | 카드 가져오기 | 웹 카드 에디터 내보내기(zip) → Godot 카드 데이터. 다시 가져와도 Godot에서 붙인 효과·비용·조건은 유지. 덱 폴더 = 덱 이름, 파일 이름 = 카드 이름(2026-11-05, 이름이 바뀌면 파일을 옮겨 uid 유지) | 프로젝트 → 도구 → 카드 가져오기... (`addons/card_importer`) |
+| 카드 내보내기 (2026-11-09) | 가져오기의 반대 방향. Godot 카드·키워드·그림 → 웹 에디터 형식 zip → 웹 에디터의 "가져오기" 버튼으로 미리보기 후 적용. 추가·변경만 하고 삭제는 안 함, 이미 있는 덱 이름은 유지, 내용이 같은 그림은 다시 올리지 않음. Godot 쪽 효과·비용·조건은 안 나감 | 프로젝트 → 도구 → 카드 내보내기... (`addons/card_importer/card_exporter.gd`) |
 | 카드 화면 | 웹 에디터와 같은 카드 모양, 마우스를 올리면 키워드 설명 | `ui/card_view/card_view.tscn` |
 | 카드 갤러리 | 에디터에서 열기만 해도 카드가 보임. 인스펙터 Deck 으로 덱별 보기, 실행(F6) 시 탭 | `ui/card_gallery/card_gallery.tscn` |
 | 테스트 도구 | GUT 9.7.1 (실행 방법은 CLAUDE.md) | `addons/gut`, `tests/` |
@@ -16,6 +17,22 @@
 | 상태 데이터 | 출혈(드로우 페이즈 고정 피해 × 수치), 혈갑(차례 종료 방어도 × 수치), 핏방울(패시브, 적이 받은 출혈 피해만큼 쌓임) — 에디터 인스펙터로 제작 | `statuses/data/` |
 | 전투 화면 (시험판) | 시험용 홍연(타격 4·사격 3·방어 3) vs 시험용 적 A·B 한 판을 직접 플레이. 원거리·근접 카드는 휜 화살표로 대상 지정, 자신 카드는 두 번 클릭/끌어 올리기, 빈 칸 클릭으로 이동, 적 차례 0.7초 간격 자동, 떠오르는 숫자·전투 기록, 승리/패배 → 다시 하기. 손패에 계산된 수치 표시 | `ui/battle_screen/battle_screen.tscn` 열고 F6. 데이터 `battles/test_battle.tres` |
 | 전투 데이터 | 격자 크기 + 아군/적 배치 리소스 (`BattleData`), 진행 담당 `BattleSession` (의뢰 파티를 밖에서 넣을 수 있음) | `Scripts/battle/battle_data.gd`, `battle_session.gd` |
+| 시작 화면 | 게임 메인 씬. 시작 버튼 → 스테이지 지도 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
+| 스테이지 지도 (시험판) | 들어올 때마다 랜덤 지도 생성(시작 → 3열×3행 전투 6·이벤트 3 → 상점 → 보스), 노드별 색상 표시. 연결선·이동·노드 진입은 아직 없음 | `Scenes/ui/stage_map/`, `Scripts/ui/`, `Scripts/stage/` (StageNode·StageGenerator), 테스트 `tests/stage/` |
+| 브람 (2026-11-09) | 유닛 브람 웰번(덱 10장), 카드 10장·강화 10장 효과, 상태 도발·대신 맞기. 새 규칙: 쉴드 전부 소모(`BlockCost`), 현재 쉴드 비례(`CurrentBlockValue`), 쉴드 제거(`RemoveBlockEffect`), 끌어오기(`PullEffect`), 도발(`StatusData.taunts`), 대신 맞기(`StatusData.guarded_by_applier`). 시험 전투(`battles/test_battle.tres`)에 배치됨, 전투 그림 칸이 없어 그림 미연결 | `entities/units/bram_welburn.tres`, `cards/data/브람/`, `statuses/data/` |
+| 그림 추가 (코드에서 아직 안 씀) | 캐릭터 10명 일러스트·픽셀 아트(`mo_liang` 은 일러스트만), 배경 5장, 공허 지도 | `Art/characters/`, `Art/backgrounds/`, `Art/ui/void_map.png` |
+
+## 진행 중: 의뢰 스테이지·사무소 (`feat/office-hub`, 2026-11-07~09)
+
+- 2026-11-08: 사무소 허브, 로스터, 캐릭터 페이지, 카드 공방, 공허 지도, 파티 선택, ESC 메뉴, 비스듬한 전투 격자, 브람 덱·유닛을 만들었다가 **전부 되돌림** (`3a823f6`). 씬·데이터를 에디터가 아니라 헤드리스 스크립트로 만들었기 때문. 지금은 코드가 없고 git 기록에만 있음 (`eedcfb6`~`dd22343`). 그림 파일만 다시 넣음 (`f899b9c`)
+- `feat/stage` 브랜치에만 있고 `feat/office-hub` 에는 없는 것: 연결선·커서·노드 진입, `StageProgress`, `StageRun` 자동 로드, 전투 간 파티 HP 유지, 이벤트·상점 임시 방(`room_screen`), 전투 화면 의뢰 모드
+- 2026-11-09: 머지 전 정리 — 생성기 "첫 열은 모두 전투" 규칙 추가, `CLAUDE.md` 1층 규칙을 새 규칙으로 수정, `title_screen.gd`·`stage_map.gd`·`stage_node_view.gd` 를 `Scripts/ui/` 로 이동, 잘리던 지도를 화면 가운데로 옮기고 노드 글자 가운데 정렬
+- 두 브랜치 모두 아직 `main` 에 머지되지 않음
+- 다음 할 일: `main` 머지 후 새 브랜치에서 의뢰 진행 복구. 로직은 `0c84bcc` 에서 가져오고 씬은 에디터에서 만든다. `feat/stage` 를 그대로 머지하면 revert 때문에 복구되지 않음
+
+남은 문제:
+
+- 노션 1층 설계는 2026-11-07 기록 기준으로 아직 3줄×5칸·휴식 규칙 그대로
 
 ## 진행 중: 전투 시스템 (카드·효과·턴)
 
@@ -74,6 +91,8 @@
 
 ## 구조 변경
 
+- 2026-11-09: 캐릭터 후보 그림 35장을 `Art_src/` 에서 뺌 (게임에 안 쓰는 그림, 저장소 밖 로컬 폴더 `C:\C\ProjectVoid_Assets` 에 보관)
+- 2026-11-07: 메인 씬을 시작 화면으로 지정 (`project.godot`)
 - 2026-11-04: 게임 스크립트를 모두 `Scripts/` 폴더로 옮김 (`Scripts/battle`, `Scripts/cards`, `Scripts/statuses`, `Scripts/ui`). 씬·데이터·테스트·플러그인은 제자리
 - 2026-11-06: 전투 배경 = 배경 씬. `BattleData.background`(PackedScene) → 전투 화면이 `Background/BackgroundLayer` 에 붙임. 배경 씬은 `Scenes/backgrounds/` (첫 배경: `mountain_shrine.tscn`, 겹 1장). 패럴랙스·마우스 따라 움직이기는 나중에 배경 씬 안에서
 - 2026-11-06: 씬을 모두 `Scenes/` 로 옮김 (`ui/…` → `Scenes/ui/…`). 그림은 `Art/` (characters/<이름>, enemies/<이름>, ui, backgrounds, vfx), 원본 `.aseprite`·`.psd` 는 `Art_src/` (`.gdignore`). 카드 그림은 카드 가져오기가 관리하므로 `cards/art/` 그대로. 빈 `battle/` 폴더 삭제
@@ -88,6 +107,8 @@
 - 유닛 스탯 가져오기: 유닛 스탯은 노션 등장인물 표에서 먼저 고친다 (2026-11-04 결정). 노션 → `entities/units/*.tres` 가져오기 툴을 만들어 스탯만 덮어쓰고 덱·패시브·장비 연결은 유지 (카드 가져오기와 같은 방식). 그전까지는 노션 값을 인스펙터에 직접 옮겨 적는다
 
 ## 기획 미정 (구현은 자리만 마련)
+
+- 브람 임시 규칙 (2026-11-09, 노션 확정 전): HP·SP·공격·방어는 노션이 0 이라 기본값(100·3·10·10). 갈고리 걸기는 브람과 같은 행의 맨 앞 칸으로, 차 있으면 피해만. 돌 던지기·내려찍기는 쉴드 0 이면 사용 불가, 치명 없음. 대신 맞기는 상대의 공격만(상태 피해 제외). 도발은 다른 행의 근접 공격도 끌어옴. "1턴간"은 브람의 다음 차례 시작까지
 
 - 홍연의 HP·SP·공격·방어·속도 (노션에 0 / 1~10 으로 미정 → 예시 데이터는 기본값 사용)
 - 피의 갈망의 정확한 수치 (예시 데이터는 잃은 HP 1%당 공격 +0.5%), 회복·혈갑 흡수 비율

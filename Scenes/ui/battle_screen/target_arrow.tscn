@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://jexoivr7n6g5"]
 
-[ext_resource type="Script" path="res://Scripts/ui/target_arrow.gd" id="1_noi8e"]
+[ext_resource type="Script" uid="uid://c6qyuebwpxrt" path="res://Scripts/ui/target_arrow.gd" id="1_noi8e"]
 
 [node name="TargetArrow" type="Node2D" unique_id=1135533263]
 top_level = true

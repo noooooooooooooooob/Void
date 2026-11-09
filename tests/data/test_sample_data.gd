@@ -127,8 +127,10 @@ func _count(deck: Array, name_ko: String) -> int:
 func test_test_battle_data():
 	var d: BattleData = load("res://battles/test_battle.tres")
 	assert_eq([d.rows, d.ally_cols, d.enemy_cols], [3, 4, 4])
-	assert_eq(d.allies.size(), 1)
+	assert_eq(d.allies.size(), 2)
 	assert_eq(d.enemies.size(), 2)
+	assert_eq(d.allies[1].unit.display_name, "브람 웰번")
+	assert_eq(d.allies[1].cell, Vector2i(3, 0))
 	var hero := d.allies[0].unit
 	assert_eq(hero.display_name, "홍연 (시험)")
 	assert_eq(hero.deck.size(), 10)

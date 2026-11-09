@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://bobapyl5n3qnl"]
+
+[ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_ja26g"]
+[ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_404vs"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_pwm3k"]
+[ext_resource type="Script" uid="uid://bubrtaft5lcun" path="res://Scripts/cards/effects/damage_effect.gd" id="4_pwm3k"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_qtbsq"]
+[ext_resource type="Script" uid="uid://cty3mion0opii" path="res://Scripts/cards/effects/pull_effect.gd" id="5_qtbsq"]
+
+[sub_resource type="Resource" id="Resource_pwm3k"]
+script = ExtResource("4_pwm3k")
+percent = 60.0
+
+[sub_resource type="Resource" id="Resource_qtbsq"]
+script = ExtResource("5_qtbsq")
+
+[sub_resource type="Resource" id="Resource_b8gsr"]
+script = ExtResource("4_pwm3k")
+percent = 90.0
+
+[sub_resource type="Resource" id="Resource_l0rpp"]
+script = ExtResource("5_qtbsq")
+
+[sub_resource type="Resource" id="Resource_aikvw"]
+script = ExtResource("4_qtbsq")
+name_ko = "갈고리 걸기+"
+description_ko = "ATK 90%로 공격. 대상을 브람 앞 칸으로 끌어옴"
+cost = 1
+attack_type = "ranged"
+keywords = PackedStringArray()
+effects = Array[ExtResource("3_pwm3k")]([SubResource("Resource_b8gsr"), SubResource("Resource_l0rpp")])
+
+[resource]
+script = ExtResource("4_qtbsq")
+id = "i65fdhjk1eyy37q9ah8r"
+deck_id = "46zsw2bbgq4wyb3th9u7"
+name_ko = "갈고리 걸기"
+description_ko = "ATK 60%로 공격. 대상을 브람 앞 칸으로 끌어옴"
+cost = 1
+attack_type = "ranged"
+keywords = PackedStringArray()
+upgrades = Array[ExtResource("4_qtbsq")]([SubResource("Resource_aikvw")])
+effects = Array[ExtResource("3_pwm3k")]([SubResource("Resource_pwm3k"), SubResource("Resource_qtbsq")])

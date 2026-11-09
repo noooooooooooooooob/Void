@@ -7,6 +7,8 @@ extends ValueSource
 
 ## 소모량을 볼 상태 id
 @export var status_id: String
+## 소모량의 몇 % 를 배율로 쓸지 (100 = 소모량 그대로). 예) 내려찍기: 소모한 쉴드의 150%
+@export var percent: float = 100.0
 
 
 func _init(id: String = "") -> void:
@@ -14,4 +16,4 @@ func _init(id: String = "") -> void:
 
 
 func evaluate(ctx: EffectContext) -> float:
-	return float(ctx.values.get("consumed:" + status_id, 0))
+	return float(ctx.values.get("consumed:" + status_id, 0)) * percent / 100.0

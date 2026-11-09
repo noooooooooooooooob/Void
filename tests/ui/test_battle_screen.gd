@@ -215,3 +215,28 @@ func test_background_scene_from_battle_data():
 func test_no_background_leaves_layer_empty():
 	var s := _screen()
 	assert_eq(s.get_node("%BackgroundLayer").get_child_count(), 0)
+
+func test_real_test_battle_plays_through_with_hongyeon_and_bram():
+	var s = load("res://Scenes/ui/battle_screen/battle_screen.tscn").instantiate()
+	s.enemy_delay = 0.0
+	add_child_autofree(s)
+	var acted := {}
+	for step in 500:
+		if s.session.is_finished():
+			break
+		if s.session.is_enemy_turn():
+			s.session.step_enemy()
+			continue
+		var hero: BattleUnit = s.session.active
+		acted[hero.data.display_name] = true
+		for card in hero.hand.duplicate():
+			var targets: Array[BattleUnit] = s.session.targets_for(card)
+			if not targets.is_empty():
+				s.session.play(card, targets[0])
+			if s.session.is_finished():
+				break
+		if not s.session.is_finished():
+			s.session.end_player_turn()
+	assert_true(s.session.is_finished())
+	assert_true(acted.has("브람 웰번"), str(acted.keys()))
+	assert_true(acted.has("홍연 (시험)"), str(acted.keys()))

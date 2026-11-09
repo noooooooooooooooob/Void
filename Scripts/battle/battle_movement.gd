@@ -59,6 +59,17 @@ func move(u: BattleUnit, to: Vector2i) -> bool:
 	return true
 
 
+## 카드 효과로 u 를 to 로 옮긴다 (끌어오기 등). 이동력을 쓰지 않고, 길이 막혀 있어도 도착 칸만 비어 있으면 된다.
+## 움직였으면 UNIT_MOVED 를 내고 true. 제자리이거나 칸이 차 있거나 격자 밖이면 아무것도 바뀌지 않는다.
+func force_move(u: BattleUnit, to: Vector2i) -> bool:
+	if not u.alive or to == u.cell or not battle.in_grid(u.side, to) or _blocked(u, to):
+		return false
+	var steps: int = absi(to.x - u.cell.x) + absi(to.y - u.cell.y)
+	u.cell = to
+	battle.events.emit(BattleEvent.make(BattleTypes.Event.UNIT_MOVED, u, null, steps))
+	return true
+
+
 ## 그 칸에 u 말고 다른 살아 있는 같은 편 유닛이 있는지
 func _blocked(u: BattleUnit, cell: Vector2i) -> bool:
 	var other: BattleUnit = battle.unit_at(u.side, cell)

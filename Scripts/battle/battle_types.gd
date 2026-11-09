@@ -42,8 +42,9 @@ enum Who { ACTOR, OWNER }
 ## OWNER_IS_APPLIER 이벤트를 일으킨 상태를 주인이 걸었을 때 (예: 내가 건 출혈의 피해에만)
 ##   상태로 생긴 피해는 행위자가 없고(아무도 "준" 것이 아님), 대신 그 상태를 건 유닛이 이벤트에 기록된다.
 ## TARGET_IS_ENEMY_OF_OWNER 이벤트의 대상이 주인의 적일 때 (예: 핏방울 — 적이 받은 출혈 피해 전부)
+## APPLIER_IS_ACTOR 이 상태를 건 유닛이 이벤트의 행위자일 때 (예: 대신 맞기 — 브람의 다음 차례가 오면 끝남)
 ## (새 값은 맨 뒤에 붙인다: .tres 에 숫자로 저장됨)
-enum Filter { ANY, OWNER_IS_ACTOR, OWNER_IS_TARGET, OWNER_IS_APPLIER, TARGET_IS_ENEMY_OF_OWNER }
+enum Filter { ANY, OWNER_IS_ACTOR, OWNER_IS_TARGET, OWNER_IS_APPLIER, TARGET_IS_ENEMY_OF_OWNER, APPLIER_IS_ACTOR }
 
 ## 상태의 종류 (노션 버프 상태 DB의 태그와 같음)
 enum StatusTag { BUFF, DEBUFF, PASSIVE }

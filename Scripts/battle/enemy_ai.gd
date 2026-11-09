@@ -68,10 +68,14 @@ func _pick_origin(u: BattleUnit, card: CardData) -> BattleUnit:
 ## 적 u 의 원거리 공격 대상: 상대 편(플레이어 쪽) 살아 있는 유닛 중 어그로 비율로 가중 랜덤.
 ## 예) 어그로 100 / 300 → 25% / 75%. 어그로가 0 인 유닛은 다른 유닛에 어그로가 있으면 뽑히지 않는다.
 ## 모두 0 이면 균등하게 고른다. 대상이 없으면 null. (사용자 결정 2026-11-05)
+## 도발한 유닛이 있으면 그 유닛들 중에서만 고른다.
 func pick_ranged_target(u: BattleUnit) -> BattleUnit:
 	var foes: Array[BattleUnit] = battle.enemies_of(u)
 	if foes.is_empty():
 		return null
+	var forced: Array[BattleUnit] = battle.taunters(foes[0].side)
+	if not forced.is_empty():
+		foes = forced
 	var weights: Array[int] = []
 	var total := 0
 	for f in foes:

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StatusData" format=3 uid="uid://bnip3lagjq38v"]
+
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="1_fiuev"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="2_x7n7y"]
+[ext_resource type="Script" uid="uid://ccs11dk06ac8p" path="res://Scripts/statuses/status_trigger.gd" id="3_h044v"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="4_qyfn1"]
+[ext_resource type="Script" uid="uid://cqxwuf5rg0o6d" path="res://Scripts/cards/effects/modify_stacks_effect.gd" id="5_romtq"]
+
+[sub_resource type="Resource" id="Resource_l2w2u"]
+script = ExtResource("5_romtq")
+status_id = "taunt"
+delta = -1
+target = 2
+
+[sub_resource type="Resource" id="Resource_w7taw"]
+script = ExtResource("3_h044v")
+event = 4
+filter = 1
+effects = Array[ExtResource("4_qyfn1")]([SubResource("Resource_l2w2u")])
+
+[resource]
+script = ExtResource("2_x7n7y")
+id = "taunt"
+display_name = "도발"
+description = "다음 차례까지 모든 적이 이 유닛만 공격"
+taunts = true
+triggers = Array[ExtResource("3_h044v")]([SubResource("Resource_w7taw")])
