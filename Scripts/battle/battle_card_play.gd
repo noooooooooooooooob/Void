@@ -104,7 +104,11 @@ func _origin_error(u: BattleUnit, eff: CardData, origin: BattleUnit) -> String:
 		"melee":
 			return "" if battle.melee_target(u) else "melee_target"
 		"ranged":
-			return "" if origin and origin.alive and origin.side != u.side else "origin"
+			if not (origin and origin.alive and origin.side != u.side):
+				return "origin"
+			# 도발: 상대 편에 도발한 유닛이 있으면 그 유닛만 지정할 수 있다.
+			var forced: Array[BattleUnit] = battle.taunters(origin.side)
+			return "" if forced.is_empty() or forced.has(origin) else "origin"
 		"ally":
 			return "" if origin and origin.alive and origin.side == u.side else "origin"
 		"self":

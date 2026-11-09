@@ -16,3 +16,8 @@ func can_pay(_ctx: EffectContext) -> bool:
 ## 비용을 실제로 지불한다. 지불한 양은 ctx.values 에 기록해서 효과가 참조할 수 있게 한다.
 func pay(_ctx: EffectContext) -> void:
 	pass
+
+
+## 손패 수치 표시용: 지금 쓴다면 ctx.values 에 기록될 값만 적는다. 실제로 지불하지는 않는다.
+func preview(_ctx: EffectContext) -> void:
+	pass

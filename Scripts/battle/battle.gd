@@ -264,13 +264,28 @@ func enemies_of(u: BattleUnit) -> Array[BattleUnit]:
 
 ## 근접 공격 대상: u 와 같은 행에서 상대 격자의 맨 앞 열부터 찾아 처음 만나는 적.
 ## 그 행에 적이 없으면 null (= 근접 카드를 쓸 수 없음). (노션 구현 확정)
+## 도발: 상대 편에 도발한 유닛이 있으면 행과 상관없이 그 유닛을 친다.
 func melee_target(u: BattleUnit) -> BattleUnit:
 	var enemy_side := _other_side(u.side)
+	var forced := taunters(enemy_side)
+	if not forced.is_empty():
+		return forced[0]
 	for col in range(cols_of(enemy_side) - 1, -1, -1):
 		var hit := unit_at(enemy_side, Vector2i(col, u.cell.y))
 		if hit:
 			return hit
 	return null
+
+
+## 그 편에서 도발 중인 살아 있는 유닛들 (전투 참여 순서). 상대 편의 공격은 이 유닛들만 노릴 수 있다.
+func taunters(side: int) -> Array[BattleUnit]:
+	var out: Array[BattleUnit] = []
+	for u in living(side):
+		for inst in u.statuses:
+			if inst.data.taunts:
+				out.append(u)
+				break
+	return out
 
 
 ## 광역 대상: 기준 유닛(origin)의 칸에 오프셋들을 더한 칸의 유닛들.
@@ -310,6 +325,11 @@ func path_length(u: BattleUnit, to: Vector2i) -> int:
 	return movement.path_length(u, to)
 
 
+## 카드 효과로 u 를 to 칸으로 옮긴다 (이동력 안 씀, 도착 칸이 비어 있어야 함). 옮겼으면 true.
+func force_move(u: BattleUnit, to: Vector2i) -> bool:
+	return movement.force_move(u, to)
+
+
 # --- 카드 ---
 # 카드 사용 규칙은 battle_card_play.gd 에 있다. 여기는 다른 코드(화면, 적 행동, 키워드 규칙)가
 # Battle 하나만 보고 쓸 수 있게 이어 주는 창구.
@@ -340,10 +360,16 @@ func exile_card(u: BattleUnit, card: CardData) -> void:
 ## actor 가 target 에게 amount 만큼 피해를 준다. (설계 문서 3.5~3.6, 기획 결정)
 ## actor 는 null 일 수 있다: 상태로 생긴 피해(출혈 등)는 아무도 "준" 것이 아니다 → 스태미너 회복 없음.
 ## source 는 이벤트에 담길 출처, applier 는 상태로 생긴 피해일 때 그 상태를 건 유닛(이벤트에 기록만).
-## 순서: 방어도 → HP / 대상 스태미너 감소 / 준 쪽 스태미너 회복 / 이벤트 / 사망
+## 순서: 대신 맞기 → 방어도 → HP / 대상 스태미너 감소 / 준 쪽 스태미너 회복 / 이벤트 / 사망
 func apply_damage(actor: BattleUnit, target: BattleUnit, amount: int, source = null, applier: BattleUnit = null) -> void:
 	if amount <= 0 or target == null or not target.alive:
 		return
+
+	# 0. 대신 맞기: 상대의 공격이면 상태를 건 유닛이 대신 받는다. 이후 처리는 전부 대신 맞는 유닛 기준.
+	var guard := _guard_of(actor, target)
+	if guard:
+		amount = maxi(1, floori(amount * (100.0 - guard.data.guard_reduction) / 100.0))
+		target = guard.applier
 
 	# 1. 방어도가 먼저 막고, 남은 만큼 HP 가 깎인다.
 	var blocked := mini(target.block, amount)
@@ -391,6 +417,27 @@ func add_block(target: BattleUnit, amount: int, source = null) -> void:
 		return
 	target.block += amount
 	events.emit(BattleEvent.make(BattleTypes.Event.BLOCK_GAINED, null, target, amount, source))
+
+
+## target 의 방어도(쉴드)를 모두 없애고, 없앤 양을 돌려준다. 있었으면 BLOCK_RESET 발행.
+func clear_block(target: BattleUnit, source = null) -> int:
+	var removed := target.block
+	if removed > 0:
+		target.block = 0
+		events.emit(BattleEvent.make(BattleTypes.Event.BLOCK_RESET, null, target, removed, source))
+	return removed
+
+
+## target 이 받을 공격을 대신 맞아 줄 상태. 없으면 null.
+## 상대가 준 피해만 해당한다 (상태로 생긴 피해는 actor 가 없다 — 사용자 결정 2026-11-09).
+## 건 유닛이 죽었거나 자기 자신이면 효과가 없다. 대신 맞는 유닛에게 다시 넘기지는 않는다.
+func _guard_of(actor: BattleUnit, target: BattleUnit) -> StatusInstance:
+	if actor == null or actor.side == target.side:
+		return null
+	for inst in target.statuses:
+		if inst.data.guarded_by_applier and inst.applier and inst.applier.alive and inst.applier != target:
+			return inst
+	return null
 
 
 # --- 상태 ---
@@ -450,6 +497,7 @@ func _subscribe_triggers(inst: StatusInstance) -> void:
 ## 2. 필터: ANY / OWNER_IS_ACTOR(주인이 이벤트를 일으킴) / OWNER_IS_TARGET(주인이 이벤트를 받음)
 ##          / OWNER_IS_APPLIER(이벤트를 일으킨 상태를 주인이 걸었음)
 ##          / TARGET_IS_ENEMY_OF_OWNER(이벤트 대상이 주인의 적 — 예: 핏방울은 적이 받은 출혈 피해 전부)
+##          / APPLIER_IS_ACTOR(상태를 건 유닛이 이벤트를 일으킴 — 예: 대신 맞기는 건 유닛의 다음 차례에 끝남)
 ## 3. 출처 필터: source_status_id 가 있으면 이벤트 출처가 그 상태일 때만 (예: 핏방울은 출혈 피해에만)
 ## 4. 실행 정보: 행위자 = 없음, 주인 = 상태를 가진 유닛, 건 유닛 = 기억만, 출처 = 상태 데이터
 ##    상태로 생긴 효과는 아무도 "준" 것이 아니다 (사용자 결정): 출혈 피해로는 누구도 스태미너를 회복하지
@@ -469,6 +517,9 @@ func _on_trigger(e: BattleEvent, inst: StatusInstance, trigger: StatusTrigger) -
 				return
 		BattleTypes.Filter.TARGET_IS_ENEMY_OF_OWNER:
 			if not (e.target is BattleUnit and e.target.side != inst.owner.side):
+				return
+		BattleTypes.Filter.APPLIER_IS_ACTOR:
+			if e.actor == null or e.actor != inst.applier:
 				return
 	if trigger.source_status_id != "":
 		if not (e.source is StatusData and e.source.id == trigger.source_status_id):

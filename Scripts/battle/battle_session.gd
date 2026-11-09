@@ -174,6 +174,9 @@ func card_preview(card: CardData) -> int:
 		return -1
 	var eff := battle.effective_card(who, card)
 	var ctx := battle.card_play.card_context(who, eff)
+	# 소모량에 비례하는 효과도 수치가 보이도록, 지불 없이 소모 예정량만 기록해 둔다.
+	for cost in eff.costs:
+		cost.preview(ctx)
 	for e in eff.effects:
 		var v := e.preview_amount(ctx)
 		if v >= 0:

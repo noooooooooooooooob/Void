@@ -23,6 +23,13 @@ extends Resource
 @export var uses_stacks: bool = true
 ## 새 라운드 시작 시 방어도가 초기화되지 않게 하는 상태인지 (방어도 유지 예외용).
 @export var keeps_block: bool = false
+## 도발: 이 상태를 가진 유닛이 있으면 상대 편의 근접·원거리 공격은 이 유닛만 노릴 수 있다.
+@export var taunts: bool = false
+## 대신 맞기: 이 상태를 가진 유닛이 받을 공격을 상태를 건 유닛이 대신 받는다.
+## 카드 공격만 해당하고, 상태로 생긴 피해(출혈 등)는 대신 받지 않는다. 건 유닛이 죽으면 효과가 없다.
+@export var guarded_by_applier: bool = false
+## 대신 맞을 때 피해를 몇 % 줄일지 (0 = 그대로). guarded_by_applier 일 때만 쓴다.
+@export var guard_reduction: float = 0.0
 ## 언제 무엇을 할지 목록
 @export var triggers: Array[StatusTrigger] = []
 ## 이 상태를 가진 동안 적용되는 스탯 보정
