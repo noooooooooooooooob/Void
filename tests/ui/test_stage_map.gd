@@ -36,7 +36,7 @@ func test_draws_a_visible_line_per_link():
 	var links := 0
 	for n in StageRun.progress.nodes:
 		links += n.next.size()
-	var lines := m.get_node("%Map").get_children().filter(func(c): return c is Line2D and c.visible)
+	var lines := m.get_node("%Links").get_children().filter(func(c): return c is Line2D and c.visible)
 	assert_gt(links, 0)
 	assert_eq(lines.size(), links)
 

@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://clxpfuas2i6ik"]
+
+[node name="LinkLine" type="Line2D" unique_id=2074483462]
+width = 6.0
+default_color = Color(0.6116496, 0.61164963, 0.6116496, 1)

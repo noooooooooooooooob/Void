@@ -28,8 +28,9 @@ offset_top = 360.0
 offset_right = 350.0
 offset_bottom = 400.0
 
-[node name="LinkTemplate" type="Line2D" parent="Map" unique_id=2115176433]
+[node name="Links" type="Control" parent="Map" unique_id=419485905]
 unique_name_in_owner = true
-visible = false
-width = 6.0
-default_color = Color(0.43137255, 0.4, 0.3372549, 1)
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2

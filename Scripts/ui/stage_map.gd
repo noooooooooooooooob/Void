@@ -8,10 +8,12 @@ extends Control
 ##   - W / ↑, S / ↓ : 갈 수 있는 다음 노드 사이에서 커서를 위·아래로 옮긴다
 ##   - 마우스 클릭   : 갈 수 있는 노드를 누르면 커서가 그리로. 커서가 있는 노드를 한 번 더 누르면 실행
 ##   - 스페이스 / 엔터 : 커서가 있는 노드를 실행
-## 노드 모양은 stage_node_view.tscn, 선 모양은 이 씬의 Map/LinkTemplate(숨겨 둔 Line2D 틀)에서 고친다.
+## 노드 모양은 stage_node_view.tscn, 선 모양(두께·기본 색)은 link_line.tscn 에서 고친다.
 
 ## 노드 하나를 그리는 틀 씬
 const NODE_VIEW := preload("res://Scenes/ui/stage_map/stage_node_view.tscn")
+## 길 하나를 그리는 틀 씬 (Line2D)
+const LINK_LINE := preload("res://Scenes/ui/stage_map/link_line.tscn")
 
 ## 열 사이 간격 (px, 노드 중심 기준)
 @export var column_gap := 260.0
@@ -29,10 +31,11 @@ var nodes: Array[StageNode] = []
 ## 노드마다 하나씩 만든 화면 부품 (nodes 와 같은 순서)
 var views: Array[StageNodeView] = []
 
-var _links := {}  # [출발 노드, 도착 노드] → Line2D
+var _link_lines := {}  # [출발 노드, 도착 노드] → Line2D
+var _link_color := Color.WHITE  # link_line.tscn 의 기본 선 색 (다시 칠할 때 되돌릴 색)
 
 @onready var _map: Control = %Map
-@onready var _link_template: Line2D = %LinkTemplate
+@onready var _links: Control = %Links  # 선들을 담는 곳. 노드 네모보다 먼저 있어서 선이 네모 밑에 깔린다
 
 
 func _ready() -> void:
@@ -79,8 +82,8 @@ func refresh() -> void:
 		else:
 			view.set_state(StageNodeView.State.LOCKED)
 	# 2. 선 색: 지금 갈 수 있는 길 / 지나온 길 / 나머지(틀 색 그대로)
-	for key in _links:
-		var line: Line2D = _links[key]
+	for key in _link_lines:
+		var line: Line2D = _link_lines[key]
 		var from: StageNode = key[0]
 		var to: StageNode = key[1]
 		if from == progress.current and to in choices:
@@ -88,7 +91,7 @@ func refresh() -> void:
 		elif from.cleared and to.cleared:
 			line.default_color = passed_link_color
 		else:
-			line.default_color = _link_template.default_color
+			line.default_color = _link_color
 
 
 # --- 입력 ---
@@ -118,14 +121,15 @@ func _on_view_clicked(view: StageNodeView) -> void:
 
 # --- 선 ---
 
-## 노드 사이 길을 선으로 긋는다. 길 하나마다 LinkTemplate(숨겨 둔 Line2D 틀)을 복제한다.
+## 노드 사이 길을 선으로 긋는다. 길 하나마다 link_line.tscn 을 instantiate 해서 Links 안에 놓는다.
 ## 선은 출발 노드 중심 → 도착 노드 중심. 양 끝은 노드 네모에 가려져서 네모 사이만 보인다
 ## (이름이 _draw 가 아닌 이유: _draw 는 Godot 이 직접 그리기용으로 쓰는 이름이라 겹친다)
 func _draw_links() -> void:
 	for node in nodes:
 		for to in node.next:
-			var line: Line2D = _link_template.duplicate()
-			line.visible = true
-			line.points = PackedVector2Array([cell_position(node), cell_position(to)])
-			_map.add_child(line)
-			_links[[node, to]] = line
+			var line: Line2D = LINK_LINE.instantiate()
+			line.add_point(cell_position(node))
+			line.add_point(cell_position(to))
+			_links.add_child(line)
+			_link_color = line.default_color
+			_link_lines[[node, to]] = line
