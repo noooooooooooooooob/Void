@@ -141,6 +141,15 @@ func test_battle_end_when_side_wiped():
 	assert_eq(bt.winner(), A)
 	assert_eq(ends, [A])
 
+func test_both_sides_wiped_counts_as_ally_loss():
+	var a := _u(A, 10)
+	var e := _u(E, 8)
+	var bt := _battle([a, e])
+	bt.start_battle()
+	bt.apply_damage(null, a, 999)
+	bt.apply_damage(null, e, 999)
+	assert_eq(bt.winner(), E)
+
 func test_next_turn_null_when_nobody_left():
 	var a := _u(A, 10)
 	var e := _u(E, 8)
