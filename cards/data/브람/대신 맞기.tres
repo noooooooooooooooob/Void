@@ -4,6 +4,17 @@
 [ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_171ea"]
 [ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_f508e"]
 [ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_8q4tn"]
+[ext_resource type="Script" uid="uid://c5rd1rublc5ed" path="res://Scripts/cards/effects/apply_status_effect.gd" id="4_i3mx5"]
+[ext_resource type="Resource" uid="uid://bqph04mpsohlu" path="res://statuses/data/guarded.tres" id="5_yuvsa"]
+[ext_resource type="Resource" uid="uid://cy8fqhxaxkkp8" path="res://statuses/data/guarded_plus.tres" id="7_575q6"]
+
+[sub_resource type="Resource" id="Resource_8q4tn"]
+script = ExtResource("4_i3mx5")
+status = ExtResource("5_yuvsa")
+
+[sub_resource type="Resource" id="Resource_yuvsa"]
+script = ExtResource("4_i3mx5")
+status = ExtResource("7_575q6")
 
 [sub_resource type="Resource" id="Resource_i3mx5"]
 script = ExtResource("4_8q4tn")
@@ -13,6 +24,7 @@ cost = 5
 category = "special"
 attack_type = "ally"
 keywords = PackedStringArray()
+effects = Array[ExtResource("3_f508e")]([SubResource("Resource_yuvsa")])
 
 [resource]
 script = ExtResource("4_8q4tn")
@@ -25,3 +37,4 @@ category = "special"
 attack_type = "ally"
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_8q4tn")]([SubResource("Resource_i3mx5")])
+effects = Array[ExtResource("3_f508e")]([SubResource("Resource_8q4tn")])

@@ -3,7 +3,18 @@
 [ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_1s3m8"]
 [ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_bsvbr"]
 [ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_tykfh"]
+[ext_resource type="Script" uid="uid://c7o0uvntceaq8" path="res://Scripts/cards/effects/block_effect.gd" id="4_bsvbr"]
 [ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_fi3cd"]
+
+[sub_resource type="Resource" id="Resource_bsvbr"]
+script = ExtResource("4_bsvbr")
+percent = 150.0
+target = 1
+
+[sub_resource type="Resource" id="Resource_tykfh"]
+script = ExtResource("4_bsvbr")
+percent = 200.0
+target = 1
 
 [sub_resource type="Resource" id="Resource_obans"]
 script = ExtResource("4_fi3cd")
@@ -12,6 +23,7 @@ description_ko = "쉴드(방어력의 200%) 획득"
 category = "skill"
 attack_type = "self"
 keywords = PackedStringArray()
+effects = Array[ExtResource("3_tykfh")]([SubResource("Resource_tykfh")])
 
 [resource]
 script = ExtResource("4_fi3cd")
@@ -23,3 +35,4 @@ category = "skill"
 attack_type = "self"
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_fi3cd")]([SubResource("Resource_obans")])
+effects = Array[ExtResource("3_tykfh")]([SubResource("Resource_bsvbr")])

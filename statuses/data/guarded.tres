@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="StatusData" format=3 uid="uid://bqph04mpsohlu"]
+
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="1_l0pr0"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="2_aisum"]
+[ext_resource type="Script" uid="uid://ccs11dk06ac8p" path="res://Scripts/statuses/status_trigger.gd" id="3_lsch8"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="4_g3skk"]
+[ext_resource type="Script" uid="uid://cqxwuf5rg0o6d" path="res://Scripts/cards/effects/modify_stacks_effect.gd" id="5_y0del"]
+
+[sub_resource type="Resource" id="Resource_kefrg"]
+script = ExtResource("5_y0del")
+status_id = "guarded"
+delta = -1
+target = 2
+
+[sub_resource type="Resource" id="Resource_bnyoo"]
+script = ExtResource("3_lsch8")
+event = 4
+filter = 5
+effects = Array[ExtResource("4_g3skk")]([SubResource("Resource_kefrg")])
+
+[resource]
+script = ExtResource("2_aisum")
+id = "guarded"
+display_name = "대신 맞기"
+description = "상태를 건 유닛의 다음 차례까지 받을 공격을 그 유닛이 대신 받음"
+guarded_by_applier = true
+triggers = Array[ExtResource("3_lsch8")]([SubResource("Resource_bnyoo")])

@@ -2,8 +2,40 @@
 
 [ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_pvlwi"]
 [ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_hd6dg"]
+[ext_resource type="Script" uid="uid://cm1dmj4a20oqr" path="res://Scripts/cards/costs/block_cost.gd" id="3_3epm0"]
 [ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_lj44a"]
 [ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_3epm0"]
+[ext_resource type="Script" uid="uid://c4r04cjsj5rfw" path="res://Scripts/cards/values/consumed_value.gd" id="5_hcnbd"]
+[ext_resource type="Script" uid="uid://bubrtaft5lcun" path="res://Scripts/cards/effects/damage_effect.gd" id="6_6okjn"]
+
+[sub_resource type="Resource" id="Resource_3epm0"]
+script = ExtResource("3_3epm0")
+
+[sub_resource type="Resource" id="Resource_6okjn"]
+script = ExtResource("5_hcnbd")
+status_id = "block"
+
+[sub_resource type="Resource" id="Resource_avuxa"]
+script = ExtResource("6_6okjn")
+use_flat = true
+flat = 1
+multiplier = SubResource("Resource_6okjn")
+can_crit = false
+
+[sub_resource type="Resource" id="Resource_g16yi"]
+script = ExtResource("3_3epm0")
+
+[sub_resource type="Resource" id="Resource_q8mec"]
+script = ExtResource("5_hcnbd")
+status_id = "block"
+percent = 120.0
+
+[sub_resource type="Resource" id="Resource_1lavs"]
+script = ExtResource("6_6okjn")
+use_flat = true
+flat = 1
+multiplier = SubResource("Resource_q8mec")
+can_crit = false
 
 [sub_resource type="Resource" id="Resource_hcnbd"]
 script = ExtResource("4_3epm0")
@@ -11,6 +43,8 @@ name_ko = "돌 던지기+"
 description_ko = "쉴드 전부 소모. 소모한 쉴드의 120%만큼 피해"
 attack_type = "ranged"
 keywords = PackedStringArray()
+costs = Array[ExtResource("2_hd6dg")]([SubResource("Resource_g16yi")])
+effects = Array[ExtResource("3_lj44a")]([SubResource("Resource_1lavs")])
 
 [resource]
 script = ExtResource("4_3epm0")
@@ -21,3 +55,5 @@ description_ko = "쉴드 전부 소모. 소모한 쉴드의 100%만큼 피해"
 attack_type = "ranged"
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_3epm0")]([SubResource("Resource_hcnbd")])
+costs = Array[ExtResource("2_hd6dg")]([SubResource("Resource_3epm0")])
+effects = Array[ExtResource("3_lj44a")]([SubResource("Resource_avuxa")])

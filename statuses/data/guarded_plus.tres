@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="StatusData" format=3 uid="uid://cy8fqhxaxkkp8"]
+
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="1_1y84c"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="2_3yf4b"]
+[ext_resource type="Script" uid="uid://ccs11dk06ac8p" path="res://Scripts/statuses/status_trigger.gd" id="3_fjj5w"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="4_bx0j5"]
+[ext_resource type="Script" uid="uid://cqxwuf5rg0o6d" path="res://Scripts/cards/effects/modify_stacks_effect.gd" id="5_51qoa"]
+
+[sub_resource type="Resource" id="Resource_a56mk"]
+script = ExtResource("5_51qoa")
+status_id = "guarded_plus"
+delta = -1
+target = 2
+
+[sub_resource type="Resource" id="Resource_2fery"]
+script = ExtResource("3_fjj5w")
+event = 4
+filter = 5
+effects = Array[ExtResource("4_bx0j5")]([SubResource("Resource_a56mk")])
+
+[resource]
+script = ExtResource("2_3yf4b")
+id = "guarded_plus"
+display_name = "대신 맞기+"
+description = "상태를 건 유닛의 다음 차례까지 받을 공격을 그 유닛이 대신 받고, 그 피해를 30% 줄임"
+guarded_by_applier = true
+guard_reduction = 30.0
+triggers = Array[ExtResource("3_fjj5w")]([SubResource("Resource_2fery")])

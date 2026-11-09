@@ -3,13 +3,34 @@
 [ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_4ycy1"]
 [ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_8xw56"]
 [ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_f58qk"]
+[ext_resource type="Script" uid="uid://bubrtaft5lcun" path="res://Scripts/cards/effects/damage_effect.gd" id="4_f58qk"]
 [ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_kt0g2"]
+[ext_resource type="Script" uid="uid://c7o0uvntceaq8" path="res://Scripts/cards/effects/block_effect.gd" id="5_kt0g2"]
+
+[sub_resource type="Resource" id="Resource_f58qk"]
+script = ExtResource("4_f58qk")
+percent = 80.0
+
+[sub_resource type="Resource" id="Resource_kt0g2"]
+script = ExtResource("5_kt0g2")
+percent = 50.0
+target = 1
+
+[sub_resource type="Resource" id="Resource_l62vf"]
+script = ExtResource("4_f58qk")
+percent = 80.0
+
+[sub_resource type="Resource" id="Resource_tho0j"]
+script = ExtResource("5_kt0g2")
+percent = 80.0
+target = 1
 
 [sub_resource type="Resource" id="Resource_7qcr3"]
 script = ExtResource("4_kt0g2")
 name_ko = "돌주먹+"
 description_ko = "ATK 80%로 공격. 쉴드(방어력의 80%) 획득"
 keywords = PackedStringArray()
+effects = Array[ExtResource("3_f58qk")]([SubResource("Resource_l62vf"), SubResource("Resource_tho0j")])
 
 [resource]
 script = ExtResource("4_kt0g2")
@@ -19,3 +40,4 @@ name_ko = "돌주먹"
 description_ko = "ATK 80%로 공격. 쉴드(방어력의 50%) 획득"
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_kt0g2")]([SubResource("Resource_7qcr3")])
+effects = Array[ExtResource("3_f58qk")]([SubResource("Resource_f58qk"), SubResource("Resource_kt0g2")])

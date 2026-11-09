@@ -3,7 +3,40 @@
 [ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_rc8r6"]
 [ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_yvf6l"]
 [ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_jkpjy"]
+[ext_resource type="Script" uid="uid://cm1dmj4a20oqr" path="res://Scripts/cards/costs/block_cost.gd" id="3_wk3br"]
 [ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_wk3br"]
+[ext_resource type="Script" uid="uid://c4r04cjsj5rfw" path="res://Scripts/cards/values/consumed_value.gd" id="5_i4ae8"]
+[ext_resource type="Script" uid="uid://bubrtaft5lcun" path="res://Scripts/cards/effects/damage_effect.gd" id="6_vftn5"]
+
+[sub_resource type="Resource" id="Resource_wk3br"]
+script = ExtResource("3_wk3br")
+
+[sub_resource type="Resource" id="Resource_vftn5"]
+script = ExtResource("5_i4ae8")
+status_id = "block"
+percent = 150.0
+
+[sub_resource type="Resource" id="Resource_8ohp7"]
+script = ExtResource("6_vftn5")
+use_flat = true
+flat = 1
+multiplier = SubResource("Resource_vftn5")
+can_crit = false
+
+[sub_resource type="Resource" id="Resource_j776l"]
+script = ExtResource("3_wk3br")
+
+[sub_resource type="Resource" id="Resource_c7atg"]
+script = ExtResource("5_i4ae8")
+status_id = "block"
+percent = 200.0
+
+[sub_resource type="Resource" id="Resource_x5lgf"]
+script = ExtResource("6_vftn5")
+use_flat = true
+flat = 1
+multiplier = SubResource("Resource_c7atg")
+can_crit = false
 
 [sub_resource type="Resource" id="Resource_i4ae8"]
 script = ExtResource("4_wk3br")
@@ -13,6 +46,8 @@ sp = 2
 cost = 10
 area = Array[Vector2i]([Vector2i(0, -1), Vector2i(0, 0), Vector2i(0, 1)])
 keywords = PackedStringArray()
+costs = Array[ExtResource("2_yvf6l")]([SubResource("Resource_j776l")])
+effects = Array[ExtResource("3_jkpjy")]([SubResource("Resource_x5lgf")])
 
 [resource]
 script = ExtResource("4_wk3br")
@@ -25,3 +60,5 @@ cost = 10
 area = Array[Vector2i]([Vector2i(0, -1), Vector2i(0, 0), Vector2i(0, 1)])
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_wk3br")]([SubResource("Resource_i4ae8")])
+costs = Array[ExtResource("2_yvf6l")]([SubResource("Resource_wk3br")])
+effects = Array[ExtResource("3_jkpjy")]([SubResource("Resource_8ohp7")])

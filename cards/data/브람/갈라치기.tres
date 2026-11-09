@@ -3,7 +3,23 @@
 [ext_resource type="Script" uid="uid://b62ah8q6oubwm" path="res://Scripts/cards/card_condition.gd" id="1_pnyld"]
 [ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_ftd5q"]
 [ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_52ucf"]
+[ext_resource type="Script" uid="uid://cl2lua21f7eaq" path="res://Scripts/cards/effects/remove_block_effect.gd" id="4_52ucf"]
 [ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_wr1vq"]
+[ext_resource type="Script" uid="uid://bubrtaft5lcun" path="res://Scripts/cards/effects/damage_effect.gd" id="5_wr1vq"]
+
+[sub_resource type="Resource" id="Resource_52ucf"]
+script = ExtResource("4_52ucf")
+
+[sub_resource type="Resource" id="Resource_wr1vq"]
+script = ExtResource("5_wr1vq")
+percent = 120.0
+
+[sub_resource type="Resource" id="Resource_27ssf"]
+script = ExtResource("4_52ucf")
+
+[sub_resource type="Resource" id="Resource_k5040"]
+script = ExtResource("5_wr1vq")
+percent = 160.0
 
 [sub_resource type="Resource" id="Resource_no7xc"]
 script = ExtResource("4_wr1vq")
@@ -12,6 +28,7 @@ description_ko = "대상의 쉴드를 모두 제거하고 ATK 160%로 공격"
 sp = 2
 cost = 2
 keywords = PackedStringArray()
+effects = Array[ExtResource("3_52ucf")]([SubResource("Resource_27ssf"), SubResource("Resource_k5040")])
 
 [resource]
 script = ExtResource("4_wr1vq")
@@ -23,3 +40,4 @@ sp = 2
 cost = 2
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_wr1vq")]([SubResource("Resource_no7xc")])
+effects = Array[ExtResource("3_52ucf")]([SubResource("Resource_52ucf"), SubResource("Resource_wr1vq")])

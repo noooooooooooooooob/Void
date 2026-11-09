@@ -4,6 +4,30 @@
 [ext_resource type="Script" uid="uid://dr8coel3mswww" path="res://Scripts/cards/card_cost.gd" id="2_gywmp"]
 [ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="3_qudgi"]
 [ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="4_m4dfd"]
+[ext_resource type="Script" uid="uid://cg5i1qg2mokgj" path="res://Scripts/cards/values/current_block_value.gd" id="4_qudgi"]
+[ext_resource type="Script" uid="uid://c7o0uvntceaq8" path="res://Scripts/cards/effects/block_effect.gd" id="5_m4dfd"]
+
+[sub_resource type="Resource" id="Resource_qudgi"]
+script = ExtResource("4_qudgi")
+percent = 50.0
+
+[sub_resource type="Resource" id="Resource_m4dfd"]
+script = ExtResource("5_m4dfd")
+use_flat = true
+flat = 1
+multiplier = SubResource("Resource_qudgi")
+target = 1
+
+[sub_resource type="Resource" id="Resource_tkhrf"]
+script = ExtResource("4_qudgi")
+percent = 70.0
+
+[sub_resource type="Resource" id="Resource_ek3ol"]
+script = ExtResource("5_m4dfd")
+use_flat = true
+flat = 1
+multiplier = SubResource("Resource_tkhrf")
+target = 1
 
 [sub_resource type="Resource" id="Resource_q11n7"]
 script = ExtResource("4_m4dfd")
@@ -14,6 +38,7 @@ cost = 1
 category = "skill"
 attack_type = "self"
 keywords = PackedStringArray()
+effects = Array[ExtResource("3_qudgi")]([SubResource("Resource_ek3ol")])
 
 [resource]
 script = ExtResource("4_m4dfd")
@@ -27,3 +52,4 @@ category = "skill"
 attack_type = "self"
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_m4dfd")]([SubResource("Resource_q11n7")])
+effects = Array[ExtResource("3_qudgi")]([SubResource("Resource_m4dfd")])
