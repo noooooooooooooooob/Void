@@ -17,6 +17,7 @@
   `Godot_v4.7.2-stable_win64_console.exe --headless --path . --import` 후
   `... --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit`
 - 카드 데이터: 웹 카드 에디터 → 내보내기 zip → Godot **프로젝트 → 도구 → 카드 가져오기...** (`addons/card_importer`). `cards/data/` 의 `.tres` 는 웹 에디터 칸만 덮어쓰고 effects/costs/conditions 는 유지. 파일 이름 = 카드 이름(겹치면 `_<id>`), 찾을 때는 파일 안의 id 기준
+- 장비 데이터 (2026-11-10): 웹 에디터 **장비** 탭(이름·설명·그림·종류 무기/방어구/장신구·등급 노말/레어/유니크/유물·스탯 줄·키워드) → 같은 zip → **카드 가져오기**가 `statuses/equipment/<종류>/<이름>.tres` 로 만든다. 웹 칸만 덮어쓰고 `statuses`(특별한 버프·특수 효과)는 Godot 담당이라 유지. id 없는 장비 파일은 건드리지 않고, 유닛이 착용 중인 장비는 웹에서 지워도 남김. 장비 스탯(`EquipmentData.stats`)은 착용 중 항상 적용, 빼면 바로 빠짐
 - 반대 방향: Godot **프로젝트 → 도구 → 카드 내보내기...** → 같은 형식의 zip → 웹 카드 에디터의 **가져오기** 버튼. 추가·변경만 하고 삭제하지 않음. effects/costs/conditions 는 웹 에디터에 없어서 나가지 않음
 
 ## 확정된 게임 규칙 (Notion "구현 확정", 2026-10-11)
