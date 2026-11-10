@@ -114,9 +114,7 @@ func _on_file_selected(path: String) -> void:
 		_confirm.ok_button_text = "적용"
 		_confirm.confirmed.connect(_on_confirmed)
 		EditorInterface.get_base_control().add_child(_confirm)
-	_confirm.dialog_text = _describe(_importer.preview()) + "
-
-" + _describe_equipment(_equipment.preview())
+	_confirm.dialog_text = _describe(_importer.preview()) + "\n\n" + _describe_equipment(_equipment.preview())
 	_confirm.popup_centered()
 
 
@@ -168,8 +166,7 @@ func _describe_equipment(p: Dictionary) -> String:
 		lines.append("착용 중이라 남김 %d개: %s" % [kept.size(), _names(kept)])
 	if warn:
 		lines.append("⚠ 표시된 장비는 Godot에서 붙인 상태도 함께 삭제됩니다.")
-	return "
-".join(lines)
+	return "\n".join(lines)
 
 
 ## 이름 목록을 "a, b, c 외 N장" 형태로. 비어 있으면 "-".

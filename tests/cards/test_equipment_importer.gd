@@ -172,3 +172,51 @@ func test_unknown_slot_and_rarity_fall_back():
 	assert_eq(eq.slot, "weapon")
 	assert_eq(eq.rarity, "normal")
 	assert_eq(eq.stats.size(), 0)
+
+func _wear(unit_name: String, paths: Array) -> void:
+	var unit := UnitData.new()
+	unit.display_name = unit_name
+	var gear: Array[EquipmentData] = []
+	for p in paths:
+		gear.append(_load(p))
+	unit.equipment.assign(gear)
+	DirAccess.make_dir_recursive_absolute(units)
+	ResourceSaver.save(unit, units.path_join(unit_name + ".tres"))
+
+func test_new_equipment_with_removed_ones_name_does_not_overwrite():
+	_import(_export([_equip("e1", "철검")]))
+	_import(_export([_equip("e2", "철검")]))
+	var files := []
+	for f in DirAccess.get_files_at(root.path_join("weapon")):
+		files.append(f)
+	assert_eq(files.size(), 1)
+	var eq: EquipmentData = _load(root.path_join("weapon").path_join(files[0]))
+	assert_eq(eq.id, "e2")
+
+func test_worn_removed_equipment_not_overwritten_by_same_name():
+	_import(_export([_equip("e1", "철검")]))
+	var eq: EquipmentData = _load(_path("weapon", "철검"))
+	var st := StatusData.new()
+	st.id = "e1_buff"
+	eq.statuses.append(st)
+	ResourceSaver.save(eq, _path("weapon", "철검"))
+	_wear("홍연", [_path("weapon", "철검")])
+	_import(_export([_equip("e2", "철검")]))
+	eq = _load(_path("weapon", "철검"))
+	assert_eq(eq.id, "e1")
+	assert_eq(eq.statuses.size(), 1)
+	assert_true(FileAccess.file_exists(_path("weapon", "철검_e2")))
+
+func test_worn_removed_kept_when_other_worn_item_moves():
+	_import(_export([_equip("a", "검"), _equip("b", "방패", "armor")]))
+	_wear("홍연", [_path("weapon", "검"), _path("armor", "방패")])
+	_import(_export([_equip("a", "큰 검")]))
+	assert_true(FileAccess.file_exists(_path("armor", "방패")))
+	assert_true(FileAccess.file_exists(_path("weapon", "큰 검")))
+
+func test_worn_kept_equipment_keeps_its_art():
+	var bytes := PackedByteArray([9])
+	_import(_export([_equip("e1", "검", "weapon", "art/s.png")]), {"art/s.png": bytes})
+	_wear("홍연", [_path("weapon", "검")])
+	_import(_export([]))
+	assert_true(FileAccess.file_exists(root.path_join("art/s.png")))

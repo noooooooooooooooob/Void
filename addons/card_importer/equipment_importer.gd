@@ -80,9 +80,29 @@ func preview() -> Dictionary:
 func apply() -> void:
 	if not _has_equipment():
 		return
+	# 0. 착용 확인은 파일을 옮기기 전에 한다. 옮긴 뒤에는 유닛 파일이 옛 경로를 가리켜 못 읽을 수 있다.
+	var wearers := _wearers()
 	var existing := _existing()  # 장비 id → 현재 파일 경로
-	var targets := _paths()  # 장비 id → 저장할 경로
+	var incoming := {}
+	for e in _list():
+		incoming[str(e.get("id", ""))] = true
+
+	# zip 에 없는 장비: 착용 중이 아니면 먼저 지운다 (그 자리를 새 장비가 쓸 수 있게).
+	# 착용 중이면 남기고, 그 경로와 그림은 다른 장비가 덮어쓰지 못하게 비워 둔다.
+	var reserved := _unmanaged_paths()  # id 없는 예전 파일 경로 → true
 	var used_art := {}
+	for path in reserved:
+		_keep_art(path, used_art)
+	for id in existing.keys():
+		if incoming.has(id):
+			continue
+		if wearers.has(existing[id]):
+			reserved[existing[id]] = true
+			_keep_art(existing[id], used_art)
+		else:
+			_util._delete(existing[id])
+		existing.erase(id)
+	var targets := _paths(reserved)  # 장비 id → 저장할 경로
 
 	# 1. 옮겨야 하는 기존 파일은 먼저 임시 이름으로 비켜 둔다 (서로 자리를 바꿔도 덮어쓰지 않게).
 	var moving := {}
@@ -113,13 +133,7 @@ func apply() -> void:
 		_fill(eq, e, used_art)
 		eq.id = id
 		_util._save(eq, path)
-		existing.erase(id)
 
-	# 4. 남은 것 = zip 에 없는 장비. 착용 중이 아니면 지운다.
-	var wearers := _wearers()
-	for id in existing:
-		if not wearers.has(existing[id]):
-			_util._delete(existing[id])
 	_remove_unused_art(used_art)
 	_util._remove_empty_dirs(root)
 
@@ -139,9 +153,10 @@ func _list() -> Array:
 
 
 ## 장비 id → 저장할 경로. 경로: <종류>/<이름>.tres, 같은 경로가 겹치면 뒤 장비에 "_<id>".
-func _paths() -> Dictionary:
+## reserved: 이미 다른 파일(착용 중이라 남긴 장비, id 없는 예전 파일)이 쓰는 경로 — 겹치면 역시 "_<id>".
+func _paths(reserved: Dictionary = {}) -> Dictionary:
 	var out := {}
-	var taken := {}
+	var taken := reserved.duplicate()
 	for e in _list():
 		var id := str(e.get("id", ""))
 		var file := _util._safe_name(_util._text(e, "name", "ko"), id)
@@ -223,6 +238,23 @@ func _existing() -> Dictionary:
 		if eq and not eq.id.is_empty():
 			out[eq.id] = path
 	return out
+
+
+## 가져오기가 관리하지 않는(id 없는) 장비 파일 경로 → true
+func _unmanaged_paths() -> Dictionary:
+	var out := {}
+	for path in _util._tres_paths(root):
+		var eq := _util._load(path) as EquipmentData
+		if eq and eq.id.is_empty():
+			out[path] = true
+	return out
+
+
+## path 의 장비가 쓰는 그림을 "사용 중"으로 표시한다 (남기는 장비의 그림이 정리되지 않게).
+func _keep_art(path: String, used_art: Dictionary) -> void:
+	var eq := _util._load(path) as EquipmentData
+	if eq and not eq.art.is_empty():
+		used_art[eq.art] = true
 
 
 ## 장비 파일 경로 → 그 장비를 착용한 유닛 이름들. units_root 아래 모든 UnitData 를 본다.
