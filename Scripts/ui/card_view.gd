@@ -105,11 +105,10 @@ func set_card(c: CardData) -> void:
 	# 5. 키워드: id 로 데이터 파일을 찾는다. 파일이 없는 키워드(웹 에디터에서 지운 것)는 건너뛴다.
 	_keywords.clear()
 	for id in c.keywords:
-		var path := keyword_dir.path_join(id + ".tres")
-		if ResourceLoader.exists(path):
-			var kw := load(path) as KeywordData
-			if kw:
-				_keywords.append(kw)
+		# 파일 이름은 키워드 이름이라 바뀔 수 있다 → 파일 안의 id 로 찾는다
+		var kw := KeywordData.find(keyword_dir, id)
+		if kw:
+			_keywords.append(kw)
 	var names := PackedStringArray()
 	for kw in _keywords:
 		names.append(kw.name_ko)

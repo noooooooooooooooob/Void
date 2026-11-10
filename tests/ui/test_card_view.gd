@@ -9,10 +9,10 @@ func before_each():
 	kw.id = "k1"
 	kw.name_ko = "출혈"
 	kw.description_ko = "드로우 턴에 수치만큼 피해"
-	ResourceSaver.save(kw, kw_dir.path_join("k1.tres"))
+	ResourceSaver.save(kw, kw_dir.path_join("출혈.tres"))
 
 func after_each():
-	DirAccess.remove_absolute(kw_dir.path_join("k1.tres"))
+	DirAccess.remove_absolute(kw_dir.path_join("출혈.tres"))
 	DirAccess.remove_absolute(kw_dir)
 
 func _card() -> CardData:

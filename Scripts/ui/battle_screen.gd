@@ -187,7 +187,12 @@ func _start(s: BattleSession) -> void:
 
 
 ## 격자 칸·유닛 박스·상태 줄을 데이터 크기만큼 새로 깐다.
+## 배경 씬에 아군·적 격자판(BattleBoard)이 있으면 그 칸을 쓰고, 없으면 기본 격자(AllyGrid·EnemyGrid)를 깐다.
 func _build_board() -> void:
+	# 1. 지난 전투의 유닛 박스를 지운다 (격자판 칸은 지우지 않으므로 그 위의 박스를 따로 지워야 한다)
+	for t in _tokens.values():
+		if is_instance_valid(t):
+			t.queue_free()
 	for parent in [_ally_grid, _enemy_grid, _ally_panel, _enemy_panel]:
 		for c in parent.get_children():
 			parent.remove_child(c)
@@ -196,15 +201,13 @@ func _build_board() -> void:
 	_tokens.clear()
 	_rows.clear()
 	var bt := session.battle
-	_ally_grid.columns = bt.cols_of(BattleTypes.Side.ALLY)
-	_enemy_grid.columns = bt.cols_of(BattleTypes.Side.ENEMY)
-	for y in bt.grid_rows:
-		# 아군 격자: 왼쪽이 후열(0), 오른쪽이 전열 → 가운데를 향함
-		for x in bt.cols_of(BattleTypes.Side.ALLY):
-			_add_cell(_ally_grid, BattleTypes.Side.ALLY, Vector2i(x, y))
-		# 적 격자: 왼쪽이 전열(큰 값) → 가운데를 향함
-		for x in range(bt.cols_of(BattleTypes.Side.ENEMY) - 1, -1, -1):
-			_add_cell(_enemy_grid, BattleTypes.Side.ENEMY, Vector2i(x, y))
+	# 2. 칸: 배경의 격자판이 있으면 그것, 없으면 기본 격자
+	var use_boards := _use_background_boards(bt)
+	_ally_grid.visible = not use_boards
+	_enemy_grid.visible = not use_boards
+	if not use_boards:
+		_build_default_grids(bt)
+	# 3. 유닛 박스·상태 줄
 	for u in bt.units:
 		var t: UnitToken = UNIT_TOKEN.instantiate()
 		t.set_unit(u)
@@ -214,6 +217,55 @@ func _build_board() -> void:
 		(_ally_panel if u.side == BattleTypes.Side.ALLY else _enemy_panel).add_child(row)
 		row.set_unit(u)
 		_rows[u] = row
+
+
+## 배경 씬 안의 아군·적 격자판 칸을 이번 전투 크기에 맞게 켜고 _cells 에 넣는다.
+## 두 편의 판이 다 있고 전투 크기(최대 5×5)를 그릴 수 있을 때만 true.
+func _use_background_boards(bt: Battle) -> bool:
+	# 1. 배경에서 편마다 판 하나를 찾는다
+	var boards := {}
+	for b in _find_boards(_bg_layer):
+		boards[b.side] = b
+	if boards.size() < 2:
+		return false
+	for side in boards:
+		if not boards[side].supports(bt.cols_of(side), bt.grid_rows):
+			push_warning("BattleScreen: 전투 크기가 격자판(5×5)보다 커서 기본 격자를 써요")
+			return false
+	# 2. 쓰는 칸만 켜고, 어느 편의 어느 칸인지 알려 준다
+	for side in boards:
+		var used: Dictionary = boards[side].use_cells(bt.cols_of(side), bt.grid_rows)
+		for at in used:
+			var c: GridCell = used[at]
+			c.setup(side, at)
+			# 다시 하기로 판을 또 쓰면 같은 칸이 두 번 연결되지 않게 한다
+			if not c.pressed.is_connected(click_cell):
+				c.pressed.connect(click_cell)
+			_cells[Vector3i(side, at.x, at.y)] = c
+	return true
+
+
+## node 아래의 모든 격자판 (배경 씬 안 어디에 넣어도 찾는다)
+func _find_boards(node: Node) -> Array[BattleBoard]:
+	var out: Array[BattleBoard] = []
+	for c in node.get_children():
+		if c is BattleBoard:
+			out.append(c)
+		out.append_array(_find_boards(c))
+	return out
+
+
+## 기본 격자: 데이터 크기만큼 grid_cell.tscn 을 복제해 AllyGrid·EnemyGrid 에 깐다.
+func _build_default_grids(bt: Battle) -> void:
+	_ally_grid.columns = bt.cols_of(BattleTypes.Side.ALLY)
+	_enemy_grid.columns = bt.cols_of(BattleTypes.Side.ENEMY)
+	for y in bt.grid_rows:
+		# 아군 격자: 왼쪽이 후열(0), 오른쪽이 전열 → 가운데를 향함
+		for x in bt.cols_of(BattleTypes.Side.ALLY):
+			_add_cell(_ally_grid, BattleTypes.Side.ALLY, Vector2i(x, y))
+		# 적 격자: 왼쪽이 전열(큰 값) → 가운데를 향함
+		for x in range(bt.cols_of(BattleTypes.Side.ENEMY) - 1, -1, -1):
+			_add_cell(_enemy_grid, BattleTypes.Side.ENEMY, Vector2i(x, y))
 
 
 func _add_cell(grid: GridContainer, side: int, cell: Vector2i) -> void:
@@ -306,7 +358,8 @@ func refresh() -> void:
 			if t.get_parent():
 				t.get_parent().remove_child(t)
 			cell.add_child(t)
-			t.position = (cell.custom_minimum_size - t.custom_minimum_size) * 0.5
+			# 칸 가운데에 놓는다. 격자판 칸은 에디터에서 크기를 바꿨을 수 있어 실제 크기도 본다
+			t.position = (cell.size.max(cell.custom_minimum_size) - t.custom_minimum_size) * 0.5
 		t.set_highlight(targets.has(u))
 		t.visible = u.alive
 	for u in _rows:

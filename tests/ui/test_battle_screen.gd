@@ -212,6 +212,57 @@ func test_background_scene_from_battle_data():
 	assert_eq(layer.get_child_count(), 1)
 	assert_eq(layer.get_child(0).name, &"TestBackground")
 
+# 아군·적 격자판을 하나씩 넣은 배경 씬 (실제 배경처럼 판은 battle_board.tscn 인스턴스)
+func _board_background() -> PackedScene:
+	var root := Control.new()
+	root.name = "BoardBackground"
+	for side in [A, E]:
+		var b: BattleBoard = load("res://Scenes/ui/battle_screen/battle_board.tscn").instantiate()
+		b.side = side
+		b.name = "AllyBoard" if side == A else "EnemyBoard"
+		root.add_child(b)
+		b.owner = root
+	var ps := PackedScene.new()
+	ps.pack(root)
+	root.free()
+	return ps
+
+func _board_screen() -> BattleScreen:
+	var d := _data()
+	d.background = _board_background()
+	return _screen(d)
+
+func test_background_boards_replace_the_default_grids():
+	var s := _board_screen()
+	assert_false(s.get_node("%AllyGrid").visible)
+	assert_false(s.get_node("%EnemyGrid").visible)
+	var ally_board: BattleBoard = s.get_node("%BackgroundLayer").find_child("AllyBoard", true, false)
+	var hero := s.session.active
+	var token_cell: Node = s._tokens[hero].get_parent()
+	assert_eq(token_cell.get_parent(), ally_board)
+
+func test_board_cells_hidden_outside_battle_size():
+	var s := _board_screen()
+	var ally_board: BattleBoard = s.get_node("%BackgroundLayer").find_child("AllyBoard", true, false)
+	var shown := ally_board.get_children().filter(func(c): return c is GridCell and c.visible).size()
+	assert_eq(shown, s.session.battle.cols_of(A) * s.session.battle.grid_rows)
+
+func test_board_cell_click_moves_once_after_restart():
+	var s := _board_screen()
+	s.restart()
+	var hero := s.session.active
+	var to: Vector2i = s.session.reachable_cells()[0]
+	var cell: GridCell = s._cells[Vector3i(A, to.x, to.y)]
+	cell.pressed.emit(A, to)
+	assert_eq(hero.cell, to)
+	assert_eq(s.session.active.cell, to)
+
+func test_restart_with_boards_keeps_one_token_per_unit():
+	var s := _board_screen()
+	s.restart()
+	var layer: Control = s.get_node("%BackgroundLayer")
+	assert_eq(layer.find_children("*", "Control", true, false).filter(func(c): return c is UnitToken and not c.is_queued_for_deletion()).size(), s.session.battle.units.size())
+
 func test_no_background_leaves_layer_empty():
 	var s := _screen()
 	assert_eq(s.get_node("%BackgroundLayer").get_child_count(), 0)

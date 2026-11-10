@@ -69,6 +69,8 @@ func _init(unit_data: UnitData, unit_side: int, unit_cell: Vector2i) -> void:
 		for status in equip.statuses:
 			if status:
 				add_status(status, 0, self)
+	# 장비 HP 보너스까지 더한 최대치로 시작한다.
+	hp = get_stat(BattleTypes.Stat.HP)
 
 
 ## 지금 스탯 값. 기본값에 붙어 있는 모든 상태의 보정을 적용한다.
@@ -115,6 +117,17 @@ func _modified(stat: int, base: float) -> int:
 	for inst in statuses:
 		for mod in inst.data.modifiers:
 			if mod.stat != stat:
+				continue
+			if mod.kind == BattleTypes.ModKind.PERCENT:
+				percent += mod.contribution(ctx)
+			else:
+				flat += mod.contribution(ctx)
+	# 장비 스탯: 착용 중이면 항상 적용 (기획 결정). 매번 장비에서 읽으므로 장비를 빼면 바로 빠진다.
+	for equip in data.equipment:
+		if equip == null:
+			continue
+		for mod in equip.stats:
+			if mod == null or mod.stat != stat:
 				continue
 			if mod.kind == BattleTypes.ModKind.PERCENT:
 				percent += mod.contribution(ctx)

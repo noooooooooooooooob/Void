@@ -197,6 +197,31 @@ func test_equipment_not_doubled_in_battle():
 	bt.start_battle()
 	assert_eq(u.get_stat(BattleTypes.Stat.ATTACK), 15)
 
+func _stat_gear_unit(mods: Array) -> BattleUnit:
+	var eq := EquipmentData.new()
+	eq.stats.assign(mods)
+	var data := UnitData.new()
+	data.attack = 10
+	data.max_hp = 100
+	data.equipment.assign([eq])
+	return BattleUnit.new(data, A, Vector2i(3, 1))
+
+func test_equipment_stats_apply_flat_and_percent():
+	# floor(10 × 1.5) + 3 = 18
+	var u := _stat_gear_unit([
+		Fixture.modifier(BattleTypes.Stat.ATTACK, BattleTypes.ModKind.PERCENT, 50),
+		Fixture.modifier(BattleTypes.Stat.ATTACK, BattleTypes.ModKind.FLAT, 3)])
+	assert_eq(u.get_stat(BattleTypes.Stat.ATTACK), 18)
+
+func test_equipment_stats_removed_when_unequipped():
+	var u := _stat_gear_unit([Fixture.modifier(BattleTypes.Stat.ATTACK, BattleTypes.ModKind.FLAT, 5)])
+	u.data.equipment.clear()
+	assert_eq(u.get_stat(BattleTypes.Stat.ATTACK), 10)
+
+func test_equipment_hp_bonus_fills_start_hp():
+	var u := _stat_gear_unit([Fixture.modifier(BattleTypes.Stat.HP, BattleTypes.ModKind.FLAT, 20)])
+	assert_eq(u.hp, 120)
+
 func test_equipment_trigger_works_in_battle():
 	# 장비의 트리거도 전투에서 동작: 차례 종료 시 방어도 2
 	var bl := BlockEffect.new()

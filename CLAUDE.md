@@ -17,6 +17,7 @@
   `Godot_v4.7.2-stable_win64_console.exe --headless --path . --import` 후
   `... --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit`
 - 카드 데이터: 웹 카드 에디터 → 내보내기 zip → Godot **프로젝트 → 도구 → 카드 가져오기...** (`addons/card_importer`). `cards/data/` 의 `.tres` 는 웹 에디터 칸만 덮어쓰고 effects/costs/conditions 는 유지. 파일 이름 = 카드 이름(겹치면 `_<id>`), 찾을 때는 파일 안의 id 기준
+- 장비 데이터 (2026-11-10): 웹 에디터 **장비** 탭(이름·설명·그림·종류 무기/방어구/장신구·등급 노말/레어/유니크/유물·스탯 줄·키워드) → 같은 zip → **카드 가져오기**가 `statuses/equipment/<종류>/<이름>.tres` 로 만든다. 웹 칸만 덮어쓰고 `statuses`(특별한 버프·특수 효과)는 Godot 담당이라 유지. id 없는 장비 파일은 건드리지 않고, 유닛이 착용 중인 장비는 웹에서 지워도 남김. 장비 스탯(`EquipmentData.stats`)은 착용 중 항상 적용, 빼면 바로 빠짐
 - 반대 방향: Godot **프로젝트 → 도구 → 카드 내보내기...** → 같은 형식의 zip → 웹 카드 에디터의 **가져오기** 버튼. 추가·변경만 하고 삭제하지 않음. effects/costs/conditions 는 웹 에디터에 없어서 나가지 않음
 
 ## 확정된 게임 규칙 (Notion "구현 확정", 2026-10-11)
@@ -40,7 +41,7 @@
   - 전투 중엔 계산된 수치, 덱 편집 화면에선 % 표시
 - 적도 같은 카드 규칙 사용. 적만 쓰는 카드는 **적 전용(검정)** 분류 — 플레이어 덱·보상·상점에 나오지 않음
 - 카드 대체: **손패에 있는 동안만** 대체 카드로 보이고 사용됨. 사용 후 묘지(버린 더미)·제외로 갈 때는 원래 카드로 돌아감 (2026-11-04)
-- 키워드: 카드에 마우스를 올리면 카드 오른쪽에 키워드 이름과 설명이 뜬다 (웹 에디터와 같은 동작). 데이터는 `CardData.keywords`(id) → `cards/keywords/<id>.tres`(KeywordData)
+- 키워드: 카드에 마우스를 올리면 카드 오른쪽에 키워드 이름과 설명이 뜬다 (웹 에디터와 같은 동작). 데이터는 `CardData.keywords`(id) → `cards/keywords/<키워드 이름>.tres`(KeywordData, 겹치면 `_<id>`). 찾을 때는 `KeywordData.find(dir, id)` 로 파일 안의 id 기준
 
 ### 스탯
 - HP, SP, 공격, 방어, 속도, 이동속도, 치명확률, 치명피해, 어그로, 스태미너, 행동 횟수
@@ -72,7 +73,7 @@ res://
   statuses/      # 상태(data/)·장비(equipment/) .tres
   entities/      # 캐릭터·적 데이터 .tres (units/)
   Scenes/        # 모든 씬 .tscn — 안은 Scripts/ 와 같은 기능별 폴더 (ui/battle_screen/, ui/card_view/ …)
-    backgrounds/ #   전투 배경 씬 (루트 Control, 겹·패럴랙스는 씬 안에서). BattleData.background 가 가리킴
+    backgrounds/ #   전투 배경 씬 (루트 Control, 겹·패럴랙스는 씬 안에서). BattleData.background 가 가리킴. 격자판(battle_board.tscn)을 아군·적용으로 넣으면 그 칸을 씀
   Art/           # 게임에 들어가는 그림 (.png) — 종류별 폴더, 캐릭터·적은 이름별로
     characters/<이름>/  enemies/<이름>/  ui/  backgrounds/  vfx/
   Art_src/       # 원본 작업 파일 (.aseprite, .psd) — .gdignore 로 Godot 이 무시

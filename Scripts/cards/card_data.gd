@@ -35,7 +35,7 @@ extends Resource
 @export_enum("melee", "ranged", "ally", "self") var attack_type: String = "melee"
 ## 광역 범위: 기준 유닛에서의 칸 오프셋 목록 (x = 앞쪽이 +, y = 행, 각각 −2..2). 비어 있으면 단일 대상.
 @export var area: Array[Vector2i] = []
-## 키워드 id 목록. 이름·설명은 cards/keywords/<id>.tres (KeywordData) 에 있다.
+## 키워드 id 목록. 이름·설명은 cards/keywords/ 안의 KeywordData 에 있다 (KeywordData.find 로 id 로 찾음).
 @export var keywords: PackedStringArray = []
 ## 카드 그림 경로 (보통 res://cards/art/...). 없으면 "".
 @export_file("*.png", "*.jpg", "*.webp", "*.gif") var art: String
