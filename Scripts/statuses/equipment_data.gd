@@ -30,7 +30,7 @@ const RARITIES: Array[String] = ["normal", "rare", "unique", "relic"]
 ## 착용 중 항상 더해지는 스탯 보정 (웹 에디터의 스탯 줄). 상태가 아니라 BattleUnit 이 장비에서 직접 읽는다.
 ## 그래서 장비를 빼면 그만큼 바로 빠진다.
 @export var stats: Array[StatModifier] = []
-## 키워드 id 목록 (cards/keywords/<id>.tres 와 같은 목록을 카드와 함께 쓴다)
+## 키워드 id 목록 (cards/keywords/ 의 키워드를 카드와 함께 쓴다. KeywordData.find 로 찾음)
 @export var keywords: PackedStringArray = []
 ## 그림 경로 (res://statuses/equipment/art/…). 비어 있으면 그림 없음.
 @export var art: String

@@ -28,7 +28,7 @@ func test_hongyeon_attack_with_sword_and_blood_lust():
 
 func test_exhaust_keyword_data_exiles_card_in_battle():
 	# 실제 소멸 키워드(.tres)에 사용 후 제외 규칙이 들어 있고, 전투에서 카드가 제외 더미로 가는지
-	var kw: KeywordData = load("res://cards/keywords/43vgq4le8g7ma4i9bc0u.tres")
+	var kw: KeywordData = KeywordData.find("res://cards/keywords", "43vgq4le8g7ma4i9bc0u")
 	assert_eq(kw.name_ko, "소멸")
 	assert_true(kw.rules.any(func(r): return r is ExileAfterUseRule))
 	var me := Fixture.unit(BattleTypes.Side.ALLY, Vector2i(3, 0))

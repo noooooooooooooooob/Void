@@ -173,16 +173,17 @@ func test_unused_art_removed():
 func test_keywords_written_and_removed():
 	var kw := {"id": "k1", "name": {"ko": "출혈", "en": "Bleed"}, "description": {"ko": "아픔", "en": "hurts"}}
 	_import(_export([], [kw]))
-	var data: KeywordData = _load(root.path_join("keywords/k1.tres"))
+	var data: KeywordData = _load(root.path_join("keywords/출혈.tres"))
+	assert_eq(data.id, "k1")
 	assert_eq(data.name_ko, "출혈")
 	assert_eq(data.description_en, "hurts")
 	_import(_export([], []))
-	assert_false(FileAccess.file_exists(root.path_join("keywords/k1.tres")))
+	assert_false(FileAccess.file_exists(root.path_join("keywords/출혈.tres")))
 
 func test_reimport_keeps_keyword_godot_fields():
 	var kw := {"id": "k1", "name": {"ko": "소멸", "en": "Exhaust"}, "description": {"ko": "사용시 제외", "en": ""}}
 	_import(_export([], [kw]))
-	var path := root.path_join("keywords/k1.tres")
+	var path := root.path_join("keywords/소멸.tres")
 	var data: KeywordData = _load(path)
 	data.rules.assign([ExileAfterUseRule.new()])
 	ResourceSaver.save(data, path)
@@ -259,3 +260,38 @@ func test_cached_resource_follows_renamed_file():
 	assert_eq(held.resource_path, _common("강타"))
 	ResourceSaver.save(held)
 	assert_false(FileAccess.file_exists(_common("베기")))
+
+
+func _kw(id: String, name_ko: String) -> Dictionary:
+	return {"id": id, "name": {"ko": name_ko, "en": ""}, "description": {"ko": "", "en": ""}}
+
+func test_keyword_rename_moves_file_keeps_uid_and_rules():
+	_import(_export([], [_kw("k1", "출혈")]))
+	var old := root.path_join("keywords/출혈.tres")
+	var data: KeywordData = _load(old)
+	data.rules.assign([ExileAfterUseRule.new()])
+	ResourceSaver.save(data, old)
+	var uid := FileAccess.get_file_as_string(old).get_slice("
+", 0)
+	_import(_export([], [_kw("k1", "깊은 출혈")]))
+	var path := root.path_join("keywords/깊은 출혈.tres")
+	assert_false(FileAccess.file_exists(old))
+	assert_eq(FileAccess.get_file_as_string(path).get_slice("
+", 0), uid)
+	assert_eq((_load(path) as KeywordData).rules.size(), 1)
+
+func test_same_keyword_name_gets_id_suffix():
+	_import(_export([], [_kw("k1", "출혈"), _kw("k2", "출혈")]))
+	assert_eq((_load(root.path_join("keywords/출혈.tres")) as KeywordData).id, "k1")
+	assert_eq((_load(root.path_join("keywords/출혈_k2.tres")) as KeywordData).id, "k2")
+
+func test_old_id_named_keyword_file_is_renamed():
+	DirAccess.make_dir_recursive_absolute(root.path_join("keywords"))
+	var data := KeywordData.new()
+	data.id = "k1"
+	data.name_ko = "출혈"
+	data.rules.assign([ExileAfterUseRule.new()])
+	ResourceSaver.save(data, root.path_join("keywords/k1.tres"))
+	_import(_export([], [_kw("k1", "출혈")]))
+	assert_false(FileAccess.file_exists(root.path_join("keywords/k1.tres")))
+	assert_eq((_load(root.path_join("keywords/출혈.tres")) as KeywordData).rules.size(), 1)

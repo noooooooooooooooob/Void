@@ -7,7 +7,7 @@ extends RefCounted
 ## 만드는 파일 (root 기본값 res://cards 기준):
 ##   data/<덱 이름>/<카드 이름>.tres 카드 (공용 카드는 data/common/)
 ##     같은 폴더에 이름이 같은 카드가 있으면 뒤 카드는 <카드 이름>_<id>.tres
-##   keywords/<키워드 id>.tres        키워드 이름·설명
+##   keywords/<키워드 이름>.tres      키워드 이름·설명 (이름이 겹치면 <이름>_<id>.tres, 찾을 때는 파일 안의 id)
 ##   art/<파일 이름>                  그림
 ##
 ## 다시 가져올 때 규칙:
@@ -245,13 +245,33 @@ func _remove_empty_dirs(dir_path: String) -> void:
 
 
 ## 키워드 .tres 를 만들거나 갱신하고, zip 에 없는 키워드 파일은 지운다.
+## 파일 이름 = 키워드 이름(겹치면 _<id>). 이름이 바뀌면 카드처럼 파일을 옮겨 uid 와 Godot 쪽 칸(rules)을 유지한다.
+## 예전처럼 id 로 이름 붙은 파일도 파일 안의 id 로 찾아서 새 이름으로 옮긴다.
 func _apply_keywords() -> void:
-	var existing := _existing_files(root.path_join("keywords"))
+	var dir := root.path_join("keywords")
+	var existing := _existing_keywords(dir)  # 키워드 id → 현재 파일 경로
+	var targets := _keyword_paths(dir)  # 키워드 id → 저장할 경로
+
+	# 옮길 파일은 먼저 임시 이름으로 비켜 둔다 (서로 이름을 바꿔도 덮어쓰지 않게, _apply_cards 와 같은 방식).
+	var moving := {}
+	var held := {}
+	for id in targets:
+		if existing.has(id) and existing[id] != targets[id]:
+			if ResourceLoader.has_cached(existing[id]):
+				held[id] = ResourceLoader.load(existing[id])
+			var tmp: String = existing[id] + ".moving"
+			DirAccess.rename_absolute(existing[id], tmp)
+			moving[id] = tmp
+
 	for k in _list("keywords"):
 		var id := str(k.get("id", ""))
-		if id.is_empty():
+		if not targets.has(id):
 			continue
-		var path := root.path_join("keywords/%s.tres" % id)
+		var path: String = targets[id]
+		if moving.has(id):
+			DirAccess.rename_absolute(moving[id], path)
+			if held.has(id):
+				held[id].take_over_path(path)
 		var kw: KeywordData = _load(path) as KeywordData if existing.has(id) else null
 		if kw == null:
 			kw = KeywordData.new()
@@ -264,6 +284,33 @@ func _apply_keywords() -> void:
 		existing.erase(id)
 	for id in existing:
 		_delete(existing[id])
+
+
+## 키워드 id → 저장할 경로. <이름>.tres, 같은 이름이 있으면 뒤 키워드에 _<id>. 이름이 비면 id.
+func _keyword_paths(dir: String) -> Dictionary:
+	var out := {}
+	var taken := {}
+	for k in _list("keywords"):
+		var id := str(k.get("id", ""))
+		if id.is_empty():
+			continue
+		var file := _safe_name(_text(k, "name", "ko"), id)
+		var path := dir.path_join("%s.tres" % file)
+		if taken.has(path):
+			path = dir.path_join("%s_%s.tres" % [file, id])
+		taken[path] = true
+		out[id] = path
+	return out
+
+
+## 폴더의 키워드 파일 { 키워드 id: 경로 }. id 는 파일 안의 KeywordData.id (비어 있으면 파일 이름).
+func _existing_keywords(dir: String) -> Dictionary:
+	var out := {}
+	for path in _tres_paths(dir):
+		var kw := _load(path) as KeywordData
+		var id: String = kw.id if kw and not kw.id.is_empty() else path.get_file().get_basename()
+		out[id] = path
+	return out
 
 
 ## 카드 한 면(기본 또는 강화 단계)의 웹 에디터 담당 칸을 채운다.
@@ -352,21 +399,6 @@ func _tres_paths(dir_path: String) -> PackedStringArray:
 	for f in dir.get_files():
 		if f.get_extension() == "tres":
 			out.append(dir_path.path_join(f))
-	return out
-
-
-## 폴더 아래 모든 .tres 를 재귀로 찾아 { 파일 이름(확장자 뺌): 경로 } 로 돌려준다.
-## 키워드는 파일 이름 = 키워드 id. 카드는 _existing_cards 를 쓴다.
-func _existing_files(dir_path: String) -> Dictionary:
-	var out := {}
-	var dir := DirAccess.open(dir_path)
-	if dir == null:
-		return out
-	for sub in dir.get_directories():
-		out.merge(_existing_files(dir_path.path_join(sub)))
-	for f in dir.get_files():
-		if f.get_extension() == "tres":
-			out[f.get_basename()] = dir_path.path_join(f)
 	return out
 
 

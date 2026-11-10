@@ -11,6 +11,7 @@
 | 카드 가져오기 | 웹 카드 에디터 내보내기(zip) → Godot 카드 데이터. 다시 가져와도 Godot에서 붙인 효과·비용·조건은 유지. 덱 폴더 = 덱 이름, 파일 이름 = 카드 이름(2026-11-05, 이름이 바뀌면 파일을 옮겨 uid 유지) | 프로젝트 → 도구 → 카드 가져오기... (`addons/card_importer`) |
 | 카드 내보내기 (2026-11-09) | 가져오기의 반대 방향. Godot 카드·키워드·그림 → 웹 에디터 형식 zip → 웹 에디터의 "가져오기" 버튼으로 미리보기 후 적용. 추가·변경만 하고 삭제는 안 함, 이미 있는 덱 이름은 유지, 내용이 같은 그림은 다시 올리지 않음. Godot 쪽 효과·비용·조건은 안 나감 | 프로젝트 → 도구 → 카드 내보내기... (`addons/card_importer/card_exporter.gd`) |
 | 장비 에디터 (2026-11-10) | 웹 카드 에디터에 장비 탭 추가 (종류·등급·스탯 줄·키워드·그림·설명). 같은 zip 으로 카드 가져오기·내보내기에 장비 포함. 웹 칸만 덮어쓰고 Godot 에서 붙인 상태(버프·특수 효과)는 유지, 착용 중인 장비는 지우지 않음. 장비 스탯은 착용 중 항상 적용, HP 보너스는 시작 HP 에도 반영 | 웹 에디터 장비 탭, `addons/card_importer/equipment_importer.gd`, `Scripts/statuses/equipment_data.gd`, 설계 `docs/superpowers/specs/2026-11-10-equipment-editor-design.md` |
+| 키워드 파일 이름 (2026-11-10) | `cards/keywords/` 파일 이름을 id 대신 키워드 이름으로 (겹치면 `_<id>`). 게임은 `KeywordData.find` 로 파일 안의 id 로 찾음. 기존 id 이름 파일은 다음 카드 가져오기 때 자동으로 이름이 바뀜 | `Scripts/cards/keyword_data.gd`, `addons/card_importer/card_importer.gd` |
 | 카드 화면 | 웹 에디터와 같은 카드 모양, 마우스를 올리면 키워드 설명 | `ui/card_view/card_view.tscn` |
 | 카드 갤러리 | 에디터에서 열기만 해도 카드가 보임. 인스펙터 Deck 으로 덱별 보기, 실행(F6) 시 탭 | `ui/card_gallery/card_gallery.tscn` |
 | 테스트 도구 | GUT 9.7.1 (실행 방법은 CLAUDE.md) | `addons/gut`, `tests/` |

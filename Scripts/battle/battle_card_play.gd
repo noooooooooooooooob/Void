@@ -146,9 +146,8 @@ func _run_after_use_rules(ctx: EffectContext, eff: CardData, card: CardData) -> 
 	return false
 
 
-## 키워드 id → 키워드 데이터 (keyword_dir/<id>.tres). 없으면 null. 한 번 읽으면 캐시에 둔다.
+## 키워드 id → 키워드 데이터 (keyword_dir 안에서 id 로 찾음). 없으면 null. 한 번 읽으면 캐시에 둔다.
 func _keyword(id: String) -> KeywordData:
 	if not battle.keyword_cache.has(id):
-		var path: String = battle.keyword_dir.path_join(id + ".tres")
-		battle.keyword_cache[id] = load(path) as KeywordData if ResourceLoader.exists(path) else null
+		battle.keyword_cache[id] = KeywordData.find(battle.keyword_dir, id)
 	return battle.keyword_cache[id]
