@@ -40,6 +40,16 @@ func load_export(data: Dictionary, art: Dictionary = {}) -> void:
 	_art = art
 
 
+## 읽어 둔 cards.json 내용. 장비 가져오기(EquipmentImporter)가 같은 zip 내용을 넘겨받을 때 쓴다.
+func get_data() -> Dictionary:
+	return _data
+
+
+## 읽어 둔 zip 그림들 ("art/<파일 이름>" → 내용). EquipmentImporter 에 넘긴다.
+func get_art() -> Dictionary:
+	return _art
+
+
 ## zip 파일을 읽어 가져올 준비를 한다.
 ## 성공하면 "", 실패하면 사람이 읽을 오류 문구를 돌려준다 (에디터 오류 창에 그대로 표시).
 func read_zip(path: String) -> String:
