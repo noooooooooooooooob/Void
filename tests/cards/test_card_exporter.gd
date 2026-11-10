@@ -181,4 +181,55 @@ func test_write_zip_to_bad_path_returns_error():
 	assert_ne(CardExporter.new(root).write_zip(root.path_join("no/such/dir/out.zip")), "")
 
 func test_empty_project_exports_empty_lists():
-	assert_eq(CardExporter.new(root).build(), {"keywords": [], "decks": [], "cards": []})
+	assert_eq(CardExporter.new(root, root.path_join("equip")).build(), {"keywords": [], "decks": [], "cards": [], "equipment": []})
+
+
+# --- 장비 ---
+
+func _equip(id: String, name_ko: String, art = null) -> Dictionary:
+	return {
+		"id": id,
+		"name": {"ko": name_ko, "en": name_ko + "_en"},
+		"description": {"ko": "설명", "en": "desc"},
+		"slot": "armor", "rarity": "relic",
+		"stats": [{"stat": "attack", "kind": "flat", "amount": 5}, {"stat": "crit_rate", "kind": "percent", "amount": -10}],
+		"keywords": ["k1"], "art": art,
+	}
+
+func _import_equip(equipment: Array, art := {}, into := "") -> void:
+	var imp := EquipmentImporter.new(root.path_join("equip") if into.is_empty() else into, root.path_join("units"))
+	imp.load_export({"equipment": equipment}, art)
+	imp.apply()
+
+func test_exports_equipment_with_stats_and_art():
+	_import_equip([_equip("e1", "갑옷", "art/plate.png")], {"art/plate.png": PackedByteArray([4, 5])})
+	var data := CardExporter.new(root, root.path_join("equip")).build()
+	assert_eq(data.equipment.size(), 1)
+	var e: Dictionary = data.equipment[0]
+	assert_eq(e.id, "e1")
+	assert_eq(e.name, {"ko": "갑옷", "en": "갑옷_en"})
+	assert_eq(e.description, {"ko": "설명", "en": "desc"})
+	assert_eq(e.slot, "armor")
+	assert_eq(e.rarity, "relic")
+	assert_eq(e.stats, [{"stat": "attack", "kind": "flat", "amount": 5}, {"stat": "crit_rate", "kind": "percent", "amount": -10}])
+	assert_eq(e.keywords, ["k1"])
+	assert_eq(e.art, "art/plate.png")
+
+func test_equipment_without_id_not_exported():
+	DirAccess.make_dir_recursive_absolute(root.path_join("equip"))
+	var old := EquipmentData.new()
+	old.display_name = "시험용 검"
+	ResourceSaver.save(old, root.path_join("equip/old.tres"))
+	assert_eq(CardExporter.new(root, root.path_join("equip")).build().equipment, [])
+
+func test_round_trip_equipment_through_zip():
+	_import_equip([_equip("e1", "갑옷", "art/plate.png")], {"art/plate.png": PackedByteArray([4, 5])})
+	var zip_path := root.path_join("out.zip")
+	assert_eq(CardExporter.new(root, root.path_join("equip")).write_zip(zip_path), "")
+	var cards := CardImporter.new(out_root)
+	assert_eq(cards.read_zip(zip_path), "")
+	var imp := EquipmentImporter.new(out_root.path_join("equip"), root.path_join("units"))
+	imp.load_export(cards.get_data(), cards.get_art())
+	imp.apply()
+	var again := CardExporter.new(out_root, out_root.path_join("equip")).build()
+	assert_eq(again.equipment, [_equip("e1", "갑옷", "art/plate.png")])

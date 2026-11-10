@@ -2,9 +2,9 @@
 extends EditorPlugin
 ## 카드 가져오기 에디터 플러그인.
 ## 메뉴: 프로젝트 → 도구 → "카드 가져오기..."
-## 흐름: zip 파일 선택 → 미리보기(추가/갱신/삭제 목록) 확인 → "적용" → 파일 시스템 다시 스캔.
+## 흐름: zip 파일 선택 → 미리보기(카드·장비의 추가/갱신/삭제 목록) 확인 → "적용" → 파일 시스템 다시 스캔.
 ## 메뉴: 프로젝트 → 도구 → "카드 내보내기..." (저장할 zip 선택 → 결과 안내. zip 은 웹 에디터의 "가져오기"로 넣는다)
-## 실제 로직은 CardImporter(card_importer.gd)·CardExporter(card_exporter.gd)에 있고, 여기는 메뉴와 대화상자만 담당한다.
+## 실제 로직은 CardImporter(card_importer.gd)·EquipmentImporter(equipment_importer.gd)·CardExporter(card_exporter.gd)에 있고, 여기는 메뉴와 대화상자만 담당한다.
 
 ## 도구 메뉴에 표시할 항목 이름.
 const MENU := "카드 가져오기..."
@@ -23,6 +23,8 @@ var _confirm: ConfirmationDialog
 var _error: AcceptDialog
 ## 지금 진행 중인 가져오기. 미리보기에서 적용까지 같은 객체를 쓴다.
 var _importer: CardImporter
+## 같은 zip 의 장비 가져오기 (_importer 가 읽은 내용을 넘겨받는다)
+var _equipment: EquipmentImporter
 ## 내보낼 zip 저장 위치 선택 창 (처음 열 때 만들고 재사용)
 var _export_dialog: EditorFileDialog
 ## 내보내기 결과 안내 창
@@ -104,19 +106,24 @@ func _on_file_selected(path: String) -> void:
 	if not err.is_empty():
 		_show_error(err)
 		return
+	_equipment = EquipmentImporter.new()
+	_equipment.load_export(_importer.get_data(), _importer.get_art())
 	if _confirm == null:
 		_confirm = ConfirmationDialog.new()
 		_confirm.title = "카드 가져오기"
 		_confirm.ok_button_text = "적용"
 		_confirm.confirmed.connect(_on_confirmed)
 		EditorInterface.get_base_control().add_child(_confirm)
-	_confirm.dialog_text = _describe(_importer.preview())
+	_confirm.dialog_text = _describe(_importer.preview()) + "
+
+" + _describe_equipment(_equipment.preview())
 	_confirm.popup_centered()
 
 
 ## "적용"을 눌렀을 때: 파일을 쓰고, 에디터가 새 파일을 인식하도록 다시 스캔한다.
 func _on_confirmed() -> void:
 	_importer.apply()
+	_equipment.apply()
 	EditorInterface.get_resource_filesystem().scan()
 	print("[Card Importer] 가져오기 완료")
 
@@ -139,6 +146,30 @@ func _describe(p: Dictionary) -> String:
 	lines.append("")
 	lines.append("효과·비용·조건은 유지되고, 웹 에디터의 내용만 덮어씁니다.")
 	return "\n".join(lines)
+
+
+## 장비 미리보기 결과(EquipmentImporter.preview())를 확인 창 글로 바꾼다.
+## ⚠ = Godot 에서 붙인 상태도 함께 지워지는 장비. 착용 중인 장비는 지우지 않고 남긴다는 줄을 따로 보여준다.
+func _describe_equipment(p: Dictionary) -> String:
+	var lines := PackedStringArray()
+	lines.append("[장비]")
+	lines.append("추가 %d개: %s" % [p.added.size(), _names(p.added)])
+	lines.append("갱신 %d개: %s" % [p.updated.size(), _names(p.updated)])
+	var removed := PackedStringArray()
+	var warn := false
+	for r in p.removed:
+		removed.append(("⚠ " if r.has_statuses else "") + r.name)
+		warn = warn or r.has_statuses
+	lines.append("삭제 %d개: %s" % [removed.size(), _names(removed)])
+	if not p.kept.is_empty():
+		var kept := PackedStringArray()
+		for k in p.kept:
+			kept.append("%s(%s)" % [k.name, ", ".join(k.units)])
+		lines.append("착용 중이라 남김 %d개: %s" % [kept.size(), _names(kept)])
+	if warn:
+		lines.append("⚠ 표시된 장비는 Godot에서 붙인 상태도 함께 삭제됩니다.")
+	return "
+".join(lines)
 
 
 ## 이름 목록을 "a, b, c 외 N장" 형태로. 비어 있으면 "-".

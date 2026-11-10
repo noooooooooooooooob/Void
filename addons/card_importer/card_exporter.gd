@@ -3,17 +3,20 @@ class_name CardExporter
 extends RefCounted
 ## Godot 카드 데이터를 웹 카드 에디터가 읽는 zip 으로 내보내는 로직. CardImporter 의 반대 방향.
 ##
-## zip 구성은 웹 에디터의 내보내기와 같다: cards.json(카드·덱·키워드 목록) + art/(카드 그림).
+## zip 구성은 웹 에디터의 내보내기와 같다: cards.json(카드·덱·키워드·장비 목록) + art/(카드·장비 그림).
 ## 웹 에디터의 "가져오기" 버튼과 Godot 의 "카드 가져오기" 양쪽에서 그대로 읽을 수 있다.
 ##
 ## 내보내는 칸은 웹 에디터가 담당하는 칸뿐이다. costs / conditions / effects / KeywordData.rules 처럼
-## 웹 에디터에 없는 Godot 쪽 칸은 넣지 않는다 (.tres 에 그대로 남는다).
+## 웹 에디터에 없는 Godot 쪽 칸은 넣지 않는다 (.tres 에 그대로 남는다). 장비의 statuses 도 같다.
+## 장비는 id 가 있는 파일만 내보낸다 (id 없는 예전 파일은 웹 에디터가 관리하지 않음 — EquipmentImporter 와 같은 규칙).
 ##
 ## 사용 순서: write_zip() 하나면 된다. 내용만 필요하면 build().
 ## 에디터 메뉴(plugin.gd)와 테스트가 이 클래스를 같이 쓴다.
 
 ## 읽어 올 최상위 폴더. 테스트에서는 user:// 아래 임시 폴더를 넣는다.
 var root: String
+## 장비 데이터 폴더 (EquipmentImporter 가 만드는 곳)
+var equipment_root: String
 ## 카드가 가리키지만 파일이 없어 빠진 그림 경로. build() 때마다 새로 채운다.
 var missing_art := PackedStringArray()
 ## zip 안의 그림 경로("art/<파일 이름>") → 실제 파일 경로
@@ -23,11 +26,13 @@ var _art_paths: Dictionary = {}
 
 
 ## root_dir: 카드 데이터 폴더. 생략하면 res://cards.
-func _init(root_dir: String = "res://cards") -> void:
+## equipment_dir: 장비 데이터 폴더. 생략하면 res://statuses/equipment.
+func _init(root_dir: String = "res://cards", equipment_dir: String = "res://statuses/equipment") -> void:
 	root = root_dir
+	equipment_root = equipment_dir
 
 
-## cards.json 과 같은 구조의 내용을 만든다. { keywords: [...], decks: [...], cards: [...] }
+## cards.json 과 같은 구조의 내용을 만든다. { keywords: [...], decks: [...], cards: [...], equipment: [...] }
 func build() -> Dictionary:
 	missing_art = PackedStringArray()
 	_art_sources = {}
@@ -46,7 +51,7 @@ func build() -> Dictionary:
 			decks.append({"id": card.deck_id, "name": {"ko": _deck_name(path, card.deck_id), "en": ""}})
 		cards.append(_card_entry(card, path))
 
-	return {"keywords": _keyword_entries(), "decks": decks, "cards": cards}
+	return {"keywords": _keyword_entries(), "decks": decks, "cards": cards, "equipment": _equipment_entries()}
 
 
 ## zip 파일을 만든다. 성공하면 "", 실패하면 사람이 읽을 오류 문구를 돌려준다 (에디터 오류 창에 그대로 표시).
@@ -120,6 +125,36 @@ func _art_entry(src: String):
 	_art_sources[dest] = src
 	_art_paths[src] = dest
 	return dest
+
+
+## 장비 항목 목록 (웹 에디터 담당 칸만). id 없는 파일은 뺀다.
+## 스탯 줄: { stat: 스탯 키, kind: "flat" | "percent", amount: 정수 } (웹 에디터는 정수만 다룬다)
+func _equipment_entries() -> Array:
+	var out := []
+	for path in CardImporter.new(root)._tres_paths(equipment_root):
+		var eq := _load(path) as EquipmentData
+		if eq == null or eq.id.is_empty():
+			continue
+		var stats := []
+		for mod in eq.stats:
+			if mod == null:
+				continue
+			stats.append({
+				"stat": EquipmentImporter.STAT_KEYS[mod.stat],
+				"kind": "percent" if mod.kind == BattleTypes.ModKind.PERCENT else "flat",
+				"amount": roundi(mod.amount),
+			})
+		out.append({
+			"id": eq.id,
+			"name": {"ko": eq.display_name, "en": eq.name_en},
+			"description": {"ko": eq.description_ko, "en": eq.description_en},
+			"slot": eq.slot,
+			"rarity": eq.rarity,
+			"stats": stats,
+			"keywords": Array(eq.keywords),
+			"art": _art_entry(eq.art),
+		})
+	return out
 
 
 ## 키워드 항목 목록. id 가 비어 있으면 파일 이름(= 키워드 id)을 쓴다.
