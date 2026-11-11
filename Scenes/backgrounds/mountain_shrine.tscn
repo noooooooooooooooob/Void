@@ -13,9 +13,12 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="FarLayer" type="TextureRect" parent="." unique_id=1537245811]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("1_rlmvk")
 expand_mode = 1
@@ -27,6 +30,157 @@ offset_left = 180.0
 offset_top = 269.0
 offset_right = 820.0
 offset_bottom = 909.0
+corners = PackedVector2Array(184, 333, 757, 333, 716, 674, -86, 674)
+
+[node name="Cell_0_0" parent="Ally Board" index="0" unique_id=1422608363]
+offset_left = 149.41122
+offset_top = 334.8782
+offset_right = 292.9477
+offset_bottom = 382.57452
+
+[node name="Cell_1_0" parent="Ally Board" index="1" unique_id=1583818456]
+offset_left = 270.66962
+offset_top = 334.8782
+offset_right = 407.8
+offset_bottom = 382.57452
+
+[node name="Cell_2_0" parent="Ally Board" index="2" unique_id=1920681267]
+offset_left = 391.92804
+offset_top = 334.8782
+offset_right = 522.6522
+offset_bottom = 382.57452
+
+[node name="Cell_3_0" parent="Ally Board" index="3" unique_id=86098122]
+offset_left = 513.1864
+offset_top = 334.8782
+offset_right = 637.50446
+offset_bottom = 382.57452
+
+[node name="Cell_4_0" parent="Ally Board" index="4" unique_id=1206357306]
+offset_left = 634.44476
+offset_top = 334.8782
+offset_right = 752.3568
+offset_bottom = 382.57452
+
+[node name="Cell_0_1" parent="Ally Board" index="5" unique_id=698158134]
+offset_left = 103.73878
+offset_top = 386.7905
+offset_right = 258.54837
+offset_bottom = 440.63596
+
+[node name="Cell_1_1" parent="Ally Board" index="6" unique_id=183946993]
+offset_left = 232.79547
+offset_top = 386.7905
+offset_right = 380.373
+offset_bottom = 440.63596
+
+[node name="Cell_2_1" parent="Ally Board" index="7" unique_id=1920265350]
+offset_left = 361.85214
+offset_top = 386.7905
+offset_right = 502.19763
+offset_bottom = 440.63596
+
+[node name="Cell_3_1" parent="Ally Board" index="8" unique_id=1248492271]
+offset_left = 490.90884
+offset_top = 386.7905
+offset_right = 624.0223
+offset_bottom = 440.63596
+
+[node name="Cell_4_1" parent="Ally Board" index="9" unique_id=348609545]
+offset_left = 619.9655
+offset_top = 386.7905
+offset_right = 745.8469
+offset_bottom = 440.63596
+
+[node name="Cell_0_2" parent="Ally Board" index="10" unique_id=1115534468]
+offset_left = 51.788055
+offset_top = 445.4131
+offset_right = 219.70247
+offset_bottom = 506.67865
+
+[node name="Cell_1_2" parent="Ally Board" index="11" unique_id=1682475230]
+offset_left = 189.71497
+offset_top = 445.4131
+offset_right = 349.4008
+offset_bottom = 506.67865
+
+[node name="Cell_2_2" parent="Ally Board" index="12" unique_id=1717770801]
+offset_left = 327.64188
+offset_top = 445.4131
+offset_right = 479.0991
+offset_bottom = 506.67865
+
+[node name="Cell_3_2" parent="Ally Board" index="13" unique_id=1254986019]
+offset_left = 465.56885
+offset_top = 445.4131
+offset_right = 608.7974
+offset_bottom = 506.67865
+
+[node name="Cell_4_2" parent="Ally Board" index="14" unique_id=973128736]
+offset_left = 603.4958
+offset_top = 445.4131
+offset_right = 738.49567
+offset_bottom = 506.67865
+
+[node name="Cell_0_3" parent="Ally Board" index="15" unique_id=731408408]
+offset_left = -7.8310175
+offset_top = 512.1369
+offset_right = 175.48836
+offset_bottom = 582.4698
+
+[node name="Cell_1_3" parent="Ally Board" index="16" unique_id=1671735369]
+offset_left = 140.27547
+offset_top = 512.1369
+offset_right = 314.14838
+offset_bottom = 582.4698
+
+[node name="Cell_2_3" parent="Ally Board" index="17" unique_id=1501931615]
+offset_left = 288.382
+offset_top = 512.1369
+offset_right = 452.8084
+offset_bottom = 582.4698
+
+[node name="Cell_3_3" parent="Ally Board" index="18" unique_id=977986087]
+offset_left = 436.48846
+offset_top = 512.1369
+offset_right = 591.46844
+offset_bottom = 582.4698
+
+[node name="Cell_4_3" parent="Ally Board" index="19" unique_id=1076426760]
+offset_left = 584.5949
+offset_top = 512.1369
+offset_right = 730.1284
+offset_bottom = 582.4698
+
+[node name="Cell_0_4" parent="Ally Board" index="20" unique_id=276321728]
+offset_left = -76.951614
+offset_top = 588.76587
+offset_right = 124.71059
+offset_bottom = 670.33984
+
+[node name="Cell_1_4" parent="Ally Board" index="21" unique_id=1474646799]
+offset_left = 82.95678
+offset_top = 588.76587
+offset_right = 273.66275
+offset_bottom = 670.33984
+
+[node name="Cell_2_4" parent="Ally Board" index="22" unique_id=816532153]
+offset_left = 242.86519
+offset_top = 588.76587
+offset_right = 422.61487
+offset_bottom = 670.33984
+
+[node name="Cell_3_4" parent="Ally Board" index="23" unique_id=1434402784]
+offset_left = 402.77362
+offset_top = 588.76587
+offset_right = 571.567
+offset_bottom = 670.33984
+
+[node name="Cell_4_4" parent="Ally Board" index="24" unique_id=1211074837]
+offset_left = 562.682
+offset_top = 588.76587
+offset_right = 720.51904
+offset_bottom = 670.33984
 
 [node name="Enemy Board" parent="." unique_id=426616299 instance=ExtResource("2_u8l2e")]
 layout_mode = 0
@@ -35,3 +189,157 @@ offset_top = 267.0
 offset_right = 1647.0
 offset_bottom = 907.0
 side = 1
+corners = PackedVector2Array(-24, 335, 549, 335, 819, 676, 17, 676)
+
+[node name="Cell_0_0" parent="Enemy Board" index="0" unique_id=1422608363]
+offset_left = -19.35678
+offset_top = 336.8782
+offset_right = 98.55518
+offset_bottom = 384.5745
+
+[node name="Cell_1_0" parent="Enemy Board" index="1" unique_id=1583818456]
+offset_left = 95.49548
+offset_top = 336.8782
+offset_right = 219.81357
+offset_bottom = 384.5745
+
+[node name="Cell_2_0" parent="Enemy Board" index="2" unique_id=1920681267]
+offset_left = 210.34776
+offset_top = 336.8782
+offset_right = 341.07196
+offset_bottom = 384.5745
+
+[node name="Cell_3_0" parent="Enemy Board" index="3" unique_id=86098122]
+offset_left = 325.20004
+offset_top = 336.8782
+offset_right = 462.33038
+offset_bottom = 384.5745
+
+[node name="Cell_4_0" parent="Enemy Board" index="4" unique_id=1206357306]
+offset_left = 440.05228
+offset_top = 336.8782
+offset_right = 583.5887
+offset_bottom = 384.5745
+
+[node name="Cell_0_1" parent="Enemy Board" index="5" unique_id=698158134]
+offset_left = -12.846956
+offset_top = 388.7905
+offset_right = 113.03452
+offset_bottom = 442.63596
+
+[node name="Cell_1_1" parent="Enemy Board" index="6" unique_id=183946993]
+offset_left = 108.97769
+offset_top = 388.7905
+offset_right = 242.09122
+offset_bottom = 442.63596
+
+[node name="Cell_2_1" parent="Enemy Board" index="7" unique_id=1920265350]
+offset_left = 230.80234
+offset_top = 388.7905
+offset_right = 371.14786
+offset_bottom = 442.63596
+
+[node name="Cell_3_1" parent="Enemy Board" index="8" unique_id=1248492271]
+offset_left = 352.627
+offset_top = 388.7905
+offset_right = 500.20456
+offset_bottom = 442.63596
+
+[node name="Cell_4_1" parent="Enemy Board" index="9" unique_id=348609545]
+offset_left = 474.45163
+offset_top = 388.7905
+offset_right = 629.26117
+offset_bottom = 442.63596
+
+[node name="Cell_0_2" parent="Enemy Board" index="10" unique_id=1115534468]
+offset_left = -5.4956627
+offset_top = 447.4131
+offset_right = 129.50423
+offset_bottom = 508.67868
+
+[node name="Cell_1_2" parent="Enemy Board" index="11" unique_id=1682475230]
+offset_left = 124.20264
+offset_top = 447.4131
+offset_right = 267.43115
+offset_bottom = 508.67868
+
+[node name="Cell_2_2" parent="Enemy Board" index="12" unique_id=1717770801]
+offset_left = 253.90094
+offset_top = 447.4131
+offset_right = 405.3581
+offset_bottom = 508.67868
+
+[node name="Cell_3_2" parent="Enemy Board" index="13" unique_id=1254986019]
+offset_left = 383.5992
+offset_top = 447.4131
+offset_right = 543.28503
+offset_bottom = 508.67868
+
+[node name="Cell_4_2" parent="Enemy Board" index="14" unique_id=973128736]
+offset_left = 513.2975
+offset_top = 447.4131
+offset_right = 681.2119
+offset_bottom = 508.67868
+
+[node name="Cell_0_3" parent="Enemy Board" index="15" unique_id=731408408]
+offset_left = 2.8715308
+offset_top = 514.13684
+offset_right = 148.40498
+offset_bottom = 584.4698
+
+[node name="Cell_1_3" parent="Enemy Board" index="16" unique_id=1671735369]
+offset_left = 141.53156
+offset_top = 514.13684
+offset_right = 296.5115
+offset_bottom = 584.4698
+
+[node name="Cell_2_3" parent="Enemy Board" index="17" unique_id=1501931615]
+offset_left = 280.1916
+offset_top = 514.13684
+offset_right = 444.618
+offset_bottom = 584.4698
+
+[node name="Cell_3_3" parent="Enemy Board" index="18" unique_id=977986087]
+offset_left = 418.85162
+offset_top = 514.13684
+offset_right = 592.7245
+offset_bottom = 584.4698
+
+[node name="Cell_4_3" parent="Enemy Board" index="19" unique_id=1076426760]
+offset_left = 557.5116
+offset_top = 514.13684
+offset_right = 740.831
+offset_bottom = 584.4698
+
+[node name="Cell_0_4" parent="Enemy Board" index="20" unique_id=276321728]
+offset_left = 12.480847
+offset_top = 590.7659
+offset_right = 170.31801
+offset_bottom = 672.33984
+
+[node name="Cell_1_4" parent="Enemy Board" index="21" unique_id=1474646799]
+offset_left = 161.43297
+offset_top = 590.7659
+offset_right = 330.22644
+offset_bottom = 672.33984
+
+[node name="Cell_2_4" parent="Enemy Board" index="22" unique_id=816532153]
+offset_left = 310.38513
+offset_top = 590.7659
+offset_right = 490.1348
+offset_bottom = 672.33984
+
+[node name="Cell_3_4" parent="Enemy Board" index="23" unique_id=1434402784]
+offset_left = 459.33728
+offset_top = 590.7659
+offset_right = 650.0432
+offset_bottom = 672.33984
+
+[node name="Cell_4_4" parent="Enemy Board" index="24" unique_id=1211074837]
+offset_left = 608.28937
+offset_top = 590.7659
+offset_right = 809.9516
+offset_bottom = 672.33984
+
+[editable path="Ally Board"]
+[editable path="Enemy Board"]

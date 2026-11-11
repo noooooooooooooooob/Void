@@ -17,6 +17,55 @@ func test_scene_has_5x5_cells_named_by_position():
 		for row in 5:
 			assert_true(b.get_node_or_null(BattleBoard.cell_name(col, row)) is GridCell, "%d,%d" % [col, row])
 
+func test_cells_have_no_minimum_and_start_at_120_in_place():
+	var b := _board(A)
+	for col in 5:
+		for row in 5:
+			var c: GridCell = b.get_node(BattleBoard.cell_name(col, row))
+			assert_eq(c.custom_minimum_size, Vector2.ZERO, "min %d,%d" % [col, row])
+			assert_almost_eq(c.size, Vector2(120, 120), Vector2(0.01, 0.01), "size %d,%d" % [col, row])
+			assert_almost_eq(c.position, Vector2(col * 130, row * 130), Vector2(0.01, 0.01), "pos %d,%d" % [col, row])
+
+var TRAP := PackedVector2Array([Vector2(200, 0), Vector2(450, 0), Vector2(650, 650), Vector2(0, 650)])
+var MINE := PackedVector2Array([Vector2(10, 10), Vector2(50, 10), Vector2(50, 70), Vector2(10, 70)])
+
+func test_board_corners_reshape_cells():
+	var b := _board(A)
+	b.corners = TRAP
+	var far: GridCell = b.get_node(BattleBoard.cell_name(2, 0))
+	var near: GridCell = b.get_node(BattleBoard.cell_name(2, 4))
+	assert_lt(far.size.y, near.size.y)
+
+func test_custom_corners_win_over_auto():
+	var b := _board(A)
+	var c: GridCell = b.get_node(BattleBoard.cell_name(1, 1))
+	c.custom_corners = MINE
+	assert_eq(c.position, Vector2(10, 10))
+	assert_eq(c.size, Vector2(40, 60))
+	b.corners = TRAP
+	assert_eq(c.position, Vector2(10, 10))
+
+func test_wrong_point_count_is_auto():
+	var b := _board(A)
+	var c: GridCell = b.get_node(BattleBoard.cell_name(1, 1))
+	c.custom_corners = PackedVector2Array([Vector2(1, 1), Vector2(2, 2), Vector2(3, 1)])
+	assert_almost_eq(c.position, Vector2(130, 130), Vector2(0.01, 0.01))
+
+func test_layout_twice_keeps_shape():
+	var b := _board(A)
+	var c: GridCell = b.get_node(BattleBoard.cell_name(1, 1))
+	c.custom_corners = MINE
+	b.layout_cells()
+	b.layout_cells()
+	assert_eq(c.size, Vector2(40, 60))
+
+func test_wrong_board_corner_count_keeps_layout():
+	var b := _board(A)
+	var c: GridCell = b.get_node(BattleBoard.cell_name(1, 1))
+	var before := c.position
+	b.corners = PackedVector2Array([Vector2(0, 0)])
+	assert_eq(c.position, before)
+
 func test_ally_front_column_is_on_the_right():
 	var b := _board(A)
 	# 아군 3열: 전투 열 2(맨 앞) → 판 오른쪽 끝(4), 열 0(뒤) → 판 열 2
