@@ -358,8 +358,8 @@ func refresh() -> void:
 			if t.get_parent():
 				t.get_parent().remove_child(t)
 			cell.add_child(t)
-			# 칸 가운데에 놓는다. 격자판 칸은 에디터에서 크기를 바꿨을 수 있어 실제 크기도 본다
-			t.position = (cell.size.max(cell.custom_minimum_size) - t.custom_minimum_size) * 0.5
+			# 칸 중심에 놓는다. 격자판 칸은 사각형이라 경계 상자 중심과 다르다
+			t.position = cell.center() - t.custom_minimum_size * 0.5
 		t.set_highlight(targets.has(u))
 		t.visible = u.alive
 	for u in _rows:

@@ -13,6 +13,41 @@ func _unit(side := E, hp := 45) -> BattleUnit:
 	return u
 
 
+const CELL := "res://Scenes/ui/battle_screen/grid_cell.tscn"
+var DIAMOND := PackedVector2Array([Vector2(50, 0), Vector2(100, 50), Vector2(50, 100), Vector2(0, 50)])
+
+func test_quad_sets_bounds_and_local_points():
+	var c: GridCell = _scene(CELL)
+	c.custom_minimum_size = Vector2.ZERO
+	c.apply_quad(PackedVector2Array([Vector2(60, 10), Vector2(110, 60), Vector2(60, 110), Vector2(10, 60)]))
+	assert_eq(c.position, Vector2(10, 10))
+	assert_eq(c.size, Vector2(100, 100))
+	assert_eq(c.quad, DIAMOND)
+
+func test_click_only_inside_quad():
+	var c: GridCell = _scene(CELL)
+	c.custom_minimum_size = Vector2.ZERO
+	c.apply_quad(DIAMOND)
+	assert_true(c._has_point(Vector2(50, 50)))
+	assert_false(c._has_point(Vector2(3, 3)))
+
+func test_no_quad_is_full_rect():
+	var c: GridCell = _scene(CELL)
+	assert_true(c._has_point(Vector2(3, 3)))
+	assert_eq(c.center(), Vector2(60, 60))
+
+func test_center_is_corner_average():
+	var c: GridCell = _scene(CELL)
+	c.custom_minimum_size = Vector2.ZERO
+	c.apply_quad(PackedVector2Array([Vector2(0, 0), Vector2(40, 0), Vector2(100, 60), Vector2(0, 60)]))
+	assert_eq(c.center(), Vector2(35, 30))
+
+func test_twisted_quad_cannot_fill():
+	var c: GridCell = _scene(CELL)
+	c.custom_minimum_size = Vector2.ZERO
+	c.apply_quad(PackedVector2Array([Vector2(0, 0), Vector2(100, 100), Vector2(100, 0), Vector2(0, 100)]))
+	assert_false(c.can_fill())
+
 func test_grid_cell_click_emits_side_and_cell():
 	var c: GridCell = _scene("res://Scenes/ui/battle_screen/grid_cell.tscn")
 	c.setup(E, Vector2i(2, 1))

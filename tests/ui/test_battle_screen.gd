@@ -257,6 +257,17 @@ func test_board_cell_click_moves_once_after_restart():
 	assert_eq(hero.cell, to)
 	assert_eq(s.session.active.cell, to)
 
+func test_token_sits_on_quad_center_not_box_center():
+	var s := _board_screen()
+	var hero := s.session.active
+	var to: Vector2i = s.session.reachable_cells()[0]
+	var cell: GridCell = s._cells[Vector3i(A, to.x, to.y)]
+	cell.custom_corners = PackedVector2Array([Vector2(10, 10), Vector2(50, 10), Vector2(90, 70), Vector2(0, 70)])
+	cell.pressed.emit(A, to)
+	var t: UnitToken = s._tokens[hero]
+	assert_eq(t.get_parent(), cell)
+	assert_eq(t.position + t.custom_minimum_size * 0.5, Vector2(37.5, 30))
+
 func test_restart_with_boards_keeps_one_token_per_unit():
 	var s := _board_screen()
 	s.restart()

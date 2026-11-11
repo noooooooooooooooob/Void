@@ -12,156 +12,191 @@ mouse_filter = 2
 script = ExtResource("1_f55pi")
 
 [node name="Cell_0_0" parent="." unique_id=1422608363 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
+offset_right = 120.0
+offset_bottom = 120.0
 
 [node name="Cell_1_0" parent="." unique_id=1583818456 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 130.0
-offset_right = 130.0
+offset_right = 250.0
+offset_bottom = 120.0
 
 [node name="Cell_2_0" parent="." unique_id=1920681267 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 260.0
-offset_right = 260.0
+offset_right = 380.0
+offset_bottom = 120.0
 
 [node name="Cell_3_0" parent="." unique_id=86098122 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 390.0
-offset_right = 390.0
+offset_right = 510.0
+offset_bottom = 120.0
 
 [node name="Cell_4_0" parent="." unique_id=1206357306 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 520.0
-offset_right = 520.0
+offset_right = 640.0
+offset_bottom = 120.0
 
 [node name="Cell_0_1" parent="." unique_id=698158134 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_top = 130.0
-offset_bottom = 130.0
+offset_right = 120.0
+offset_bottom = 250.0
 
 [node name="Cell_1_1" parent="." unique_id=183946993 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 130.0
 offset_top = 130.0
-offset_right = 130.0
-offset_bottom = 130.0
+offset_right = 250.0
+offset_bottom = 250.0
 
 [node name="Cell_2_1" parent="." unique_id=1920265350 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 260.0
 offset_top = 130.0
-offset_right = 260.0
-offset_bottom = 130.0
+offset_right = 380.0
+offset_bottom = 250.0
 
 [node name="Cell_3_1" parent="." unique_id=1248492271 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 390.0
 offset_top = 130.0
-offset_right = 390.0
-offset_bottom = 130.0
+offset_right = 510.0
+offset_bottom = 250.0
 
 [node name="Cell_4_1" parent="." unique_id=348609545 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 520.0
 offset_top = 130.0
-offset_right = 520.0
-offset_bottom = 130.0
+offset_right = 640.0
+offset_bottom = 250.0
 
 [node name="Cell_0_2" parent="." unique_id=1115534468 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_top = 260.0
-offset_bottom = 260.0
+offset_right = 120.0
+offset_bottom = 380.0
 
 [node name="Cell_1_2" parent="." unique_id=1682475230 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 130.0
 offset_top = 260.0
-offset_right = 130.0
-offset_bottom = 260.0
+offset_right = 250.0
+offset_bottom = 380.0
 
 [node name="Cell_2_2" parent="." unique_id=1717770801 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 260.0
 offset_top = 260.0
-offset_right = 260.0
-offset_bottom = 260.0
+offset_right = 380.0
+offset_bottom = 380.0
 
 [node name="Cell_3_2" parent="." unique_id=1254986019 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 390.0
 offset_top = 260.0
-offset_right = 390.0
-offset_bottom = 260.0
+offset_right = 510.0
+offset_bottom = 380.0
 
 [node name="Cell_4_2" parent="." unique_id=973128736 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 520.0
 offset_top = 260.0
-offset_right = 520.0
-offset_bottom = 260.0
+offset_right = 640.0
+offset_bottom = 380.0
 
 [node name="Cell_0_3" parent="." unique_id=731408408 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_top = 390.0
-offset_bottom = 390.0
+offset_right = 120.0
+offset_bottom = 510.0
 
 [node name="Cell_1_3" parent="." unique_id=1671735369 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 130.0
 offset_top = 390.0
-offset_right = 130.0
-offset_bottom = 390.0
+offset_right = 250.0
+offset_bottom = 510.0
 
 [node name="Cell_2_3" parent="." unique_id=1501931615 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 260.0
 offset_top = 390.0
-offset_right = 260.0
-offset_bottom = 390.0
+offset_right = 380.0
+offset_bottom = 510.0
 
 [node name="Cell_3_3" parent="." unique_id=977986087 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 390.0
 offset_top = 390.0
-offset_right = 390.0
-offset_bottom = 390.0
+offset_right = 510.0
+offset_bottom = 510.0
 
 [node name="Cell_4_3" parent="." unique_id=1076426760 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 520.0
 offset_top = 390.0
-offset_right = 520.0
-offset_bottom = 390.0
+offset_right = 640.0
+offset_bottom = 510.0
 
 [node name="Cell_0_4" parent="." unique_id=276321728 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_top = 520.0
-offset_bottom = 520.0
+offset_right = 120.0
+offset_bottom = 640.0
 
 [node name="Cell_1_4" parent="." unique_id=1474646799 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 130.0
 offset_top = 520.0
-offset_right = 130.0
-offset_bottom = 520.0
+offset_right = 250.0
+offset_bottom = 640.0
 
 [node name="Cell_2_4" parent="." unique_id=816532153 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 260.0
 offset_top = 520.0
-offset_right = 260.0
-offset_bottom = 520.0
+offset_right = 380.0
+offset_bottom = 640.0
 
 [node name="Cell_3_4" parent="." unique_id=1434402784 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 390.0
 offset_top = 520.0
-offset_right = 390.0
-offset_bottom = 520.0
+offset_right = 510.0
+offset_bottom = 640.0
 
 [node name="Cell_4_4" parent="." unique_id=1211074837 instance=ExtResource("2_mug7f")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 offset_left = 520.0
 offset_top = 520.0
-offset_right = 520.0
-offset_bottom = 520.0
+offset_right = 640.0
+offset_bottom = 640.0
