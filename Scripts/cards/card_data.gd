@@ -49,3 +49,6 @@ extends Resource
 @export var conditions: Array[CardCondition] = []
 ## 효과 목록. 위에서부터 차례로 실행된다. 예: 피해 → 상태 부여.
 @export var effects: Array[CardEffect] = []
+## 이 카드를 쓸 때 사용자가 재생할 애니메이션 이름 (사용자 UnitData.battle_frames 안의 이름. 예: "punch").
+## 비워 두거나 사용자에게 그 애니메이션이 없으면 재생하지 않는다.
+@export var animation: StringName

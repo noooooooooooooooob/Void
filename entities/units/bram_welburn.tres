@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://b1mvfbsokntdu"]
 
+[ext_resource type="SpriteFrames" uid="uid://ciiv4k826tf1k" path="res://entities/units/bram_frames.tres" id="1_08hrn"]
 [ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="1_e7lks"]
 [ext_resource type="Resource" uid="uid://71r6u07dt4h3" path="res://cards/data/브람/돌주먹.tres" id="2_08hrn"]
 [ext_resource type="Resource" uid="uid://mrwjdmvvqq4k" path="res://cards/data/브람/바위 팔 막기.tres" id="3_bbsqc"]
@@ -18,6 +19,7 @@
 [resource]
 script = ExtResource("14_04rbb")
 display_name = "브람 웰번"
+battle_frames = ExtResource("1_08hrn")
 crit_rate = 1
 crit_damage = 175
 aggro = 100

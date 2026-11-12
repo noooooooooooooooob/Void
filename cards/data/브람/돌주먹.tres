@@ -31,6 +31,7 @@ name_ko = "돌주먹+"
 description_ko = "ATK 80%로 공격. 쉴드(방어력의 80%) 획득"
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_f58qk")]([SubResource("Resource_l62vf"), SubResource("Resource_tho0j")])
+animation = null
 
 [resource]
 script = ExtResource("4_kt0g2")
@@ -41,3 +42,4 @@ description_ko = "ATK 80%로 공격. 쉴드(방어력의 50%) 획득"
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_kt0g2")]([SubResource("Resource_7qcr3")])
 effects = Array[ExtResource("3_f58qk")]([SubResource("Resource_f58qk"), SubResource("Resource_kt0g2")])
+animation = &"punch"

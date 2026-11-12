@@ -8,6 +8,11 @@ extends Resource
 ## 화면에 보일 이름
 @export var display_name: String
 
+@export_group("전투 그림")
+## 전투 타일 위에서 쓰는 애니메이션 묶음 (SpriteFrames).
+## 애니메이션 "idle" = 서 있을 때. 카드를 쓰면 그 카드의 animation 이름을 한 번 재생하고 idle 로 돌아온다.
+## 비워 두면 그림 없이 색 박스만 보인다.
+@export var battle_frames: SpriteFrames
 @export_group("스탯")
 ## 최대 HP
 @export var max_hp: int = 100

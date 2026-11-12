@@ -29,6 +29,7 @@ sp = 2
 cost = 2
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_52ucf")]([SubResource("Resource_27ssf"), SubResource("Resource_k5040")])
+animation = null
 
 [resource]
 script = ExtResource("4_wr1vq")
@@ -41,3 +42,4 @@ cost = 2
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_wr1vq")]([SubResource("Resource_no7xc")])
 effects = Array[ExtResource("3_52ucf")]([SubResource("Resource_52ucf"), SubResource("Resource_wr1vq")])
+animation = &"uppercut"

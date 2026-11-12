@@ -24,6 +24,7 @@ category = "skill"
 attack_type = "self"
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_tykfh")]([SubResource("Resource_tykfh")])
+animation = null
 
 [resource]
 script = ExtResource("4_fi3cd")
@@ -36,3 +37,4 @@ attack_type = "self"
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_fi3cd")]([SubResource("Resource_obans")])
 effects = Array[ExtResource("3_tykfh")]([SubResource("Resource_bsvbr")])
+animation = &"guard"

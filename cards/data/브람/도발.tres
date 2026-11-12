@@ -36,6 +36,7 @@ category = "special"
 attack_type = "self"
 keywords = PackedStringArray("hbrpoig8f1cbfno6b9m8")
 effects = Array[ExtResource("3_28p0o")]([SubResource("Resource_huouo"), SubResource("Resource_ul6kd")])
+animation = null
 
 [resource]
 script = ExtResource("4_mn24l")
@@ -49,3 +50,4 @@ attack_type = "self"
 keywords = PackedStringArray("hbrpoig8f1cbfno6b9m8")
 upgrades = Array[ExtResource("4_mn24l")]([SubResource("Resource_e31t7")])
 effects = Array[ExtResource("3_28p0o")]([SubResource("Resource_mn24l"), SubResource("Resource_32jeq")])
+animation = &"victory_pose"

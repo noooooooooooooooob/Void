@@ -292,6 +292,10 @@ func _subscribe_events() -> void:
 		_add_log("%s 회복 +%d" % [e.target.data.display_name, e.amount]))
 	ev.subscribe(E.BEFORE_CARD_PLAYED, func(e):
 		var to: String = (" → " + e.target.data.display_name) if e.target and e.target != e.actor else ""
+		# 카드를 쓴 유닛의 박스가 그 카드의 동작을 재생한다 (e.card = 실제로 쓰는 카드)
+		var token: UnitToken = _tokens.get(e.actor)
+		if token:
+			token.play_card_animation(e.card)
 		_add_log("%s: %s%s" % [e.actor.data.display_name, e.card.name_ko, to]))
 	ev.subscribe(E.UNIT_MOVED, func(e): _add_log("%s 이동 %d칸" % [e.actor.data.display_name, e.amount]))
 	ev.subscribe(E.UNIT_DIED, func(e): _add_log("✖ %s 쓰러짐" % e.target.data.display_name))

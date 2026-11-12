@@ -45,6 +45,7 @@ attack_type = "ranged"
 keywords = PackedStringArray()
 costs = Array[ExtResource("2_hd6dg")]([SubResource("Resource_g16yi")])
 effects = Array[ExtResource("3_lj44a")]([SubResource("Resource_1lavs")])
+animation = null
 
 [resource]
 script = ExtResource("4_3epm0")
@@ -57,3 +58,4 @@ keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_3epm0")]([SubResource("Resource_hcnbd")])
 costs = Array[ExtResource("2_hd6dg")]([SubResource("Resource_3epm0")])
 effects = Array[ExtResource("3_lj44a")]([SubResource("Resource_avuxa")])
+animation = &"punch"

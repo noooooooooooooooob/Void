@@ -1,0 +1,50 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://ciiv4k826tf1k"]
+
+[ext_resource type="Texture2D" uid="uid://bvvrulqiirwhm" path="res://Art/characters/bram_welburn/bram_guard.png" id="1_3mifd"]
+[ext_resource type="Texture2D" uid="uid://bb0r5siyvne7d" path="res://Art/characters/bram_welburn/bram_idle.png" id="2_5mwgl"]
+[ext_resource type="Texture2D" uid="uid://1ybohtfrg8xl" path="res://Art/characters/bram_welburn/bram_punch.png" id="3_bsbag"]
+[ext_resource type="Texture2D" uid="uid://casexvan7rvln" path="res://Art/characters/bram_welburn/bram_uppercut.png" id="4_1vl0e"]
+[ext_resource type="Texture2D" uid="uid://cxirq72n6plug" path="res://Art/characters/bram_welburn/bram_victory_pose.png" id="5_cxdqo"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_3mifd")
+}],
+"loop": 0,
+"name": &"guard",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_5mwgl")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_bsbag")
+}],
+"loop": 0,
+"name": &"punch",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_1vl0e")
+}],
+"loop": 0,
+"name": &"uppercut",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_cxdqo")
+}],
+"loop": 0,
+"name": &"victory_pose",
+"speed": 2.0
+}]

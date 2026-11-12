@@ -24,6 +24,7 @@ attack_type = "ally"
 area = Array[Vector2i]([Vector2i(0, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1)])
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_7ylg6")]([SubResource("Resource_7ylg6")])
+animation = null
 
 [resource]
 script = ExtResource("4_aoxul")
@@ -38,3 +39,4 @@ area = Array[Vector2i]([Vector2i(0, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_aoxul")]([SubResource("Resource_b1d2g")])
 effects = Array[ExtResource("3_7ylg6")]([SubResource("Resource_sbdg5")])
+animation = null

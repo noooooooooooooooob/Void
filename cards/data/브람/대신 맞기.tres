@@ -25,6 +25,7 @@ category = "special"
 attack_type = "ally"
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_f508e")]([SubResource("Resource_yuvsa")])
+animation = null
 
 [resource]
 script = ExtResource("4_8q4tn")
@@ -38,3 +39,4 @@ attack_type = "ally"
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_8q4tn")]([SubResource("Resource_i3mx5")])
 effects = Array[ExtResource("3_f508e")]([SubResource("Resource_8q4tn")])
+animation = &"guard"

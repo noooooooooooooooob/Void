@@ -48,6 +48,7 @@ area = Array[Vector2i]([Vector2i(0, -1), Vector2i(0, 0), Vector2i(0, 1)])
 keywords = PackedStringArray()
 costs = Array[ExtResource("2_yvf6l")]([SubResource("Resource_j776l")])
 effects = Array[ExtResource("3_jkpjy")]([SubResource("Resource_x5lgf")])
+animation = null
 
 [resource]
 script = ExtResource("4_wk3br")
@@ -62,3 +63,4 @@ keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_wk3br")]([SubResource("Resource_i4ae8")])
 costs = Array[ExtResource("2_yvf6l")]([SubResource("Resource_wk3br")])
 effects = Array[ExtResource("3_jkpjy")]([SubResource("Resource_8ohp7")])
+animation = &"uppercut"

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ds1tdywryk7ut"]
 
-[ext_resource type="Script" path="res://Scripts/ui/unit_token.gd" id="1_0og7g"]
+[ext_resource type="Script" uid="uid://budhdb1xcvkfq" path="res://Scripts/ui/unit_token.gd" id="1_0og7g"]
 
 [node name="UnitToken" type="Control" unique_id=89544387]
 custom_minimum_size = Vector2(100, 100)
@@ -17,6 +17,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.47843137, 0.18431373, 0.22745098, 1)
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=249696371]
+unique_name_in_owner = true
+position = Vector2(50, 50)
+scale = Vector2(0.2, 0.2)
+offset = Vector2(0, -200)
 
 [node name="Box" type="VBoxContainer" parent="." unique_id=1740090346]
 layout_mode = 0
@@ -44,8 +50,8 @@ vertical_alignment = 1
 [node name="Block" type="Label" parent="Box" unique_id=1237649675]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.49803922, 0.72156864, 1, 1)
+theme_override_font_sizes/font_size = 16
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
