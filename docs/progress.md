@@ -1,6 +1,6 @@
 # Project Void 개발 진행 상황
 
-마지막 갱신: 2026-11-14
+마지막 갱신: 2026-11-15
 
 코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
 
@@ -25,6 +25,7 @@
 | 전투 격자판 (2026-11-10) | 편마다 5×5 칸 판(`battle_board.tscn`)을 배경 씬에 아군용·적용으로 하나씩 넣고 칸 위치·크기·모양을 에디터에서 꾸민다. 전투가 시작되면 맞닿는 쪽 열·가운데 행부터 전투 크기만큼만 켜고 나머지는 숨김. 판이 없는 배경은 기존 정사각형 격자. 2026-11-11: 칸을 원근 사각형으로. 보드 네 모서리(`corners`)를 바닥에 맞추면 25칸이 자동으로 나뉘고, 필요한 칸만 꼭짓점(`custom_corners`)을 직접 조정. 색·표시·클릭 판정이 칸 모양을 따름. 에디터 2D 화면에서 핸들로 드래그 | `Scenes/ui/battle_screen/battle_board.tscn`, `Scripts/ui/battle_board.gd`, `Scripts/ui/grid_cell.gd`, `Scripts/ui/board_shape.gd`, `addons/board_shape_editor/`, 설계 `docs/superpowers/specs/2026-11-11-board-cell-shape-design.md` |
 | 전투 스프라이트 (2026-11-13) | 유닛마다 `UnitData.battle_frames`(SpriteFrames)를 두고 유닛 박스의 `Sprite`(AnimatedSprite2D)가 `idle` 을 반복. 카드를 쓰면 `CardData.animation` 이름의 동작을 한 번 재생하고 idle 로 돌아옴(강화본은 칸이 비면 원래 카드 이름). 지금은 브람만, 동작마다 그림 1장(placeholder): punch·uppercut·guard·victory_pose. 묶음이 없는 유닛은 색 박스 그대로 | `entities/units/bram_frames.tres`, `Art/characters/bram_welburn/bram_*.png`, `Scripts/ui/unit_token.gd` |
 | 카드 연출 (2026-11-14) | 카드마다 연출 씬(`CardData.performance`, 루트 `CardPerformance`)의 AnimationPlayer `perform` 타임라인으로 이동·동작·이펙트를 정하고, Call Method 키 `move(x, y, 시간)`(대상 칸 기준)·`hit()`(맞는 반응, 여러 번)·`show_results()`(결과 한 번에)·`zoom(세기, 시간)` 을 찍는다. 연출 끝나면 자동 복귀. 계산은 즉시, 화면은 `PerformanceRecorder`→`PerformanceQueue` 로 단계별 재생하고 연출 중엔 입력·적 행동·결과 창 대기. hit 반응: 캐릭터 그림·화면·캐릭터 UI 랜덤 흔들림, 피격 이펙트, 효과음(음높이 무작위), 히트스톱, 번쩍임, 넉백. 결과: 숫자는 부호 없이 색으로 구분(피해 빨강·회복 초록·방어도 파랑)하고 매번 조금씩 다른 방향으로 떠오름, 피해 클수록·치명타면 큰 숫자, 처치·치명 때 추가 흔들림. 공통값은 BattleScreen, 카드별 변경은 연출 씬 루트. 시험: 브람 돌주먹. HP 바 잔상은 HP 바가 생긴 뒤 | `Scripts/performances/`, `Scripts/ui/performance_queue.gd`, `Scripts/ui/shaker.gd`, `Scenes/performances/bram_stone_fist.tscn`, 설계 `docs/superpowers/specs/2026-11-14-card-performance-design.md` |
+| 손패 떠오르기 (2026-11-15) | 손패 카드는 평소 `hand_sink`(150px)만큼 화면 아래로 내려가 있고, 마우스를 올린 카드만 부드럽게 떠오름(`hand_rise_speed`). 고른 카드는 계속 위. 카드가 움직여도 깜빡이지 않게 카드 가로 범위 기둥 전체로 마우스를 봄 | `Scripts/ui/battle_screen.gd` |
 | 그림 추가 (코드에서 아직 안 씀) | 캐릭터 10명 일러스트·픽셀 아트(`mo_liang` 은 일러스트만), 배경 5장, 공허 지도 | `Art/characters/`, `Art/backgrounds/`, `Art/ui/void_map.png` |
 
 ## 진행 중: 의뢰 스테이지 (`feat/stage-run`, 2026-11-07~10)

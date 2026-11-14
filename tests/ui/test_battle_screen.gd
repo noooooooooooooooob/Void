@@ -302,3 +302,40 @@ func test_real_test_battle_plays_through_with_hongyeon_and_bram():
 	assert_true(s.session.is_finished())
 	assert_true(acted.has("브람 웰번"), str(acted.keys()))
 	assert_true(acted.has("홍연 (시험)"), str(acted.keys()))
+
+# 손패: 평소엔 아래로 내려가 있고, 마우스를 올린 카드만 떠오른다.
+func _card_top(s: BattleScreen, i: int) -> float:
+	return s.get_node("%Hand").get_child(i).position.y
+
+func test_hand_cards_sit_low():
+	var s := _screen()
+	await wait_frames(2)
+	s._update_hand_lift(10.0, -1)
+	var hand: Control = s.get_node("%Hand")
+	var v: Control = hand.get_child(0)
+	assert_almost_eq(_card_top(s, 0), hand.size.y - v.size.y + s.hand_sink, 0.5)
+
+func test_hovered_card_rises():
+	var s := _screen()
+	await wait_frames(2)
+	s._update_hand_lift(10.0, 2)
+	var hand: Control = s.get_node("%Hand")
+	var v: Control = hand.get_child(2)
+	assert_almost_eq(_card_top(s, 2), hand.size.y - v.size.y, 0.5)
+	assert_almost_eq(_card_top(s, 0), hand.size.y - v.size.y + s.hand_sink, 0.5)
+
+func test_hover_rises_gradually():
+	var s := _screen()
+	await wait_frames(2)
+	s._update_hand_lift(10.0, -1)
+	var low := _card_top(s, 1)
+	s._update_hand_lift(0.016, 1)
+	assert_lt(_card_top(s, 1), low)
+	assert_gt(_card_top(s, 1), low - s.hand_sink)
+
+func test_selected_card_stays_up_without_hover():
+	var s := _screen()
+	s.select_card(_index_of(s, "사격"))
+	await wait_frames(2)
+	s._update_hand_lift(10.0, -1)
+	assert_eq(_card_top(s, s.selected_index), 0.0)

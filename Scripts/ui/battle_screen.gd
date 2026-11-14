@@ -32,6 +32,10 @@ extends Control
 @export var drag_play_height := 120.0
 ## 전투 기록에 남길 줄 수
 @export var log_lines := 8
+## 손패 카드가 평소에 내려가 있는 거리 (픽셀). 화면 아래로 이만큼 묻히고, 마우스를 올린 카드만 떠오른다
+@export var hand_sink := 150.0
+## 손패 카드가 떠오르고 내려가는 빠르기 (클수록 빠름, 1초에 남은 거리의 대략 이 배수만큼)
+@export var hand_rise_speed := 14.0
 
 @export_group("피격 반응 (공통값)")
 ## hit 때 대상 위치에 띄우는 이펙트 씬 (한 번 재생하고 스스로 지워지는 씬). 비우면 이펙트 없음. 카드 연출 씬의 hit_effect 가 있으면 그것
@@ -127,6 +131,7 @@ var _stage_mode := false  # 의뢰(스테이지) 전투인지. 그러면 결과 
 var _won := false         # 마지막 전투를 이겼는지 (의뢰 모드 결과 버튼용)
 var _recorder: PerformanceRecorder  # 이번 전투의 이벤트 → 연출 단계 기록기
 var _pending_winner := -1  # 연출 중에 전투가 끝났으면 이긴 편 (연출이 끝나면 결과 창). 없으면 -1
+var _lifts: Array[float] = []  # 손패 카드마다 떠오른 정도 (0 = 내려감, 1 = 다 떠오름). 손패를 다시 깔아도 번호로 이어진다
 var _fx_rng := RandomNumberGenerator.new()  # 흔들림·음높이용 난수. 전투 rng 와 따로 (전투 결과 재현에 영향 없게)
 
 
@@ -706,6 +711,8 @@ func _draw_hand() -> void:
 		# 고른 카드는 손패 줄 위쪽에 붙어서 올라와 보이고, 나머지는 아래쪽에 붙는다.
 		v.size_flags_vertical = Control.SIZE_SHRINK_BEGIN if i == selected_index else Control.SIZE_SHRINK_END
 		v.gui_input.connect(_on_card_input.bind(i))
+	# 떠오른 정도는 번호로 이어 간다 (다시 깔 때마다 처음부터 떠오르면 깜빡여 보인다)
+	_lifts.resize(hero.hand.size())
 
 
 func _on_card_input(event: InputEvent, index: int) -> void:
@@ -741,9 +748,41 @@ func _unhandled_input(event: InputEvent) -> void:
 		_release_drag()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if selected:
 		_update_arrow()
+	_update_hand_lift(delta, _hand_index_under(get_global_mouse_position()))
+
+
+## 마우스 아래의 손패 카드 번호 (없으면 -1). 카드가 떠오르며 움직여도 깜빡이지 않게
+## 카드 가로 범위 × (손패 위쪽 ~ 화면 아래) 기둥 전체로 본다.
+func _hand_index_under(pos: Vector2) -> int:
+	var top := _hand.get_global_rect().position.y
+	for i in _hand.get_child_count():
+		var r: Rect2 = _hand.get_child(i).get_global_rect()
+		if pos.x >= r.position.x and pos.x < r.end.x and pos.y >= top:
+			return i
+	return -1
+
+
+## 손패 카드 높이: 고른 카드는 맨 위, 마우스를 올린 카드(hover)는 떠오르고, 나머지는 hand_sink 만큼 내려간다.
+## delta 초만큼 목표 쪽으로 부드럽게 움직인다. 위치는 손패 줄(HBoxContainer)이 정한 자리를 기준으로 덮어쓴다.
+func _update_hand_lift(delta: float, hover: int) -> void:
+	var n := _hand.get_child_count()
+	if _lifts.size() != n:
+		_lifts.resize(n)
+	var k := minf(1.0, delta * hand_rise_speed)
+	for i in n:
+		var v: Control = _hand.get_child(i)
+		var target := 1.0 if i == hover or i == selected_index else 0.0
+		_lifts[i] = lerpf(_lifts[i], target, k)
+		if absf(_lifts[i] - target) < 0.001:
+			_lifts[i] = target
+		# 고른 카드는 손패 줄 맨 위(SHRINK_BEGIN), 나머지는 맨 아래 기준에서 내려간 만큼
+		if i == selected_index:
+			v.position.y = 0.0
+		else:
+			v.position.y = _hand.size.y - v.size.y + hand_sink * (1.0 - _lifts[i])
 
 
 ## 화살표: 원거리·아군·근접 카드를 골랐을 때 고른 카드 위쪽 가운데 → 마우스(근접은 자동 대상)
