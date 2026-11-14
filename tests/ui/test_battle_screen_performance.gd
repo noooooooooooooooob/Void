@@ -311,3 +311,11 @@ func test_overlapping_hitstops_each_resume():
 	assert_eq(a.get_node("%AnimationPlayer").speed_scale, 0.0)
 	await wait_seconds(0.25)
 	assert_eq(a.get_node("%AnimationPlayer").speed_scale, 1.0)
+
+func test_damage_number_has_no_sign_and_is_red():
+	var s := _screen()
+	_use(s, "타격")
+	var nums := s.get_node("%FloatLayer").get_children()
+	assert_eq(nums.size(), 1)
+	assert_eq(nums[0].text, "10")
+	assert_eq(Color(nums[0].modulate, 1.0), s.damage_color)

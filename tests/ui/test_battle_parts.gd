@@ -136,3 +136,25 @@ func test_float_number_settles_at_given_scale():
 	assert_gt(f.scale.x, 1.5)  # 처음엔 크게 튀어나옴
 	await wait_seconds(0.3)
 	assert_almost_eq(f.scale.x, 1.5, 0.01)
+
+func test_float_number_centers_on_point():
+	var f: FloatNumber = load("res://Scenes/ui/battle_screen/float_number.tscn").instantiate()
+	add_child_autofree(f)
+	f.start_jitter = 0.0
+	f.global_position = Vector2(200, 100)
+	f.pop("123", Color.RED)
+	# position = 크기 변화(튀어나옴) 전 상자의 왼쪽 위. 부모가 원점이라 화면 좌표와 같다
+	assert_almost_eq(f.position.x + f.size.x * 0.5, 200.0, 0.5)
+
+func test_float_number_paths_vary():
+	var ends := []
+	for seed in [1, 2]:
+		var f: FloatNumber = load("res://Scenes/ui/battle_screen/float_number.tscn").instantiate()
+		add_child_autofree(f)
+		f.duration = 2.0
+		f.rng.seed = seed
+		f.position = Vector2(200, 100)
+		f.pop("5", Color.RED)
+		ends.append(f)
+	await wait_seconds(0.4)
+	assert_ne(ends[0].position, ends[1].position)

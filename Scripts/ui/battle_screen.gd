@@ -57,11 +57,17 @@ extends Control
 ## 넉백 뒤 제자리로 천천히 돌아오는 시간 (초)
 @export var knockback_return := 0.25
 
+@export_group("숫자 색")
+## 피해 숫자 색 (부호 없이 색으로 구분)
+@export var damage_color := Color("ff5a5a")
+## 회복 숫자 색
+@export var heal_color := Color("7ee08a")
+## 방어도 숫자 색
+@export var block_color := Color("7fb8ff")
+
 @export_group("강조 (공통값)")
 ## 피해 숫자 크기: 1 + (피해 / 대상 최대 HP, 최대 1) × 이 값. 최대 HP 를 한 번에 깎으면 1 + 이 값 배
 @export var big_number_boost := 0.6
-## 치명타 피해 숫자 색
-@export var crit_color := Color("ffd23f")
 ## 치명타 피해 숫자 크기 배율
 @export var crit_number_scale := 1.3
 ## 치명타가 있으면 결과 표시 때 화면을 hit_shake × 이 값으로 한 번 더 흔든다
@@ -353,7 +359,7 @@ func _on_step_results(step: PerformanceStep) -> void:
 		var crits := step.crit_targets()
 		for u in totals:
 			var crit := crits.has(u)
-			_pop(u, "-%d" % totals[u], crit_color if crit else Color("ff5a5a"),
+			_pop(u, str(totals[u]), damage_color,
 				number_scale(totals[u], u.get_stat(BattleTypes.Stat.HP), crit))
 		# 연출이 있는 카드만: 쓰러뜨림·치명타는 결과가 보이는 순간 한 번 더 강조 (설계 5-1 의 6·7)
 		if step.card.performance:
@@ -517,13 +523,13 @@ func _show_event(e: BattleEvent, pop_damage: bool) -> void:
 			_round += 1
 		E.DAMAGE_TAKEN:
 			if pop_damage:
-				_pop(e.target, "-%d" % e.amount, Color("ff5a5a"))
+				_pop(e.target, str(e.amount), damage_color)
 			_add_log("%s → %s 피해 %d" % [_who(e), e.target.data.display_name, e.amount])
 		E.BLOCK_GAINED:
-			_pop(e.target, "+%d" % e.amount, Color("7fb8ff"))
+			_pop(e.target, str(e.amount), block_color)
 			_add_log("%s 방어도 +%d" % [e.target.data.display_name, e.amount])
 		E.HEALED:
-			_pop(e.target, "+%d" % e.amount, Color("7ee08a"))
+			_pop(e.target, str(e.amount), heal_color)
 			_add_log("%s 회복 +%d" % [e.target.data.display_name, e.amount])
 		E.UNIT_MOVED:
 			_add_log("%s 이동 %d칸" % [e.actor.data.display_name, e.amount])
@@ -810,7 +816,8 @@ func _pop(u: BattleUnit, text: String, color: Color, size_scale := 1.0) -> void:
 		return
 	var f: FloatNumber = FLOAT_NUMBER.instantiate()
 	_float_layer.add_child(f)
-	f.global_position = t.get_global_rect().get_center() - Vector2(f.size.x * 0.5, 70)
+	# 박스 위쪽 가운데. 가로 가운데 맞춤·흩어짐은 FloatNumber.pop 이 한다
+	f.global_position = t.get_global_rect().get_center() - Vector2(0, 70)
 	f.pop(text, color, size_scale)
 
 
