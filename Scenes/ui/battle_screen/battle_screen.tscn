@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://0v6xwnruplme"]
 
-[ext_resource type="Script" path="res://Scripts/ui/battle_screen.gd" id="1_t8gdv"]
-[ext_resource type="Resource" path="res://battles/test_battle.tres" id="2_rwkbd"]
-[ext_resource type="PackedScene" path="res://Scenes/ui/battle_screen/target_arrow.tscn" id="3_h06ft"]
+[ext_resource type="Script" uid="uid://debrvnsyyps0h" path="res://Scripts/ui/battle_screen.gd" id="1_t8gdv"]
+[ext_resource type="Resource" uid="uid://bil5d8b8oetor" path="res://battles/test_battle.tres" id="2_rwkbd"]
+[ext_resource type="PackedScene" uid="uid://jexoivr7n6g5" path="res://Scenes/ui/battle_screen/target_arrow.tscn" id="3_h06ft"]
 [ext_resource type="Script" path="res://Scripts/ui/performance_queue.gd" id="4_5dyec"]
 
 [node name="BattleScreen" type="Control" unique_id=1934429999]

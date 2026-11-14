@@ -1,0 +1,76 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/performances/card_performance.gd" id="1_2h47h"]
+[ext_resource type="SpriteFrames" path="res://entities/units/bram_frames.tres" id="2_gmvyg"]
+
+[sub_resource type="Animation" id="Animation_j2uut"]
+length = 0.7
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [-120.0, 0.0, 0.15],
+"method": &"move"
+}, {
+"args": [],
+"method": &"hit"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_results"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Actor")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [&"idle"],
+"method": &"play"
+}, {
+"args": [&"punch"],
+"method": &"play"
+}, {
+"args": [&"idle"],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_u6wrg"]
+_data = {
+&"perform": SubResource("Animation_j2uut")
+}
+
+[node name="BramStoneFist" type="Node2D" unique_id=1516994417]
+script = ExtResource("1_2h47h")
+
+[node name="Actor" type="AnimatedSprite2D" parent="." unique_id=879024434]
+unique_name_in_owner = true
+sprite_frames = ExtResource("2_gmvyg")
+animation = &"idle"
+offset = Vector2(0, -200)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1763857072]
+unique_name_in_owner = true
+libraries/ = SubResource("AnimationLibrary_u6wrg")
