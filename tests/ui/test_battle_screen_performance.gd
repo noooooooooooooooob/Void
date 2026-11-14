@@ -246,3 +246,25 @@ func test_card_override_hitstop_zero_skips_pause():
 	_use(s, "연출타격")
 	await wait_for_signal(_queue(s).hit, 1.0)
 	assert_eq(_queue(s).current_performance().get_node("%AnimationPlayer").speed_scale, 1.0)
+
+func test_hit_flashes_target():
+	var s := _screen()
+	var sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	assert_gt(sprite.modulate.r, 1.0)
+	await wait_seconds(0.4)
+	assert_eq(sprite.modulate, Color.WHITE)
+
+func test_knockback_pushes_away_and_returns():
+	var s := _screen()
+	s.hitstop_time = 0.0
+	var foe := _unit(s, "적A")
+	var sprite: AnimatedSprite2D = s._tokens[foe].sprite()
+	var home := sprite.offset
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	# 적은 아군보다 오른쪽 → 오른쪽(+x)으로 밀림
+	assert_gt(sprite.offset.x, home.x)
+	await wait_seconds(0.5)
+	assert_eq(sprite.offset, home)

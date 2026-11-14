@@ -48,6 +48,14 @@ extends Control
 @export var pitch_jitter := 0.08
 ## 히트스톱: hit 순간 연출(공격자·이펙트·이동)과 대상 그림을 함께 멈추는 시간 (초). 카드 연출 씬의 hitstop_time 이 0 이상이면 그것
 @export var hitstop_time := 0.07
+## 피격 번쩍임: hit 순간 대상 그림을 이 색(1 보다 크면 하얗게 빛남)으로 했다가 flash_time 초 동안 원래 색으로
+@export var flash_color := Color(3, 3, 3)
+## 피격 번쩍임이 사라지는 시간 (초)
+@export var flash_time := 0.08
+## 넉백: hit 순간 대상 그림이 공격자 반대쪽으로 밀리는 거리 (화면 픽셀). 카드 연출 씬의 knockback 이 0 이상이면 그것
+@export var knockback := 12.0
+## 넉백 뒤 제자리로 천천히 돌아오는 시간 (초)
+@export var knockback_return := 0.25
 
 const GRID_CELL := preload("res://Scenes/ui/battle_screen/grid_cell.tscn")
 const UNIT_TOKEN := preload("res://Scenes/ui/battle_screen/unit_token.tscn")
@@ -353,6 +361,8 @@ func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 	var snd: AudioStream = perf.hit_sound if perf.hit_sound else hit_sound
 	var screen := perf.hit_shake if perf.hit_shake >= 0.0 else hit_shake
 	var stop := perf.hitstop_time if perf.hitstop_time >= 0.0 else hitstop_time
+	var push := perf.knockback if perf.knockback >= 0.0 else knockback
+	var from: UnitToken = _tokens.get(step.actor)
 	# 1. 대상마다: 캐릭터 그림·UI 흔들림, 대상 위치에 이펙트
 	for u in step.hit_targets():
 		var t: UnitToken = _tokens.get(u)
@@ -360,6 +370,9 @@ func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 			continue
 		Shaker.shake(t.sprite(), hit_unit_shake, shake_time, _fx_rng)
 		Shaker.shake(t.ui_box(), hit_unit_shake, shake_time, _fx_rng)
+		_flash(t.sprite())
+		if from and u != step.actor:
+			_knockback(t.sprite(), signf(t.get_global_rect().get_center().x - from.get_global_rect().get_center().x), push)
 		if fx:
 			var e: Node = fx.instantiate()
 			_perf_layer.add_child(e)
@@ -374,6 +387,34 @@ func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 		_hit_sound.play()
 	# 4. 히트스톱 (공격자만 멈추면 어색하므로 대상 그림도 함께)
 	_hitstop(perf, step.hit_targets(), stop)
+
+
+## 피격 번쩍임: 그림을 flash_color 로 했다가 flash_time 초 동안 원래 색(흰색)으로
+func _flash(sprite: CanvasItem) -> void:
+	sprite.modulate = flash_color
+	sprite.create_tween().tween_property(sprite, "modulate", Color.WHITE, flash_time)
+
+
+## 넉백: 그림을 dir(+1 오른쪽 / −1 왼쪽) 쪽으로 dist 픽셀 밀었다가 knockback_return 초 동안 제자리로.
+## 흔들림(position)과 겹쳐도 되게 그림의 offset 을 움직인다. 겹친 넉백도 원래 offset 으로 돌아온다.
+func _knockback(sprite: AnimatedSprite2D, dir: float, dist: float) -> void:
+	if dist <= 0.0 or dir == 0.0:
+		return
+	var home: Vector2 = sprite.get_meta(&"_kb_home", sprite.offset)
+	sprite.set_meta(&"_kb_home", home)
+	sprite.set_meta(&"_kb_count", int(sprite.get_meta(&"_kb_count", 0)) + 1)
+	# offset 은 그림 크기(scale) 기준이라 화면 픽셀로 맞춘다
+	var sx := absf(sprite.global_scale.x) if sprite.global_scale.x != 0.0 else 1.0
+	sprite.offset = home + Vector2(dir * dist / sx, 0)
+	var tw := sprite.create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(sprite, "offset", home, knockback_return)
+	tw.finished.connect(func():
+		var n := int(sprite.get_meta(&"_kb_count", 1)) - 1
+		sprite.set_meta(&"_kb_count", n)
+		if n <= 0:
+			sprite.offset = home
+			sprite.remove_meta(&"_kb_home")
+			sprite.remove_meta(&"_kb_count"))
 
 
 ## 연출 씬·이동·대상 그림을 time 초 동안 멈췄다가 다시 움직인다. UI·타이머·흔들림은 멈추지 않는다
