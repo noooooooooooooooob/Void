@@ -14,6 +14,11 @@ extends Control
 ## - 우클릭 / ESC: 취소. 카드를 안 고른 상태에서 빛나는 칸 클릭: 이동.
 ## - 적 차례는 enemy_delay 초 간격으로 자동 진행. 그동안 입력은 무시한다.
 ##
+## 카드 연출 (설계 docs/superpowers/specs/2026-11-14-card-performance-design.md):
+## - 전투 계산은 즉시 끝나지만, 화면은 이벤트를 PerformanceRecorder 로 단계별로 모아 PerformanceQueue 에 넘긴다.
+## - 연출 씬이 있는 카드는 연출이 끝날 때까지 결과(숫자·HP)를 미루고, 그동안 입력·적 행동·결과 창도 기다린다.
+## - 연출 씬이 없는 카드·카드 밖 이벤트는 그 자리에서 바로 그린다 (예전과 같음).
+##
 ## 의뢰 모드: 스테이지 지도에서 전투 노드로 들어오면(StageRun.in_battle()) battle_data 대신 의뢰의 전투 데이터와
 ## 파티(HP 유지)를 쓰고, 결과 버튼이 "계속"(승리 → 지도) / "처음으로"(패배 → 의뢰 실패) 가 된다.
 
@@ -65,6 +70,8 @@ var selected_index := -1
 @onready var _result_label: Label = %ResultLabel
 @onready var _restart_button: Button = %RestartButton
 @onready var _enemy_timer: Timer = %EnemyTimer
+@onready var _perf_layer: Control = %PerformanceLayer
+@onready var _queue: PerformanceQueue = %PerformanceQueue
 
 var _cells := {}        # Vector3i(편, 열, 행) → GridCell
 var _tokens := {}       # BattleUnit → UnitToken
@@ -75,12 +82,19 @@ var _dragging := false  # 손패 카드를 누른 채 끌고 있는지
 var _press_pos := Vector2.ZERO
 var _stage_mode := false  # 의뢰(스테이지) 전투인지. 그러면 결과 버튼이 "다시 하기" 대신 지도로/처음으로 간다
 var _won := false         # 마지막 전투를 이겼는지 (의뢰 모드 결과 버튼용)
+var _recorder: PerformanceRecorder  # 이번 전투의 이벤트 → 연출 단계 기록기
+var _pending_winner := -1  # 연출 중에 전투가 끝났으면 이긴 편 (연출이 끝나면 결과 창). 없으면 -1
 
 
 func _ready() -> void:
 	_end_turn.pressed.connect(press_end_turn)
 	_restart_button.pressed.connect(_on_result_button)
 	_enemy_timer.timeout.connect(_on_enemy_timer)
+	# 연출 대기열: 연출 씬은 PerformanceLayer 에 띄우고, 유닛 박스는 _tokens 에서 찾는다
+	_queue.layer = _perf_layer
+	_queue.token_of = func(u): return _tokens.get(u)
+	_queue.step_results.connect(_on_step_results)
+	_queue.drained.connect(_on_drained)
 	_arrow.visible = false
 	_result.visible = false
 	# 의뢰 지도에서 전투 노드로 들어왔으면 의뢰의 전투 데이터와 파티(HP 유지)를 쓴다
@@ -176,13 +190,15 @@ func _start(s: BattleSession) -> void:
 	selected = null
 	selected_index = -1
 	_round = 0
+	_pending_winner = -1
 	_log_texts.clear()
 	_result.visible = false
 	_build_board()
-	_subscribe_events()
+	_recorder = PerformanceRecorder.new(session.battle)
 	session.changed.connect(_on_changed)
 	session.finished.connect(_on_finished)
 	session.start()
+	_flush()
 	refresh()
 
 
@@ -276,36 +292,83 @@ func _add_cell(grid: GridContainer, side: int, cell: Vector2i) -> void:
 	_cells[Vector3i(side, cell.x, cell.y)] = c
 
 
-## 전투 이벤트 → 떠오르는 숫자·전투 기록·라운드 번호
-func _subscribe_events() -> void:
-	var ev := session.battle.events
+## 기록기에 쌓인 단계를 연출 대기열로 넘긴다. 연출 없는 단계는 이 호출 안에서 바로 그려진다.
+func _flush() -> void:
+	if _recorder:
+		_queue.push(_recorder.take_steps())
+
+
+## 대기열이 단계 하나의 결과를 보여 줄 때: 숫자·기록, 그리고 그 단계가 끝났을 때의 값으로 박스·상태 줄
+func _on_step_results(step: PerformanceStep) -> void:
+	var is_card := step.kind == PerformanceStep.Kind.CARD
+	# 1. 카드: 사용 기록, 연출 씬이 없으면 박스 그림의 동작만, 피해는 대상별 합계 숫자 하나
+	if is_card:
+		var to: String = (" → " + step.target.data.display_name) if step.target and step.target != step.actor else ""
+		_add_log("%s: %s%s" % [step.actor.data.display_name, step.card.name_ko, to])
+		var token: UnitToken = _tokens.get(step.actor)
+		if token and step.card.performance == null:
+			token.play_card_animation(step.card)
+		var totals := step.damage_totals()
+		for u in totals:
+			_pop(u, "-%d" % totals[u], Color("ff5a5a"))
+	# 2. 나머지 이벤트: 숫자·기록 (카드의 피해 숫자는 위에서 합쳐 띄웠으므로 기록만)
+	for e in step.events:
+		_show_event(e, not is_card)
+	# 3. 박스: 이 단계가 끝났을 때의 HP·방어도·위치
+	for u in step.state:
+		var t: UnitToken = _tokens.get(u)
+		if t == null:
+			continue
+		t.show_state(step.state[u])
+		_place_token(t, u.side, step.state[u].cell)
+		if _rows.has(u):
+			_rows[u].refresh()
+
+
+## 이벤트 하나를 떠오르는 숫자·전투 기록·라운드 번호로 보여 준다. pop_damage 가 false 면 피해 숫자는 안 띄운다.
+func _show_event(e: BattleEvent, pop_damage: bool) -> void:
 	var E := BattleTypes.Event
-	ev.subscribe(E.ROUND_START, func(_e): _round += 1)
-	ev.subscribe(E.DAMAGE_TAKEN, func(e):
-		_pop(e.target, "-%d" % e.amount, Color("ff5a5a"))
-		_add_log("%s → %s 피해 %d" % [_who(e), e.target.data.display_name, e.amount]))
-	ev.subscribe(E.BLOCK_GAINED, func(e):
-		_pop(e.target, "+%d" % e.amount, Color("7fb8ff"))
-		_add_log("%s 방어도 +%d" % [e.target.data.display_name, e.amount]))
-	ev.subscribe(E.HEALED, func(e):
-		_pop(e.target, "+%d" % e.amount, Color("7ee08a"))
-		_add_log("%s 회복 +%d" % [e.target.data.display_name, e.amount]))
-	ev.subscribe(E.BEFORE_CARD_PLAYED, func(e):
-		var to: String = (" → " + e.target.data.display_name) if e.target and e.target != e.actor else ""
-		# 카드를 쓴 유닛의 박스가 그 카드의 동작을 재생한다 (e.card = 실제로 쓰는 카드)
-		var token: UnitToken = _tokens.get(e.actor)
-		if token:
-			token.play_card_animation(e.card)
-		_add_log("%s: %s%s" % [e.actor.data.display_name, e.card.name_ko, to]))
-	ev.subscribe(E.UNIT_MOVED, func(e): _add_log("%s 이동 %d칸" % [e.actor.data.display_name, e.amount]))
-	ev.subscribe(E.UNIT_DIED, func(e): _add_log("✖ %s 쓰러짐" % e.target.data.display_name))
+	match e.type:
+		E.ROUND_START:
+			_round += 1
+		E.DAMAGE_TAKEN:
+			if pop_damage:
+				_pop(e.target, "-%d" % e.amount, Color("ff5a5a"))
+			_add_log("%s → %s 피해 %d" % [_who(e), e.target.data.display_name, e.amount])
+		E.BLOCK_GAINED:
+			_pop(e.target, "+%d" % e.amount, Color("7fb8ff"))
+			_add_log("%s 방어도 +%d" % [e.target.data.display_name, e.amount])
+		E.HEALED:
+			_pop(e.target, "+%d" % e.amount, Color("7ee08a"))
+			_add_log("%s 회복 +%d" % [e.target.data.display_name, e.amount])
+		E.UNIT_MOVED:
+			_add_log("%s 이동 %d칸" % [e.actor.data.display_name, e.amount])
+		E.UNIT_DIED:
+			_add_log("✖ %s 쓰러짐" % e.target.data.display_name)
 
 
 func _on_changed() -> void:
+	_flush()
+	# 연출 중이면 다시 그리기·적 진행은 연출이 끝난 뒤(_on_drained)
+	if _queue.is_busy():
+		return
 	refresh()
-	# 적 차례면 잠깐 뒤에 진행 (enemy_delay 가 0 이면 부르는 쪽이 직접 step_enemy)
+	_continue_enemy()
+
+
+## 적 차례면 잠깐 뒤에 진행 (enemy_delay 가 0 이면 부르는 쪽이 직접 step_enemy)
+func _continue_enemy() -> void:
 	if session.is_enemy_turn() and enemy_delay > 0.0 and _enemy_timer.is_stopped():
 		_enemy_timer.start(enemy_delay)
+
+
+## 연출이 다 끝남: 미뤄 둔 다시 그리기·적 진행·결과 창
+func _on_drained() -> void:
+	refresh()
+	if _pending_winner != -1:
+		_show_result(_pending_winner)
+		return
+	_continue_enemy()
 
 
 func _on_enemy_timer() -> void:
@@ -316,6 +379,16 @@ func _on_finished(winner: int) -> void:
 	_enemy_timer.stop()
 	selected = null
 	selected_index = -1
+	_flush()
+	# 연출 중이면 결과 창은 연출이 끝난 뒤
+	if _queue.is_busy():
+		_pending_winner = winner
+		return
+	_show_result(winner)
+
+
+func _show_result(winner: int) -> void:
+	_pending_winner = -1
 	_won = winner == BattleTypes.Side.ALLY
 	_result_label.text = "승리" if _won else "패배"
 	# 의뢰 전투: 이기면 지도로 계속, 지면 의뢰 실패 → 시작 화면 (CLAUDE.md 의뢰 스테이지 규칙)
@@ -338,8 +411,9 @@ func _on_result_button() -> void:
 # --- 그리기 ---
 
 ## 세션의 지금 상태로 화면 전체를 다시 그린다.
+## 연출 중에는 그리지 않는다 (아직 안 보여 준 결과가 미리 보이지 않게). 연출이 끝나면 다시 부른다.
 func refresh() -> void:
-	if session == null:
+	if session == null or _queue.is_busy():
 		return
 	var bt := session.battle
 	var hero := session.active
@@ -357,13 +431,7 @@ func refresh() -> void:
 		targets = session.targets_for(selected)
 	for u in _tokens:
 		var t: UnitToken = _tokens[u]
-		var cell: GridCell = _cells.get(Vector3i(u.side, u.cell.x, u.cell.y))
-		if cell and t.get_parent() != cell:
-			if t.get_parent():
-				t.get_parent().remove_child(t)
-			cell.add_child(t)
-			# 칸 중심에 놓는다. 격자판 칸은 사각형이라 경계 상자 중심과 다르다
-			t.position = cell.center() - t.custom_minimum_size * 0.5
+		_place_token(t, u.side, u.cell)
 		t.set_highlight(targets.has(u))
 		t.visible = u.alive
 	for u in _rows:
@@ -380,6 +448,18 @@ func refresh() -> void:
 		_exile_label.text = "제외 %d" % who.exiled.size()
 	_end_turn.disabled = not _input_ok()
 	_update_arrow()
+
+
+## 유닛 박스를 그 칸으로 옮긴다 (이미 그 칸이면 그대로).
+func _place_token(t: UnitToken, side: int, at: Vector2i) -> void:
+	var cell: GridCell = _cells.get(Vector3i(side, at.x, at.y))
+	if cell == null or t.get_parent() == cell:
+		return
+	if t.get_parent():
+		t.get_parent().remove_child(t)
+	cell.add_child(t)
+	# 칸 중심에 놓는다. 격자판 칸은 사각형이라 경계 상자 중심과 다르다
+	t.position = cell.center() - t.custom_minimum_size * 0.5
 
 
 func _draw_queue() -> void:
@@ -527,7 +607,7 @@ func _play(origin: BattleUnit) -> void:
 
 
 func _input_ok() -> bool:
-	return session != null and session.active != null and not session.is_finished()
+	return session != null and session.active != null and not session.is_finished() and not _queue.is_busy()
 
 
 func _attack_type(card: CardData) -> String:

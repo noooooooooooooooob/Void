@@ -1,8 +1,9 @@
 [gd_scene format=3 uid="uid://0v6xwnruplme"]
 
-[ext_resource type="Script" uid="uid://debrvnsyyps0h" path="res://Scripts/ui/battle_screen.gd" id="1_t8gdv"]
-[ext_resource type="Resource" uid="uid://bil5d8b8oetor" path="res://battles/test_battle.tres" id="2_rwkbd"]
-[ext_resource type="PackedScene" uid="uid://jexoivr7n6g5" path="res://Scenes/ui/battle_screen/target_arrow.tscn" id="3_h06ft"]
+[ext_resource type="Script" path="res://Scripts/ui/battle_screen.gd" id="1_t8gdv"]
+[ext_resource type="Resource" path="res://battles/test_battle.tres" id="2_rwkbd"]
+[ext_resource type="PackedScene" path="res://Scenes/ui/battle_screen/target_arrow.tscn" id="3_h06ft"]
+[ext_resource type="Script" path="res://Scripts/ui/performance_queue.gd" id="4_5dyec"]
 
 [node name="BattleScreen" type="Control" unique_id=1934429999]
 layout_mode = 3
@@ -177,6 +178,13 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "차례 종료"
 
+[node name="PerformanceLayer" type="Control" parent="." unique_id=874589522]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
 [node name="FloatLayer" type="Control" parent="." unique_id=393838644]
 unique_name_in_owner = true
 anchors_preset = 0
@@ -223,3 +231,7 @@ text = "다시 하기"
 [node name="EnemyTimer" type="Timer" parent="." unique_id=136294226]
 unique_name_in_owner = true
 one_shot = true
+
+[node name="PerformanceQueue" type="Node" parent="." unique_id=1051432266]
+unique_name_in_owner = true
+script = ExtResource("4_5dyec")

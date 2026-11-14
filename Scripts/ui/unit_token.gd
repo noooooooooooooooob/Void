@@ -50,6 +50,27 @@ func refresh() -> void:
 	modulate.a = 1.0 if unit.alive else 0.35
 
 
+## 연출 중 결과를 보여 줄 때: 실제 유닛 값 대신 그 단계가 끝났을 때의 값으로 HP·방어도·흐림만 다시 그린다.
+## s = PerformanceStep.state 의 한 유닛 값 {"hp": int, "block": int, "alive": bool}
+func show_state(s: Dictionary) -> void:
+	if unit == null or not is_node_ready():
+		return
+	_hp.text = "%d/%d" % [s.hp, unit.get_stat(BattleTypes.Stat.HP)]
+	_block.visible = s.block > 0
+	_block.text = str(s.block)
+	modulate.a = 1.0 if s.alive else 0.35
+
+
+## 전투 그림 노드 (연출이 숨기고, 피격 반응이 흔든다)
+func sprite() -> AnimatedSprite2D:
+	return _sprite
+
+
+## 캐릭터 UI (이름·HP·방어도 묶음). 피격 반응이 흔든다
+func ui_box() -> Control:
+	return $Box
+
+
 ## 대상 후보로 강조할지
 func set_highlight(on: bool) -> void:
 	_highlight = on
