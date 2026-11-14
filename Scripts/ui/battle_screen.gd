@@ -46,6 +46,8 @@ extends Control
 @export var shake_time := 0.2
 ## 효과음 음높이를 매번 이만큼(비율) 안에서 무작위로 바꾼다 (0.08 = ±8%)
 @export var pitch_jitter := 0.08
+## 히트스톱: hit 순간 연출(공격자·이펙트·이동)과 대상 그림을 함께 멈추는 시간 (초). 카드 연출 씬의 hitstop_time 이 0 이상이면 그것
+@export var hitstop_time := 0.07
 
 const GRID_CELL := preload("res://Scenes/ui/battle_screen/grid_cell.tscn")
 const UNIT_TOKEN := preload("res://Scenes/ui/battle_screen/unit_token.tscn")
@@ -99,6 +101,7 @@ var _stage_mode := false  # 의뢰(스테이지) 전투인지. 그러면 결과 
 var _won := false         # 마지막 전투를 이겼는지 (의뢰 모드 결과 버튼용)
 var _recorder: PerformanceRecorder  # 이번 전투의 이벤트 → 연출 단계 기록기
 var _pending_winner := -1  # 연출 중에 전투가 끝났으면 이긴 편 (연출이 끝나면 결과 창). 없으면 -1
+var _hitstops := 0         # 진행 중인 히트스톱 개수. 겹치면 마지막 것이 끝날 때 푼다
 var _fx_rng := RandomNumberGenerator.new()  # 흔들림·음높이용 난수. 전투 rng 와 따로 (전투 결과 재현에 영향 없게)
 
 
@@ -349,6 +352,7 @@ func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 	var fx: PackedScene = perf.hit_effect if perf.hit_effect else hit_effect
 	var snd: AudioStream = perf.hit_sound if perf.hit_sound else hit_sound
 	var screen := perf.hit_shake if perf.hit_shake >= 0.0 else hit_shake
+	var stop := perf.hitstop_time if perf.hitstop_time >= 0.0 else hitstop_time
 	# 1. 대상마다: 캐릭터 그림·UI 흔들림, 대상 위치에 이펙트
 	for u in step.hit_targets():
 		var t: UnitToken = _tokens.get(u)
@@ -368,6 +372,38 @@ func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 		_hit_sound.stream = snd
 		_hit_sound.pitch_scale = 1.0 + _fx_rng.randf_range(-pitch_jitter, pitch_jitter)
 		_hit_sound.play()
+	# 4. 히트스톱 (공격자만 멈추면 어색하므로 대상 그림도 함께)
+	_hitstop(perf, step.hit_targets(), stop)
+
+
+## 연출 씬·이동·대상 그림을 time 초 동안 멈췄다가 다시 움직인다. UI·타이머·흔들림은 멈추지 않는다
+## (Engine.time_scale 을 쓰지 않는 이유).
+func _hitstop(perf: CardPerformance, targets: Array[BattleUnit], time: float) -> void:
+	if time <= 0.0:
+		return
+	var sprites: Array[AnimatedSprite2D] = []
+	for u in targets:
+		if _tokens.has(u):
+			sprites.append(_tokens[u].sprite())
+	var tw := _queue.move_tween
+	perf.set_paused(true)
+	if tw and tw.is_valid():
+		tw.pause()
+	for sp in sprites:
+		sp.speed_scale = 0.0
+	_hitstops += 1
+	await get_tree().create_timer(time).timeout
+	_hitstops -= 1
+	# 겹친 히트스톱이 남아 있으면 그쪽이 끝날 때 푼다
+	if _hitstops > 0:
+		return
+	if is_instance_valid(perf):
+		perf.set_paused(false)
+	if tw and tw.is_valid():
+		tw.play()
+	for sp in sprites:
+		if is_instance_valid(sp):
+			sp.speed_scale = 1.0
 
 
 ## 이벤트 하나를 떠오르는 숫자·전투 기록·라운드 번호로 보여 준다. pop_damage 가 false 면 피해 숫자는 안 띄운다.

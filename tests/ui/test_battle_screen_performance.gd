@@ -222,3 +222,27 @@ func test_hit_spawns_effect_on_target():
 	assert_eq(layer.get_child_count(), before + 1)
 	var foe_center: Vector2 = s._tokens[_unit(s, "적A")].get_global_rect().get_center()
 	assert_almost_eq(layer.get_child(layer.get_child_count() - 1).global_position, foe_center, Vector2(1, 1))
+
+func test_hitstop_pauses_performance_and_target():
+	var s := _screen()
+	s.hitstop_time = 0.1
+	var foe_sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	var perf := _queue(s).current_performance()
+	assert_eq(perf.get_node("%AnimationPlayer").speed_scale, 0.0)
+	assert_eq(foe_sprite.speed_scale, 0.0)
+	await wait_seconds(0.2)
+	assert_eq(perf.get_node("%AnimationPlayer").speed_scale, 1.0)
+	assert_eq(foe_sprite.speed_scale, 1.0)
+
+func test_card_override_hitstop_zero_skips_pause():
+	var ps := _perf([[0.1, "hit", []]], 0.2)
+	var p: CardPerformance = ps.instantiate()
+	p.hitstop_time = 0.0
+	ps.pack(p)
+	p.free()
+	var s := _screen(_data(45, null, ps))
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	assert_eq(_queue(s).current_performance().get_node("%AnimationPlayer").speed_scale, 1.0)
