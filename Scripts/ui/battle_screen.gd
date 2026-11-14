@@ -721,15 +721,15 @@ func _on_card_input(event: InputEvent, index: int) -> void:
 			_press_pos = get_global_mouse_position()
 			_dragging = select_card(index) and selected != null
 		elif _dragging:
-			_release_drag()
+			_release_drag(get_global_mouse_position())
 
 
-## 손을 뗐을 때: 대상 유닛 위면 사용, 자신 카드를 충분히 끌어 올렸으면 사용. 그 자리에서 뗀 클릭은 고른 상태 유지.
-func _release_drag() -> void:
+## 손을 뗐을 때 (mouse = 뗀 화면 위치): 대상 유닛 위면 사용, 자신 카드를 충분히 끌어 올렸으면 사용.
+## 그 자리에서 뗀 클릭은 고른 상태 유지. 끌고 가서 쓸 수 없는 곳에서 떼면 고르기를 취소해 카드가 손패로 돌아간다.
+func _release_drag(mouse: Vector2) -> void:
 	_dragging = false
 	if selected == null:
 		return
-	var mouse := get_global_mouse_position()
 	if mouse.distance_to(_press_pos) < 12.0:
 		return
 	var hover := _unit_under(mouse)
@@ -737,6 +737,8 @@ func _release_drag() -> void:
 		return
 	if _attack_type(selected) == "self" and _press_pos.y - mouse.y > drag_play_height:
 		_play(null)
+		return
+	cancel()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -745,7 +747,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("ui_cancel"):
 		cancel()
 	elif event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and _dragging:
-		_release_drag()
+		_release_drag(get_global_mouse_position())
 
 
 func _process(delta: float) -> void:
