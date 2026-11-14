@@ -121,7 +121,6 @@ var _stage_mode := false  # 의뢰(스테이지) 전투인지. 그러면 결과 
 var _won := false         # 마지막 전투를 이겼는지 (의뢰 모드 결과 버튼용)
 var _recorder: PerformanceRecorder  # 이번 전투의 이벤트 → 연출 단계 기록기
 var _pending_winner := -1  # 연출 중에 전투가 끝났으면 이긴 편 (연출이 끝나면 결과 창). 없으면 -1
-var _hitstops := 0         # 진행 중인 히트스톱 개수. 겹치면 마지막 것이 끝날 때 푼다
 var _fx_rng := RandomNumberGenerator.new()  # 흔들림·음높이용 난수. 전투 rng 와 따로 (전투 결과 재현에 영향 없게)
 
 
@@ -370,7 +369,7 @@ func _on_step_results(step: PerformanceStep) -> void:
 		t.show_state(step.state[u])
 		_place_token(t, u.side, step.state[u].cell)
 		if _rows.has(u):
-			_rows[u].refresh()
+			_rows[u].show_state(step.state[u])
 
 
 ## 연출의 hit 키: 대상들의 맞는 반응 (설계 5장 — 캐릭터 그림·화면·캐릭터 UI 흔들림, 피격 이펙트, 효과음).
@@ -445,25 +444,40 @@ func _hitstop(perf: CardPerformance, targets: Array[BattleUnit], time: float) ->
 	for u in targets:
 		if _tokens.has(u):
 			sprites.append(_tokens[u].sprite())
-	var tw := _queue.move_tween
-	perf.set_paused(true)
-	if tw and tw.is_valid():
-		tw.pause()
+	var tw := _queue.move_tween if _queue.current_performance() == perf else null
+	# 멈춤은 노드마다 센다: 겹친 히트스톱이 있어도 각 노드는 자기를 멈춘 히트스톱이 다 끝날 때 풀린다
+	if _hold(perf):
+		perf.set_paused(true)
+		if tw and tw.is_valid():
+			tw.pause()
 	for sp in sprites:
-		sp.speed_scale = 0.0
-	_hitstops += 1
+		if _hold(sp):
+			sp.speed_scale = 0.0
 	await get_tree().create_timer(time).timeout
-	_hitstops -= 1
-	# 겹친 히트스톱이 남아 있으면 그쪽이 끝날 때 푼다
-	if _hitstops > 0:
-		return
-	if is_instance_valid(perf):
+	if is_instance_valid(perf) and _release(perf):
 		perf.set_paused(false)
-	if tw and tw.is_valid():
-		tw.play()
+		if tw and tw.is_valid():
+			tw.play()
 	for sp in sprites:
-		if is_instance_valid(sp):
+		if is_instance_valid(sp) and _release(sp):
 			sp.speed_scale = 1.0
+
+
+## 히트스톱 멈춤 수를 하나 늘린다. 처음 멈추는 거면 true
+func _hold(n: Node) -> bool:
+	var c := int(n.get_meta(&"_hitstop", 0)) + 1
+	n.set_meta(&"_hitstop", c)
+	return c == 1
+
+
+## 히트스톱 멈춤 수를 하나 줄인다. 마지막이면 true (이제 다시 움직여도 됨)
+func _release(n: Node) -> bool:
+	var c := int(n.get_meta(&"_hitstop", 1)) - 1
+	if c > 0:
+		n.set_meta(&"_hitstop", c)
+		return false
+	n.remove_meta(&"_hitstop")
+	return true
 
 
 ## 연출의 zoom 키 (줌 펀치): 기준 대상을 중심으로 화면을 1 + strength 배로 키웠다가 time 초 동안 원래대로.

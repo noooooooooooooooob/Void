@@ -52,6 +52,11 @@ func play(frames: SpriteFrames) -> void:
 	if not _player.has_animation(PERFORM):
 		done.emit.call_deferred()
 		return
+	# perform 이 반복(loop)으로 저장돼 있으면 끝나지 않아 전투가 멈추므로 한 번만 재생한다
+	var anim := _player.get_animation(PERFORM)
+	if anim.loop_mode != Animation.LOOP_NONE:
+		push_warning("CardPerformance %s: perform 이 반복으로 설정돼 있어 한 번만 재생해요" % scene_file_path)
+		anim.loop_mode = Animation.LOOP_NONE
 	if not _player.animation_finished.is_connected(_on_finished):
 		_player.animation_finished.connect(_on_finished)
 	_player.play(PERFORM)

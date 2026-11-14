@@ -20,7 +20,8 @@ var card: CardData
 var target: BattleUnit
 ## 이 단계에 들어온 이벤트들 (발행 순서)
 var events: Array[BattleEvent] = []
-## 단계가 닫힐 때 전투의 모든 유닛 상태. BattleUnit → {"hp": int, "block": int, "alive": bool, "cell": Vector2i}
+## 단계가 닫힐 때 전투의 모든 유닛 상태. BattleUnit → {"hp": int, "block": int, "alive": bool, "cell": Vector2i,
+##   "stamina": int, "statuses": [[StatusData, 수치], ...]}
 ## 화면은 결과를 보여 줄 때 실제 값 대신 이 값으로 그린다 (뒤 단계의 결과가 미리 보이지 않게).
 var state: Dictionary = {}
 
@@ -70,4 +71,8 @@ func crit_targets() -> Array[BattleUnit]:
 func snapshot(units: Array[BattleUnit]) -> void:
 	state.clear()
 	for u in units:
-		state[u] = {"hp": u.hp, "block": u.block, "alive": u.alive, "cell": u.cell}
+		var sts := []
+		for inst in u.statuses:
+			sts.append([inst.data, inst.stacks])
+		state[u] = {"hp": u.hp, "block": u.block, "alive": u.alive, "cell": u.cell,
+			"stamina": u.stamina, "statuses": sts}

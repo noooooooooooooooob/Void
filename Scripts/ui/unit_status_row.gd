@@ -24,19 +24,37 @@ func set_unit(u: BattleUnit) -> void:
 func refresh() -> void:
 	if unit == null:
 		return
+	var sts := []
+	for inst in unit.statuses:
+		sts.append([inst.data, inst.stacks])
+	_render(unit.hp, unit.block, unit.stamina, sts, unit.alive)
+
+
+## 연출 중 결과를 보여 줄 때: 실제 유닛 값 대신 그 단계가 끝났을 때의 값으로 그린다.
+## s = PerformanceStep.state 의 한 유닛 값 (hp, block, stamina, statuses, alive)
+func show_state(s: Dictionary) -> void:
+	if unit == null:
+		return
+	_render(s.hp, s.block, s.stamina, s.statuses, s.alive)
+
+
+## statuses = [[StatusData, 수치], ...]
+func _render(hp: int, block: int, stamina: int, statuses: Array, alive: bool) -> void:
 	var max_hp := unit.get_stat(BattleTypes.Stat.HP)
 	_name.text = unit.data.display_name
 	_hp_bar.max_value = max_hp
-	_hp_bar.value = unit.hp
-	_hp.text = "%d/%d" % [unit.hp, max_hp]
-	_block.text = "방어도 %d" % unit.block
-	_stamina.text = "스태미너 %d" % unit.stamina
+	_hp_bar.value = hp
+	_hp.text = "%d/%d" % [hp, max_hp]
+	_block.text = "방어도 %d" % block
+	_stamina.text = "스태미너 %d" % stamina
 	# 상태: 패시브인데 수치가 0 인 것(쌓기 전 핏방울 등)은 보여 줄 게 없어서 숨긴다.
 	var parts := PackedStringArray()
-	for inst in unit.statuses:
-		if inst.data.tag == BattleTypes.StatusTag.PASSIVE and inst.stacks <= 0:
+	for pair in statuses:
+		var data: StatusData = pair[0]
+		var stacks: int = pair[1]
+		if data.tag == BattleTypes.StatusTag.PASSIVE and stacks <= 0:
 			continue
-		var label := inst.data.display_name if not inst.data.display_name.is_empty() else inst.data.id
-		parts.append("%s %d" % [label, inst.stacks] if inst.data.uses_stacks else label)
+		var label := data.display_name if not data.display_name.is_empty() else data.id
+		parts.append("%s %d" % [label, stacks] if data.uses_stacks else label)
 	_statuses.text = "  ".join(parts)
-	modulate.a = 1.0 if unit.alive else 0.45
+	modulate.a = 1.0 if alive else 0.45

@@ -107,3 +107,11 @@ func test_no_kill_no_crit():
 	var s: PerformanceStep = _card_steps(rec.take_steps())[0]
 	assert_eq(s.killed(), [] as Array[BattleUnit])
 	assert_eq(s.crit_targets(), [] as Array[BattleUnit])
+
+func test_snapshot_has_stamina_and_statuses():
+	var st := Fixture.status("bleed")
+	battle.apply_status(foe, st, 3, hero)
+	var steps := rec.take_steps()
+	var s: Dictionary = steps.back().state[foe]
+	assert_eq(s.stamina, foe.stamina)
+	assert_eq(s.statuses, [[st, 3]])

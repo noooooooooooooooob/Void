@@ -128,13 +128,14 @@ func test_two_enemy_cards_show_their_own_hp():
 	var seen := []
 	_queue(s).step_results.connect(func(step):
 		if step.kind == PerformanceStep.Kind.CARD:
-			seen.append([_hp_text(s, hero), step.state[hero].hp]))
+			seen.append([_hp_text(s, hero), step.state[hero].hp, s._rows[hero].get_node("%Hp").text]))
 	s.session.step_enemy()
 	s.session.step_enemy()
 	await wait_for_signal(_queue(s).drained, 3.0)
 	assert_eq(seen.size(), 2)
 	for e in seen:
 		assert_eq(e[0], "%d/%d" % [e[1], hero.get_stat(BattleTypes.Stat.HP)])
+		assert_eq(e[2], e[0])  # 옆 상태 패널도 같은 단계 값
 	assert_gt(seen[0][1], seen[1][1])
 
 func test_no_show_results_key_shows_at_end():
@@ -293,3 +294,20 @@ func test_zoom_punch_returns_to_one():
 	await wait_seconds(0.25)
 	assert_eq(s.scale, Vector2.ONE)
 	assert_eq(s.pivot_offset, Vector2.ZERO)
+
+func test_overlapping_hitstops_each_resume():
+	var s := _screen()
+	var a: CardPerformance = PerfBuild.build([[0.5, "hit", []]], 1.0)
+	var b: CardPerformance = PerfBuild.build([[0.5, "hit", []]], 1.0)
+	add_child_autofree(a)
+	add_child_autofree(b)
+	a.play(null)
+	b.play(null)
+	var none: Array[BattleUnit] = []
+	s._hitstop(a, none, 0.25)
+	s._hitstop(b, none, 0.05)
+	await wait_seconds(0.12)
+	assert_eq(b.get_node("%AnimationPlayer").speed_scale, 1.0)
+	assert_eq(a.get_node("%AnimationPlayer").speed_scale, 0.0)
+	await wait_seconds(0.25)
+	assert_eq(a.get_node("%AnimationPlayer").speed_scale, 1.0)

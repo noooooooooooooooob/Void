@@ -84,3 +84,12 @@ func test_overrides_default_to_unset():
 
 func test_card_data_has_performance():
 	assert_null(CardData.new().performance)
+
+func test_looping_perform_still_finishes():
+	var p := build([[0.05, "hit", []]], 0.1)
+	p.get_node("%AnimationPlayer").get_animation(&"perform").loop_mode = Animation.LOOP_LINEAR
+	add_child_autofree(p)
+	_listen(p)
+	p.play(null)
+	await wait_for_signal(p.done, 1.0)
+	assert_eq(log.back(), ["done"])
