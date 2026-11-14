@@ -283,3 +283,13 @@ func test_kill_adds_extra_screen_shake_at_results():
 	await wait_for_signal(_queue(s).step_results, 1.0)
 	await wait_frames(2)
 	assert_ne(s.position, home)
+
+func test_zoom_punch_returns_to_one():
+	var s := _screen(_data(45, null, _perf([[0.05, "zoom", [0.1, 0.1]]], 0.4)))
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).zoom, 1.0)
+	await wait_frames(1)
+	assert_gt(s.scale.x, 1.0)
+	await wait_seconds(0.25)
+	assert_eq(s.scale, Vector2.ONE)
+	assert_eq(s.pivot_offset, Vector2.ZERO)

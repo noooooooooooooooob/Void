@@ -135,6 +135,7 @@ func _ready() -> void:
 	_queue.step_results.connect(_on_step_results)
 	_queue.drained.connect(_on_drained)
 	_queue.hit.connect(_on_hit)
+	_queue.zoom.connect(_on_zoom)
 	_fx_rng.randomize()
 	_arrow.visible = false
 	_result.visible = false
@@ -463,6 +464,17 @@ func _hitstop(perf: CardPerformance, targets: Array[BattleUnit], time: float) ->
 	for sp in sprites:
 		if is_instance_valid(sp):
 			sp.speed_scale = 1.0
+
+
+## 연출의 zoom 키 (줌 펀치): 기준 대상을 중심으로 화면을 1 + strength 배로 키웠다가 time 초 동안 원래대로.
+func _on_zoom(step: PerformanceStep, strength: float, time: float) -> void:
+	var t: UnitToken = _tokens.get(step.target if step.target else step.actor)
+	var center := t.get_global_rect().get_center() if t else get_global_rect().get_center()
+	pivot_offset = get_global_transform().affine_inverse() * center
+	scale = Vector2.ONE * (1.0 + strength)
+	var tw := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, "scale", Vector2.ONE, maxf(time, 0.01))
+	tw.finished.connect(func(): pivot_offset = Vector2.ZERO)
 
 
 ## 피해 숫자 크기. 피해가 대상 최대 HP 에 가까울수록 크고, 치명타면 crit_number_scale 배.
