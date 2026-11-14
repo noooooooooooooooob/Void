@@ -351,11 +351,12 @@ func test_drag_released_off_target_returns_card():
 	assert_eq(s.selected_index, -1)
 	assert_eq(s.session.active.hand.size(), 5)
 
-func test_short_click_release_keeps_selection():
+func test_short_click_release_returns_card():
 	var s := _screen()
 	var i := _index_of(s, "사격")
 	s.select_card(i)
 	s._dragging = true
 	s._press_pos = Vector2(900, 1000)
-	s._release_drag(Vector2(903, 1002))  # 그 자리에서 뗀 클릭
-	assert_eq(s.selected_index, i)
+	s._release_drag(Vector2(903, 1002))  # 끌지 않고 그 자리에서 뗀 클릭도 카드가 돌아간다
+	assert_null(s.selected)
+	assert_eq(s.selected_index, -1)
