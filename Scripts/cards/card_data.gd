@@ -52,3 +52,6 @@ extends Resource
 ## 이 카드를 쓸 때 사용자가 재생할 애니메이션 이름 (사용자 UnitData.battle_frames 안의 이름. 예: "punch").
 ## 비워 두거나 사용자에게 그 애니메이션이 없으면 재생하지 않는다.
 @export var animation: StringName
+## 이 카드를 쓸 때 재생할 연출 씬 (루트 = CardPerformance). 비우면 연출 없이 결과를 바로 보여 준다.
+## 이동 좌표·시간·피격 반응 변경 등은 전부 연출 씬 안에서 정한다. Godot 담당 칸이라 카드 가져오기가 덮어쓰지 않는다.
+@export var performance: PackedScene
