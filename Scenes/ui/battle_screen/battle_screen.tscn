@@ -235,3 +235,6 @@ one_shot = true
 [node name="PerformanceQueue" type="Node" parent="." unique_id=1051432266]
 unique_name_in_owner = true
 script = ExtResource("4_5dyec")
+
+[node name="HitSound" type="AudioStreamPlayer" parent="." unique_id=256951789]
+unique_name_in_owner = true

@@ -33,6 +33,20 @@ extends Control
 ## 전투 기록에 남길 줄 수
 @export var log_lines := 8
 
+@export_group("피격 반응 (공통값)")
+## hit 때 대상 위치에 띄우는 이펙트 씬 (한 번 재생하고 스스로 지워지는 씬). 비우면 이펙트 없음. 카드 연출 씬의 hit_effect 가 있으면 그것
+@export var hit_effect: PackedScene
+## hit 때 효과음. 비우면 소리 없음. 카드 연출 씬의 hit_sound 가 있으면 그것
+@export var hit_sound: AudioStream
+## hit 때 화면 흔들림 세기 (픽셀). 카드 연출 씬의 hit_shake 가 0 이상이면 그것
+@export var hit_shake := 6.0
+## hit 때 대상 캐릭터 그림·캐릭터 UI 흔들림 세기 (픽셀, 공통값만)
+@export var hit_unit_shake := 4.0
+## 흔들림이 약해지며 멈추는 데 걸리는 시간 (초)
+@export var shake_time := 0.2
+## 효과음 음높이를 매번 이만큼(비율) 안에서 무작위로 바꾼다 (0.08 = ±8%)
+@export var pitch_jitter := 0.08
+
 const GRID_CELL := preload("res://Scenes/ui/battle_screen/grid_cell.tscn")
 const UNIT_TOKEN := preload("res://Scenes/ui/battle_screen/unit_token.tscn")
 const TURN_PORTRAIT := preload("res://Scenes/ui/battle_screen/turn_portrait.tscn")
@@ -72,6 +86,7 @@ var selected_index := -1
 @onready var _enemy_timer: Timer = %EnemyTimer
 @onready var _perf_layer: Control = %PerformanceLayer
 @onready var _queue: PerformanceQueue = %PerformanceQueue
+@onready var _hit_sound: AudioStreamPlayer = %HitSound
 
 var _cells := {}        # Vector3i(편, 열, 행) → GridCell
 var _tokens := {}       # BattleUnit → UnitToken
@@ -84,6 +99,7 @@ var _stage_mode := false  # 의뢰(스테이지) 전투인지. 그러면 결과 
 var _won := false         # 마지막 전투를 이겼는지 (의뢰 모드 결과 버튼용)
 var _recorder: PerformanceRecorder  # 이번 전투의 이벤트 → 연출 단계 기록기
 var _pending_winner := -1  # 연출 중에 전투가 끝났으면 이긴 편 (연출이 끝나면 결과 창). 없으면 -1
+var _fx_rng := RandomNumberGenerator.new()  # 흔들림·음높이용 난수. 전투 rng 와 따로 (전투 결과 재현에 영향 없게)
 
 
 func _ready() -> void:
@@ -95,6 +111,8 @@ func _ready() -> void:
 	_queue.token_of = func(u): return _tokens.get(u)
 	_queue.step_results.connect(_on_step_results)
 	_queue.drained.connect(_on_drained)
+	_queue.hit.connect(_on_hit)
+	_fx_rng.randomize()
 	_arrow.visible = false
 	_result.visible = false
 	# 의뢰 지도에서 전투 노드로 들어왔으면 의뢰의 전투 데이터와 파티(HP 유지)를 쓴다
@@ -323,6 +341,33 @@ func _on_step_results(step: PerformanceStep) -> void:
 		_place_token(t, u.side, step.state[u].cell)
 		if _rows.has(u):
 			_rows[u].refresh()
+
+
+## 연출의 hit 키: 대상들의 맞는 반응 (설계 5장 — 캐릭터 그림·화면·캐릭터 UI 흔들림, 피격 이펙트, 효과음).
+## 숫자는 띄우지 않는다 (결과는 show_results 때). 카드 연출 씬에 값이 있으면 공통값 대신 그것을 쓴다.
+func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
+	var fx: PackedScene = perf.hit_effect if perf.hit_effect else hit_effect
+	var snd: AudioStream = perf.hit_sound if perf.hit_sound else hit_sound
+	var screen := perf.hit_shake if perf.hit_shake >= 0.0 else hit_shake
+	# 1. 대상마다: 캐릭터 그림·UI 흔들림, 대상 위치에 이펙트
+	for u in step.hit_targets():
+		var t: UnitToken = _tokens.get(u)
+		if t == null:
+			continue
+		Shaker.shake(t.sprite(), hit_unit_shake, shake_time, _fx_rng)
+		Shaker.shake(t.ui_box(), hit_unit_shake, shake_time, _fx_rng)
+		if fx:
+			var e: Node = fx.instantiate()
+			_perf_layer.add_child(e)
+			if e is Node2D or e is Control:
+				e.global_position = t.get_global_rect().get_center()
+	# 2. 화면 전체 흔들림
+	Shaker.shake(self, screen, shake_time, _fx_rng)
+	# 3. 효과음 (음높이는 매번 조금씩 다르게)
+	if snd:
+		_hit_sound.stream = snd
+		_hit_sound.pitch_scale = 1.0 + _fx_rng.randf_range(-pitch_jitter, pitch_jitter)
+		_hit_sound.play()
 
 
 ## 이벤트 하나를 떠오르는 숫자·전투 기록·라운드 번호로 보여 준다. pop_damage 가 false 면 피해 숫자는 안 띄운다.

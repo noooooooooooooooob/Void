@@ -164,3 +164,61 @@ func test_move_goes_near_target_cell():
 	var perf: Node2D = s.get_node("%PerformanceLayer").get_child(0)
 	var foe_center: Vector2 = s._tokens[_unit(s, "적A")].get_global_rect().get_center()
 	assert_almost_eq(perf.global_position, foe_center + Vector2(-80, 0), Vector2(1, 1))
+
+func test_hit_shakes_target_sprite_and_ui():
+	var s := _screen()
+	var foe := _unit(s, "적A")
+	var box: Control = s._tokens[foe].ui_box()
+	var sprite: AnimatedSprite2D = s._tokens[foe].sprite()
+	var box_home := box.position
+	var sprite_home := sprite.position
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	await wait_frames(2)
+	assert_ne(box.position, box_home)
+	assert_ne(sprite.position, sprite_home)
+	await wait_for_signal(_queue(s).drained, 2.0)
+	await wait_seconds(0.3)
+	assert_eq(box.position, box_home)
+	assert_eq(sprite.position, sprite_home)
+
+func test_hit_shakes_screen_and_plays_sound():
+	var s := _screen()
+	s.hit_sound = AudioStreamWAV.new()
+	var home := s.position
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	await wait_frames(2)
+	assert_ne(s.position, home)
+	var snd: AudioStreamPlayer = s.get_node("%HitSound")
+	assert_eq(snd.stream, s.hit_sound)
+	assert_almost_eq(snd.pitch_scale, 1.0, s.pitch_jitter + 0.001)
+
+func test_card_override_hit_sound():
+	var ps := _perf([[0.1, "hit", []]], 0.2)
+	var p: CardPerformance = ps.instantiate()
+	p.hit_sound = AudioStreamWAV.new()
+	var override_sound := p.hit_sound
+	ps.pack(p)
+	p.free()
+	var s := _screen(_data(45, null, ps))
+	s.hit_sound = AudioStreamWAV.new()
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	assert_eq(s.get_node("%HitSound").stream.get_class(), "AudioStreamWAV")
+	assert_ne(s.get_node("%HitSound").stream, s.hit_sound)
+
+func test_hit_spawns_effect_on_target():
+	var fx := Node2D.new()
+	var fx_scene := PackedScene.new()
+	fx_scene.pack(fx)
+	fx.free()
+	var s := _screen()
+	s.hit_effect = fx_scene
+	var layer := s.get_node("%PerformanceLayer")
+	_use(s, "연출타격")
+	var before := layer.get_child_count()
+	await wait_for_signal(_queue(s).hit, 1.0)
+	assert_eq(layer.get_child_count(), before + 1)
+	var foe_center: Vector2 = s._tokens[_unit(s, "적A")].get_global_rect().get_center()
+	assert_almost_eq(layer.get_child(layer.get_child_count() - 1).global_position, foe_center, Vector2(1, 1))
