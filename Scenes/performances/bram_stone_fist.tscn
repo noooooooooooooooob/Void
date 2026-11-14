@@ -1,7 +1,7 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://clb1d1vvcj2jy"]
 
-[ext_resource type="Script" path="res://Scripts/performances/card_performance.gd" id="1_2h47h"]
-[ext_resource type="SpriteFrames" path="res://entities/units/bram_frames.tres" id="2_gmvyg"]
+[ext_resource type="Script" uid="uid://b60ttgo8hxj7t" path="res://Scripts/performances/card_performance.gd" id="1_2h47h"]
+[ext_resource type="SpriteFrames" uid="uid://ciiv4k826tf1k" path="res://entities/units/bram_frames.tres" id="2_gmvyg"]
 
 [sub_resource type="Animation" id="Animation_j2uut"]
 length = 0.7

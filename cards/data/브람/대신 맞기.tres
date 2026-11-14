@@ -25,7 +25,6 @@ category = "special"
 attack_type = "ally"
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_f508e")]([SubResource("Resource_yuvsa")])
-animation = null
 
 [resource]
 script = ExtResource("4_8q4tn")

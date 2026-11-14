@@ -29,7 +29,6 @@ sp = 2
 cost = 2
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_52ucf")]([SubResource("Resource_27ssf"), SubResource("Resource_k5040")])
-animation = null
 
 [resource]
 script = ExtResource("4_wr1vq")

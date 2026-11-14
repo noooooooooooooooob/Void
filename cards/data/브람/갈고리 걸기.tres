@@ -29,7 +29,6 @@ cost = 1
 attack_type = "ranged"
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_pwm3k")]([SubResource("Resource_b8gsr"), SubResource("Resource_l0rpp")])
-animation = null
 
 [resource]
 script = ExtResource("4_qtbsq")

@@ -39,7 +39,6 @@ category = "skill"
 attack_type = "self"
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_qudgi")]([SubResource("Resource_ek3ol")])
-animation = null
 
 [resource]
 script = ExtResource("4_m4dfd")
