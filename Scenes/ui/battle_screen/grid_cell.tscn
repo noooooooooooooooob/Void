@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://djk0rr812mnud"]
 
-[ext_resource type="Script" path="res://Scripts/ui/grid_cell.gd" id="1_0sqyp"]
+[ext_resource type="Script" uid="uid://66gnsd2p1jbi" path="res://Scripts/ui/grid_cell.gd" id="1_0sqyp"]
 
 [node name="GridCell" type="Control" unique_id=230895616]
 custom_minimum_size = Vector2(120, 120)
