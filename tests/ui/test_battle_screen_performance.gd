@@ -268,3 +268,18 @@ func test_knockback_pushes_away_and_returns():
 	assert_gt(sprite.offset.x, home.x)
 	await wait_seconds(0.5)
 	assert_eq(sprite.offset, home)
+
+func test_bigger_damage_bigger_number():
+	var s := _screen()
+	assert_gt(s.number_scale(40, 45, false), s.number_scale(5, 45, false))
+	assert_almost_eq(s.number_scale(0, 45, false), 1.0, 0.001)
+	assert_almost_eq(s.number_scale(45, 45, true), (1.0 + s.big_number_boost) * s.crit_number_scale, 0.001)
+
+func test_kill_adds_extra_screen_shake_at_results():
+	var s := _screen(_data(10, null, _perf([[0.1, "show_results", []]], 0.3)))
+	s.hit_shake = 6.0
+	var home := s.position
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).step_results, 1.0)
+	await wait_frames(2)
+	assert_ne(s.position, home)

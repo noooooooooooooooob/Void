@@ -57,6 +57,18 @@ extends Control
 ## 넉백 뒤 제자리로 천천히 돌아오는 시간 (초)
 @export var knockback_return := 0.25
 
+@export_group("강조 (공통값)")
+## 피해 숫자 크기: 1 + (피해 / 대상 최대 HP, 최대 1) × 이 값. 최대 HP 를 한 번에 깎으면 1 + 이 값 배
+@export var big_number_boost := 0.6
+## 치명타 피해 숫자 색
+@export var crit_color := Color("ffd23f")
+## 치명타 피해 숫자 크기 배율
+@export var crit_number_scale := 1.3
+## 치명타가 있으면 결과 표시 때 화면을 hit_shake × 이 값으로 한 번 더 흔든다
+@export var crit_shake_boost := 1.3
+## 쓰러뜨린 결과면 결과 표시 때 화면 흔들림·히트스톱을 공통값 × 이 값으로 한 번 더
+@export var kill_boost := 1.8
+
 const GRID_CELL := preload("res://Scenes/ui/battle_screen/grid_cell.tscn")
 const UNIT_TOKEN := preload("res://Scenes/ui/battle_screen/unit_token.tscn")
 const TURN_PORTRAIT := preload("res://Scenes/ui/battle_screen/turn_portrait.tscn")
@@ -338,8 +350,14 @@ func _on_step_results(step: PerformanceStep) -> void:
 		if token and step.card.performance == null:
 			token.play_card_animation(step.card)
 		var totals := step.damage_totals()
+		var crits := step.crit_targets()
 		for u in totals:
-			_pop(u, "-%d" % totals[u], Color("ff5a5a"))
+			var crit := crits.has(u)
+			_pop(u, "-%d" % totals[u], crit_color if crit else Color("ff5a5a"),
+				number_scale(totals[u], u.get_stat(BattleTypes.Stat.HP), crit))
+		# 연출이 있는 카드만: 쓰러뜨림·치명타는 결과가 보이는 순간 한 번 더 강조 (설계 5-1 의 6·7)
+		if step.card.performance:
+			_emphasize(step)
 	# 2. 나머지 이벤트: 숫자·기록 (카드의 피해 숫자는 위에서 합쳐 띄웠으므로 기록만)
 	for e in step.events:
 		_show_event(e, not is_card)
@@ -445,6 +463,24 @@ func _hitstop(perf: CardPerformance, targets: Array[BattleUnit], time: float) ->
 	for sp in sprites:
 		if is_instance_valid(sp):
 			sp.speed_scale = 1.0
+
+
+## 피해 숫자 크기. 피해가 대상 최대 HP 에 가까울수록 크고, 치명타면 crit_number_scale 배.
+func number_scale(amount: int, max_hp: int, crit: bool) -> float:
+	var ratio := clampf(float(amount) / maxf(float(max_hp), 1.0), 0.0, 1.0)
+	var s := 1.0 + ratio * big_number_boost
+	return s * crit_number_scale if crit else s
+
+
+## 쓰러뜨린 결과·치명타 결과 강조: 화면 흔들림(+히트스톱) 한 번 더
+func _emphasize(step: PerformanceStep) -> void:
+	var perf := _queue.current_performance()
+	if not step.killed().is_empty():
+		Shaker.shake(self, hit_shake * kill_boost, shake_time * kill_boost, _fx_rng)
+		if perf:
+			_hitstop(perf, step.hit_targets(), hitstop_time * kill_boost)
+	elif not step.crit_targets().is_empty():
+		Shaker.shake(self, hit_shake * crit_shake_boost, shake_time, _fx_rng)
 
 
 ## 이벤트 하나를 떠오르는 숫자·전투 기록·라운드 번호로 보여 준다. pop_damage 가 false 면 피해 숫자는 안 띄운다.
@@ -742,14 +778,14 @@ func _who(e: BattleEvent) -> String:
 	return "(%s)" % (e.source.display_name if e.source is StatusData else "상태")
 
 
-func _pop(u: BattleUnit, text: String, color: Color) -> void:
+func _pop(u: BattleUnit, text: String, color: Color, size_scale := 1.0) -> void:
 	var t: UnitToken = _tokens.get(u)
 	if t == null or not t.is_inside_tree():
 		return
 	var f: FloatNumber = FLOAT_NUMBER.instantiate()
 	_float_layer.add_child(f)
 	f.global_position = t.get_global_rect().get_center() - Vector2(f.size.x * 0.5, 70)
-	f.pop(text, color)
+	f.pop(text, color, size_scale)
 
 
 func _add_log(line: String) -> void:

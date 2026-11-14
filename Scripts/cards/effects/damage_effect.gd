@@ -51,9 +51,11 @@ func apply(ctx: EffectContext) -> void:
 		return
 	for t in resolve_targets(ctx):
 		var value := base * mult
+		var crit := false
 		# 치명 판정은 대상마다 따로. 행위자 기준 치명확률·치명피해.
 		if can_crit and ctx.actor:
 			var rate := ctx.actor.get_stat(BattleTypes.Stat.CRIT_RATE)
 			if ctx.battle.rng.randf() * 100.0 < rate:
 				value *= ctx.actor.get_stat(BattleTypes.Stat.CRIT_DAMAGE) / 100.0
-		ctx.battle.apply_damage(ctx.actor, t, final_amount(value), ctx.source, ctx.applier)
+				crit = true
+		ctx.battle.apply_damage(ctx.actor, t, final_amount(value), ctx.source, ctx.applier, crit)

@@ -114,3 +114,28 @@ func test_remove_status_event():
 	battle.remove_status(target, "bleed")
 	assert_null(target.get_status("bleed"))
 	assert_eq(_types(), [Ev.STATUS_APPLIED, Ev.STATUS_REMOVED])
+
+func _crit_card() -> CardData:
+	var d := DamageEffect.new()
+	d.use_flat = true
+	d.flat = 10
+	var c := CardData.new()
+	c.attack_type = "melee"
+	c.sp = 0
+	c.effects.assign([d])
+	attacker.hand.append(c)
+	return c
+
+func test_crit_flag_on_damage_event():
+	attacker.data.crit_rate = 100
+	battle.play_card(attacker, _crit_card())
+	var taken: Array = log.filter(func(e): return e.type == Ev.DAMAGE_TAKEN)
+	assert_eq(taken.size(), 1)
+	assert_true(taken[0].crit)
+
+func test_no_crit_flag_without_crit():
+	attacker.data.crit_rate = 0
+	battle.play_card(attacker, _crit_card())
+	var taken: Array = log.filter(func(e): return e.type == Ev.DAMAGE_TAKEN)
+	assert_false(taken[0].crit)
+	assert_eq(taken[0].amount, 10)

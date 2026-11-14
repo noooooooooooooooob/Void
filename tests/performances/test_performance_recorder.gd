@@ -90,3 +90,20 @@ func test_take_steps_clears():
 	battle.apply_damage(null, foe, 5)
 	rec.take_steps()
 	assert_eq(rec.take_steps().size(), 0)
+
+func test_killed_and_crit_targets():
+	hero.data.crit_rate = 100
+	var d := _dmg(100)
+	d.can_crit = true
+	var c := _card([d])
+	battle.play_card(hero, c)
+	var s: PerformanceStep = _card_steps(rec.take_steps())[0]
+	assert_eq(s.killed(), [foe] as Array[BattleUnit])
+	assert_eq(s.crit_targets(), [foe] as Array[BattleUnit])
+
+func test_no_kill_no_crit():
+	var c := _card([_dmg(5)])
+	battle.play_card(hero, c)
+	var s: PerformanceStep = _card_steps(rec.take_steps())[0]
+	assert_eq(s.killed(), [] as Array[BattleUnit])
+	assert_eq(s.crit_targets(), [] as Array[BattleUnit])

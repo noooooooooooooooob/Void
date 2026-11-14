@@ -48,6 +48,24 @@ func hit_targets() -> Array[BattleUnit]:
 	return out
 
 
+## 이 단계에서 쓰러진 유닛들 (UNIT_DIED 순서)
+func killed() -> Array[BattleUnit]:
+	var out: Array[BattleUnit] = []
+	for e in events:
+		if e.type == BattleTypes.Event.UNIT_DIED and e.target and not out.has(e.target):
+			out.append(e.target)
+	return out
+
+
+## 이 단계에서 치명타를 맞은 유닛들 (DAMAGE_TAKEN 의 crit)
+func crit_targets() -> Array[BattleUnit]:
+	var out: Array[BattleUnit] = []
+	for e in events:
+		if e.type == BattleTypes.Event.DAMAGE_TAKEN and e.crit and not out.has(e.target):
+			out.append(e.target)
+	return out
+
+
 ## 단계를 닫는다: 전투의 모든 유닛 상태를 state 에 찍어 둔다.
 func snapshot(units: Array[BattleUnit]) -> void:
 	state.clear()

@@ -359,8 +359,9 @@ func exile_card(u: BattleUnit, card: CardData) -> void:
 ## actor 가 target 에게 amount 만큼 피해를 준다. (설계 문서 3.5~3.6, 기획 결정)
 ## actor 는 null 일 수 있다: 상태로 생긴 피해(출혈 등)는 아무도 "준" 것이 아니다 → 스태미너 회복 없음.
 ## source 는 이벤트에 담길 출처, applier 는 상태로 생긴 피해일 때 그 상태를 건 유닛(이벤트에 기록만).
+## crit 은 치명타였는지 — 이벤트에 표시만 한다 (화면 강조용, 수치는 부르는 쪽이 이미 반영).
 ## 순서: 대신 맞기 → 방어도 → HP / 대상 스태미너 감소 / 준 쪽 스태미너 회복 / 이벤트 / 사망
-func apply_damage(actor: BattleUnit, target: BattleUnit, amount: int, source = null, applier: BattleUnit = null) -> void:
+func apply_damage(actor: BattleUnit, target: BattleUnit, amount: int, source = null, applier: BattleUnit = null, crit := false) -> void:
 	if amount <= 0 or target == null or not target.alive:
 		return
 
@@ -390,8 +391,13 @@ func apply_damage(actor: BattleUnit, target: BattleUnit, amount: int, source = n
 		actor.stamina = mini(max_stamina, actor.stamina + amount / 2)
 
 	# 4. 이벤트: 준 쪽 기준(DEALT) → 받은 쪽 기준(TAKEN) 순서.
-	events.emit(BattleEvent.make(BattleTypes.Event.DAMAGE_DEALT, actor, target, amount, source, null, applier))
-	events.emit(BattleEvent.make(BattleTypes.Event.DAMAGE_TAKEN, actor, target, amount, source, null, applier))
+	#    crit 은 화면 강조용 표시만 싣는다 (수치는 이미 amount 에 반영됨)
+	var dealt := BattleEvent.make(BattleTypes.Event.DAMAGE_DEALT, actor, target, amount, source, null, applier)
+	dealt.crit = crit
+	events.emit(dealt)
+	var taken := BattleEvent.make(BattleTypes.Event.DAMAGE_TAKEN, actor, target, amount, source, null, applier)
+	taken.crit = crit
+	events.emit(taken)
 
 	# 5. 사망
 	if target.alive and target.hp <= 0:

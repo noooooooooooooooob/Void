@@ -128,3 +128,11 @@ func test_float_number_frees_itself():
 	assert_eq(f.text, "-9")
 	await wait_seconds(0.2)
 	assert_false(is_instance_valid(f))
+
+func test_float_number_settles_at_given_scale():
+	var f: FloatNumber = load("res://Scenes/ui/battle_screen/float_number.tscn").instantiate()
+	add_child_autofree(f)
+	f.pop("-30", Color.RED, 1.5)
+	assert_gt(f.scale.x, 1.5)  # 처음엔 크게 튀어나옴
+	await wait_seconds(0.3)
+	assert_almost_eq(f.scale.x, 1.5, 0.01)
