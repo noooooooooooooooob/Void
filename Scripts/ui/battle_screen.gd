@@ -755,13 +755,14 @@ func _process(delta: float) -> void:
 	_update_hand_lift(delta, _hand_index_under(get_global_mouse_position()))
 
 
-## 마우스 아래의 손패 카드 번호 (없으면 -1). 카드가 떠오르며 움직여도 깜빡이지 않게
-## 카드 가로 범위 × (손패 위쪽 ~ 화면 아래) 기둥 전체로 본다.
+## 마우스 아래의 손패 카드 번호 (없으면 -1).
+## 카드 가로 범위 × (그 카드의 지금 윗변 ~ 화면 아래) 로 본다: 실제로 보이는 카드에 닿아야 올린 것으로 친다.
+## (손패 줄 위쪽부터 보면 내려가 있는 카드보다 한참 위의 빈 곳에서도 반응한다 — 2026-11-15 수정)
+## 카드는 올리면 위로만 움직이므로 마우스는 계속 카드 안에 남아 깜빡이지 않는다.
 func _hand_index_under(pos: Vector2) -> int:
-	var top := _hand.get_global_rect().position.y
 	for i in _hand.get_child_count():
 		var r: Rect2 = _hand.get_child(i).get_global_rect()
-		if pos.x >= r.position.x and pos.x < r.end.x and pos.y >= top:
+		if pos.x >= r.position.x and pos.x < r.end.x and pos.y >= r.position.y:
 			return i
 	return -1
 
