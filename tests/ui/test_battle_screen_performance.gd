@@ -286,12 +286,25 @@ func test_kill_adds_extra_screen_shake_at_results():
 	assert_ne(s.position, home)
 
 func test_zoom_punch_returns_to_one():
-	var s := _screen(_data(45, null, _perf([[0.05, "zoom", [0.1, 0.1]]], 0.4)))
+	var s := _screen(_data(45, null, _perf([[0.05, "zoom", [0.1, 0.5]]], 0.4)))
 	_use(s, "연출타격")
 	await wait_for_signal(_queue(s).zoom, 1.0)
 	await wait_frames(1)
 	assert_gt(s.scale.x, 1.0)
-	await wait_seconds(0.25)
+	await wait_seconds(0.7)
+	assert_eq(s.scale, Vector2.ONE)
+	assert_eq(s.pivot_offset, Vector2.ZERO)
+
+func test_overlapping_zooms_keep_center_until_last_one_ends():
+	var s := _screen()
+	var step := PerformanceStep.new()
+	step.actor = _unit(s, "적A")
+	s._on_zoom(step, 0.1, 0.1)
+	s._on_zoom(step, 0.1, 0.6)
+	await wait_seconds(0.3)
+	assert_gt(s.scale.x, 1.0)
+	assert_ne(s.pivot_offset, Vector2.ZERO)
+	await wait_seconds(0.5)
 	assert_eq(s.scale, Vector2.ONE)
 	assert_eq(s.pivot_offset, Vector2.ZERO)
 
@@ -319,3 +332,15 @@ func test_damage_number_has_no_sign_and_is_red():
 	assert_eq(nums.size(), 1)
 	assert_eq(nums[0].text, "10")
 	assert_eq(Color(nums[0].modulate, 1.0), s.damage_color)
+
+func test_item_refused_and_dimmed_during_performance():
+	var s := _screen()
+	s.toggle_bag()
+	assert_false(s.get_node("%BagPanel").slots()[0].is_dimmed())
+	_use(s, "연출타격")
+	assert_true(_queue(s).is_busy())
+	assert_false(s.select_item(0))
+	assert_true(s.get_node("%BagPanel").slots()[0].is_dimmed())
+	await wait_for_signal(_queue(s).drained, 2.0)
+	assert_false(s.get_node("%BagPanel").slots()[0].is_dimmed())
+	assert_true(s.select_item(0))

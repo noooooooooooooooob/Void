@@ -155,3 +155,35 @@ func test_draw_phase_still_reshuffles():
 	battle.begin_turn(me)
 	assert_eq(me.hand.size(), 5)
 
+
+# 행동 횟수를 0 으로 만드는 상태 (기절 같은 것)
+func _stun() -> StatusData:
+	var st := Fixture.status("stun", false)
+	st.modifiers.assign([Fixture.modifier(BattleTypes.Stat.ACTIONS, BattleTypes.ModKind.FLAT, -1)])
+	return st
+
+func _stun_everyone_after_round_one() -> void:
+	battle.start_battle()
+	battle.next_turn()
+	battle.next_turn()
+	var stun := _stun()
+	battle.apply_status(me, stun, 1, me)
+	battle.apply_status(foe, stun, 1, foe)
+
+func test_round_with_no_actions_passes_to_next_round():
+	_stun_everyone_after_round_one()
+	var ends := [0]
+	battle.events.subscribe(Ev.ROUND_END, func(_e):
+		ends[0] += 1
+		if ends[0] == 2:
+			battle.remove_status(me, "stun")
+			battle.remove_status(foe, "stun"))
+	assert_not_null(battle.next_turn())
+	assert_eq(ends[0], 2)
+
+func test_endless_empty_rounds_stop_at_limit():
+	_stun_everyone_after_round_one()
+	var starts := [0]
+	battle.events.subscribe(Ev.ROUND_START, func(_e): starts[0] += 1)
+	assert_null(battle.next_turn())
+	assert_eq(starts[0], BattleTypes.EMPTY_ROUND_LIMIT)

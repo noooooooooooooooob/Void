@@ -141,3 +141,10 @@ func test_test_battle_data():
 	assert_eq([foe.max_hp, foe.attack, foe.defense, foe.speed_min, foe.speed_max], [45, 9, 6, 2, 8])
 	assert_eq(foe.deck.size(), 4)
 	assert_ne(d.enemies[0].unit.display_name, d.enemies[1].unit.display_name)
+
+func test_toggle_bag_action_is_tab():
+	assert_true(InputMap.has_action("toggle_bag"))
+	var ev := InputEventKey.new()
+	ev.physical_keycode = KEY_TAB
+	ev.pressed = true
+	assert_true(ev.is_action_pressed("toggle_bag"))

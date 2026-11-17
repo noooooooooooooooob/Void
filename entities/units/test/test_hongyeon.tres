@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://vv4lak7p21rq"]
 
-[ext_resource type="Script" path="res://Scripts/cards/card_data.gd" id="1_m68oq"]
-[ext_resource type="Resource" path="res://cards/data/common/타격.tres" id="2_jlno6"]
-[ext_resource type="Resource" path="res://cards/data/common/사격.tres" id="3_d73ro"]
-[ext_resource type="Resource" path="res://cards/data/common/방어.tres" id="4_srylm"]
-[ext_resource type="Script" path="res://Scripts/statuses/equipment_data.gd" id="5_2srp8"]
-[ext_resource type="Script" path="res://Scripts/statuses/status_data.gd" id="6_jq8xh"]
-[ext_resource type="Script" path="res://Scripts/battle/unit_data.gd" id="7_y68u3"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="1_m68oq"]
+[ext_resource type="Resource" uid="uid://bcro5bq723igu" path="res://cards/data/common/타격.tres" id="2_jlno6"]
+[ext_resource type="Resource" uid="uid://8tur81lky8gg" path="res://cards/data/common/사격.tres" id="3_d73ro"]
+[ext_resource type="Resource" uid="uid://hgxecy5umc0r" path="res://cards/data/common/방어.tres" id="4_srylm"]
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="5_2srp8"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="6_jq8xh"]
+[ext_resource type="Script" uid="uid://d1mc58d4xcsay" path="res://Scripts/battle/unit_data.gd" id="7_y68u3"]
 
 [resource]
 script = ExtResource("7_y68u3")

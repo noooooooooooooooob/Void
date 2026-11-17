@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://dvg8b5kiu3itw"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_ildyd"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_djt8d"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_71dgf"]
+
+[resource]
+script = ExtResource("1_ildyd")
+id = "t512k18hhohar7eqn4jh"
+display_name = "호루스의 눈"
+slot = "accessory"
+rarity = "relic"
+keywords = PackedStringArray()

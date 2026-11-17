@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="StatusData" format=3 uid="uid://dyfa8tr0akvqk"]
+
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="1_1rtpj"]
+[ext_resource type="Script" uid="uid://dad2j14vp834v" path="res://Scripts/cards/values/stack_count_value.gd" id="2_ivajm"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_cxhht"]
+[ext_resource type="Script" uid="uid://ccs11dk06ac8p" path="res://Scripts/statuses/status_trigger.gd" id="4_r021n"]
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="5_xf6aa"]
+[ext_resource type="Script" uid="uid://cqxwuf5rg0o6d" path="res://Scripts/cards/effects/modify_stacks_effect.gd" id="6_ovn10"]
+
+[sub_resource type="Resource" id="Resource_lkfh3"]
+script = ExtResource("2_ivajm")
+status_id = "rage_potion"
+
+[sub_resource type="Resource" id="Resource_yr1mg"]
+script = ExtResource("1_1rtpj")
+amount = 10.0
+scale = SubResource("Resource_lkfh3")
+
+[sub_resource type="Resource" id="Resource_cidpu"]
+script = ExtResource("2_ivajm")
+status_id = "rage_potion"
+
+[sub_resource type="Resource" id="Resource_x8fna"]
+script = ExtResource("6_ovn10")
+status_id = "rage_potion"
+delta = -1
+multiplier = SubResource("Resource_cidpu")
+target = 2
+
+[sub_resource type="Resource" id="Resource_e24jm"]
+script = ExtResource("4_r021n")
+event = 7
+filter = 1
+effects = Array[ExtResource("5_xf6aa")]([SubResource("Resource_x8fna")])
+
+[resource]
+script = ExtResource("3_cxhht")
+id = "rage_potion"
+display_name = "분노"
+description = "공격 +10% (수치당). 자신의 엔드 페이즈에 모두 사라짐"
+triggers = Array[ExtResource("4_r021n")]([SubResource("Resource_e24jm")])
+modifiers = Array[ExtResource("1_1rtpj")]([SubResource("Resource_yr1mg")])

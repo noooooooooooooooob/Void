@@ -10,7 +10,6 @@
 [ext_resource type="Resource" uid="uid://dxisc5b4kt4lr" path="res://cards/data/홍연/hongyeon-dismantle-scythe.tres" id="8_u3acd"]
 [ext_resource type="Resource" uid="uid://c8h3qjvtc63t5" path="res://cards/data/홍연/s5bggphyh55dq7v3w76y.tres" id="9_e851c"]
 [ext_resource type="Resource" uid="uid://c7s5r8uay7g2d" path="res://cards/data/홍연/u6l73a6kwgf8bqoslw23.tres" id="10_as77w"]
-[ext_resource type="Resource" uid="uid://dedjjd75wbww3" path="res://cards/data/홍연/uux9vxzohyhubf6c6x2b.tres" id="11_cf473"]
 [ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="12_dat57"]
 [ext_resource type="Resource" uid="uid://e7iwe4eets7q" path="res://statuses/equipment/test_sword.tres" id="13_pqdb5"]
 [ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="14_6tskh"]
@@ -23,6 +22,6 @@ display_name = "홍연"
 crit_rate = 1
 crit_damage = 175
 aggro = 100
-deck = Array[ExtResource("1_3td4b")]([ExtResource("2_b6ncs"), ExtResource("3_ip30j"), ExtResource("4_2t3st"), ExtResource("5_83csd"), ExtResource("6_5n5g0"), ExtResource("7_aakc6"), ExtResource("8_u3acd"), ExtResource("9_e851c"), ExtResource("10_as77w"), ExtResource("11_cf473")])
+deck = Array[ExtResource("1_3td4b")]([ExtResource("2_b6ncs"), ExtResource("3_ip30j"), ExtResource("4_2t3st"), ExtResource("5_83csd"), ExtResource("6_5n5g0"), ExtResource("7_aakc6"), ExtResource("8_u3acd"), ExtResource("9_e851c"), ExtResource("10_as77w")])
 passives = Array[ExtResource("14_6tskh")]([ExtResource("15_tcbq3")])
 equipment = Array[ExtResource("12_dat57")]([ExtResource("13_pqdb5")])

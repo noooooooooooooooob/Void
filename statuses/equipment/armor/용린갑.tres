@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://co5gg2flog11p"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_o5oiq"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_3qeqd"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_q4a2w"]
+
+[resource]
+script = ExtResource("1_o5oiq")
+id = "35yo9lbv5m7mhvuj4vsi"
+display_name = "용린갑"
+slot = "armor"
+rarity = "relic"
+keywords = PackedStringArray()

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://it17ex7llf5d"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_hsnn2"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_lrux5"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_ncjh5"]
+
+[resource]
+script = ExtResource("1_hsnn2")
+id = "92s0tn0rnnctjy2io87v"
+display_name = "가죽 투구"
+slot = "armor"
+keywords = PackedStringArray()

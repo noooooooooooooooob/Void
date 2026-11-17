@@ -12,7 +12,12 @@ extends Control
 ## - 근접 카드: 화살표가 자동 대상에 고정 → 대상 위에서 손을 떼면 사용.
 ## - 자신 카드: 손패 위로 끌어 올려 놓으면 사용.
 ## - 쓸 수 없는 곳에서 떼거나, 끌지 않고 그냥 클릭했다 떼면 카드가 손패로 돌아간다 (2026-11-15).
-## - 우클릭 / ESC: 취소. 카드를 안 고른 상태에서 빛나는 칸 클릭: 이동.
+## - 우클릭 / ESC: 취소.
+## - 이동 (2026-11-17, 설계 docs/superpowers/specs/2026-11-17-move-button-design.md):
+##   이동 버튼을 눌러 이동 모드를 켜야 갈 수 있는 칸이 빛나고, 그 칸을 누르면 이동한 뒤 모드가 꺼진다.
+## - 소비 아이템 (설계 docs/superpowers/specs/2026-11-17-consumable-items-design.md):
+##   TAB 또는 가방 버튼으로 가방을 열고, 아이템 칸을 누른 채 끌어 아군 위에서 떼면 사용 (카드와 같은 화살표).
+##   그 밖에서 떼면(제자리 클릭도) 취소. 아군 차례의 카드 사용 페이즈에만 쓸 수 있고 비용은 없다.
 ## - 적 차례는 enemy_delay 초 간격으로 자동 진행. 그동안 입력은 무시한다.
 ##
 ## 카드 연출 (설계 docs/superpowers/specs/2026-11-14-card-performance-design.md):
@@ -29,7 +34,7 @@ extends Control
 @export var enemy_delay := 0.7
 ## 난수 시드. "다시 하기"마다 1씩 늘어난다.
 @export var battle_seed := 0
-## 손패에서 이만큼(픽셀) 위로 끌어 올린 뒤 놓으면 자신 카드를 쓴다
+## 손패에서 이만큼(픽셀) 위로 끌어 올린 뒤 놓으면 자신·근접 카드를 쓴다 (대상 고를 필요 없는 카드)
 @export var drag_play_height := 120.0
 ## 전투 기록에 남길 줄 수
 @export var log_lines := 8
@@ -37,6 +42,10 @@ extends Control
 @export var hand_sink := 150.0
 ## 손패 카드가 떠오르고 내려가는 빠르기 (클수록 빠름, 1초에 남은 거리의 대략 이 배수만큼)
 @export var hand_rise_speed := 14.0
+## 시험용 아이템: 의뢰 밖에서(F6 시험 전투) 가방에 넣어 두는 소비 아이템. "다시 하기" 때도 다시 채운다. 의뢰 전투에서는 쓰지 않는다
+@export var test_items: Array[ConsumableData] = []
+## 의뢰의 일반 전투에서 이겼을 때 소비 아이템 1개가 나올 확률 (0 ~ 1, 전투 공통 값). 보스·시험 전투는 드랍 없음
+@export_range(0.0, 1.0) var item_drop_chance := 0.4
 
 @export_group("피격 반응 (공통값)")
 ## hit 때 대상 위치에 띄우는 이펙트 씬 (한 번 재생하고 스스로 지워지는 씬). 비우면 이펙트 없음. 카드 연출 씬의 hit_effect 가 있으면 그것
@@ -93,6 +102,12 @@ var session: BattleSession
 var selected: CardData = null
 ## 고른 카드의 손패 번호 (없으면 -1). 같은 카드 리소스가 여러 장 있어도(타격 4장 등) 한 장만 고르기 위해 번호로 기억한다.
 var selected_index := -1
+## 지금 고른(끌고 있는) 아이템의 가방 칸 번호 (없으면 -1). 카드와 아이템은 동시에 고르지 않는다.
+var selected_item := -1
+## 드랍 후보 아이템 폴더 (이 폴더의 소비 아이템 중 하나가 같은 확률로 나온다). 테스트에서 바꾼다.
+var drop_pool_dir := StageRun.ITEM_DIR
+## 결과 창에서 아직 정하지 않은 드랍 아이템 (받기·바꾸기·넘어가기 전). 없으면 null
+var pending_drop: ConsumableData = null
 
 # --- 씬의 노드 ---
 @onready var _bg_layer: Control = %BackgroundLayer
@@ -110,12 +125,20 @@ var selected_index := -1
 @onready var _discard_label: Label = %DiscardLabel
 @onready var _exile_label: Label = %ExileLabel
 @onready var _end_turn: Button = %EndTurnButton
+@onready var _bag_button: Button = %BagButton
+@onready var _move_button: Button = %MoveButton
+@onready var _bag_panel: BagPanel = %BagPanel
 @onready var _log: Label = %Log
 @onready var _float_layer: Control = %FloatLayer
 @onready var _arrow: TargetArrow = %TargetArrow
 @onready var _result: Control = %ResultOverlay
 @onready var _result_label: Label = %ResultLabel
 @onready var _restart_button: Button = %RestartButton
+@onready var _drop_box: Control = %DropBox
+@onready var _drop_label: Label = %DropLabel
+@onready var _drop_slots: HBoxContainer = %DropSlots
+@onready var _take_button: Button = %TakeButton
+@onready var _skip_button: Button = %SkipButton
 @onready var _enemy_timer: Timer = %EnemyTimer
 @onready var _perf_layer: Control = %PerformanceLayer
 @onready var _queue: PerformanceQueue = %PerformanceQueue
@@ -127,17 +150,33 @@ var _rows := {}         # BattleUnit → UnitStatusRow
 var _round := 0         # 라운드 번호 (ROUND_START 를 셈)
 var _log_texts: Array[String] = []
 var _dragging := false  # 손패 카드를 누른 채 끌고 있는지
+var _dragging_item := false  # 가방 칸을 누른 채 끌고 있는지 (카드의 _dragging 과 같은 역할)
+var _move_mode := false  # 이동 버튼을 눌러 이동 칸을 고르는 중인지
 var _press_pos := Vector2.ZERO
 var _stage_mode := false  # 의뢰(스테이지) 전투인지. 그러면 결과 버튼이 "다시 하기" 대신 지도로/처음으로 간다
 var _won := false         # 마지막 전투를 이겼는지 (의뢰 모드 결과 버튼용)
 var _recorder: PerformanceRecorder  # 이번 전투의 이벤트 → 연출 단계 기록기
 var _pending_winner := -1  # 연출 중에 전투가 끝났으면 이긴 편 (연출이 끝나면 결과 창). 없으면 -1
 var _lifts: Array[float] = []  # 손패 카드마다 떠오른 정도 (0 = 내려감, 1 = 다 떠오름). 손패를 다시 깔아도 번호로 이어진다
-var _fx_rng := RandomNumberGenerator.new()  # 흔들림·음높이용 난수. 전투 rng 와 따로 (전투 결과 재현에 영향 없게)
+var _zoom_tween: Tween  # 지금 돌아오는 중인 줌 펀치 (줌이 겹치면 앞의 것을 멈추려고 기억)
+var _fx_rng := RandomNumberGenerator.new()  # 흔들림·음높이·아이템 드랍 판정용 난수. 전투 rng 와 따로 (전투 결과 재현에 영향 없게)
 
 
 func _ready() -> void:
 	_end_turn.pressed.connect(press_end_turn)
+	_bag_button.pressed.connect(toggle_bag)
+	_move_button.pressed.connect(toggle_move)
+	_bag_panel.item_pressed.connect(_on_item_pressed)
+	_bag_panel.item_released.connect(_on_item_released)
+	_bag_panel.visible = false
+	# 결과 창의 드랍: 받기 / 넘어가기 / (가방이 가득 찼을 때) 바꿀 칸 누르기
+	_take_button.pressed.connect(take_drop)
+	_skip_button.pressed.connect(skip_drop)
+	for i in _drop_slots.get_child_count():
+		var slot := _drop_slots.get_child(i) as ItemSlot
+		slot.index = i
+		slot.pressed.connect(swap_drop)
+	_drop_box.visible = false
 	_restart_button.pressed.connect(_on_result_button)
 	_enemy_timer.timeout.connect(_on_enemy_timer)
 	# 연출 대기열: 연출 씬은 PerformanceLayer 에 띄우고, 유닛 박스는 _tokens 에서 찾는다
@@ -186,12 +225,19 @@ func select_card(index: int) -> bool:
 		return false
 	selected = card
 	selected_index = index
+	# 카드를 고르면 고른 아이템은 내려놓고 이동 모드도 끈다
+	selected_item = -1
+	_move_mode = false
+	_dragging_item = false
 	refresh()
 	return true
 
 
 ## 유닛을 눌렀을 때: 고른 카드가 있고 그 유닛이 대상 후보면 카드를 쓴다.
+## 아이템을 고른 상태면 그 유닛(살아 있는 아군)에게 아이템을 쓴다.
 func click_unit(u: BattleUnit) -> bool:
+	if selected_item >= 0:
+		return _use_item(u)
 	if not _input_ok() or selected == null or u == null:
 		return false
 	if not session.targets_for(selected).has(u):
@@ -201,19 +247,97 @@ func click_unit(u: BattleUnit) -> bool:
 	return true
 
 
-## 칸을 눌렀을 때: 카드를 고른 상태면 그 칸의 유닛을 대상으로, 아니면 이동.
+## 칸을 눌렀을 때: 카드를 고른 상태면 그 칸의 유닛을 대상으로, 이동 모드면 그 칸으로 이동.
+## 이동하면 이동 모드는 꺼진다 (이동력이 남아도 다시 버튼을 눌러야 함 — 2026-11-17 사용자 승인).
 func click_cell(side: int, cell: Vector2i) -> bool:
 	if not _input_ok():
 		return false
-	if selected:
+	if selected or selected_item >= 0:
 		return click_unit(session.battle.unit_at(side, cell))
-	if side != session.active.side or not session.reachable_cells().has(cell):
+	if not _move_mode or side != session.active.side or not session.reachable_cells().has(cell):
 		return false
-	return session.move(cell)
+	_move_mode = false
+	if not session.move(cell):
+		refresh()
+		return false
+	return true
 
 
-## 고른 카드를 내려놓는다.
+## 이동 버튼: 이동 모드를 켜고 끈다. 켤 수 있는 건 입력을 받을 수 있고 이동력이 남았을 때뿐.
+## 켜면 고른 카드·아이템은 내려놓는다.
+func toggle_move() -> void:
+	if _move_mode:
+		_move_mode = false
+	elif _can_move():
+		_move_mode = true
+		selected = null
+		selected_index = -1
+		_dragging = false
+		selected_item = -1
+		_dragging_item = false
+	refresh()
+
+
+## 이동 모드인지 (이동 버튼이 눌려 있고 갈 수 있는 칸이 빛나는 중)
+func is_move_mode() -> bool:
+	return _move_mode
+
+
+## 이동 버튼을 쓸 수 있는지: 입력을 받을 수 있고 지금 유닛의 이동력이 남았을 때
+func _can_move() -> bool:
+	return _input_ok() and session.active.move_left > 0
+
+
+## 가방을 연다 / 닫는다 (TAB 또는 가방 버튼). 열어 보는 것은 언제든 된다 (적 차례·연출 중에도).
+## 닫으면 고른 아이템은 내려놓는다.
+func toggle_bag() -> void:
+	_bag_panel.visible = not _bag_panel.visible
+	if not _bag_panel.visible:
+		selected_item = -1
+		_dragging_item = false
+	if session:
+		_draw_bag()
+		refresh()
+
+
+## 가방이 열려 있는지
+func is_bag_open() -> bool:
+	return _bag_panel.visible
+
+
+## 가방 index 칸의 아이템을 고른다 (끌기 시작). 고른 카드는 내려놓는다.
+## 아군 차례가 아니거나(적 차례·연출 중·전투 끝) 빈 칸이거나 쓸 대상이 없으면 false.
+func select_item(index: int) -> bool:
+	if not _input_ok():
+		return false
+	var items := session.inventory.items
+	if index < 0 or index >= items.size():
+		return false
+	if session.item_targets(items[index]).is_empty():
+		return false
+	selected = null
+	selected_index = -1
+	_dragging = false
+	_move_mode = false
+	selected_item = index
+	refresh()
+	return true
+
+
+## 취소 (우클릭 / ESC). 순서: 이동 모드 → 고른 아이템 → (고른 카드가 없으면) 열린 가방 닫기 → 고른 카드 내려놓기.
 func cancel() -> void:
+	if _move_mode:
+		_move_mode = false
+		refresh()
+		return
+	if selected_item >= 0:
+		selected_item = -1
+		_dragging_item = false
+		refresh()
+		return
+	if selected == null and is_bag_open():
+		toggle_bag()
+		return
 	selected = null
 	selected_index = -1
 	_dragging = false
@@ -226,7 +350,39 @@ func press_end_turn() -> void:
 		return
 	selected = null
 	selected_index = -1
+	selected_item = -1
+	_dragging_item = false
+	_move_mode = false
 	session.end_player_turn()
+
+
+## 드랍 받기: 가방에 빈 칸이 있을 때만 넣는다 (가득 찼으면 아무것도 하지 않음 — 바꿀 칸을 눌러야 한다).
+func take_drop() -> void:
+	if pending_drop == null or not session.inventory.add(pending_drop):
+		return
+	_close_drop()
+
+
+## 가방이 가득 찼을 때: index 칸의 아이템을 버리고 드랍으로 바꾼다.
+func swap_drop(index: int) -> void:
+	if pending_drop == null or not session.inventory.replace(index, pending_drop):
+		return
+	_close_drop()
+
+
+## 드랍을 받지 않고 넘어간다.
+func skip_drop() -> void:
+	if pending_drop == null:
+		return
+	_close_drop()
+
+
+## 드랍을 정했다: 드랍 구역을 닫고 결과 버튼("계속")을 보인다.
+func _close_drop() -> void:
+	pending_drop = null
+	_draw_drop()
+	_draw_bag()
+	_restart_button.grab_focus()
 
 
 ## "다시 하기": 같은 전투 데이터로 새 전투 (시드 +1).
@@ -240,12 +396,23 @@ func restart() -> void:
 func _start(s: BattleSession) -> void:
 	_enemy_timer.stop()
 	session = s
+	# 가방: 의뢰 전투면 의뢰의 가방(전투가 끝나도 남음), 시험 전투면 test_items 로 채운 임시 가방
+	if _stage_mode:
+		session.inventory = StageRun.inventory
+	else:
+		session.inventory = Inventory.new()
+		for item in test_items:
+			session.inventory.add(item)
 	selected = null
 	selected_index = -1
+	selected_item = -1
+	_dragging_item = false
 	_round = 0
 	_pending_winner = -1
 	_log_texts.clear()
 	_result.visible = false
+	pending_drop = null
+	_draw_drop()
 	_build_board()
 	_recorder = PerformanceRecorder.new(session.battle)
 	session.changed.connect(_on_changed)
@@ -498,9 +665,13 @@ func _on_zoom(step: PerformanceStep, strength: float, time: float) -> void:
 	var center := t.get_global_rect().get_center() if t else get_global_rect().get_center()
 	pivot_offset = get_global_transform().affine_inverse() * center
 	scale = Vector2.ONE * (1.0 + strength)
-	var tw := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
-	tw.tween_property(self, "scale", Vector2.ONE, maxf(time, 0.01))
-	tw.finished.connect(func(): pivot_offset = Vector2.ZERO)
+	# 앞의 줌이 아직 돌아오는 중이면 멈춘다. 그대로 두면 앞의 줌이 끝나면서 중심을 되돌려,
+	# 아직 확대 중인 이번 줌의 화면이 튄다
+	if _zoom_tween and _zoom_tween.is_valid():
+		_zoom_tween.kill()
+	_zoom_tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	_zoom_tween.tween_property(self, "scale", Vector2.ONE, maxf(time, 0.01))
+	_zoom_tween.finished.connect(func(): pivot_offset = Vector2.ZERO)
 
 
 ## 피해 숫자 크기. 피해가 대상 최대 HP 에 가까울수록 크고, 치명타면 crit_number_scale 배.
@@ -537,14 +708,22 @@ func _show_event(e: BattleEvent, pop_damage: bool) -> void:
 		E.HEALED:
 			_pop(e.target, str(e.amount), heal_color)
 			_add_log("%s 회복 +%d" % [e.target.data.display_name, e.amount])
+		E.HP_LOST:
+			# 피해가 아닌 HP 감소 (음수 아이템). 숫자는 피해 숫자와 같은 색
+			_pop(e.target, str(e.amount), damage_color)
+			_add_log("%s HP -%d" % [e.target.data.display_name, e.amount])
 		E.UNIT_MOVED:
 			_add_log("%s 이동 %d칸" % [e.actor.data.display_name, e.amount])
 		E.UNIT_DIED:
 			_add_log("✖ %s 쓰러짐" % e.target.data.display_name)
+		E.ITEM_USED:
+			_add_log("아이템: %s → %s" % [e.source.display_name, e.target.data.display_name])
 
 
 func _on_changed() -> void:
 	_flush()
+	# 가방은 연출 중에도 다시 그린다 (연출 중에는 아이템이 어두워야 한다)
+	_draw_bag()
 	# 연출 중이면 다시 그리기·적 진행은 연출이 끝난 뒤(_on_drained)
 	if _queue.is_busy():
 		return
@@ -575,6 +754,8 @@ func _on_finished(winner: int) -> void:
 	_enemy_timer.stop()
 	selected = null
 	selected_index = -1
+	selected_item = -1
+	_dragging_item = false
 	_flush()
 	# 연출 중이면 결과 창은 연출이 끝난 뒤
 	if _queue.is_busy():
@@ -590,8 +771,33 @@ func _show_result(winner: int) -> void:
 	# 의뢰 전투: 이기면 지도로 계속, 지면 의뢰 실패 → 시작 화면 (CLAUDE.md 의뢰 스테이지 규칙)
 	if _stage_mode:
 		_restart_button.text = "계속" if _won else "처음으로"
+	# 드랍 판정: 의뢰의 일반 전투에서 이겼을 때만 (보스는 이기면 의뢰가 끝나므로 없음, 시험 전투도 없음).
+	# 난수는 전투 난수(Battle.rng)가 아니라 화면용 난수 — 같은 시드의 전투 결과가 드랍 때문에 달라지지 않게.
+	pending_drop = null
+	if _stage_mode and _won and not StageRun.is_boss_battle():
+		pending_drop = StageRun.roll_item_drop(item_drop_chance, StageRun.item_pool(drop_pool_dir), _fx_rng)
+	_draw_drop()
 	_result.visible = true
-	_restart_button.grab_focus()
+	if pending_drop == null:
+		_restart_button.grab_focus()
+
+
+## 결과 창의 드랍 구역을 그린다. 드랍을 정하기 전에는 결과 버튼("계속")을 숨긴다.
+## 빈 칸이 있으면 받기 / 넘어가기, 가방이 가득 찼으면 바꿀 칸(가방 5칸) / 넘어가기.
+func _draw_drop() -> void:
+	var has := pending_drop != null
+	_drop_box.visible = has
+	_restart_button.visible = not has
+	if not has:
+		return
+	var full := session.inventory.is_full()
+	_drop_label.text = "아이템 획득: " + pending_drop.display_name + (" (가방이 가득 참)" if full else "")
+	_take_button.visible = not full
+	_drop_slots.visible = full
+	if full:
+		var items := session.inventory.items
+		for i in _drop_slots.get_child_count():
+			(_drop_slots.get_child(i) as ItemSlot).set_item(items[i] if i < items.size() else null)
 
 
 ## 결과 창 버튼: 의뢰 전투면 지도로(승리)/시작 화면으로(패배), 아니면 "다시 하기"
@@ -613,6 +819,9 @@ func refresh() -> void:
 		return
 	var bt := session.battle
 	var hero := session.active
+	# 이동 모드는 이동할 수 없게 되면(적 차례·전투 끝·이동력 0) 저절로 꺼진다
+	if _move_mode and not _can_move():
+		_move_mode = false
 	_round_label.text = "라운드 %d" % _round
 	if hero:
 		_banner.text = "내 차례 · " + hero.data.display_name
@@ -625,10 +834,18 @@ func refresh() -> void:
 	var targets: Array[BattleUnit] = []
 	if selected:
 		targets = session.targets_for(selected)
+	# 아이템을 골랐으면 쓸 수 있는 아군을 강조한다 (가방이 바뀌어 그 칸이 없어졌으면 고르기를 푼다)
+	if selected_item >= session.inventory.items.size():
+		selected_item = -1
+	var item_targets: Array[BattleUnit] = []
+	if selected_item >= 0:
+		item_targets = session.item_targets(session.inventory.items[selected_item])
+		if item_targets.is_empty():
+			selected_item = -1
 	for u in _tokens:
 		var t: UnitToken = _tokens[u]
 		_place_token(t, u.side, u.cell)
-		t.set_highlight(targets.has(u))
+		t.set_highlight(targets.has(u) or item_targets.has(u))
 		t.visible = u.alive
 	for u in _rows:
 		_rows[u].refresh()
@@ -643,7 +860,17 @@ func refresh() -> void:
 		_discard_label.text = "버린 카드 %d" % who.discard.size()
 		_exile_label.text = "제외 %d" % who.exiled.size()
 	_end_turn.disabled = not _input_ok()
+	_move_button.disabled = not _can_move()
+	_move_button.set_pressed_no_signal(_move_mode)
+	_draw_bag()
 	_update_arrow()
+
+
+## 가방 버튼의 개수와 가방 패널의 칸들을 다시 그린다. 쓸 수 없는 때(적 차례·연출 중·전투 끝)는 아이템이 어둡다.
+func _draw_bag() -> void:
+	var items := session.inventory.items
+	_bag_button.text = "가방 %d/%d" % [items.size(), Inventory.CAPACITY]
+	_bag_panel.show_items(items, _input_ok(), selected_item)
 
 
 ## 유닛 박스를 그 칸으로 옮긴다 (이미 그 칸이면 그대로).
@@ -669,7 +896,7 @@ func _draw_queue() -> void:
 		p.set_entry(q[i].unit, q[i].speed, i == 0)
 
 
-## 칸 표시: 카드를 골랐으면 대상 칸(빨강)과 마우스 아래 대상의 광역 범위(주황), 아니면 이동 가능 칸(하늘).
+## 칸 표시: 카드를 골랐으면 대상 칸(빨강)과 마우스 아래 대상의 광역 범위(주황), 이동 모드면 이동 가능 칸(하늘).
 func _draw_marks(targets: Array[BattleUnit], hover: BattleUnit) -> void:
 	for k in _cells:
 		_cells[k].set_mark(GridCell.Mark.NONE)
@@ -682,7 +909,15 @@ func _draw_marks(targets: Array[BattleUnit], hover: BattleUnit) -> void:
 			var eff := session.battle.effective_card(session.active, selected)
 			for u in session.battle.area_targets(hover, eff.area):
 				_mark(u.side, u.cell, GridCell.Mark.AREA)
-	else:
+	elif selected_item >= 0:
+		# 아이템을 끄는 중: 쓸 수 있는 유닛 위면 범위 칸을 카드 광역처럼 표시한다 (대상 유닛은 박스가 빛난다)
+		if selected_item < session.inventory.items.size():
+			var item := session.inventory.items[selected_item]
+			if hover and session.item_targets(item).has(hover):
+				for u in session.battle.item_affected(item, hover):
+					_mark(u.side, u.cell, GridCell.Mark.AREA)
+	elif _move_mode:
+		# 이동 버튼을 눌렀을 때만 이동 칸을 표시한다
 		for cell in session.reachable_cells():
 			_mark(session.active.side, cell, GridCell.Mark.MOVE)
 
@@ -725,7 +960,8 @@ func _on_card_input(event: InputEvent, index: int) -> void:
 			_release_drag(get_global_mouse_position())
 
 
-## 손을 뗐을 때 (mouse = 뗀 화면 위치): 대상 유닛 위면 사용, 자신 카드를 충분히 끌어 올렸으면 사용.
+## 손을 뗐을 때 (mouse = 뗀 화면 위치): 대상 유닛 위면 사용.
+## 대상을 고를 필요 없는 자신·근접 카드는 drag_play_height 넘게 끌어 올렸으면 어디서 떼든 사용 (근접은 자동 대상, 2026-11-17).
 ## 그 밖에는 (끌지 않고 그 자리에서 뗀 클릭도) 고르기를 취소해 카드가 손패로 돌아간다. (2026-11-15 사용자 결정)
 func _release_drag(mouse: Vector2) -> void:
 	_dragging = false
@@ -734,10 +970,60 @@ func _release_drag(mouse: Vector2) -> void:
 	var hover := _unit_under(mouse)
 	if hover and click_unit(hover):
 		return
-	if _attack_type(selected) == "self" and _press_pos.y - mouse.y > drag_play_height:
+	if _attack_type(selected) in ["self", "melee"] and _press_pos.y - mouse.y > drag_play_height:
 		_play(null)
 		return
 	cancel()
+
+
+# --- 아이템 끌기 (카드와 같은 규칙) ---
+
+## 가방 칸을 눌렀을 때: 그 아이템을 고르고 끌기 시작한다.
+func _on_item_pressed(index: int) -> void:
+	_dragging_item = select_item(index)
+
+
+## 누른 가방 칸에서 손을 뗐을 때 (마우스가 어디에 있든 누른 칸이 알려 준다).
+func _on_item_released(_index: int) -> void:
+	if _dragging_item:
+		_release_item_drag(get_global_mouse_position())
+
+
+## 아이템을 끌다가 손을 뗐을 때 (mouse = 뗀 화면 위치): 쓸 수 있는 아군 위면 사용.
+## 그 밖에는 (끌지 않고 그 자리에서 뗀 클릭도) 고르기를 취소하고 아이템은 가방에 남는다 — 카드의 2026-11-15 규칙과 같다.
+func _release_item_drag(mouse: Vector2) -> void:
+	_dragging_item = false
+	if selected_item < 0:
+		return
+	var hover := _unit_under(mouse)
+	if hover and click_unit(hover):
+		return
+	selected_item = -1
+	refresh()
+
+
+## 고른 아이템을 u 에게 쓴다. 아군 차례가 아니거나 u 가 대상(살아 있는 아군)이 아니면 false (이때는 아이템을 그대로 고른 채 둔다).
+## 쓰고 나면 고르기를 풀고, 가방은 열린 채 둔다.
+func _use_item(u: BattleUnit) -> bool:
+	if not _input_ok() or u == null or selected_item >= session.inventory.items.size():
+		return false
+	if not session.item_targets(session.inventory.items[selected_item]).has(u):
+		return false
+	var index := selected_item
+	selected_item = -1
+	_dragging_item = false
+	if not session.use_item(index, u):
+		refresh()
+		return false
+	return true
+
+
+## TAB(입력 액션 toggle_bag): 가방 열기/닫기. 결과 창이 떠 있으면 무시한다.
+## _unhandled_input 이 아니라 _input 에서 받는다: 버튼에 포커스가 있으면 TAB 을 UI 가 먼저(포커스 이동으로) 써 버린다.
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("toggle_bag") and not _result.visible:
+		toggle_bag()
+		get_viewport().set_input_as_handled()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -747,10 +1033,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		cancel()
 	elif event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and _dragging:
 		_release_drag(get_global_mouse_position())
+	elif event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and _dragging_item:
+		_release_item_drag(get_global_mouse_position())
 
 
 func _process(delta: float) -> void:
-	if selected:
+	if selected or selected_item >= 0:
 		_update_arrow()
 	_update_hand_lift(delta, _hand_index_under(get_global_mouse_position()))
 
@@ -788,7 +1076,20 @@ func _update_hand_lift(delta: float, hover: int) -> void:
 
 
 ## 화살표: 원거리·아군·근접 카드를 골랐을 때 고른 카드 위쪽 가운데 → 마우스(근접은 자동 대상)
+## 아이템을 골랐을 때는 그 가방 칸 위쪽 가운데 → 마우스. 쓸 수 있는 아군 위면 유효 색.
 func _update_arrow() -> void:
+	if session and selected_item >= 0:
+		if session.active == null or not is_bag_open() or selected_item >= session.inventory.items.size():
+			_arrow.visible = false
+			return
+		var slot := _bag_panel.slots()[selected_item]
+		var item_from := slot.get_global_rect().get_center() - Vector2(0, slot.size.y * 0.5)
+		var over := _unit_under(get_global_mouse_position())
+		_arrow.visible = true
+		_arrow.set_points(item_from, get_global_mouse_position())
+		_arrow.set_valid(over != null and session.item_targets(session.inventory.items[selected_item]).has(over))
+		_draw_marks([], over)
+		return
 	var kind := _attack_type(selected) if selected else ""
 	if session == null or session.active == null or kind == "" or kind == "self":
 		_arrow.visible = false

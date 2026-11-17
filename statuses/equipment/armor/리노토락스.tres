@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://i4fousvai0dd"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_4rolo"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_mcd55"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_x2woa"]
+
+[resource]
+script = ExtResource("1_4rolo")
+id = "46r2hg251j17lkz0e45h"
+display_name = "리노토락스"
+slot = "armor"
+rarity = "relic"
+keywords = PackedStringArray()

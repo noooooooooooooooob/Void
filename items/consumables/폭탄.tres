@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ConsumableData" format=3 uid="uid://dmmxyq7xlrecs"]
+
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="1_txr2r"]
+[ext_resource type="Script" uid="uid://djb1gwwlyajmm" path="res://Scripts/items/consumable_line.gd" id="2_v7b1b"]
+[ext_resource type="Script" uid="uid://bubrtaft5lcun" path="res://Scripts/cards/effects/damage_effect.gd" id="2_xho20"]
+[ext_resource type="Script" uid="uid://d10njdpn0uhn0" path="res://Scripts/items/consumable_data.gd" id="3_xho20"]
+
+[sub_resource type="Resource" id="Resource_exgrn"]
+script = ExtResource("2_xho20")
+use_flat = true
+flat = 10
+can_crit = false
+
+[resource]
+script = ExtResource("3_xho20")
+id = "58hrjs0oytogo1b2c0xx"
+display_name = "폭탄"
+description_ko = "10의 대미지"
+keywords = PackedStringArray()
+target = 1
+area = Array[Vector2i]([Vector2i(0, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1)])
+effects = Array[ExtResource("1_txr2r")]([SubResource("Resource_exgrn")])

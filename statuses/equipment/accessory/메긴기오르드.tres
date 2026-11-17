@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://bey3r4j5263qy"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_nm1tp"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_ry57t"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_im5c6"]
+
+[resource]
+script = ExtResource("1_nm1tp")
+id = "0q4z3yhws2o5o07rhjuf"
+display_name = "메긴기오르드"
+slot = "accessory"
+rarity = "relic"
+keywords = PackedStringArray()

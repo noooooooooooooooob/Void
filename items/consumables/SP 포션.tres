@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ConsumableData" format=3 uid="uid://dqyshapm4yul5"]
+
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="1_ffwjv"]
+[ext_resource type="Script" uid="uid://djb1gwwlyajmm" path="res://Scripts/items/consumable_line.gd" id="2_l8rlb"]
+[ext_resource type="Script" uid="uid://d10njdpn0uhn0" path="res://Scripts/items/consumable_data.gd" id="3_pepsw"]
+
+[sub_resource type="Resource" id="Resource_0dvj1"]
+script = ExtResource("2_l8rlb")
+type = 1
+amount = 2
+
+[resource]
+script = ExtResource("3_pepsw")
+id = "onhz5jy0r1gbczo6afle"
+display_name = "SP 포션"
+description_ko = "SP를 회복"
+keywords = PackedStringArray()
+lines = Array[ExtResource("2_l8rlb")]([SubResource("Resource_0dvj1")])

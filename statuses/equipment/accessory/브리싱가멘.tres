@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://bq66o72nklkkj"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_1j4vs"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_1typ4"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_dc52s"]
+
+[resource]
+script = ExtResource("1_1j4vs")
+id = "en90zmhfrepmcat5j6ip"
+display_name = "브리싱가멘"
+slot = "accessory"
+rarity = "relic"
+keywords = PackedStringArray()

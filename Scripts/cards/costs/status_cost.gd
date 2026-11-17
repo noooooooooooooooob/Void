@@ -26,3 +26,9 @@ func pay(ctx: EffectContext) -> void:
 	var paid := ctx.actor.stacks_of(status_id) if consume_all else amount
 	ctx.battle.change_stacks(ctx.actor, status_id, -paid)
 	ctx.values["consumed:" + status_id] = paid
+
+
+## 손패 수치 표시용: 지금 쓴다면 소모할 양만 적는다 (수치는 건드리지 않는다).
+## 이게 없으면 소모량 비례 효과(ConsumedValue)의 손패 숫자가 0 으로 나온다.
+func preview(ctx: EffectContext) -> void:
+	ctx.values["consumed:" + status_id] = ctx.actor.stacks_of(status_id) if consume_all else amount

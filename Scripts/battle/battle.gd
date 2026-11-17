@@ -129,12 +129,24 @@ func start_round() -> void:
 ## 다음 차례(행동 하나)의 유닛을 정해서 돌려준다. 차례 진행(begin_turn)은 부르는 쪽이 한다.
 ## 라운드의 행동을 다 썼으면 ROUND_END → 새 라운드. 전투가 끝났거나 행동할 유닛이 없으면 null.
 ## 행동 횟수가 2 인 유닛은 한 라운드에 두 번 반환된다 (행동 하나 = 온전한 차례 하나).
+## 아무도 행동하지 않는 라운드(살아 있는 유닛 전원의 행동 횟수가 0)는 그대로 끝내고 다음 라운드로 넘긴다
+## (사용자 결정 2026-11-16). 그런 라운드가 EMPTY_ROUND_LIMIT 번 이어지면 더 진행하지 않고 null.
 func next_turn() -> BattleUnit:
 	if winner() != -1:
 		return null
-	if turn_order.is_round_over():
+	var rounds := 0
+	while turn_order.is_round_over():
+		if rounds >= BattleTypes.EMPTY_ROUND_LIMIT:
+			push_warning("Battle: 아무도 행동하지 않는 라운드가 %d 번 이어져 진행을 멈춤" % rounds)
+			current = null
+			return null
+		rounds += 1
 		events.emit(BattleEvent.make(BattleTypes.Event.ROUND_END))
 		start_round()
+		# 라운드 끝·시작 반응으로 한쪽이 전멸했으면 차례를 열지 않는다
+		if winner() != -1:
+			current = null
+			return null
 	var entry := turn_order.pop_next()
 	current = entry.get("unit") if not entry.is_empty() else null
 	current_speed = entry.get("speed", 0)
@@ -416,6 +428,19 @@ func heal(target: BattleUnit, amount: int, source = null) -> void:
 	events.emit(BattleEvent.make(BattleTypes.Event.HEALED, null, target, gained, source))
 
 
+## target 의 HP 를 amount 만큼 깎는다. **피해가 아니다** (2026-11-17 사용자 결정, 음수 아이템용):
+## 방어도를 무시하고, DAMAGE_DEALT/DAMAGE_TAKEN 을 내지 않으며(피격 트리거 없음), 스태미너·치명도 없다. 아무도 준 것이 아님.
+## HP 는 0 밑으로 내려가지 않고, HP_LOST 의 amount 는 실제로 줄어든 양이다. 0 이 되면 쓰러진다.
+func lose_hp(target: BattleUnit, amount: int, source = null) -> void:
+	if amount <= 0 or target == null or not target.alive:
+		return
+	var lost := mini(amount, target.hp)
+	target.hp -= lost
+	events.emit(BattleEvent.make(BattleTypes.Event.HP_LOST, null, target, lost, source))
+	if target.alive and target.hp <= 0:
+		_on_unit_died(target)
+
+
 ## target 이 방어도(쉴드)를 amount 만큼 얻는다. 방어도는 라운드 시작 시 초기화된다(Task 7).
 func add_block(target: BattleUnit, amount: int, source = null) -> void:
 	if amount <= 0 or target == null or not target.alive:
@@ -443,6 +468,67 @@ func _guard_of(actor: BattleUnit, target: BattleUnit) -> StatusInstance:
 		if inst.data.guarded_by_applier and inst.applier and inst.applier.alive and inst.applier != target:
 			return inst
 	return null
+
+
+# --- 아이템 ---
+
+## item 을 target 에게 쓸 수 있는지: 대상이 살아 있고 아이템의 사용 대상 편(아군/적/둘 다)에 맞으며,
+## 범위 안에 효과를 받을 유닛이 하나라도 있을 때 (없으면 아이템만 사라지므로 막는다).
+## (언제 쓸 수 있는지 — 아군 차례의 카드 사용 페이즈 — 는 BattleSession 이 본다)
+func can_use_item(item: ConsumableData, target: BattleUnit) -> bool:
+	if item == null or target == null or not target.alive or not item.allows_side(target.side):
+		return false
+	return not item_affected(item, target).is_empty()
+
+
+## item 을 picked 에게 쓰면 효과를 받는 유닛들: 범위(area) 안의 살아 있는 유닛.
+## 카드 광역과 같은 규칙 — 고른 유닛과 같은 편 격자에서만, 범위가 비면 고른 유닛 한 명.
+func item_affected(item: ConsumableData, picked: BattleUnit) -> Array[BattleUnit]:
+	var out: Array[BattleUnit] = []
+	for u in area_targets(picked, item.area):
+		if u.alive:
+			out.append(u)
+	return out
+
+
+## 소비 아이템 item 을 target(고른 유닛)에게 쓴다. 못 쓰면 아무것도 바꾸지 않고 false.
+## (가방에서 빼는 것은 BattleSession.use_item 이 한다. 비용 없음 — SP·행동을 쓰지 않는다)
+## 아이템으로 생긴 효과는 아무도 "준" 것이 아니다 (상태로 생긴 효과와 같은 취급: 행위자 없음).
+## 순서: 범위 안 유닛마다 [효과 줄을 위에서부터 → Godot 담당 특수 효과(effects)] → ITEM_USED 한 번
+func use_item(item: ConsumableData, target: BattleUnit) -> bool:
+	if not can_use_item(item, target):
+		return false
+	for u in item_affected(item, target):
+		# 1. 효과 줄: 고정값 또는 대상 최대치의 % (내림). 양수 = 회복, 음수 = 깎음, 0 = 아무 일 없음
+		for line in item.lines:
+			if line == null or not u.alive:
+				continue
+			match line.type:
+				ConsumableLine.Type.HEAL_HP:
+					var v := line.amount_for(u.get_stat(BattleTypes.Stat.HP))
+					if v > 0:
+						heal(u, v, item)
+					elif v < 0:
+						# 피해가 아니라 HP 만 깎는다 (2026-11-17 사용자 결정)
+						lose_hp(u, -v, item)
+				ConsumableLine.Type.HEAL_SP:
+					# SP 는 최대 SP 를 넘어도 된다 (2026-11-17 사용자 결정).
+					# 넘친 SP 는 그 유닛의 다음 차례 시작(begin_turn)에 최대 SP 로 돌아간다. 깎을 때는 0 에서 멈춘다.
+					u.sp = maxi(0, u.sp + line.amount_for(u.get_stat(BattleTypes.Stat.SP)))
+		# 2. 특수 효과: 주인·대상 = 효과를 받은 그 유닛
+		if not item.effects.is_empty() and u.alive:
+			var ctx := EffectContext.new()
+			ctx.battle = self
+			ctx.actor = null
+			ctx.owner = u
+			ctx.source = item
+			ctx.targets.append(u)
+			for effect in item.effects:
+				if effect:
+					effect.apply(ctx)
+	# 3. 전투 기록·화면 갱신용 이벤트 (target = 고른 유닛)
+	events.emit(BattleEvent.make(BattleTypes.Event.ITEM_USED, null, target, 0, item))
+	return true
 
 
 # --- 상태 ---

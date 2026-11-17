@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ConsumableData" format=3 uid="uid://2i21cekyg8p1"]
+
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="1_a6gw4"]
+[ext_resource type="Script" uid="uid://djb1gwwlyajmm" path="res://Scripts/items/consumable_line.gd" id="2_ghnve"]
+[ext_resource type="Script" uid="uid://c7o0uvntceaq8" path="res://Scripts/cards/effects/block_effect.gd" id="2_nsdp4"]
+[ext_resource type="Script" uid="uid://d10njdpn0uhn0" path="res://Scripts/items/consumable_data.gd" id="3_nsdp4"]
+
+[sub_resource type="Resource" id="Resource_npyly"]
+script = ExtResource("2_nsdp4")
+use_flat = true
+flat = 10
+
+[resource]
+script = ExtResource("3_nsdp4")
+id = "g6t0muojr2p1qt7ns4hk"
+display_name = "쉴드 포션"
+description_ko = "쉴드 추가"
+keywords = PackedStringArray()
+effects = Array[ExtResource("1_a6gw4")]([SubResource("Resource_npyly")])

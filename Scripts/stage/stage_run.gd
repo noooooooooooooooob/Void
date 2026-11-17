@@ -20,11 +20,15 @@ const BATTLE_SCENE := "res://Scenes/ui/battle_screen/battle_screen.tscn"
 const ROOM_SCENE := "res://Scenes/ui/room_screen/room_screen.tscn"
 ## 지금은 모든 전투(보스 포함)가 이 시험 전투를 쓴다. 노드별 전투 데이터는 나중에
 const DEFAULT_BATTLE := preload("res://battles/test_battle.tres")
+## 드랍 후보가 되는 소비 아이템 폴더 (이 폴더의 .tres 전부. 하위 폴더는 보지 않는다)
+const ITEM_DIR := "res://items/consumables"
 
 ## 지도 진행 상태. 의뢰 중이 아니면 null
 var progress: StageProgress = null
 ## 의뢰 파티 (전투마다 같은 유닛을 다시 넣어서 HP 를 유지한다)
 var party: Array[BattleUnit] = []
+## 파티 공용 가방 (소비 아이템 5칸). 의뢰 시작 때 비어 있고 의뢰가 끝나면 비워진다 — 의뢰 밖으로 가져가지 못한다
+var inventory := Inventory.new()
 
 
 ## 의뢰 중인지 (지도가 만들어져 있는지)
@@ -37,6 +41,7 @@ func is_active() -> bool:
 func start_run(seed_value: int = 0) -> void:
 	progress = StageProgress.new(StageGenerator.new(seed_value).generate())
 	party.clear()
+	inventory = Inventory.new()
 	for u in DEFAULT_BATTLE.make_units():
 		if u.side == BattleTypes.Side.ALLY:
 			party.append(u)
@@ -46,6 +51,7 @@ func start_run(seed_value: int = 0) -> void:
 func end_run() -> void:
 	progress = null
 	party.clear()
+	inventory = Inventory.new()
 
 
 ## 커서가 가리키는 노드를 실행한다 (지도에서 스페이스·엔터·고른 노드 다시 클릭).
@@ -65,6 +71,35 @@ func enter_selected() -> void:
 ## 지금 전투 노드에 들어가 있는지 (전투 화면이 의뢰 모드로 돌지 판단)
 func in_battle() -> bool:
 	return is_active() and progress.entering != null and progress.entering.is_battle()
+
+
+## 지금 들어가 있는 노드가 보스 전투인지 (보스는 이기면 의뢰가 끝나므로 아이템 드랍이 없다)
+func is_boss_battle() -> bool:
+	return is_active() and progress.entering != null and progress.entering.kind == StageNode.Kind.BOSS
+
+
+## dir 폴더의 소비 아이템 전부 (드랍 후보). 폴더가 없거나 아이템이 없으면 빈 배열.
+## 내보낸 게임에서는 파일 이름 끝에 .remap 이 붙으므로 떼고 읽는다 (KeywordData._scan 과 같은 방식).
+func item_pool(dir: String = ITEM_DIR) -> Array[ConsumableData]:
+	var out: Array[ConsumableData] = []
+	if not DirAccess.dir_exists_absolute(dir):
+		return out
+	for f in DirAccess.get_files_at(dir):
+		var file := f.trim_suffix(".remap")
+		if file.get_extension() != "tres":
+			continue
+		var item := load(dir.path_join(file)) as ConsumableData
+		if item:
+			out.append(item)
+	return out
+
+
+## 전투 승리 드랍 판정: chance(0~1) 확률로 pool 중 하나를 같은 확률로 고른다. 꽝이거나 pool 이 비었으면 null.
+## rng 는 전투 난수(Battle.rng)와 다른 것을 넘긴다 — 같은 시드의 전투 결과가 드랍 때문에 달라지지 않게.
+func roll_item_drop(chance: float, pool: Array[ConsumableData], rng: RandomNumberGenerator) -> ConsumableData:
+	if pool.is_empty() or rng.randf() >= chance:
+		return null
+	return pool[rng.randi_range(0, pool.size() - 1)]
 
 
 ## 지금 전투 노드의 전투 데이터

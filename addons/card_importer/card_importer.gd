@@ -122,6 +122,13 @@ func _apply_cards(used_art: Dictionary) -> void:
 	var existing := _existing_cards(root.path_join("data"))  # 카드 id → 현재 파일 경로
 	var targets := _card_paths()  # 카드 id → 저장할 경로
 
+	# 0. zip 에 없는 카드(웹 에디터에서 지운 카드)의 파일은 먼저 지운다.
+	#    나중에 지우면, 같은 폴더에 같은 이름으로 새로 만든 카드가 그 경로에 저장된 뒤 함께 지워진다.
+	for id in existing.keys():
+		if not targets.has(id):
+			_delete(existing[id])
+			existing.erase(id)
+
 	# 1. 옮겨야 하는 기존 파일은 먼저 전부 임시 이름으로 비켜 둔다.
 	#    (A 의 새 이름이 B 의 옛 이름인 경우처럼 서로 자리를 바꿔도 덮어쓰지 않게)
 	var moving := {}  # 카드 id → 임시 경로
@@ -172,11 +179,8 @@ func _apply_cards(used_art: Dictionary) -> void:
 		card.upgrades = ups
 
 		_save(card, path)
-		existing.erase(id)
 
-	# 여기까지 남은 파일 = zip 에 없는 카드 → 삭제. 비게 된 덱 폴더도 정리.
-	for id in existing:
-		_delete(existing[id])
+	# 비게 된 덱 폴더를 정리한다.
 	_remove_empty_dirs(root.path_join("data"))
 
 
@@ -252,6 +256,12 @@ func _apply_keywords() -> void:
 	var existing := _existing_keywords(dir)  # 키워드 id → 현재 파일 경로
 	var targets := _keyword_paths(dir)  # 키워드 id → 저장할 경로
 
+	# zip 에 없는 키워드 파일은 먼저 지운다 (같은 이름의 새 키워드가 그 경로에 저장될 수 있게, _apply_cards 와 같은 이유).
+	for id in existing.keys():
+		if not targets.has(id):
+			_delete(existing[id])
+			existing.erase(id)
+
 	# 옮길 파일은 먼저 임시 이름으로 비켜 둔다 (서로 이름을 바꿔도 덮어쓰지 않게, _apply_cards 와 같은 방식).
 	var moving := {}
 	var held := {}
@@ -281,9 +291,6 @@ func _apply_keywords() -> void:
 		kw.description_ko = _text(k, "description", "ko")
 		kw.description_en = _text(k, "description", "en")
 		_save(kw, path)
-		existing.erase(id)
-	for id in existing:
-		_delete(existing[id])
 
 
 ## 키워드 id → 저장할 경로. <이름>.tres, 같은 이름이 있으면 뒤 키워드에 _<id>. 이름이 비면 id.

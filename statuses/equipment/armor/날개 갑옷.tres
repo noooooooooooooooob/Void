@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://bmnlbuvrlxdx5"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_tgbtd"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_4o57s"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_xeo0g"]
+
+[resource]
+script = ExtResource("1_tgbtd")
+id = "qkkv0zhzhztviycy34tt"
+display_name = "날개 갑옷"
+slot = "armor"
+rarity = "unique"
+keywords = PackedStringArray()

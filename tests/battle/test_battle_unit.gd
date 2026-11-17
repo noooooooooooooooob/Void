@@ -95,3 +95,29 @@ func test_passive_without_stacks_is_not_removed():
 func test_new_unit_starts_full():
 	var u := Fixture.unit(BattleTypes.Side.ALLY, Vector2i(2, 1), {"max_hp": 80, "max_stamina": 50})
 	assert_eq([u.hp, u.stamina, u.block, u.alive, u.cell], [80, 50, 0, true, Vector2i(2, 1)])
+
+func test_hp_stops_at_zero():
+	var u := Fixture.unit(BattleTypes.Side.ALLY, Vector2i.ZERO, {"max_hp": 100})
+	u.hp = -20
+	assert_eq(u.hp, 0)
+
+func test_hp_stops_at_max():
+	var u := Fixture.unit(BattleTypes.Side.ALLY, Vector2i.ZERO, {"max_hp": 100})
+	u.hp = 150
+	assert_eq(u.hp, 100)
+
+func test_hp_drops_to_max_when_max_hp_buff_is_removed():
+	var u := _with_mods({"max_hp": 100}, [Fixture.modifier(S.HP, K.FLAT, 20)])
+	u.hp = 120
+	assert_eq(u.hp, 120)
+	u.remove_status("buff")
+	assert_eq(u.hp, 100)
+
+func test_hp_drops_to_max_when_max_hp_stacks_drop():
+	var u := Fixture.unit(BattleTypes.Side.ALLY, Vector2i.ZERO, {"max_hp": 100})
+	var st := Fixture.status("vigor")
+	st.modifiers.assign([Fixture.modifier(S.HP, K.FLAT, 10, StackCountValue.new("vigor"))])
+	u.add_status(st, 3, u)
+	u.hp = 130
+	u.change_stacks("vigor", -2)
+	assert_eq(u.hp, 110)

@@ -25,6 +25,8 @@ enum Event {
 	STATUS_APPLIED, STATUS_REMOVED, UNIT_MOVED, UNIT_DIED, STAMINA_BROKEN,  # 상태·이동·사망·스태미너 0
 	TURN_ORDER_CHANGED,  # 속도 변화로 행동 순서가 바뀜 (화면의 순서 표시 갱신용)
 	CARD_EXILED,  # 카드가 제외 더미로 감 (소멸 키워드 등). ※ 새 이벤트는 맨 뒤에 붙인다 (.tres 에 숫자로 저장됨)
+	ITEM_USED,  # 소비 아이템을 씀 (target = 받은 유닛, source = ConsumableData). 전투 기록·화면 갱신용
+	HP_LOST,  # 피해가 아닌 HP 감소 (음수 아이템 등). amount = 실제로 줄어든 양, actor 없음. 피해 이벤트·방어도와 무관
 }
 
 ## 효과가 누구에게 적용되는지.
@@ -60,3 +62,6 @@ const DEFAULT_GRID_COLS := 4
 const CHAIN_LIMIT := 10
 ## 아군의 기본 드로우 장수 (적은 1장)
 const DEFAULT_DRAW := 5
+## 아무도 행동하지 않는 라운드(살아 있는 유닛 전원의 행동 횟수가 0)를 연달아 넘기는 최대 횟수.
+## 넘으면 더 진행하지 않는다 (전원이 영원히 행동 불가일 때 게임이 멈추지 않게).
+const EMPTY_ROUND_LIMIT := 100

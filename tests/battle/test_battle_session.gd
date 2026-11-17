@@ -218,3 +218,28 @@ func test_card_preview():
 	assert_eq(s.card_preview(_hand_card(s, "타격")), 10)
 	assert_eq(s.card_preview(_hand_card(s, "방어")), 15)
 	assert_eq(s.card_preview(CardData.new()), -1)
+
+# 쓰면 사용자가 죽는 자신 카드
+func _self_destruct() -> CardData:
+	var d := DamageEffect.new()
+	d.percent = 100000
+	d.can_crit = false
+	d.target = BattleTypes.Target.SELF
+	return _card("자폭", "self", d)
+
+func test_ally_dying_on_own_turn_passes_the_turn():
+	var first := _unit_data("선봉", {"speed_min": 10, "speed_max": 10, "attack": 10}, [_self_destruct()])
+	var second := _unit_data("후위", {"speed_min": 9, "speed_max": 9}, [_guard()])
+	var e1 := _unit_data("적A", {"speed_min": 1, "speed_max": 1}, [_strike()])
+	var d := BattleData.new()
+	d.allies.assign([_slot(first, Vector2i(3, 1)), _slot(second, Vector2i(3, 0))])
+	d.enemies.assign([_slot(e1, Vector2i(3, 1))])
+	var s := _started(d)
+	var dying := s.active
+	assert_eq(dying.data.display_name, "선봉")
+	assert_true(s.play(_hand_card(s, "자폭")))
+	assert_false(dying.alive)
+	assert_false(s.is_finished())
+	assert_not_null(s.active)
+	if s.active:
+		assert_eq(s.active.data.display_name, "후위")

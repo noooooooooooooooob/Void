@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://l26jp6xje7cg"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_fd7t1"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_ej2ju"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_ut84i"]
+
+[resource]
+script = ExtResource("1_fd7t1")
+id = "56ykl9jzjvvh4njiyw8e"
+display_name = "차르 아이나"
+slot = "armor"
+rarity = "unique"
+keywords = PackedStringArray()

@@ -13,8 +13,12 @@ var data: UnitData
 var side: int
 ## 자기 편 격자 안의 칸 (열, 행). 열은 클수록 앞(상대 쪽).
 var cell: Vector2i
-## 현재 HP / SP / 방어도 / 스태미너
-var hp: int
+## 현재 HP. 넣는 값은 항상 0 ~ 최대 HP 사이로 맞춰진다 (사용자 결정 2026-11-16:
+## HP 가 최대보다 높거나 0 보다 낮은 순간은 없어야 한다 — 피해 이벤트 도중에도).
+var hp: int:
+	set(value):
+		hp = clampi(value, 0, maxi(0, get_stat(BattleTypes.Stat.HP)))
+## 현재 SP / 방어도 / 스태미너
 var sp: int = 0
 var block: int = 0
 var stamina: int
@@ -143,6 +147,7 @@ func add_status(status: StatusData, stacks: int, applier: BattleUnit) -> StatusI
 	if inst:
 		inst.stacks += stacks
 		inst.applier = applier
+		_fit_hp()
 		return inst
 	inst = StatusInstance.new()
 	inst.data = status
@@ -150,6 +155,7 @@ func add_status(status: StatusData, stacks: int, applier: BattleUnit) -> StatusI
 	inst.applier = applier
 	inst.stacks = stacks
 	statuses.append(inst)
+	_fit_hp()
 	return inst
 
 
@@ -178,10 +184,12 @@ func change_stacks(id: String, delta: int) -> bool:
 	inst.stacks += delta
 	if inst.stacks <= 0 and inst.data.tag == BattleTypes.StatusTag.PASSIVE:
 		inst.stacks = 0
+		_fit_hp()
 		return false
 	if inst.data.uses_stacks and inst.stacks <= 0:
 		remove_status(id)
 		return true
+	_fit_hp()
 	return false
 
 
@@ -192,4 +200,11 @@ func remove_status(id: String) -> StatusInstance:
 		return null
 	statuses.erase(inst)
 	inst.active = false
+	_fit_hp()
 	return inst
+
+
+## 상태가 붙거나 떨어지거나 수치가 바뀐 뒤 부른다: 최대 HP 가 줄었으면 현재 HP 도 거기까지 내린다.
+## (hp 의 setter 가 0 ~ 최대 HP 로 맞추므로 같은 값을 다시 넣기만 하면 된다)
+func _fit_hp() -> void:
+	hp = hp

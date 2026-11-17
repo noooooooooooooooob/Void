@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://ukv1rnxq12gh"]
+
+[ext_resource type="Script" uid="uid://dfgy5fwg8m8ri" path="res://Scripts/ui/bag_panel.gd" id="1_rpr8o"]
+[ext_resource type="PackedScene" uid="uid://dcesqstjti4i6" path="res://Scenes/ui/battle_screen/item_slot.tscn" id="2_qtgkb"]
+
+[node name="BagPanel" type="PanelContainer" unique_id=1869143465]
+script = ExtResource("1_rpr8o")
+
+[node name="Box" type="VBoxContainer" parent="." unique_id=769886529]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Box" unique_id=818241855]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "가방 (0/5)"
+horizontal_alignment = 1
+
+[node name="Slots" type="HBoxContainer" parent="Box" unique_id=1609968389]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Slot0" parent="Box/Slots" unique_id=685467998 instance=ExtResource("2_qtgkb")]
+layout_mode = 2
+
+[node name="Slot1" parent="Box/Slots" unique_id=1741202257 instance=ExtResource("2_qtgkb")]
+layout_mode = 2
+
+[node name="Slot2" parent="Box/Slots" unique_id=646855065 instance=ExtResource("2_qtgkb")]
+layout_mode = 2
+
+[node name="Slot3" parent="Box/Slots" unique_id=1913021852 instance=ExtResource("2_qtgkb")]
+layout_mode = 2
+
+[node name="Slot4" parent="Box/Slots" unique_id=949023374 instance=ExtResource("2_qtgkb")]
+layout_mode = 2

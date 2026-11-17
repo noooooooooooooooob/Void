@@ -21,4 +21,5 @@ modifiers = Array[ExtResource("3_y45ex")]([SubResource("Resource_beibj")])
 [resource]
 script = ExtResource("1_oxuun")
 display_name = "시험용 검"
+keywords = PackedStringArray()
 statuses = Array[ExtResource("2_mn7of")]([SubResource("Resource_b5xxo")])

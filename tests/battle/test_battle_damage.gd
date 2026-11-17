@@ -139,3 +139,10 @@ func test_no_crit_flag_without_crit():
 	var taken: Array = log.filter(func(e): return e.type == Ev.DAMAGE_TAKEN)
 	assert_false(taken[0].crit)
 	assert_eq(taken[0].amount, 10)
+
+func test_overkill_damage_event_sees_zero_hp():
+	target.hp = 10
+	var seen := []
+	battle.events.subscribe(Ev.DAMAGE_TAKEN, func(e): seen.append(e.target.hp))
+	battle.apply_damage(attacker, target, 30)
+	assert_eq(seen, [0])

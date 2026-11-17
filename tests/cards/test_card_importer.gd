@@ -295,3 +295,21 @@ func test_old_id_named_keyword_file_is_renamed():
 	_import(_export([], [_kw("k1", "출혈")]))
 	assert_false(FileAccess.file_exists(root.path_join("keywords/k1.tres")))
 	assert_eq((_load(root.path_join("keywords/출혈.tres")) as KeywordData).rules.size(), 1)
+
+func test_new_card_reusing_deleted_cards_name_survives():
+	_import(_export([_card("c1", "베기")]))
+	_add_effect_and_save(_common("베기"))
+	_import(_export([_card("c2", "베기")]))
+	var card: CardData = _load(_common("베기"))
+	assert_not_null(card)
+	if card:
+		assert_eq(card.id, "c2")
+		assert_eq(card.effects.size(), 0)
+
+func test_new_keyword_reusing_deleted_keywords_name_survives():
+	_import(_export([], [_kw("k1", "출혈")]))
+	_import(_export([], [_kw("k2", "출혈")]))
+	var kw: KeywordData = _load(root.path_join("keywords/출혈.tres"))
+	assert_not_null(kw)
+	if kw:
+		assert_eq(kw.id, "k2")

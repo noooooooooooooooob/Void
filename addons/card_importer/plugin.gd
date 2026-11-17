@@ -4,7 +4,8 @@ extends EditorPlugin
 ## 메뉴: 프로젝트 → 도구 → "카드 가져오기..."
 ## 흐름: zip 파일 선택 → 미리보기(카드·장비의 추가/갱신/삭제 목록) 확인 → "적용" → 파일 시스템 다시 스캔.
 ## 메뉴: 프로젝트 → 도구 → "카드 내보내기..." (저장할 zip 선택 → 결과 안내. zip 은 웹 에디터의 "가져오기"로 넣는다)
-## 실제 로직은 CardImporter(card_importer.gd)·EquipmentImporter(equipment_importer.gd)·CardExporter(card_exporter.gd)에 있고, 여기는 메뉴와 대화상자만 담당한다.
+## 실제 로직은 CardImporter(card_importer.gd)·EquipmentImporter(equipment_importer.gd)·ConsumableImporter(consumable_importer.gd)·
+## CardExporter(card_exporter.gd)에 있고, 여기는 메뉴와 대화상자만 담당한다.
 
 ## 도구 메뉴에 표시할 항목 이름.
 const MENU := "카드 가져오기..."
@@ -25,6 +26,8 @@ var _error: AcceptDialog
 var _importer: CardImporter
 ## 같은 zip 의 장비 가져오기 (_importer 가 읽은 내용을 넘겨받는다)
 var _equipment: EquipmentImporter
+## 같은 zip 의 소비 아이템 가져오기 (_importer 가 읽은 내용을 넘겨받는다)
+var _consumables: ConsumableImporter
 ## 내보낼 zip 저장 위치 선택 창 (처음 열 때 만들고 재사용)
 var _export_dialog: EditorFileDialog
 ## 내보내기 결과 안내 창
@@ -108,20 +111,24 @@ func _on_file_selected(path: String) -> void:
 		return
 	_equipment = EquipmentImporter.new()
 	_equipment.load_export(_importer.get_data(), _importer.get_art())
+	_consumables = ConsumableImporter.new()
+	_consumables.load_export(_importer.get_data(), _importer.get_art())
 	if _confirm == null:
 		_confirm = ConfirmationDialog.new()
 		_confirm.title = "카드 가져오기"
 		_confirm.ok_button_text = "적용"
 		_confirm.confirmed.connect(_on_confirmed)
 		EditorInterface.get_base_control().add_child(_confirm)
-	_confirm.dialog_text = _describe(_importer.preview()) + "\n\n" + _describe_equipment(_equipment.preview())
+	_confirm.dialog_text = _describe(_importer.preview()) + "\n\n" + _describe_equipment(_equipment.preview()) \
+		+ "\n\n" + _describe_consumables(_consumables.preview())
 	_confirm.popup_centered()
 
 
-## "적용"을 눌렀을 때: 파일을 쓰고, 에디터가 새 파일을 인식하도록 다시 스캔한다.
+## "적용"을 눌렀을 때: 카드 → 장비 → 소비 아이템 순서로 파일을 쓰고, 에디터가 새 파일을 인식하도록 다시 스캔한다.
 func _on_confirmed() -> void:
 	_importer.apply()
 	_equipment.apply()
+	_consumables.apply()
 	EditorInterface.get_resource_filesystem().scan()
 	print("[Card Importer] 가져오기 완료")
 
@@ -166,6 +173,29 @@ func _describe_equipment(p: Dictionary) -> String:
 		lines.append("착용 중이라 남김 %d개: %s" % [kept.size(), _names(kept)])
 	if warn:
 		lines.append("⚠ 표시된 장비는 Godot에서 붙인 상태도 함께 삭제됩니다.")
+	return "\n".join(lines)
+
+
+## 소비 아이템 미리보기 결과(ConsumableImporter.preview())를 확인 창 글로 바꾼다.
+## ⚠ = Godot 에서 붙인 특수 효과도 함께 지워지는 아이템. Godot 에 없는 효과(스탯 버프)를 뺀 아이템은 따로 알린다.
+func _describe_consumables(p: Dictionary) -> String:
+	var lines := PackedStringArray()
+	lines.append("[소비 아이템]")
+	lines.append("추가 %d개: %s" % [p.added.size(), _names(p.added)])
+	lines.append("갱신 %d개: %s" % [p.updated.size(), _names(p.updated)])
+	var removed := PackedStringArray()
+	var warn := false
+	for r in p.removed:
+		removed.append(("⚠ " if r.has_effects else "") + r.name)
+		warn = warn or r.has_effects
+	lines.append("삭제 %d개: %s" % [removed.size(), _names(removed)])
+	if warn:
+		lines.append("⚠ 표시된 아이템은 Godot에서 붙인 특수 효과도 함께 삭제됩니다.")
+	if not p.dropped.is_empty():
+		var dropped := PackedStringArray()
+		for d in p.dropped:
+			dropped.append("%s(%d줄)" % [d.name, d.count])
+		lines.append("⚠ 버프 효과는 아직 Godot 에 없어 빼고 가져옴: %s" % _names(dropped))
 	return "\n".join(lines)
 
 

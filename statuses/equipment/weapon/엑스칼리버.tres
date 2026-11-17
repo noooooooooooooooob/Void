@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://bxecft70psw0e"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_vd2v3"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_hs53s"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_6rok2"]
+
+[sub_resource type="Resource" id="Resource_dif0y"]
+script = ExtResource("2_hs53s")
+amount = 33.0
+
+[resource]
+script = ExtResource("1_vd2v3")
+id = "wfh9k8133dce2cauvoq5"
+display_name = "엑스칼리버"
+rarity = "relic"
+stats = Array[ExtResource("2_hs53s")]([SubResource("Resource_dif0y")])
+keywords = PackedStringArray()

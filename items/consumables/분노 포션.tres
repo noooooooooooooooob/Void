@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ConsumableData" format=3 uid="uid://bwwjccfn24hbc"]
+
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="1_scon2"]
+[ext_resource type="Script" uid="uid://c5rd1rublc5ed" path="res://Scripts/cards/effects/apply_status_effect.gd" id="2_e8n88"]
+[ext_resource type="Script" uid="uid://djb1gwwlyajmm" path="res://Scripts/items/consumable_line.gd" id="2_ixlvq"]
+[ext_resource type="Script" uid="uid://d10njdpn0uhn0" path="res://Scripts/items/consumable_data.gd" id="3_e8n88"]
+[ext_resource type="Resource" uid="uid://dyfa8tr0akvqk" path="res://statuses/data/rage_potion.tres" id="3_k33nv"]
+
+[sub_resource type="Resource" id="Resource_olon1"]
+script = ExtResource("2_e8n88")
+status = ExtResource("3_k33nv")
+
+[resource]
+script = ExtResource("3_e8n88")
+id = "q408inkdbqslt11pgqtg"
+display_name = "분노 포션"
+keywords = PackedStringArray()
+effects = Array[ExtResource("1_scon2")]([SubResource("Resource_olon1")])

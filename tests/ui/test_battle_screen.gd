@@ -146,8 +146,52 @@ func test_enemy_turns_then_back_to_player():
 
 func test_click_reachable_cell_moves():
 	var s := _screen()
+	s.toggle_move()
+	assert_true(s.is_move_mode())
 	assert_true(s.click_cell(A, Vector2i(2, 1)))
 	assert_eq(s.session.active.cell, Vector2i(2, 1))
+	assert_false(s.is_move_mode())
+
+func test_click_cell_without_move_mode_does_nothing():
+	var s := _screen()
+	assert_false(s.click_cell(A, Vector2i(2, 1)))
+	assert_eq(s.session.active.cell, Vector2i(3, 1))
+
+func _move_marked(s: BattleScreen, cell: Vector2i) -> bool:
+	return s._cells[Vector3i(A, cell.x, cell.y)]._mark_color.a > 0.0
+
+func test_move_cells_shown_only_in_move_mode():
+	var s := _screen()
+	assert_false(_move_marked(s, Vector2i(2, 1)))
+	s.toggle_move()
+	assert_true(_move_marked(s, Vector2i(2, 1)))
+	assert_true(s.get_node("%MoveButton").button_pressed)
+	s.toggle_move()
+	assert_false(_move_marked(s, Vector2i(2, 1)))
+	assert_false(s.get_node("%MoveButton").button_pressed)
+
+func test_selecting_card_ends_move_mode():
+	var s := _screen()
+	s.toggle_move()
+	s.select_card(_index_of(s, "사격"))
+	assert_false(s.is_move_mode())
+
+func test_cancel_ends_move_mode():
+	var s := _screen()
+	s.toggle_move()
+	s.cancel()
+	assert_false(s.is_move_mode())
+	assert_false(_move_marked(s, Vector2i(2, 1)))
+
+func test_move_button_disabled_without_move_left():
+	var s := _screen()
+	assert_false(s.get_node("%MoveButton").disabled)
+	s.toggle_move()
+	s.click_cell(A, Vector2i(1, 1))
+	assert_eq(s.session.active.move_left, 0)
+	assert_true(s.get_node("%MoveButton").disabled)
+	s.toggle_move()
+	assert_false(s.is_move_mode())
 
 func test_cancel_clears_selection_and_arrow():
 	var s := _screen()
@@ -253,6 +297,7 @@ func test_board_cell_click_moves_once_after_restart():
 	var hero := s.session.active
 	var to: Vector2i = s.session.reachable_cells()[0]
 	var cell: GridCell = s._cells[Vector3i(A, to.x, to.y)]
+	s.toggle_move()
 	cell.pressed.emit(A, to)
 	assert_eq(hero.cell, to)
 	assert_eq(s.session.active.cell, to)
@@ -263,6 +308,7 @@ func test_token_sits_on_quad_center_not_box_center():
 	var to: Vector2i = s.session.reachable_cells()[0]
 	var cell: GridCell = s._cells[Vector3i(A, to.x, to.y)]
 	cell.custom_corners = PackedVector2Array([Vector2(10, 10), Vector2(50, 10), Vector2(90, 70), Vector2(0, 70)])
+	s.toggle_move()
 	cell.pressed.emit(A, to)
 	var t: UnitToken = s._tokens[hero]
 	assert_eq(t.get_parent(), cell)
@@ -360,3 +406,26 @@ func test_short_click_release_returns_card():
 	s._release_drag(Vector2(903, 1002))  # 끌지 않고 그 자리에서 뗀 클릭도 카드가 돌아간다
 	assert_null(s.selected)
 	assert_eq(s.selected_index, -1)
+
+func test_melee_card_drag_up_plays_on_front_enemy():
+	var s := _screen()
+	var front := _enemy(s, "적A")
+	s.select_card(_index_of(s, "타격"))
+	s._dragging = true
+	s._press_pos = Vector2(900, 1000)
+	var to := Vector2(900, 1000 - s.drag_play_height - 10)
+	assert_null(s._unit_under(to))  # 유닛 없는 곳에서 뗀다
+	s._release_drag(to)
+	assert_eq(front.hp, 35)
+	assert_null(s.selected)
+
+func test_melee_card_short_drag_returns_card():
+	var s := _screen()
+	var front := _enemy(s, "적A")
+	s.select_card(_index_of(s, "타격"))
+	s._dragging = true
+	s._press_pos = Vector2(900, 1000)
+	s._release_drag(Vector2(900, 1000 - s.drag_play_height + 10))
+	assert_eq(front.hp, 45)
+	assert_null(s.selected)
+	assert_eq(s.session.active.hand.size(), 5)

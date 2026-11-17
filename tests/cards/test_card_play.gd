@@ -220,3 +220,16 @@ func test_area_around_ranged_origin():
 	below.battle = battle
 	battle.play_card(me, c, foe)
 	assert_eq([foe.hp, below.hp], [900, 0])
+
+func test_status_cost_preview_records_all_stacks_without_paying():
+	me.add_status(Fixture.status("blood"), 5, me)
+	var ctx := battle.card_play.card_context(me, _card())
+	_status_cost("blood", 1, true).preview(ctx)
+	assert_eq(ctx.values.get("consumed:blood"), 5)
+	assert_eq(me.stacks_of("blood"), 5)
+
+func test_status_cost_preview_records_fixed_amount():
+	me.add_status(Fixture.status("blood"), 5, me)
+	var ctx := battle.card_play.card_context(me, _card())
+	_status_cost("blood", 2).preview(ctx)
+	assert_eq(ctx.values.get("consumed:blood"), 2)

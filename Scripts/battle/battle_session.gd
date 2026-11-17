@@ -24,6 +24,8 @@ var battle: Battle
 var active: BattleUnit = null
 ## 이 세션을 만든 전투 데이터
 var data: BattleData
+## 파티 공용 가방 (소비 아이템). 만든 뒤 밖에서 넣는다 — 의뢰면 StageRun.inventory. 기본은 빈 가방.
+var inventory := Inventory.new()
 
 var _seed: int
 var _pending: BattleUnit = null  # 화면이 step_enemy() 를 부르기를 기다리는 적
@@ -105,7 +107,8 @@ func play(card: CardData, origin: BattleUnit = null) -> bool:
 	var ok := battle.play_card(active, card, origin)
 	if ok:
 		changed.emit()
-		_check_end()
+		if not _check_end():
+			_pass_if_dead()
 	return ok
 
 
@@ -116,6 +119,8 @@ func move(cell: Vector2i) -> bool:
 	var ok := battle.move_unit(active, cell)
 	if ok:
 		changed.emit()
+		if not _check_end():
+			_pass_if_dead()
 	return ok
 
 
@@ -130,6 +135,34 @@ func end_player_turn() -> void:
 	if _check_end():
 		return
 	advance()
+
+
+## 지금 item 을 쓸 수 있는 대상들 (아이템의 사용 대상 편에 맞는 살아 있는 유닛). 아군 차례가 아니거나 전투가 끝났으면 비어 있다.
+## 규칙: 아이템은 아군 차례의 카드 사용 페이즈에만 쓴다 (active 가 있는 동안이 그때다).
+func item_targets(item: ConsumableData) -> Array[BattleUnit]:
+	var out: Array[BattleUnit] = []
+	if active == null or _finished:
+		return out
+	for u in battle.living_all():
+		if battle.can_use_item(item, u):
+			out.append(u)
+	return out
+
+
+## 가방의 index 칸 아이템을 target 에게 쓴다. 아군 차례가 아니거나 칸·대상이 맞지 않으면 false (가방 그대로).
+## 성공하면 가방에서 그 칸을 뺀다. 비용 없음 (SP·행동을 쓰지 않음).
+func use_item(index: int, target: BattleUnit) -> bool:
+	if active == null or _finished:
+		return false
+	if index < 0 or index >= inventory.items.size():
+		return false
+	if not battle.use_item(inventory.items[index], target):
+		return false
+	inventory.remove_at(index)
+	changed.emit()
+	if not _check_end():
+		_pass_if_dead()
+	return true
 
 
 ## card 의 기준 유닛으로 고를 수 있는 유닛들. 비어 있으면 지금 쓸 수 없는 카드다.
@@ -204,6 +237,15 @@ func is_finished() -> bool:
 ## 부르는 쪽이 start() 를 부른다.
 func restart() -> BattleSession:
 	return BattleSession.new(data, [], _seed + 1)
+
+
+## 지금 아군이 자기 차례에 죽었으면(반사 피해 등) 그 차례를 바로 끝내고 다음 차례를 연다
+## (사용자 결정 2026-11-16). 드로우 페이즈에 죽었을 때와 같이 end_turn 없이 건너뛴다.
+func _pass_if_dead() -> void:
+	if active == null or active.alive:
+		return
+	active = null
+	advance()
 
 
 ## 한쪽이 전멸했으면 finished 를 (한 번만) 내고 true.

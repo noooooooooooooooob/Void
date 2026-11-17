@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://dlf0fgjdxa7p8"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_eu4ji"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_3i4y3"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_qy4fv"]
+
+[resource]
+script = ExtResource("1_eu4ji")
+id = "ucil54ccqt4a9fjdz4kv"
+display_name = "금루옥의"
+slot = "armor"
+rarity = "relic"
+keywords = PackedStringArray()

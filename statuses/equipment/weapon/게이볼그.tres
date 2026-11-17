@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3 uid="uid://cmx1vc305gm51"]
+
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="1_2f1b7"]
+[ext_resource type="Script" uid="uid://chb8g878jiesl" path="res://Scripts/statuses/stat_modifier.gd" id="2_6qb3v"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="3_xu3ym"]
+
+[sub_resource type="Resource" id="Resource_axstw"]
+script = ExtResource("2_6qb3v")
+amount = 20.0
+
+[resource]
+script = ExtResource("1_2f1b7")
+id = "7228on7p9pjaukui4yr9"
+display_name = "게이볼그"
+description_ko = "공격이 반드시 적중한다"
+rarity = "relic"
+stats = Array[ExtResource("2_6qb3v")]([SubResource("Resource_axstw")])
+keywords = PackedStringArray()

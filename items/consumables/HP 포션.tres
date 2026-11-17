@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ConsumableData" format=3 uid="uid://brvdjoodjgtvg"]
+
+[ext_resource type="Script" uid="uid://dm3qvwm4w40i1" path="res://Scripts/cards/card_effect.gd" id="1_qdljr"]
+[ext_resource type="Script" uid="uid://djb1gwwlyajmm" path="res://Scripts/items/consumable_line.gd" id="2_kytio"]
+[ext_resource type="Script" uid="uid://d10njdpn0uhn0" path="res://Scripts/items/consumable_data.gd" id="3_201ys"]
+
+[sub_resource type="Resource" id="Resource_1i06n"]
+script = ExtResource("2_kytio")
+kind = 1
+amount = 25
+
+[resource]
+script = ExtResource("3_201ys")
+id = "w9vn7ncxzoueo6adwbd9"
+display_name = "HP 포션"
+description_ko = "HP를 회복"
+keywords = PackedStringArray()
+lines = Array[ExtResource("2_kytio")]([SubResource("Resource_1i06n")])
