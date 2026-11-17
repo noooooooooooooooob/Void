@@ -21,6 +21,11 @@ extends Resource
 ## 겹·패럴랙스·마우스 따라 움직이기는 배경 씬 안에서 만든다. 비우면 배경 단색만 보인다.
 @export var background: PackedScene
 
+@export_group("보상")
+## 의뢰에서 이 전투를 이기면 얻는 공허 조각 수 (일반·보스 모두. 처음 값: 일반 20, 보스 50 — 2026-11-17).
+## 의뢰 밖 시험 전투(F6)에서는 주지 않는다.
+@export var shard_reward: int = 20
+
 
 ## 아군 + 적 배치로 새 전투 유닛들을 만든다 (아군이 먼저). 부를 때마다 새 유닛이다.
 func make_units() -> Array[BattleUnit]:

@@ -1,5 +1,5 @@
 extends GutTest
-# 방 화면: 이벤트(A/B), 상점(다음), 의뢰 성공(처음으로)마다 보이는 글자와 버튼.
+# 방 화면: 이벤트(A/B), 의뢰 성공(처음으로)마다 보이는 글자와 버튼. (상점은 상점 화면 — test_shop_screen.gd)
 
 const SCENE := "res://Scenes/ui/room_screen/room_screen.tscn"
 const K := StageNode.Kind
@@ -29,14 +29,6 @@ func test_event_shows_two_choices():
 	assert_true(r.get_node("%ChoiceA").visible)
 	assert_true(r.get_node("%ChoiceB").visible)
 	assert_false(r.get_node("%NextButton").visible)
-
-func test_shop_shows_next_button():
-	StageRun.progress.entering = _node(K.SHOP)
-	var r := _room()
-	assert_eq(r.get_node("%TitleLabel").text, "상점")
-	assert_false(r.get_node("%ChoiceA").visible)
-	assert_true(r.get_node("%NextButton").visible)
-	assert_eq(r.get_node("%NextButton").text, "다음")
 
 func test_clear_after_boss_goes_to_title():
 	StageRun.progress.current = _node(K.BOSS)

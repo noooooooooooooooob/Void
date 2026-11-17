@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ShopData" format=3 uid="uid://dhdgriqd4deib"]
+
+[ext_resource type="Script" uid="uid://cb6thjmhhf24n" path="res://Scripts/shop/shop_data.gd" id="1_700kj"]
+
+[resource]
+script = ExtResource("1_700kj")
+card_price = 1
+item_price = 1
+remove_price = 1
+upgrade_price = 1

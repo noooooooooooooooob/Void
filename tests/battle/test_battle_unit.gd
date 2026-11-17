@@ -121,3 +121,27 @@ func test_hp_drops_to_max_when_max_hp_stacks_drop():
 	u.hp = 130
 	u.change_stacks("vigor", -2)
 	assert_eq(u.hp, 110)
+
+
+# --- 의뢰 덱 (run_deck) ---
+
+func _deck_unit(n: int) -> BattleUnit:
+	var data := UnitData.new()
+	for i in n:
+		data.deck.append(CardData.new())
+	return BattleUnit.new(data, BattleTypes.Side.ALLY, Vector2i.ZERO)
+
+func test_run_deck_starts_as_copy_of_data_deck():
+	var u := _deck_unit(2)
+	assert_eq(u.run_deck, u.data.deck)
+	u.run_deck.append(CardData.new())
+	assert_eq(u.data.deck.size(), 2)
+
+func test_battle_prepares_from_run_deck():
+	var u := _deck_unit(3)
+	u.run_deck.pop_back()
+	var enemy := Fixture.unit(BattleTypes.Side.ENEMY, Vector2i.ZERO)
+	var b := Battle.new([u, enemy], 1)
+	b.start_battle()
+	assert_eq(u.deck.size() + u.hand.size() + u.discard.size(), 2)
+	assert_eq(u.data.deck.size(), 3)

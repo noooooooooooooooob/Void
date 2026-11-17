@@ -36,3 +36,12 @@ layout_mode = 2
 
 [node name="Slot4" parent="Box/Slots" unique_id=949023374 instance=ExtResource("2_qtgkb")]
 layout_mode = 2
+
+[node name="DiscardZone" type="Button" parent="Box/Slots" unique_id=1890457709]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+tooltip_text = "아이템을 끌어 여기에 놓으면 버린다"
+focus_mode = 0
+theme_override_font_sizes/font_size = 20
+text = "버리기"

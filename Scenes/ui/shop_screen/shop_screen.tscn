@@ -1,0 +1,207 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/ui/shop_screen.gd" id="1_4u2ww"]
+[ext_resource type="Resource" path="res://shop/shop_data.tres" id="2_2mrub"]
+[ext_resource type="PackedScene" path="res://Scenes/ui/battle_screen/bag_panel.tscn" id="3_ww6sw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ohwbh"]
+bg_color = Color(0.05, 0.05, 0.07, 0.92)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ydbh"]
+bg_color = Color(0.05, 0.05, 0.07, 0.92)
+
+[node name="ShopScreen" type="Control" unique_id=535037113]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_4u2ww")
+shop_data = ExtResource("2_2mrub")
+
+[node name="Background" type="ColorRect" parent="." unique_id=504215482]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.118, 0.11, 0.133, 1)
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1420643748]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="Main" type="VBoxContainer" parent="Margin" unique_id=671333955]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Header" type="HBoxContainer" parent="Margin/Main" unique_id=1888317037]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Margin/Main/Header" unique_id=1678591908]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "상점"
+
+[node name="Spacer" type="Control" parent="Margin/Main/Header" unique_id=1716558221]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ShardLabel" type="Label" parent="Margin/Main/Header" unique_id=475806141]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "공허 조각 0"
+
+[node name="CardsLabel" type="Label" parent="Margin/Main" unique_id=912258458]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "카드"
+
+[node name="CardRow" type="HBoxContainer" parent="Margin/Main" unique_id=1376962342]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ItemsLabel" type="Label" parent="Margin/Main" unique_id=92340666]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "소비 아이템"
+
+[node name="ItemRow" type="HBoxContainer" parent="Margin/Main" unique_id=1418457498]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Services" type="HBoxContainer" parent="Margin/Main" unique_id=2030932814]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RemoveButton" type="Button" parent="Margin/Main/Services" unique_id=1708777433]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "카드 제거"
+
+[node name="UpgradeButton" type="Button" parent="Margin/Main/Services" unique_id=1515597463]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "카드 강화"
+
+[node name="Spacer" type="Control" parent="Margin/Main/Services" unique_id=47573815]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LeaveButton" type="Button" parent="Margin/Main/Services" unique_id=1762748640]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "나가기"
+
+[node name="BagPanel" parent="Margin/Main" unique_id=1869143465 instance=ExtResource("3_ww6sw")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="DeckPanel" type="PanelContainer" parent="." unique_id=1001732705]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ohwbh")
+
+[node name="Margin" type="MarginContainer" parent="DeckPanel" unique_id=1817343610]
+layout_mode = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 48
+
+[node name="Box" type="VBoxContainer" parent="DeckPanel/Margin" unique_id=1377739312]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="DeckTitle" type="Label" parent="DeckPanel/Margin/Box" unique_id=456141378]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "제거할 카드를 고르세요"
+
+[node name="UnitTabs" type="HBoxContainer" parent="DeckPanel/Margin/Box" unique_id=1041034483]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="UnitTabTemplate" type="Button" parent="DeckPanel/Margin/Box/UnitTabs" unique_id=822935162]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 52)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+toggle_mode = true
+text = "파티원"
+
+[node name="Scroll" type="ScrollContainer" parent="DeckPanel/Margin/Box" unique_id=372421432]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="DeckGrid" type="GridContainer" parent="DeckPanel/Margin/Box/Scroll" unique_id=256579993]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 8
+
+[node name="DeckCancel" type="Button" parent="DeckPanel/Margin/Box" unique_id=1162573721]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "취소"
+
+[node name="UpgradePanel" type="PanelContainer" parent="." unique_id=1085286110]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1ydbh")
+
+[node name="Margin" type="MarginContainer" parent="UpgradePanel" unique_id=255315728]
+layout_mode = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 48
+
+[node name="Box" type="VBoxContainer" parent="UpgradePanel/Margin" unique_id=842311638]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="UpgradeTitle" type="Label" parent="UpgradePanel/Margin/Box" unique_id=1564149483]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "강화 카드를 고르세요"
+horizontal_alignment = 1
+
+[node name="UpgradeRow" type="HBoxContainer" parent="UpgradePanel/Margin/Box" unique_id=1930263993]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="UpgradeCancel" type="Button" parent="UpgradePanel/Margin/Box" unique_id=189077694]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 26
+text = "취소"

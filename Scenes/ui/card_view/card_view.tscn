@@ -68,15 +68,6 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_meaii"]
-resource_local_to_scene = true
-bg_color = Color(0.7647059, 0.25490198, 0.22745098, 1)
-border_color = Color(0.11372549, 0.105882354, 0.14117648, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xf3ra"]
 content_margin_left = 10.0
 content_margin_top = 10.0
@@ -340,17 +331,6 @@ custom_minimum_size = Vector2(4, 4)
 layout_mode = 2
 mouse_filter = 2
 color = Color(0.827451, 0.8117647, 0.8627451, 1)
-
-[node name="UpgradeBadge" type="Label" parent="Column/ArtBox/Side" unique_id=469698582]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(22, 22)
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_meaii")
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "+1"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="Amount" type="Label" parent="Column/ArtBox" unique_id=1431500428]
 unique_name_in_owner = true

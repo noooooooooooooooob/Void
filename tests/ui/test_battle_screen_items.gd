@@ -291,3 +291,26 @@ func test_hp_lost_event_logged():
 	var foe := _unit("적A")
 	s._show_event(BattleEvent.make(BattleTypes.Event.HP_LOST, null, foe, 20, _bomb()), true)
 	assert_string_contains(s.get_node("%Log").text, "적A HP -20")
+
+
+# --- 버리기 ---
+
+func test_drag_item_to_discard_removes_it():
+	await wait_process_frames(2)
+	var hero := s.session.active
+	hero.hp = 50
+	s.toggle_bag()
+	s.get_node("%BagPanel").item_pressed.emit(0)
+	s.get_node("%BagPanel").discard_requested.emit(0)
+	assert_eq(s.session.inventory.items.size(), 1)
+	assert_eq(s.session.inventory.items[0].display_name, "기력약")
+	assert_eq(hero.hp, 50)
+	assert_eq(s.selected_item, -1)
+	assert_false(s._dragging_item)
+	assert_eq(s.get_node("%BagButton").text, "가방 1/5")
+
+func test_discard_ignored_when_not_dragging():
+	await wait_process_frames(2)
+	s.toggle_bag()
+	s.get_node("%BagPanel").discard_requested.emit(0)
+	assert_eq(s.session.inventory.items.size(), 2)

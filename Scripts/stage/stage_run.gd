@@ -5,7 +5,8 @@ extends Node
 ## 흐름:
 ##   시작 화면 → 지도(StageMap)가 start_run() → 노드 고르고 enter_selected()
 ##     전투·보스 → 전투 화면(stage 모드) → 승리 complete_node() / 패배 fail_run()
-##     이벤트·상점 → 방 화면(RoomScreen) → 선택지·다음 버튼 complete_node()
+##     이벤트 → 방 화면(RoomScreen) → 선택지 complete_node()
+##     상점 → 상점 화면(ShopScreen) → 나가기 complete_node()
 ##   complete_node() 후 보스까지 끝났으면 방 화면(의뢰 성공) → "처음으로" end_run()
 ## 규칙 (CLAUDE.md 의뢰 스테이지): 의뢰 안에서는 체력 유지, HP 0 파티원은 남은 전투 제외,
 ##   의뢰가 끝나면 전원 회복(다음 start_run 에서 파티를 새로 만든다)
@@ -18,8 +19,12 @@ const TITLE_SCENE := "res://Scenes/ui/title_screen/title_screen.tscn"
 const STAGE_MAP_SCENE := "res://Scenes/ui/stage_map/stage_map.tscn"
 const BATTLE_SCENE := "res://Scenes/ui/battle_screen/battle_screen.tscn"
 const ROOM_SCENE := "res://Scenes/ui/room_screen/room_screen.tscn"
-## 지금은 모든 전투(보스 포함)가 이 시험 전투를 쓴다. 노드별 전투 데이터는 나중에
+## 상점 노드가 여는 상점 화면 (상점 설계 2026-11-17)
+const SHOP_SCENE := "res://Scenes/ui/shop_screen/shop_screen.tscn"
+## 일반 전투 노드가 쓰는 전투 데이터 (지금은 시험 전투 하나. 노드별 전투 데이터는 나중에)
 const DEFAULT_BATTLE := preload("res://battles/test_battle.tres")
+## 보스 노드가 쓰는 전투 데이터 (2026-11-17: 보스 보상 공허 조각 50 을 따로 두려고 분리)
+const BOSS_BATTLE := preload("res://battles/boss_battle.tres")
 ## 드랍 후보가 되는 소비 아이템 폴더 (이 폴더의 .tres 전부. 하위 폴더는 보지 않는다)
 const ITEM_DIR := "res://items/consumables"
 
@@ -29,6 +34,8 @@ var progress: StageProgress = null
 var party: Array[BattleUnit] = []
 ## 파티 공용 가방 (소비 아이템 5칸). 의뢰 시작 때 비어 있고 의뢰가 끝나면 비워진다 — 의뢰 밖으로 가져가지 못한다
 var inventory := Inventory.new()
+## 공허 조각 지갑. 의뢰 시작 때 0 이고 의뢰가 끝나면 사라진다 (상점 설계 2026-11-17)
+var wallet := Wallet.new()
 
 
 ## 의뢰 중인지 (지도가 만들어져 있는지)
@@ -42,6 +49,7 @@ func start_run(seed_value: int = 0) -> void:
 	progress = StageProgress.new(StageGenerator.new(seed_value).generate())
 	party.clear()
 	inventory = Inventory.new()
+	wallet = Wallet.new()
 	for u in DEFAULT_BATTLE.make_units():
 		if u.side == BattleTypes.Side.ALLY:
 			party.append(u)
@@ -52,20 +60,27 @@ func end_run() -> void:
 	progress = null
 	party.clear()
 	inventory = Inventory.new()
+	wallet = Wallet.new()
 
 
 ## 커서가 가리키는 노드를 실행한다 (지도에서 스페이스·엔터·고른 노드 다시 클릭).
-## 전투·보스 → 전투 화면, 이벤트·상점 → 방 화면
+## 열 화면은 scene_for 가 정한다
 func enter_selected() -> void:
 	if not is_active():
 		return
 	var node := progress.enter()
 	if node == null:
 		return
+	_go(scene_for(node))
+
+
+## 노드 종류마다 여는 화면: 전투·보스 → 전투 화면, 상점 → 상점 화면, 이벤트 → 방 화면
+func scene_for(node: StageNode) -> String:
 	if node.is_battle():
-		_go(BATTLE_SCENE)
-	else:
-		_go(ROOM_SCENE)
+		return BATTLE_SCENE
+	if node.kind == StageNode.Kind.SHOP:
+		return SHOP_SCENE
+	return ROOM_SCENE
 
 
 ## 지금 전투 노드에 들어가 있는지 (전투 화면이 의뢰 모드로 돌지 판단)
@@ -102,8 +117,10 @@ func roll_item_drop(chance: float, pool: Array[ConsumableData], rng: RandomNumbe
 	return pool[rng.randi_range(0, pool.size() - 1)]
 
 
-## 지금 전투 노드의 전투 데이터
+## 지금 전투 노드의 전투 데이터: 보스 노드면 보스용, 아니면 일반
 func battle_data() -> BattleData:
+	if is_boss_battle():
+		return BOSS_BATTLE
 	return DEFAULT_BATTLE
 
 

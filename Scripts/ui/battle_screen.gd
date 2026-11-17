@@ -168,6 +168,7 @@ func _ready() -> void:
 	_move_button.pressed.connect(toggle_move)
 	_bag_panel.item_pressed.connect(_on_item_pressed)
 	_bag_panel.item_released.connect(_on_item_released)
+	_bag_panel.discard_requested.connect(_on_item_discard)
 	_bag_panel.visible = false
 	# 결과 창의 드랍: 받기 / 넘어가기 / (가방이 가득 찼을 때) 바꿀 칸 누르기
 	_take_button.pressed.connect(take_drop)
@@ -771,6 +772,10 @@ func _show_result(winner: int) -> void:
 	# 의뢰 전투: 이기면 지도로 계속, 지면 의뢰 실패 → 시작 화면 (CLAUDE.md 의뢰 스테이지 규칙)
 	if _stage_mode:
 		_restart_button.text = "계속" if _won else "처음으로"
+	# 공허 조각: 의뢰 전투에서 이기면 전투 데이터의 보상만큼 (일반·보스 모두, 상점 설계 2026-11-17)
+	if _stage_mode and _won and battle_data:
+		StageRun.wallet.add(battle_data.shard_reward)
+		_result_label.text += "\n공허 조각 +%d" % battle_data.shard_reward
 	# 드랍 판정: 의뢰의 일반 전투에서 이겼을 때만 (보스는 이기면 의뢰가 끝나므로 없음, 시험 전투도 없음).
 	# 난수는 전투 난수(Battle.rng)가 아니라 화면용 난수 — 같은 시드의 전투 결과가 드랍 때문에 달라지지 않게.
 	pending_drop = null
@@ -987,6 +992,17 @@ func _on_item_pressed(index: int) -> void:
 func _on_item_released(_index: int) -> void:
 	if _dragging_item:
 		_release_item_drag(get_global_mouse_position())
+
+
+## 아이템을 끌어 가방의 버리기 칸에서 뗐을 때: 그 아이템을 버린다 (상점 설계 2026-11-17).
+## 끌기는 아이템을 쓸 수 있을 때(아군 카드 사용 페이즈)만 시작되므로 버리기도 그때만 된다.
+func _on_item_discard(index: int) -> void:
+	if not _dragging_item:
+		return
+	_dragging_item = false
+	selected_item = -1
+	session.inventory.remove_at(index)
+	refresh()
 
 
 ## 아이템을 끌다가 손을 뗐을 때 (mouse = 뗀 화면 위치): 쓸 수 있는 아군 위면 사용.

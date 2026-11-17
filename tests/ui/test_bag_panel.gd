@@ -38,6 +38,7 @@ func test_slot_shows_lines_and_tooltip():
 
 func test_pressing_filled_slot_reports_press_and_release():
 	var p := _panel([_item("회복약"), _item("기력약")])
+	p.allow_discard = false   # 헤드리스의 마우스 위치가 버리기 칸 위일 수 있어서 (버리기는 아래 테스트에서)
 	watch_signals(p)
 	p.slots()[1]._gui_input(_mouse(true))
 	assert_signal_emitted_with_parameters(p, "item_pressed", [1])
@@ -64,3 +65,35 @@ func test_unusable_items_are_dimmed_and_selected_is_marked():
 	p.show_items([_item("회복약")] as Array[ConsumableData], true, -1)
 	assert_false(p.slots()[0].is_dimmed())
 	assert_false(p.slots()[1].is_selected())
+
+
+# --- 버리기 ---
+
+func _discard_center(p: BagPanel) -> Vector2:
+	return p.get_node("%DiscardZone").get_global_rect().get_center()
+
+func test_release_over_discard_zone_requests_discard():
+	var p := _panel([_item("회복약"), _item("기력약")])
+	await wait_process_frames(2)
+	watch_signals(p)
+	assert_true(p.is_over_discard(_discard_center(p)))
+	p._on_slot_released(1, _discard_center(p))
+	assert_signal_emitted_with_parameters(p, "discard_requested", [1])
+	assert_signal_emit_count(p, "item_released", 0)
+
+func test_release_elsewhere_is_normal_release():
+	var p := _panel([_item("회복약")])
+	await wait_process_frames(2)
+	watch_signals(p)
+	p._on_slot_released(0, Vector2(-500, -500))
+	assert_signal_emit_count(p, "discard_requested", 0)
+	assert_signal_emitted_with_parameters(p, "item_released", [0])
+
+func test_discard_off_when_not_allowed():
+	var p := _panel([_item("회복약")])
+	await wait_process_frames(2)
+	p.allow_discard = false
+	watch_signals(p)
+	p._on_slot_released(0, _discard_center(p))
+	assert_signal_emit_count(p, "discard_requested", 0)
+	assert_signal_emitted_with_parameters(p, "item_released", [0])

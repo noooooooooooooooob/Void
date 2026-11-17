@@ -5,14 +5,15 @@ extends PanelContainer
 ##
 ## - 노드 구성·배치·글자 크기·스타일은 card_view.tscn 에서 에디터로 편집한다.
 ##   여기서는 카드마다 달라지는 것(글자, 그림, 범위 칸, 분류 색)만 바꾼다.
-## - 모양은 웹 카드 에디터의 카드와 같다: 이름 / 그림 + SP 원 / 공격 종류·범위·강화 배지 / 키워드 / 설명 / 코스트.
+## - 모양은 웹 카드 에디터의 카드와 같다: 이름 / 그림 + SP 원 / 공격 종류·범위 / 키워드 / 설명 / 코스트.
+## - 강화 버전 카드는 바탕이 옅은 금색이고 둘레에 금빛 광채가 있다 (2026-11-17 사용자 결정: "+N" 배지 대신 카드 모양으로 구분).
 ## - 마우스를 올리면 카드 오른쪽에 키워드 이름과 설명이 뜬다 (화면이 모자라면 왼쪽).
 ## - @tool 이라 갤러리 씬을 에디터에서 열기만 해도 카드가 그려진다.
 ##
 ## 주의: 아래 %이름 노드(Name, Sp, AreaGrid, KeywordEntry 등)는 씬의 노드 이름과 맞아야 한다.
 ## 씬에서 노드 이름을 바꾸면 여기 @onready 줄도 같이 바꿔야 한다.
 
-## 카드 분류(CardData.category) → 테두리·SP 원·강화 배지 색. 웹 에디터와 같은 색.
+## 카드 분류(CardData.category) → 테두리·SP 원 색. 웹 에디터와 같은 색.
 const CATEGORY_COLORS := {
 	"attack": Color("c3413a"),   # 공격: 빨강
 	"skill": Color("2d6cc9"),    # 스킬: 파랑
@@ -29,6 +30,14 @@ const AREA_RADIUS := 2
 ## 키워드 데이터(KeywordData .tres)가 있는 폴더. 카드에는 키워드 id 만 있어서 여기서 이름·설명을 찾는다.
 @export var keyword_dir := "res://cards/keywords"
 
+@export_group("강화 버전 모양")
+## 강화 버전 카드의 바탕색 (기본 카드는 씬의 바탕색 그대로)
+@export var upgraded_bg := Color("f6e6b4")
+## 강화 버전 카드 둘레 광채 색
+@export var upgraded_glow := Color(1.0, 0.78, 0.25, 0.85)
+## 강화 버전 카드 둘레 광채 크기 (픽셀)
+@export var upgraded_glow_size := 10
+
 ## 지금 표시 중인 카드
 var card: CardData
 
@@ -39,7 +48,6 @@ var card: CardData
 @onready var description_label: Label = %Description  ## 카드 설명
 @onready var keywords_label: Label = %Keywords      ## 설명 위의 키워드 이름들 (주황)
 @onready var attack_badge: Label = %AttackBadge     ## 오른쪽 위 공격 종류 배지
-@onready var upgrade_badge: Label = %UpgradeBadge   ## 강화 단계 수 배지 (+N)
 @onready var art_rect: TextureRect = %Art           ## 카드 그림
 @onready var amount_label: Label = %Amount       ## 전투 중 계산된 수치 (큰 숫자, 기본 숨김)
 @onready var tooltip: PanelContainer = %Tooltip     ## 키워드 설명 툴팁 (top_level 이라 카드 밖에 그려짐)
@@ -53,6 +61,8 @@ var card: CardData
 var _lit: Array[Vector2i] = []
 ## 이 카드의 키워드 중 데이터 파일을 찾은 것들 (지워진 키워드는 빠짐)
 var _keywords: Array[KeywordData] = []
+## 씬에 정해 둔 기본 바탕색 (강화 버전에서 기본 카드로 돌아올 때 쓴다). 처음 그릴 때 기억한다
+var _normal_bg = null
 
 
 func _ready() -> void:
@@ -75,12 +85,19 @@ func set_card(c: CardData) -> void:
 	if not is_node_ready():
 		return  # 노드가 아직 없다. _ready 에서 다시 부른다.
 
-	# 1. 분류 색: 테두리, SP 원, 강화 배지.
+	# 1. 분류 색: 테두리, SP 원.
 	#    씬의 스타일박스는 "씬별로 로컬"이라 카드마다 따로 색을 바꿀 수 있다.
 	var color: Color = CATEGORY_COLORS.get(c.category, CATEGORY_COLORS["attack"])
-	_panel_style(self).border_color = color
+	var style := _panel_style(self)
+	style.border_color = color
 	_panel_style(_sp_circle).bg_color = color
-	(upgrade_badge.get_theme_stylebox("normal") as StyleBoxFlat).bg_color = color
+	# 강화 버전: 옅은 금색 바탕 + 금빛 광채. 기본 카드는 씬의 바탕색, 광채 없음
+	if _normal_bg == null:
+		_normal_bg = style.bg_color
+	var up := is_upgraded(c)
+	style.bg_color = upgraded_bg if up else _normal_bg
+	style.shadow_color = upgraded_glow
+	style.shadow_size = upgraded_glow_size if up else 0
 
 	# 2. 글자
 	name_label.text = c.name_ko if not c.name_ko.is_empty() else "이름 없음"
@@ -88,8 +105,6 @@ func set_card(c: CardData) -> void:
 	cost_label.text = "코스트 %d" % c.cost
 	description_label.text = c.description_ko
 	attack_badge.text = ATTACK_BADGES.get(c.attack_type, "?")
-	upgrade_badge.visible = not c.upgrades.is_empty()
-	upgrade_badge.text = "+%d" % c.upgrades.size()
 
 	# 3. 범위 미니 격자: 범위가 비어 있으면 단일 대상(기준 칸만).
 	#    칸 순서 i → 좌표 (열 i%5, 행 i/5) 에서 반지름을 빼서 −2..2 로.
@@ -128,6 +143,22 @@ func show_amount(value: int) -> void:
 ## 지금 쓸 수 없는 카드를 어둡게 표시한다 (전투 화면 손패).
 func set_dimmed(on: bool) -> void:
 	modulate = Color(0.45, 0.45, 0.45) if on else Color.WHITE
+
+
+## card 가 강화 버전인지. 강화 버전은 원래 카드 .tres 안에 든 리소스라 경로가 "파일::id" 모양이다
+## (원래 카드는 파일 경로 그대로, 코드에서 만든 카드는 빈 경로).
+static func is_upgraded(c: CardData) -> bool:
+	return c != null and c.resource_path.contains("::")
+
+
+## 지금 바탕색 (테스트용)
+func background_color() -> Color:
+	return _panel_style(self).bg_color
+
+
+## 지금 광채 크기 (테스트용)
+func glow_size() -> int:
+	return _panel_style(self).shadow_size
 
 
 ## 지금 테두리 색 (테스트용)

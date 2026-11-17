@@ -20,9 +20,9 @@ func _init(owner_battle) -> void:
 	battle = owner_battle
 
 
-## 전투 시작 준비: 덱을 데이터에서 복사해 섞고(원본 데이터는 그대로), 손패·버린 더미·제외 더미를 비운다.
+## 전투 시작 준비: 덱을 의뢰 덱(run_deck)에서 복사해 섞고(의뢰 덱은 그대로), 손패·버린 더미·제외 더미를 비운다.
 func prepare(u: BattleUnit) -> void:
-	u.deck = u.data.deck.duplicate()
+	u.deck = u.run_deck.duplicate()
 	shuffle(u.deck)
 	u.hand.clear()
 	u.discard.clear()

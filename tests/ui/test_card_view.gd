@@ -42,8 +42,6 @@ func test_texts():
 	assert_eq(v.cost_label.text, "코스트 3")
 	assert_eq(v.description_label.text, "핏방울을 전부 소모")
 	assert_eq(v.attack_badge.text, "원")
-	assert_eq(v.upgrade_badge.text, "+1")
-	assert_true(v.upgrade_badge.visible)
 
 func test_border_color_by_category():
 	var v := _view(_card())
@@ -81,9 +79,6 @@ func test_no_tooltip_without_keywords():
 	v.show_keyword_tooltip()
 	assert_false(v.tooltip.visible)
 	assert_false(v.keywords_label.visible)
-	c.upgrades = [] as Array[CardData]
-	v.set_card(c)
-	assert_false(v.upgrade_badge.visible)
 
 func test_show_amount_visible_with_value():
 	var v := _view(_card())
@@ -108,3 +103,33 @@ func test_set_dimmed():
 	assert_lt(v.modulate.v, 1.0)
 	v.set_dimmed(false)
 	assert_eq(v.modulate, Color.WHITE)
+
+
+# --- 강화 버전 모양 (2026-11-17: "+N" 배지 대신 카드 모양으로 구분) ---
+
+func _real_upgradable() -> CardData:
+	return load("res://cards/data/브람/돌주먹.tres")
+
+func test_no_upgrade_badge():
+	var v := _view(_card())
+	assert_false(v.has_node("%UpgradeBadge"))
+
+func test_is_upgraded_only_for_upgrade_versions():
+	var base := _real_upgradable()
+	assert_false(CardView.is_upgraded(base))
+	assert_true(CardView.is_upgraded(base.upgrades[0]))
+	assert_false(CardView.is_upgraded(_card()))
+
+func test_upgraded_card_looks_different_and_back():
+	var base := _real_upgradable()
+	var v := _view(base)
+	var normal_bg: Color = v.background_color()
+	assert_eq(v.glow_size(), 0)
+	v.set_card(base.upgrades[0])
+	assert_eq(v.background_color(), v.upgraded_bg)
+	assert_ne(v.background_color(), normal_bg)
+	assert_gt(v.glow_size(), 0)
+	assert_eq(v.border_color(), CardView.CATEGORY_COLORS[base.upgrades[0].category])
+	v.set_card(base)
+	assert_eq(v.background_color(), normal_bg)
+	assert_eq(v.glow_size(), 0)

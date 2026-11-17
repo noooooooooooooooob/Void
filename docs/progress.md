@@ -16,7 +16,7 @@
 | 소비 아이템 특수 효과 (2026-11-17) | 웹 효과 줄로 못 적는 아이템을 Godot `effects` 로 구현: **폭탄** 범위 안 적마다 고정 피해 10(치명 없음, 방어도에 막힘), **쉴드 포션** 고정 방어도 10, **분노 포션** 새 상태 분노(`rage_potion`, 공격 +10% × 수치, 받은 유닛 자신의 엔드 페이즈에 전부 사라짐). 다시 가져와도 유지. 분노 포션의 웹 버프 줄은 여전히 가져올 때 빠짐 | `items/consumables/폭탄·쉴드 포션·분노 포션.tres`, `statuses/data/rage_potion.tres`, 설계 `docs/superpowers/specs/2026-11-17-consumable-special-effects-design.md` |
 | 이동 버튼 (2026-11-17) | 이동 칸(하늘색)이 항상 떠 있던 것을 **이동 버튼**으로 바꿈: 버튼을 눌러야 갈 수 있는 칸이 빛나고, 칸을 누르면 이동 후 모드가 꺼짐. ESC·우클릭·카드/아이템 고르기·차례 종료로도 꺼짐. 이동력 0·적 차례·연출 중엔 버튼 비활성 | `battle_screen.gd` (`toggle_move`, `is_move_mode`), 씬 `BottomRight/MoveButton`, 설계 `docs/superpowers/specs/2026-11-17-move-button-design.md` |
 | 키워드 파일 이름 (2026-11-10) | `cards/keywords/` 파일 이름을 id 대신 키워드 이름으로 (겹치면 `_<id>`). 게임은 `KeywordData.find` 로 파일 안의 id 로 찾음. 기존 id 이름 파일은 다음 카드 가져오기 때 자동으로 이름이 바뀜 | `Scripts/cards/keyword_data.gd`, `addons/card_importer/card_importer.gd` |
-| 카드 화면 | 웹 에디터와 같은 카드 모양, 마우스를 올리면 키워드 설명 | `ui/card_view/card_view.tscn` |
+| 카드 화면 | 웹 에디터와 같은 카드 모양, 마우스를 올리면 키워드 설명. 2026-11-17: "+N" 강화 배지를 없애고 **강화 버전 카드는 옅은 금색 바탕 + 금빛 광채**로 구분 (색은 `CardView` 인스펙터 "강화 버전 모양") | `ui/card_view/card_view.tscn` |
 | 카드 갤러리 | 에디터에서 열기만 해도 카드가 보임. 인스펙터 Deck 으로 덱별 보기, 실행(F6) 시 탭 | `ui/card_gallery/card_gallery.tscn` |
 | 테스트 도구 | GUT 9.7.1 (실행 방법은 CLAUDE.md) | `addons/gut`, `tests/` |
 | 예시 데이터 | 유닛 홍연(덱 10장, 패시브 피의 갈망, 장비 시험용 검), 상태 피의 갈망(잃은 HP 1%당 공격 +0.5%, 임시 값), 장비 시험용 검(공격 +5) | `entities/units/hongyeon.tres`, `statuses/data/`, `statuses/equipment/` |
@@ -25,12 +25,13 @@
 | 전투 화면 (시험판) | 시험용 홍연(타격 4·사격 3·방어 3) vs 시험용 적 A·B 한 판을 직접 플레이. 원거리·근접 카드는 휜 화살표로 대상 지정, 자신 카드는 두 번 클릭/끌어 올리기, 빈 칸 클릭으로 이동, 적 차례 0.7초 간격 자동, 떠오르는 숫자·전투 기록, 승리/패배 → 다시 하기. 손패에 계산된 수치 표시 | `ui/battle_screen/battle_screen.tscn` 열고 F6. 데이터 `battles/test_battle.tres` |
 | 전투 데이터 | 격자 크기 + 아군/적 배치 리소스 (`BattleData`), 진행 담당 `BattleSession` (의뢰 파티를 밖에서 넣을 수 있음) | `Scripts/battle/battle_data.gd`, `battle_session.gd` |
 | 시작 화면 | 게임 메인 씬. 시작 버튼 → 스테이지 지도 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
-| 의뢰 진행 (시험판, 2026-11-10) | 의뢰마다 랜덤 지도(시작 → 3열×3행 전투 6·이벤트 3 → 상점 → 보스), 연결선, W/S·클릭으로 다음 노드 고르기, 스페이스·엔터로 실행. 전투 승리 → 지도, 패배 → 시작 화면, 보스 승리 → 의뢰 성공. 의뢰 안에서 HP 유지, HP 0 파티원 제외. 이벤트·상점은 자리만, 보스는 시험 전투 | `Scenes/ui/stage_map/`, `Scenes/ui/room_screen/`, `Scripts/stage/` (StageRun 자동 로드·StageProgress), 테스트 `tests/stage/`, `tests/ui/` |
+| 의뢰 진행 (시험판, 2026-11-10) | 의뢰마다 랜덤 지도(시작 → 3열×3행 전투 6·이벤트 3 → 상점 → 보스), 연결선, W/S·클릭으로 다음 노드 고르기, 스페이스·엔터로 실행. 전투 승리 → 지도, 패배 → 시작 화면, 보스 승리 → 의뢰 성공. 의뢰 안에서 HP 유지, HP 0 파티원 제외. 이벤트는 자리만(상점은 2026-11-17 상점 화면), 보스는 시험 전투 | `Scenes/ui/stage_map/`, `Scenes/ui/room_screen/`, `Scripts/stage/` (StageRun 자동 로드·StageProgress), 테스트 `tests/stage/`, `tests/ui/` |
 | 브람 (2026-11-09) | 유닛 브람 웰번(덱 10장), 카드 10장·강화 10장 효과, 상태 도발·대신 맞기. 새 규칙: 쉴드 전부 소모(`BlockCost`), 현재 쉴드 비례(`CurrentBlockValue`), 쉴드 제거(`RemoveBlockEffect`), 끌어오기(`PullEffect`), 도발(`StatusData.taunts`), 대신 맞기(`StatusData.guarded_by_applier`). 시험 전투(`battles/test_battle.tres`)에 배치됨, 전투 그림 칸이 없어 그림 미연결 | `entities/units/bram_welburn.tres`, `cards/data/브람/`, `statuses/data/` |
 | 전투 격자판 (2026-11-10) | 편마다 5×5 칸 판(`battle_board.tscn`)을 배경 씬에 아군용·적용으로 하나씩 넣고 칸 위치·크기·모양을 에디터에서 꾸민다. 전투가 시작되면 맞닿는 쪽 열·가운데 행부터 전투 크기만큼만 켜고 나머지는 숨김. 판이 없는 배경은 기존 정사각형 격자. 2026-11-11: 칸을 원근 사각형으로. 보드 네 모서리(`corners`)를 바닥에 맞추면 25칸이 자동으로 나뉘고, 필요한 칸만 꼭짓점(`custom_corners`)을 직접 조정. 색·표시·클릭 판정이 칸 모양을 따름. 에디터 2D 화면에서 핸들로 드래그 | `Scenes/ui/battle_screen/battle_board.tscn`, `Scripts/ui/battle_board.gd`, `Scripts/ui/grid_cell.gd`, `Scripts/ui/board_shape.gd`, `addons/board_shape_editor/`, 설계 `docs/superpowers/specs/2026-11-11-board-cell-shape-design.md` |
 | 전투 스프라이트 (2026-11-13) | 유닛마다 `UnitData.battle_frames`(SpriteFrames)를 두고 유닛 박스의 `Sprite`(AnimatedSprite2D)가 `idle` 을 반복. 카드를 쓰면 `CardData.animation` 이름의 동작을 한 번 재생하고 idle 로 돌아옴(강화본은 칸이 비면 원래 카드 이름). 지금은 브람만, 동작마다 그림 1장(placeholder): punch·uppercut·guard·victory_pose. 묶음이 없는 유닛은 색 박스 그대로 | `entities/units/bram_frames.tres`, `Art/characters/bram_welburn/bram_*.png`, `Scripts/ui/unit_token.gd` |
 | 카드 연출 (2026-11-14) | 카드마다 연출 씬(`CardData.performance`, 루트 `CardPerformance`)의 AnimationPlayer `perform` 타임라인으로 이동·동작·이펙트를 정하고, Call Method 키 `move(x, y, 시간)`(대상 칸 기준)·`hit()`(맞는 반응, 여러 번)·`show_results()`(결과 한 번에)·`zoom(세기, 시간)` 을 찍는다. 연출 끝나면 자동 복귀. 계산은 즉시, 화면은 `PerformanceRecorder`→`PerformanceQueue` 로 단계별 재생하고 연출 중엔 입력·적 행동·결과 창 대기. hit 반응: 캐릭터 그림·화면·캐릭터 UI 랜덤 흔들림, 피격 이펙트, 효과음(음높이 무작위), 히트스톱, 번쩍임, 넉백. 결과: 숫자는 부호 없이 색으로 구분(피해 빨강·회복 초록·방어도 파랑)하고 매번 조금씩 다른 방향으로 떠오름, 피해 클수록·치명타면 큰 숫자, 처치·치명 때 추가 흔들림. 공통값은 BattleScreen, 카드별 변경은 연출 씬 루트. 시험: 브람 돌주먹. HP 바 잔상은 HP 바가 생긴 뒤 | `Scripts/performances/`, `Scripts/ui/performance_queue.gd`, `Scripts/ui/shaker.gd`, `Scenes/performances/bram_stone_fist.tscn`, 설계 `docs/superpowers/specs/2026-11-14-card-performance-design.md` |
 | 손패 떠오르기 (2026-11-15) | 손패 카드는 평소 `hand_sink`(150px)만큼 화면 아래로 내려가 있고, 마우스를 올린 카드만 부드럽게 떠오름(`hand_rise_speed`). 카드는 끌어서 대상 위(자신·근접 카드는 위로 끌어 올리면 어디서 놓든, 근접은 자동 대상 — 2026-11-17)에서 놓아야 쓰이고, 그 밖에 놓거나 그냥 클릭했다 떼면 손패로 돌아감. 카드가 움직여도 깜빡이지 않게 카드 가로 범위 기둥 전체로 마우스를 봄 | `Scripts/ui/battle_screen.gd` |
+| 상점·공허 조각 (시험판, 2026-11-17) | 의뢰 안 재화 **공허 조각**: 의뢰 전투 승리마다 `BattleData.shard_reward`(일반 20, 보스 50 — 보스는 새 `battles/boss_battle.tres`), 결과 창에 "공허 조각 +N", 의뢰가 끝나면 0. 상점 노드 → **상점 화면**: 파티(살아 있는 파티원) 캐릭터 카드 5장·소비 아이템 3개를 겹치지 않게 진열해 구매(카드 50, 아이템 30), **카드 제거**(75)·**카드 강화**(60, 원래 카드의 강화 중 최대 3개에서 고름, 강화한 카드는 다른 강화로 바꾸기). 가격 고정, 값은 `shop/shop_data.tres`. 덱 변경은 **의뢰 덱**(`BattleUnit.run_deck`)에만, 유닛 원본 덱은 그대로. 나가면 노드 클리어. 가방 아이템은 끌어서 **버리기** 칸에 놓으면 버림(상점·전투) | `Scripts/shop/`, `Scripts/cards/card_pool.gd`, `Scripts/stage/wallet.gd`, `Scripts/ui/shop_screen.gd`, `Scenes/ui/shop_screen/`, 설계 `docs/superpowers/specs/2026-11-17-shop-design.md` |
 | 그림 추가 (코드에서 아직 안 씀) | 캐릭터 10명 일러스트·픽셀 아트(`mo_liang` 은 일러스트만), 배경 5장, 공허 지도 | `Art/characters/`, `Art/backgrounds/`, `Art/ui/void_map.png` |
 
 ## 진행 중: 의뢰 스테이지 (`feat/stage-run`, 2026-11-07~10)
@@ -120,7 +121,8 @@
 - 2026-11-04: Godot 에디터가 두 번 꺼진 원인 — 에디터가 켜진 동안 바깥에서 리소스 파일을 바꾸거나 옮김, 같은 프로젝트로 두 번째 Godot 을 띄워 테스트. 테스트는 이제 프로젝트 복사본에서 실행
 
 ## 나중에 할 일
-- 소비 아이템 다음 단계: 웹 에디터 → Godot 가져오기(`consumable_importer`, 장비와 같은 규칙), 스탯 버프 아이템, 상점 구매, 의뢰 밖(사무소) 인벤토리, 아이템 그림·전용 연출
+- 소비 아이템 다음 단계: 스탯 버프 아이템, 의뢰 밖(사무소) 인벤토리, 아이템 그림·전용 연출
+- 상점 다음 단계: 장비 강화, 전투 카드 보상(확률로 카드 또는 아이템), 이벤트에서 얻는 공허 조각, 상점 그림·연출. 상점에서 사고 강화한 카드는 전투 동작 이름(`unit_token.gd` 강화본 판정)이 원래 덱에서만 찾아져 비어 있을 수 있음
 
 - ~~전투 데이터 리소스~~ → 2026-11-05 `BattleData` 로 완료
 - 전투 화면 다음 단계: 대상에 화살표를 올렸을 때 예상 피해(28 → 23), 적 의도 표시(규칙 미정), 그림·연출, 홍연 고유 카드 효과(수치·지속 턴·속박·공격태세 기획 필요)

@@ -26,7 +26,23 @@ var stamina: int
 var alive: bool = true
 ## 붙어 있는 상태들
 var statuses: Array[StatusInstance] = []
-## 덱 / 손패 / 버린 카드 더미 (캐릭터마다 따로)
+## 의뢰 덱: 이 유닛이 전투마다 들고 들어가는 카드 목록. 만들 때 UnitData.deck 을 복사한다.
+## 의뢰 동안 같은 유닛을 다시 쓰므로 상점의 구매·제거·강화가 의뢰 끝까지 유지되고,
+## 새 의뢰는 새 유닛이라 기본 덱으로 돌아간다 (상점 설계 2026-11-17: 덱 변경은 의뢰 안에서만).
+## UnitData.deck(리소스 원본)은 절대 바꾸지 않는다.
+## 처음 읽을 때 복사한다 — 유닛을 만든 뒤 data.deck 을 채우는 경우(테스트·시험 전투)에도 그 덱으로 시작하게.
+var run_deck: Array[CardData]:
+	get:
+		if not _run_deck_ready:
+			_run_deck = data.deck.duplicate()
+			_run_deck_ready = true
+		return _run_deck
+	set(value):
+		_run_deck = value
+		_run_deck_ready = true
+var _run_deck: Array[CardData] = []
+var _run_deck_ready := false
+## 덱 / 손패 / 버린 카드 더미 (캐릭터마다 따로, 전투 안에서만)
 var deck: Array[CardData] = []
 var hand: Array[CardData] = []
 var discard: Array[CardData] = []

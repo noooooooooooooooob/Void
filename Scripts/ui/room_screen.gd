@@ -1,9 +1,9 @@
 class_name RoomScreen
 extends Control
-## 이벤트·상점·의뢰 성공을 보여주는 간단한 방 화면. room_screen.tscn 의 스크립트.
-## 지금은 효과가 없는 자리만 마련한 단계 (CLAUDE.md: 이벤트/상점 효과는 미정):
+## 이벤트·의뢰 성공을 보여주는 간단한 방 화면. room_screen.tscn 의 스크립트.
+## 상점은 상점 화면(shop_screen.tscn)이 맡는다 (2026-11-17).
+## 이벤트는 아직 효과가 없는 자리만 마련한 단계 (CLAUDE.md: 이벤트 효과는 미정):
 ##   - 이벤트: A / B 선택지 중 아무거나 누르면 그냥 다음 (지도로)
-##   - 상점: "다음" 버튼 → 지도로 (그다음은 보스)
 ##   - 의뢰 성공(보스 승리 뒤): "처음으로" 버튼 → 시작 화면
 ## 어떤 방인지는 StageRun.room() 이 정한다. 글자·배치는 room_screen.tscn 에서 에디터로 고친다.
 
@@ -29,12 +29,6 @@ func _ready() -> void:
 			_body.text = "무언가 일어났다. 어떻게 할까?\n(아직 선택지 효과는 없다)"
 			_show_buttons(true, false)
 			_choice_a.grab_focus()
-		StageRun.Room.SHOP:
-			_title.text = "상점"
-			_body.text = "아직 살 수 있는 것이 없다."
-			_next.text = "다음"
-			_show_buttons(false, true)
-			_next.grab_focus()
 		StageRun.Room.CLEAR:
 			_title.text = "의뢰 성공"
 			_body.text = "보스를 쓰러뜨렸다."
@@ -55,7 +49,7 @@ func _on_choice() -> void:
 	StageRun.complete_node()
 
 
-## 상점 "다음" / 의뢰 성공 "처음으로"
+## 의뢰 성공 "처음으로" (그 밖의 방에서는 다음 노드로)
 func _on_next() -> void:
 	if room == StageRun.Room.CLEAR:
 		StageRun.finish_run()

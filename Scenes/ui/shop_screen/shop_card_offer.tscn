@@ -1,0 +1,35 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/ui/card_view/card_view.tscn" id="1_t8j50"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sv0eq"]
+resource_local_to_scene = true
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.9843137, 0.98039216, 0.96862745, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.7647059, 0.25490198, 0.22745098, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="ShopCardOffer" type="VBoxContainer" unique_id=1548537456]
+theme_override_constants/separation = 6
+
+[node name="Card" parent="." unique_id=1500508533 instance=ExtResource("1_t8j50")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_sv0eq")
+
+[node name="Button" type="Button" parent="." unique_id=23538283]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "구매"

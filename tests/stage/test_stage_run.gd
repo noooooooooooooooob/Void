@@ -125,3 +125,31 @@ func test_is_boss_battle_only_on_boss_node():
 	assert_false(r.is_boss_battle())
 	r.progress.entering = _node_of(r, K.BOSS)
 	assert_true(r.is_boss_battle())
+
+# --- 공허 조각 / 보스 전투 데이터 ---
+
+func test_wallet_resets_on_new_run():
+	var r := _run()
+	r.wallet.add(40)
+	r.end_run()
+	assert_eq(r.wallet.shards, 0)
+	r.start_run(2)
+	assert_eq(r.wallet.shards, 0)
+
+func test_boss_node_uses_boss_battle():
+	var r := _run()
+	r.progress.entering = _node_of(r, K.BOSS)
+	assert_eq(r.battle_data(), r.BOSS_BATTLE)
+	r.progress.entering = _node_of(r, K.BATTLE)
+	assert_eq(r.battle_data(), r.DEFAULT_BATTLE)
+
+func test_shard_rewards_default_and_boss():
+	assert_eq(StageRunScript.DEFAULT_BATTLE.shard_reward, 20)
+	assert_eq(StageRunScript.BOSS_BATTLE.shard_reward, 50)
+
+func test_scene_for_each_node_kind():
+	var r := _run()
+	assert_eq(r.scene_for(_node_of(r, K.BATTLE)), r.BATTLE_SCENE)
+	assert_eq(r.scene_for(_node_of(r, K.BOSS)), r.BATTLE_SCENE)
+	assert_eq(r.scene_for(_node_of(r, K.EVENT)), r.ROOM_SCENE)
+	assert_eq(r.scene_for(_node_of(r, K.SHOP)), r.SHOP_SCENE)

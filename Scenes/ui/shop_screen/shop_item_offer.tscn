@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/ui/battle_screen/item_slot.tscn" id="1_7ty7o"]
+
+[node name="ShopItemOffer" type="VBoxContainer" unique_id=1134274257]
+theme_override_constants/separation = 6
+
+[node name="Item" parent="." unique_id=685467998 instance=ExtResource("1_7ty7o")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Button" type="Button" parent="." unique_id=866802535]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "구매"

@@ -212,3 +212,33 @@ func test_stage_battle_uses_the_run_bag():
 	var s := _screen()
 	assert_same(s.session.inventory, StageRun.inventory)
 	assert_eq(s.get_node("%BagButton").text, "가방 1/5")
+
+
+# --- 공허 조각 보상 ---
+
+func test_stage_win_adds_shard_reward():
+	_enter_battle_node()
+	var s := _screen()
+	s._on_finished(BattleTypes.Side.ALLY)
+	assert_eq(StageRun.wallet.shards, 20)
+	assert_eq(s.get_node("%ResultLabel").text, "승리\n공허 조각 +20")
+
+func test_boss_win_adds_boss_reward():
+	_enter_battle_node()
+	StageRun.progress.entering = _boss_node()
+	var s := _screen()
+	s._on_finished(BattleTypes.Side.ALLY)
+	assert_eq(StageRun.wallet.shards, 50)
+
+func test_stage_loss_gives_no_shards():
+	_enter_battle_node()
+	var s := _screen()
+	s._on_finished(BattleTypes.Side.ENEMY)
+	assert_eq(StageRun.wallet.shards, 0)
+
+func test_test_battle_win_gives_no_shards():
+	StageRun.end_run()
+	var s := _screen()
+	s._on_finished(BattleTypes.Side.ALLY)
+	assert_eq(StageRun.wallet.shards, 0)
+	assert_eq(s.get_node("%ResultLabel").text, "승리")
