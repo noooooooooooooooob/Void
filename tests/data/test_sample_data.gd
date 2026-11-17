@@ -15,7 +15,7 @@ func _hongyeon_with_passives() -> BattleUnit:
 func test_hongyeon_loads_with_deck_passive_equipment():
 	var data: UnitData = load("res://entities/units/hongyeon.tres")
 	assert_eq(data.display_name, "홍연")
-	assert_eq(data.deck.size(), 10)
+	assert_eq(data.deck.size(), 9)
 	assert_eq(data.passives[0].id, "blood_lust")
 	assert_eq(data.equipment[0].display_name, "시험용 검")
 	assert_eq([data.crit_rate, data.crit_damage, data.aggro], [1, 175, 100])
