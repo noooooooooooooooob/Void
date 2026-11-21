@@ -1,6 +1,6 @@
 # 카드 사용 연출 설계
 
-2026-11-14. 상태: 구현됨 (`feat/card-performance`). HP 바 잔상(5-1 의 9)만 남음.
+2026-11-14. 상태: 구현됨 (`feat/card-performance`, 2026-11-21 `main` 머지·브랜치 삭제). HP 바 잔상(5-1 의 9)만 남음.
 
 > 2026-11-19: 5장(연출 씬 규약 — `move` 키)·6장(재생 순서)은 `2026-11-19-performance-timeline-design.md` 로 대체됨. hit·show_results·zoom·타격감 규칙은 그대로.
 

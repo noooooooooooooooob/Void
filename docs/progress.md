@@ -26,7 +26,7 @@
 | 전투 데이터 | 격자 크기 + 아군/적 배치 리소스 (`BattleData`), 진행 담당 `BattleSession` (의뢰 파티를 밖에서 넣을 수 있음) | `Scripts/battle/battle_data.gd`, `battle_session.gd` |
 | 시작 화면 | 게임 메인 씬. 시작 버튼 → 스테이지 지도 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
 | 의뢰 진행 (시험판, 2026-11-10) | 의뢰마다 랜덤 지도(시작 → 3열×3행 전투 6·이벤트 3 → 상점 → 보스), 연결선, W/S·클릭으로 다음 노드 고르기, 스페이스·엔터로 실행. 전투 승리 → 지도, 패배 → 시작 화면, 보스 승리 → 의뢰 성공. 의뢰 안에서 HP 유지, HP 0 파티원 제외. 이벤트는 자리만(상점은 2026-11-17 상점 화면), 보스는 시험 전투 | `Scenes/ui/stage_map/`, `Scenes/ui/room_screen/`, `Scripts/stage/` (StageRun 자동 로드·StageProgress), 테스트 `tests/stage/`, `tests/ui/` |
-| 브람 (2026-11-09) | 유닛 브람 웰번(덱 10장), 카드 10장·강화 10장 효과, 상태 도발·대신 맞기. 새 규칙: 쉴드 전부 소모(`BlockCost`), 현재 쉴드 비례(`CurrentBlockValue`), 쉴드 제거(`RemoveBlockEffect`), 끌어오기(`PullEffect`), 도발(`StatusData.taunts`), 대신 맞기(`StatusData.guarded_by_applier`). 시험 전투(`battles/test_battle.tres`)에 배치됨, 전투 그림 칸이 없어 그림 미연결 | `entities/units/bram_welburn.tres`, `cards/data/브람/`, `statuses/data/` |
+| 브람 (2026-11-09) | 유닛 브람 웰번(덱 10장), 카드 10장·강화 10장 효과, 상태 도발·대신 맞기. 새 규칙: 쉴드 전부 소모(`BlockCost`), 현재 쉴드 비례(`CurrentBlockValue`), 쉴드 제거(`RemoveBlockEffect`), 끌어오기(`PullEffect`), 도발(`StatusData.taunts`), 대신 맞기(`StatusData.guarded_by_applier`). 시험 전투(`battles/test_battle.tres`)에 배치됨. 전투 그림은 아래 "전투 스프라이트"(2026-11-13) | `entities/units/bram_welburn.tres`, `cards/data/브람/`, `statuses/data/` |
 | 전투 격자판 (2026-11-10) | 편마다 5×5 칸 판(`battle_board.tscn`)을 배경 씬에 아군용·적용으로 하나씩 넣고 칸 위치·크기·모양을 에디터에서 꾸민다. 전투가 시작되면 맞닿는 쪽 열·가운데 행부터 전투 크기만큼만 켜고 나머지는 숨김. 판이 없는 배경은 기존 정사각형 격자. 2026-11-11: 칸을 원근 사각형으로. 보드 네 모서리(`corners`)를 바닥에 맞추면 25칸이 자동으로 나뉘고, 필요한 칸만 꼭짓점(`custom_corners`)을 직접 조정. 색·표시·클릭 판정이 칸 모양을 따름. 에디터 2D 화면에서 핸들로 드래그 | `Scenes/ui/battle_screen/battle_board.tscn`, `Scripts/ui/battle_board.gd`, `Scripts/ui/grid_cell.gd`, `Scripts/ui/board_shape.gd`, `addons/board_shape_editor/`, 설계 `docs/superpowers/specs/2026-11-11-board-cell-shape-design.md` |
 | 전투 스프라이트 (2026-11-13) | 유닛마다 `UnitData.battle_frames`(SpriteFrames)를 두고 유닛 박스의 `Sprite`(AnimatedSprite2D)가 `idle` 을 반복. 카드를 쓰면 `CardData.animation` 이름의 동작을 한 번 재생하고 idle 로 돌아옴(강화본은 칸이 비면 원래 카드 이름). 지금은 브람만, 동작마다 그림 1장(placeholder): punch·uppercut·guard·victory_pose. 묶음이 없는 유닛은 색 박스 그대로 | `entities/units/bram_frames.tres`, `Art/characters/bram_welburn/bram_*.png`, `Scripts/ui/unit_token.gd` |
 | 카드 연출 (2026-11-14) | 카드마다 연출 씬(`CardData.performance`, 루트 `CardPerformance`)의 AnimationPlayer `perform` 타임라인으로 이동·동작·이펙트를 정하고, Call Method 키 `move(x, y, 시간)`(대상 칸 기준)·`hit()`(맞는 반응, 여러 번)·`show_results()`(결과 한 번에)·`zoom(세기, 시간)` 을 찍는다. 연출 끝나면 자동 복귀. 계산은 즉시, 화면은 `PerformanceRecorder`→`PerformanceQueue` 로 단계별 재생하고 연출 중엔 입력·적 행동·결과 창 대기. hit 반응: 캐릭터 그림·화면·캐릭터 UI 랜덤 흔들림, 피격 이펙트, 효과음(음높이 무작위), 히트스톱, 번쩍임, 넉백. 결과: 숫자는 부호 없이 색으로 구분(피해 빨강·회복 초록·방어도 파랑)하고 매번 조금씩 다른 방향으로 떠오름, 피해 클수록·치명타면 큰 숫자, 처치·치명 때 추가 흔들림. 공통값은 BattleScreen, 카드별 변경은 연출 씬 루트. 시험: 브람 돌주먹. HP 바 잔상은 HP 바가 생긴 뒤 | `Scripts/performances/`, `Scripts/ui/performance_queue.gd`, `Scripts/ui/shaker.gd`, `Scenes/performances/bram_stone_fist.tscn`, 설계 `docs/superpowers/specs/2026-11-14-card-performance-design.md` |
@@ -38,7 +38,7 @@
 | 전투 보상 목록 (2026-11-19) | 의뢰 전투 승리 → 결과 창에 보상 줄(공허 조각 / 아이템 / 카드 추가)을 **클릭해서 챙김**(슬더스식). 조각 자동 지급·받기 버튼 없앰. 아이템은 가방이 가득 차면 바꿀 칸 고르기·취소. **카드 보상 새로 추가**: 살아 있는 파티원 카드 중 3장 → 1장 골라 주인의 의뢰 덱으로(넘어가기 가능). 보스는 조각만. "계속"은 언제든, 안 챙긴 보상은 사라짐. 카드 후보 뽑기는 상점과 같은 함수(`CardPool.pick_party_cards`) | `Scripts/stage/battle_reward.gd`, `Scripts/ui/battle_screen.gd`, 씬 `ResultOverlay/Box/RewardList`·`ResultOverlay/CardPick`, 설계 `docs/superpowers/specs/2026-11-19-battle-rewards-design.md` |
 | 그림 추가 (코드에서 아직 안 씀) | 캐릭터 10명 일러스트·픽셀 아트(`mo_liang` 은 일러스트만), 배경 5장, 공허 지도 | `Art/characters/`, `Art/backgrounds/`, `Art/ui/void_map.png` |
 
-## 진행 중: 의뢰 스테이지 (`feat/stage-run`, 2026-11-07~10)
+## 의뢰 스테이지 작업 기록 (2026-11-07~10, `main` 머지 — PR #3)
 
 - 2026-11-08: 사무소 허브, 로스터, 캐릭터 페이지, 카드 공방, 공허 지도, 파티 선택, ESC 메뉴, 비스듬한 전투 격자, 브람 덱·유닛을 만들었다가 **전부 되돌림** (`3a823f6`). 씬·데이터를 에디터가 아니라 헤드리스 스크립트로 만들었기 때문. 지금은 코드가 없고 git 기록에만 있음 (`eedcfb6`~`dd22343`). 그림 파일만 다시 넣음 (`f899b9c`)
 - 2026-11-09: 머지 전 정리 — 생성기 "첫 열은 모두 전투" 규칙 추가, `CLAUDE.md` 1층 규칙을 새 규칙으로 수정, `title_screen.gd`·`stage_map.gd`·`stage_node_view.gd` 를 `Scripts/ui/` 로 이동, 잘리던 지도를 화면 가운데로 옮기고 노드 글자 가운데 정렬
@@ -52,11 +52,11 @@
 - 기획 결정 필요: 파티 위치를 다음 전투로 이어갈지(지금은 이어짐), 대신 맞기를 브람 자신에게 쓸 수 있게 둘지(지금은 SP 만 쓰고 효과 없음)
 - 의뢰 파티가 비면 전투 화면이 만피 새 아군을 만듦. 지금은 도달할 수 없지만 파티 선택을 넣을 때 막아야 함
 
-## 진행 중: 전투 시스템 (카드·효과·턴)
+## 전투 시스템 (카드·효과·턴) — 완료
 
 - 설계: [docs/superpowers/specs/2026-11-03-card-effect-system-design.md](superpowers/specs/2026-11-03-card-effect-system-design.md)
 - 구현 계획: [docs/superpowers/plans/2026-11-03-card-effect-system.md](superpowers/plans/2026-11-03-card-effect-system.md)
-- 브랜치: `feat/battle-system`
+- 브랜치: `feat/battle-system` (`main` 머지 — PR #1)
 
 | # | 단계 | 상태 | 커밋 |
 |---|---|---|---|
