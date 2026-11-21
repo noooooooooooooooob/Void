@@ -56,8 +56,14 @@ var speed_rolls: Array[int] = []
 var boss_index: int = 0
 ## 전투에 들어온 순서. 속도가 같을 때 순서를 정하는 기준.
 var initial_index: int = 0
-## 이 유닛이 속한 전투 (Battle). Battle 이 넣어 준다.
-var battle
+## 이 유닛이 속한 전투 (Battle). Battle 이 넣어 준다. 의뢰 파티는 다음 전투에 다시 들어가며 바뀐다.
+## 약한 참조(WeakRef)로 둔다: Battle.units 가 유닛을 들고 있어서 서로 강하게 잡으면 전투가 끝나도 풀리지 않는다.
+var battle:
+	get:
+		return _battle.get_ref() if _battle else null
+	set(value):
+		_battle = weakref(value) if value else null
+var _battle: WeakRef
 
 ## 스탯 종류 → UnitData 의 기본값 필드 이름
 const _BASE_FIELDS := {

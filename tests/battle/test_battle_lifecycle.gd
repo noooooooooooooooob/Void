@@ -149,3 +149,34 @@ func test_new_battle_resets_battle_state_but_keeps_hp():
 	assert_null(hero.get_status("bleed"))  # 전투 중 상태는 다음 전투로 넘어가지 않음
 	assert_not_null(hero.get_status("gear"))  # 장비는 유지
 	assert_eq(hero.stacks_of("blood_drop"), 0)  # 패시브는 새로 시작
+
+
+# --- 메모리: 전투가 끝나고 참조를 놓으면 Battle·유닛이 풀려야 한다 (RefCounted 순환 참조 금지) ---
+
+func test_battle_is_freed_when_dropped():
+	var hero := Fixture.unit(A, Vector2i(3, 0))
+	var foe := Fixture.unit(E, Vector2i(3, 0))
+	var bt := _battle([hero, foe])
+	bt.start_battle()
+	var ref: WeakRef = weakref(bt)
+	bt = null
+	assert_null(ref.get_ref(), "유닛이 남아 있어도 Battle 은 풀려야 한다 (의뢰 파티는 다음 전투까지 남음)")
+
+func test_unit_with_self_applied_status_is_freed():
+	# 장비·패시브는 건 유닛 = 자기 자신 → 유닛 ↔ 상태 인스턴스가 서로 붙잡으면 안 된다
+	var hero := Fixture.unit(A, Vector2i(3, 0))
+	hero.add_status(Fixture.status("gear", false), 0, hero)
+	var ref: WeakRef = weakref(hero)
+	hero = null
+	assert_null(ref.get_ref())
+
+func test_party_unit_reused_after_old_battle_freed():
+	# 지난 전투가 풀린 뒤에도 같은 유닛으로 다음 전투가 돈다
+	var hero := Fixture.unit(A, Vector2i(3, 0))
+	var first := _battle([hero, Fixture.unit(E, Vector2i(3, 0))])
+	first.start_battle()
+	first = null
+	var second := _battle([hero, Fixture.unit(E, Vector2i(3, 0))])
+	second.start_battle()
+	assert_eq(hero.battle, second)
+	assert_gt(hero.get_stat(BattleTypes.Stat.HP), 0)

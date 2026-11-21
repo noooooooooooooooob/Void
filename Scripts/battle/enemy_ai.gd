@@ -17,12 +17,16 @@ extends RefCounted
 ##   원거리 = 살아 있는 아군 편 유닛 중 어그로 비율 가중 랜덤 (사용자 결정 2026-11-05). 모두 0 이면 균등.
 ##   아군·자신 = 자기 자신
 
-## 이 적 행동이 속한 전투
-var battle
+## 이 적 행동이 속한 전투. Battle 이 이 객체를 들고 있으므로 거꾸로는 약한 참조(WeakRef)로 둔다 —
+## 서로 강하게 붙잡으면 RefCounted 가 메모리에서 풀리지 않는다 (코드 리뷰 2026-11-17).
+var battle:
+	get:
+		return _battle.get_ref() if _battle else null
+var _battle: WeakRef
 
 
 func _init(owner_battle) -> void:
-	battle = owner_battle
+	_battle = weakref(owner_battle)
 
 
 ## 적 u 의 차례를 처음부터 끝까지 진행한다.

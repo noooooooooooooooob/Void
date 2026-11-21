@@ -64,3 +64,43 @@ func test_load_all_finds_base_of_real_upgrade():
 			assert_eq(CardPool.find_base(c.upgrades[0], CardPool.load_all()), c)
 			return
 	pending("강화가 있는 카드가 없음")
+
+func _ally(cards: Array) -> BattleUnit:
+	return BattleUnit.new(_unit_data(cards), BattleTypes.Side.ALLY, Vector2i.ZERO)
+
+func _rng() -> RandomNumberGenerator:
+	var r := RandomNumberGenerator.new()
+	r.seed = 3
+	return r
+
+func test_pick_party_cards_only_party_cards_with_owner():
+	var u := _ally([_card("x", "d1")])
+	var pool: Array[CardData] = []
+	for i in 5:
+		pool.append(_card("a%d" % i, "d1"))
+	for i in 3:
+		pool.append(_card("b%d" % i, "d2"))
+	var party: Array[BattleUnit] = [u]
+	var r := CardPool.pick_party_cards(party, pool, 3, _rng())
+	assert_eq(r.cards.size(), 3)
+	assert_eq(r.owners.size(), 3)
+	var seen := {}
+	for c in r.cards:
+		assert_eq(c.deck_id, "d1")
+		assert_false(seen.has(c))
+		seen[c] = true
+	for o in r.owners:
+		assert_eq(o, u)
+
+func test_pick_party_cards_fewer_than_n():
+	var u := _ally([_card("x", "d1")])
+	var pool: Array[CardData] = [_card("a", "d1"), _card("b", "d1")]
+	var party: Array[BattleUnit] = [u]
+	assert_eq(CardPool.pick_party_cards(party, pool, 3, _rng()).cards.size(), 2)
+
+func test_pick_party_cards_empty_party():
+	var pool: Array[CardData] = [_card("a", "d1")]
+	var party: Array[BattleUnit] = []
+	var r := CardPool.pick_party_cards(party, pool, 3, _rng())
+	assert_eq(r.cards, [])
+	assert_eq(r.owners, [])

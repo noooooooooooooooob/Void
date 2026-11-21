@@ -1,0 +1,118 @@
+[gd_scene format=3 uid="uid://cvk8mvlvsgl5i"]
+
+[ext_resource type="Script" uid="uid://dj23yrtmp2oh3" path="res://addons/performance_stage_view/stage_view.gd" id="1_61h52"]
+
+[node name="PerformanceStageView" type="VBoxContainer" unique_id=332714942]
+custom_minimum_size = Vector2(0, 260)
+script = ExtResource("1_61h52")
+
+[node name="Top" type="HBoxContainer" parent="." unique_id=369816061]
+layout_mode = 2
+
+[node name="BackgroundLabel" type="Label" parent="Top" unique_id=1635899511]
+layout_mode = 2
+text = "배경"
+
+[node name="BackgroundList" type="OptionButton" parent="Top" unique_id=482750331]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="EnemyLabel" type="Label" parent="Top" unique_id=1530601078]
+layout_mode = 2
+text = "적"
+
+[node name="EnemyList" type="OptionButton" parent="Top" unique_id=1096566112]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ActorCellLabel" type="Label" parent="Top" unique_id=1140934059]
+layout_mode = 2
+text = "내 칸"
+
+[node name="ActorCellList" type="OptionButton" parent="Top" unique_id=1134366806]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="EnemyCellLabel" type="Label" parent="Top" unique_id=1772609859]
+layout_mode = 2
+text = "적 칸"
+
+[node name="EnemyCellList" type="OptionButton" parent="Top" unique_id=523894782]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CritCheck" type="CheckBox" parent="Top" unique_id=622240587]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "켜면 ▶ 재생 중 결과(show_results) 키 때 치명타 강조(화면 흔들림·슬로우모션)를 보여 줘요"
+text = "치명타"
+
+[node name="Hint" type="Label" parent="Top" unique_id=694787179]
+unique_name_in_owner = true
+layout_mode = 2
+text = "연출 씬(루트 CardPerformance)을 열면 여기에 실제 전투 화면처럼 보여요"
+
+[node name="Frame" type="AspectRatioContainer" parent="." unique_id=191824645]
+layout_mode = 2
+size_flags_vertical = 3
+ratio = 1.7777778
+
+[node name="Screen" type="SubViewportContainer" parent="Frame" unique_id=1019118618]
+layout_mode = 2
+stretch = true
+
+[node name="Viewport" type="SubViewport" parent="Frame/Screen" unique_id=1760797409]
+handle_input_locally = false
+size = Vector2i(400, 225)
+size_2d_override = Vector2i(1920, 1080)
+size_2d_override_stretch = true
+render_target_update_mode = 4
+
+[node name="Backdrop" type="ColorRect" parent="Frame/Screen/Viewport" unique_id=261377032]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.08, 0.075, 0.105, 1)
+
+[node name="World" type="Control" parent="Frame/Screen/Viewport" unique_id=228328921]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Background" type="Control" parent="Frame/Screen/Viewport/World" unique_id=1739303094]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="Units" type="Control" parent="Frame/Screen/Viewport/World" unique_id=612053848]
+unique_name_in_owner = true
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="UnitTemplate" type="Node2D" parent="Frame/Screen/Viewport/World/Units" unique_id=432927436]
+unique_name_in_owner = true
+visible = false
+
+[node name="Box" type="ColorRect" parent="Frame/Screen/Viewport/World/Units/UnitTemplate" unique_id=865287769]
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+mouse_filter = 2
+
+[node name="Sprite" type="AnimatedSprite2D" parent="Frame/Screen/Viewport/World/Units/UnitTemplate" unique_id=985018331]
+scale = Vector2(0.2, 0.2)
+offset = Vector2(0, -200)
+
+[node name="PerfLayer" type="Node2D" parent="Frame/Screen/Viewport/World" unique_id=1396467944]
+unique_name_in_owner = true
+
+[node name="HitSound" type="AudioStreamPlayer" parent="." unique_id=323554501]
+unique_name_in_owner = true

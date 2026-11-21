@@ -88,14 +88,32 @@ func play_card_animation(card: CardData) -> void:
 	if unit == null or _sprite.sprite_frames == null:
 		return
 	var anim := card.animation
-	# 강화본(+)은 칸이 비어 있으면 원래 카드(덱에 있는 카드)의 이름을 쓴다
+	# 강화본(+)은 칸이 비어 있으면 원래 카드의 이름을 쓴다.
+	# 1. 기본 덱에서 먼저 찾고, 2. 없으면(상점에서 산 뒤 강화한 카드) 카드 데이터 전체에서 원래 카드를 찾는다
 	if anim == &"":
 		for base in unit.data.deck:
-			if card in base.upgrades:
+			if base and card in base.upgrades:
 				anim = base.animation
+	# 카드 폴더 전체를 읽는 건 무거우므로, 다른 카드 파일 안에 든 강화본일 때만 찾는다
+	if anim == &"" and is_embedded_upgrade(card):
+		var base := CardPool.find_base(card, CardPool.load_all())
+		if base != card:
+			anim = base.animation
 	if anim == &"" or not _sprite.sprite_frames.has_animation(anim):
 		return
 	_sprite.play(anim)
+
+
+## 맞는 동작: 연출의 hit 키 때 전투 화면이 부른다. 그림 묶음에 hit 애니메이션이 있으면 한 번 재생하고,
+## 끝나면 idle 로 돌아간다 (반복 없이 만들어야 끝남). 없으면 아무것도 안 한다 (2026-11-21)
+func play_hit() -> void:
+	if _sprite.sprite_frames and _sprite.sprite_frames.has_animation(&"hit"):
+		_sprite.play(&"hit")
+
+
+## card 가 다른 카드 .tres 안에 든 리소스(강화본)인지. 강화본은 따로 파일이 없어 경로가 "<파일>::<id>" 꼴이다.
+static func is_embedded_upgrade(card: CardData) -> bool:
+	return card != null and card.resource_path.contains("::")
 
 
 ## 유닛의 애니메이션 묶음을 Sprite 에 넣고 idle 을 튼다. 묶음이 없는 유닛(홍연, 적)은 그림을 숨긴다.

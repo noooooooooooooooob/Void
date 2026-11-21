@@ -11,17 +11,14 @@ const DEFAULT_DIR := "res://cards/data"
 
 
 ## dir 아래(하위 폴더 포함)의 카드 전부. 폴더가 없으면 빈 배열.
-## 내보낸 게임에서는 파일 이름 끝에 .remap 이 붙으므로 떼고 읽는다 (StageRun.item_pool 과 같은 방식).
+## (.remap 처리는 ResDir.tres_paths 가 한다)
 static func load_all(dir: String = DEFAULT_DIR) -> Array[CardData]:
 	var out: Array[CardData] = []
 	if not DirAccess.dir_exists_absolute(dir):
 		return out
 	# 1. 이 폴더의 카드
-	for f in DirAccess.get_files_at(dir):
-		var file := f.trim_suffix(".remap")
-		if file.get_extension() != "tres":
-			continue
-		var card := load(dir.path_join(file)) as CardData
+	for path in ResDir.tres_paths(dir):
+		var card := load(path) as CardData
 		if card:
 			out.append(card)
 	# 2. 하위 폴더 (덱마다 한 폴더)
@@ -67,3 +64,28 @@ static func upgrade_options(card: CardData, pool: Array[CardData]) -> Array[Card
 		if up and up != card:
 			out.append(up)
 	return out
+
+
+## 파티 캐릭터의 카드 중 겹치지 않게 최대 n 장을 무작위로 고르고, 카드마다 주인을 붙인다.
+## 상점 진열 카드와 전투 보상 카드 후보가 같이 쓴다 (상점 설계 2026-11-17, 전투 보상 설계 2026-11-19).
+## - 파티원 순서대로 cards_for 를 모은다. 같은 카드가 두 캐릭터에 걸리면 먼저 찾은 파티원이 주인
+## - 후보가 n 장보다 적으면 있는 만큼
+## 반환: {"cards": Array[CardData], "owners": Array[BattleUnit]} — 두 배열은 같은 길이, 같은 순서
+static func pick_party_cards(party: Array[BattleUnit], pool: Array[CardData], n: int,
+		rng: RandomNumberGenerator) -> Dictionary:
+	# 1. 후보 모으기 (주인 기억)
+	var candidates: Array[CardData] = []
+	var owner_of := {}
+	for u in party:
+		for c in cards_for(u.data, pool):
+			if not owner_of.has(c):
+				owner_of[c] = u
+				candidates.append(c)
+	# 2. 겹치지 않게 n 장 뽑기
+	var cards: Array[CardData] = []
+	var owners: Array[BattleUnit] = []
+	while cards.size() < n and not candidates.is_empty():
+		var c: CardData = candidates.pop_at(rng.randi_range(0, candidates.size() - 1))
+		cards.append(c)
+		owners.append(owner_of[c])
+	return {"cards": cards, "owners": owners}

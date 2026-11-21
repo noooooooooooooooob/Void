@@ -24,19 +24,48 @@ script = ExtResource("1_t8gdv")
 battle_data = ExtResource("2_rwkbd")
 test_items = Array[ExtResource("3_78nqw")]([ExtResource("4_yl6x5"), ExtResource("5_ui2py"), ExtResource("6_yp0aa"), ExtResource("7_hxvqh"), ExtResource("8_8gv40")])
 
-[node name="Background" type="ColorRect" parent="." unique_id=27910543]
+[node name="World" type="Control" parent="." unique_id=499999937]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Background" type="ColorRect" parent="World" unique_id=27910543]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.08235294, 0.07450981, 0.105882354, 1)
 
-[node name="BackgroundLayer" type="Control" parent="Background" unique_id=2117233571]
+[node name="BackgroundLayer" type="Control" parent="World/Background" unique_id=2117233571]
 unique_name_in_owner = true
 anchors_preset = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
+
+[node name="AllyGrid" type="GridContainer" parent="World" unique_id=1490610946]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 420.0
+offset_top = 220.0
+offset_right = 924.0
+offset_bottom = 596.0
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 4
+
+[node name="EnemyGrid" type="GridContainer" parent="World" unique_id=319191806]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 996.0
+offset_top = 220.0
+offset_right = 1500.0
+offset_bottom = 596.0
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 4
 
 [node name="RoundLabel" type="Label" parent="." unique_id=1453502877]
 unique_name_in_owner = true
@@ -88,28 +117,6 @@ offset_top = 160.0
 offset_right = 1896.0
 offset_bottom = 520.0
 theme_override_constants/separation = 8
-
-[node name="AllyGrid" type="GridContainer" parent="." unique_id=1490610946]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 420.0
-offset_top = 220.0
-offset_right = 924.0
-offset_bottom = 596.0
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 4
-
-[node name="EnemyGrid" type="GridContainer" parent="." unique_id=319191806]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 996.0
-offset_top = 220.0
-offset_right = 1500.0
-offset_bottom = 596.0
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 4
 
 [node name="Log" type="Label" parent="." unique_id=321385293]
 unique_name_in_owner = true
@@ -202,14 +209,21 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 26
 text = "차례 종료"
 
-[node name="PerformanceLayer" type="Control" parent="." unique_id=874589522]
+[node name="WorldFront" type="Control" parent="." unique_id=1623109874]
 unique_name_in_owner = true
 anchors_preset = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="FloatLayer" type="Control" parent="." unique_id=393838644]
+[node name="PerformanceLayer" type="Control" parent="WorldFront" unique_id=874589522]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="FloatLayer" type="Control" parent="WorldFront" unique_id=393838644]
 unique_name_in_owner = true
 anchors_preset = 0
 anchor_right = 1.0
@@ -254,6 +268,19 @@ theme_override_font_sizes/font_size = 96
 text = "승리"
 horizontal_alignment = 1
 
+[node name="RewardList" type="VBoxContainer" parent="ResultOverlay/Box" unique_id=540267460]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RewardTemplate" type="Button" parent="ResultOverlay/Box/RewardList" unique_id=2047996242]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(480, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "보상"
+
 [node name="DropBox" type="VBoxContainer" parent="ResultOverlay/Box" unique_id=1719494287]
 unique_name_in_owner = true
 visible = false
@@ -264,7 +291,7 @@ theme_override_constants/separation = 12
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "아이템 획득"
+text = "가방이 가득 찼어요 — 바꿀 칸을 고르세요"
 horizontal_alignment = 1
 
 [node name="DropSlots" type="HBoxContainer" parent="ResultOverlay/Box/DropBox" unique_id=1625059042]
@@ -293,19 +320,12 @@ layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="TakeButton" type="Button" parent="ResultOverlay/Box/DropBox/DropButtons" unique_id=116273627]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 60)
-layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "받기"
-
 [node name="SkipButton" type="Button" parent="ResultOverlay/Box/DropBox/DropButtons" unique_id=1962193590]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
-text = "넘어가기"
+text = "취소"
 
 [node name="RestartButton" type="Button" parent="ResultOverlay/Box" unique_id=696030292]
 unique_name_in_owner = true
@@ -313,6 +333,48 @@ custom_minimum_size = Vector2(280, 72)
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "다시 하기"
+
+[node name="CardPick" type="PanelContainer" parent="ResultOverlay" unique_id=1356348610]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="ResultOverlay/CardPick" unique_id=612441608]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="Box" type="VBoxContainer" parent="ResultOverlay/CardPick/Margin" unique_id=794888094]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="CardPickTitle" type="Label" parent="ResultOverlay/CardPick/Margin/Box" unique_id=620870539]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "카드 1장을 고르세요"
+horizontal_alignment = 1
+
+[node name="CardPickRow" type="HBoxContainer" parent="ResultOverlay/CardPick/Margin/Box" unique_id=1531057949]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="CardPickSkip" type="Button" parent="ResultOverlay/CardPick/Margin/Box" unique_id=1262200650]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 26
+text = "넘어가기"
 
 [node name="EnemyTimer" type="Timer" parent="." unique_id=136294226]
 unique_name_in_owner = true

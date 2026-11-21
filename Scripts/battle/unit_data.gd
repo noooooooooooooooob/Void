@@ -34,7 +34,7 @@ extends Resource
 @export var crit_rate: int = 0
 ## 치명피해 (%). 150 이면 치명타 때 ×1.5.
 @export var crit_damage: int = 150
-## 어그로. 값만 있고 규칙은 아직 미정.
+## 어그로. 적의 원거리 공격 대상을 고를 때 살아 있는 아군의 어그로 비율로 가중 랜덤 (모두 0 이면 균등, 2026-11-05).
 @export var aggro: int = 0
 ## 최대 스태미너. 받은 피해(방어도로 막은 양 포함)만큼 깎이고, 준 피해의 절반만큼 회복. 0 이 되면 기절·탈진(미정).
 @export var max_stamina: int = 100

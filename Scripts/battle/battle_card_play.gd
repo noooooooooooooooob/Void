@@ -10,12 +10,16 @@ extends RefCounted
 ## - 카드 대체: 손패에 있는 동안만. 사용 후 묘지·제외로 갈 때는 원래 카드.
 ## - 키워드 규칙(예: 소멸 → 사용 후 제외)이 사용 직후 카드를 옮길 수 있다.
 
-## 이 카드 규칙이 속한 전투
-var battle
+## 이 카드 규칙이 속한 전투. Battle 이 이 객체를 들고 있으므로 거꾸로는 약한 참조(WeakRef)로 둔다 —
+## 서로 강하게 붙잡으면 RefCounted 가 메모리에서 풀리지 않는다 (코드 리뷰 2026-11-17).
+var battle:
+	get:
+		return _battle.get_ref() if _battle else null
+var _battle: WeakRef
 
 
 func _init(owner_battle) -> void:
-	battle = owner_battle
+	_battle = weakref(owner_battle)
 
 
 

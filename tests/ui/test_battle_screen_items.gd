@@ -292,6 +292,12 @@ func test_hp_lost_event_logged():
 	s._show_event(BattleEvent.make(BattleTypes.Event.HP_LOST, null, foe, 20, _bomb()), true)
 	assert_string_contains(s.get_node("%Log").text, "적A HP -20")
 
+func test_item_damage_logged_with_item_name():
+	# 폭탄 같은 아이템 특수 효과의 피해는 "(상태)" 가 아니라 아이템 이름으로 남는다
+	var foe := _unit("적A")
+	s._show_event(BattleEvent.make(BattleTypes.Event.DAMAGE_TAKEN, null, foe, 10, _bomb()), true)
+	assert_string_contains(s.get_node("%Log").text, "(폭탄) → 적A 피해 10")
+
 
 # --- 버리기 ---
 

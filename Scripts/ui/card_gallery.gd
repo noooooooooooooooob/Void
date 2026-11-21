@@ -8,7 +8,8 @@ extends Control
 ## - 실행(F6): 위쪽 탭으로 덱을 고른다. 카드에 마우스를 올리면 키워드 설명이 뜬다.
 ## - 덱 = cards/data 아래 폴더 하나. common 폴더는 "공용"으로 표시한다.
 ## - 배경·여백·간격·탭 모양은 card_gallery.tscn 에서 에디터로 편집한다.
-##   덱 제목과 카드 줄(HFlowContainer)은 덱 수만큼 생기므로 여기서 만든다.
+##   덱 제목과 카드 줄은 덱 수만큼 생기므로, 씬의 숨긴 틀(%SectionTitleTemplate, %CardRowTemplate)을 복제한다
+##   — 글자 크기·색·카드 간격은 그 틀에서 고친다.
 
 ## 카드 한 장을 그릴 씬
 const CARD_VIEW := preload("res://Scenes/ui/card_view/card_view.tscn")
@@ -36,6 +37,8 @@ const COMMON_LABEL := "공용"
 @onready var deck_tabs: TabBar = %DeckTabs          ## 실행 중 덱 선택 탭 (에디터에서는 비어 있음)
 @onready var empty_label: Label = %EmptyLabel       ## 카드가 하나도 없을 때 안내 문구
 @onready var _sections: VBoxContainer = %Sections   # 덱 제목 + 카드 줄이 쌓이는 곳
+@onready var _title_template: Label = %SectionTitleTemplate      # 덱 제목 틀 (숨김, 복제해서 씀)
+@onready var _row_template: HFlowContainer = %CardRowTemplate    # 카드 줄 틀 (숨김, 복제해서 씀)
 
 ## 마지막으로 읽은 카드. 표시 이름("공용", 덱 이름) → 이름순 카드 배열
 var _decks: Dictionary = {}
@@ -76,16 +79,14 @@ func refresh() -> void:
 	for label in shown:
 		# "전체" 보기에서만 덱마다 "홍연 (10)" 같은 제목을 붙인다.
 		if deck == ALL:
-			var header := Label.new()
+			var header := _title_template.duplicate() as Label
+			header.visible = true
 			header.text = "%s (%d)" % [label, _decks[label].size()]
 			header.set_meta("deck", label)  # section_titles() 가 덱 이름을 찾는 표시
-			header.add_theme_font_size_override("font_size", 18)
-			header.add_theme_color_override("font_color", Color("1d1b24"))
 			_sections.add_child(header)
-		# 카드 줄: 폭이 모자라면 다음 줄로 넘어간다.
-		var flow := HFlowContainer.new()
-		flow.add_theme_constant_override("h_separation", 16)
-		flow.add_theme_constant_override("v_separation", 16)
+		# 카드 줄 (틀 복제): 폭이 모자라면 다음 줄로 넘어간다.
+		var flow := _row_template.duplicate() as HFlowContainer
+		flow.visible = true
 		_sections.add_child(flow)
 		for card in _decks[label]:
 			var view: CardView = CARD_VIEW.instantiate()
@@ -162,12 +163,11 @@ func _load_decks(dir_path: String) -> Dictionary:
 		return out
 	for sub in dir.get_directories():
 		var cards: Array[CardData] = []
-		var sub_path := dir_path.path_join(sub)
-		for f in DirAccess.get_files_at(sub_path):
-			if f.get_extension() == "tres":
-				var card := load(sub_path.path_join(f)) as CardData
-				if card:
-					cards.append(card)
+		# 내보낸 게임의 .remap 처리는 ResDir.tres_paths 가 한다
+		for path in ResDir.tres_paths(dir_path.path_join(sub)):
+			var card := load(path) as CardData
+			if card:
+				cards.append(card)
 		if cards.is_empty():
 			continue
 		cards.sort_custom(func(a: CardData, b: CardData) -> bool: return a.name_ko < b.name_ko)

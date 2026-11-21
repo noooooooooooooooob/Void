@@ -106,18 +106,11 @@ func _valid_slot(unit: BattleUnit, deck_index: int) -> bool:
 	return unit in party and deck_index >= 0 and deck_index < unit.run_deck.size()
 
 
-## 진열 카드 채우기: 파티원마다 그 캐릭터의 카드를 모아(주인 기억) 겹치지 않게 card_count 장
+## 진열 카드 채우기: 파티원 카드 중 겹치지 않게 card_count 장, 주인과 함께 (CardPool.pick_party_cards)
 func _stock_cards() -> void:
-	var candidates: Array[CardData] = []
-	var owner_of := {}  # 카드 → 주인 (같은 카드가 두 캐릭터에 걸리면 먼저 찾은 쪽)
-	for u in party:
-		for c in CardPool.cards_for(u.data, _pool):
-			if not owner_of.has(c):
-				owner_of[c] = u
-				candidates.append(c)
-	for c in _pick(candidates, data.card_count):
-		cards.append(c)
-		card_owners.append(owner_of[c])
+	var picked := CardPool.pick_party_cards(party, _pool, data.card_count, _rng)
+	cards.assign(picked.cards)
+	card_owners.assign(picked.owners)
 
 
 ## 진열 아이템 채우기: 후보에서 겹치지 않게 item_count 개

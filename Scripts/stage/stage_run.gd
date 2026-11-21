@@ -12,7 +12,8 @@ extends Node
 ##   의뢰가 끝나면 전원 회복(다음 start_run 에서 파티를 새로 만든다)
 
 ## 방 화면이 무엇을 보여줄지
-enum Room { EVENT, SHOP, CLEAR }
+## 상점은 상점 화면(ShopScreen)이 맡아서 방 화면에는 오지 않는다 (2026-11-17)
+enum Room { EVENT, CLEAR }
 
 ## 씬 경로 (파일을 옮기면 여기도 고친다)
 const TITLE_SCENE := "res://Scenes/ui/title_screen/title_screen.tscn"
@@ -94,16 +95,11 @@ func is_boss_battle() -> bool:
 
 
 ## dir 폴더의 소비 아이템 전부 (드랍 후보). 폴더가 없거나 아이템이 없으면 빈 배열.
-## 내보낸 게임에서는 파일 이름 끝에 .remap 이 붙으므로 떼고 읽는다 (KeywordData._scan 과 같은 방식).
+## (.remap 처리는 ResDir.tres_paths 가 한다)
 func item_pool(dir: String = ITEM_DIR) -> Array[ConsumableData]:
 	var out: Array[ConsumableData] = []
-	if not DirAccess.dir_exists_absolute(dir):
-		return out
-	for f in DirAccess.get_files_at(dir):
-		var file := f.trim_suffix(".remap")
-		if file.get_extension() != "tres":
-			continue
-		var item := load(dir.path_join(file)) as ConsumableData
+	for path in ResDir.tres_paths(dir):
+		var item := load(path) as ConsumableData
 		if item:
 			out.append(item)
 	return out
@@ -137,8 +133,6 @@ func living_party() -> Array[BattleUnit]:
 func room() -> Room:
 	if is_active() and progress.is_finished():
 		return Room.CLEAR
-	if is_active() and progress.entering and progress.entering.kind == StageNode.Kind.SHOP:
-		return Room.SHOP
 	return Room.EVENT
 
 

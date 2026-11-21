@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bp6gbf7qqfhhj"]
 
-[ext_resource type="Script" uid="uid://cwxkx1c4ln6oa" path="res://Scripts/ui/card_gallery.gd" id="1_nnqkx"]
+[ext_resource type="Script" path="res://Scripts/ui/card_gallery.gd" id="1_nnqkx"]
 
 [node name="CardGallery" type="Control" unique_id=1032504302]
 layout_mode = 3
@@ -58,3 +58,18 @@ visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.40784314, 0.39607844, 0.46666667, 1)
 text = "카드가 없어요. 프로젝트 → 도구 → 카드 가져오기... 로 먼저 가져오세요."
+
+[node name="SectionTitleTemplate" type="Label" parent="." unique_id=402037370]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.11372549, 0.105882354, 0.14117648, 1)
+text = "덱 이름 (0)"
+
+[node name="CardRowTemplate" type="HFlowContainer" parent="." unique_id=543633597]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 16

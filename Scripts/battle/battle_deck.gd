@@ -12,12 +12,16 @@ extends RefCounted
 ## - 보스는 덱을 섞지 않고 정해진 순서대로 1장씩 쓴다. 끝까지 쓰면 처음으로 돌아간다.
 ## - 모든 섞기는 전투의 난수(battle.rng)를 쓴다 → 같은 시드면 같은 결과.
 
-## 이 덱 규칙이 속한 전투
-var battle
+## 이 덱 규칙이 속한 전투. Battle 이 이 객체를 들고 있으므로 거꾸로는 약한 참조(WeakRef)로 둔다 —
+## 서로 강하게 붙잡으면 RefCounted 가 메모리에서 풀리지 않는다 (코드 리뷰 2026-11-17).
+var battle:
+	get:
+		return _battle.get_ref() if _battle else null
+var _battle: WeakRef
 
 
 func _init(owner_battle) -> void:
-	battle = owner_battle
+	_battle = weakref(owner_battle)
 
 
 ## 전투 시작 준비: 덱을 의뢰 덱(run_deck)에서 복사해 섞고(의뢰 덱은 그대로), 손패·버린 더미·제외 더미를 비운다.

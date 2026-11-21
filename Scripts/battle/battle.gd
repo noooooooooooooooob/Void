@@ -3,13 +3,7 @@ extends RefCounted
 ## 전투 하나. 유닛·격자·이벤트·난수를 갖고, 피해·회복·방어도·상태 처리 규칙을 실행한다.
 ## 화면(씬) 없이 동작하는 순수 로직이라 테스트에서 바로 만들어 쓸 수 있다.
 ##
-## 이 파일은 구현 계획의 Task 4~10 에 걸쳐 섹션별로 채워진다.
-##   Task 4: 격자, 피해, 회복, 방어도, 상태 API
-##   Task 6: 카드 사용 (조건, 비용, 대상, 대체, 소멸→제외)
-##   Task 7: 덱과 턴 진행 (행동마다 속도, 즉시 재정렬, 드로우, 방어도 초기화, 전투 종료)
-##   Task 8: 상태 트리거 구독·해제, 패시브 적용, 장비 트리거 연결 (장비 스탯은 유닛 생성 시부터 항상)
-##   Task 9: 이동 (규칙은 battle_movement.gd)
-##   Task 10: 적 행동 (규칙은 enemy_ai.gd), 보스 순서 드로우
+## 섹션: 전투·라운드·차례 진행 / 덱 / 격자 / 적 / 이동 / 카드 / 피해·회복·방어도 / 아이템 / 상태 / 사망
 ## 덱 규칙(준비·드로우·섞기)은 battle_deck.gd, 카드 사용 규칙은 battle_card_play.gd 로 분리 (2026-11-05)
 ## 규칙 출처: docs/superpowers/specs/2026-11-03-card-effect-system-design.md (3장, 4장)
 ##
@@ -58,7 +52,7 @@ var grid_cols := {
 ## units: 참여 유닛들. 배열 순서가 initial_index 가 된다 (속도가 같을 때 순서 기준).
 ## battle_seed: 난수 시드. 0 이어도 고정 시드로 동작한다(테스트 재현용).
 ## rows / ally_cols / enemy_cols: 이 전투의 격자 크기. 생략하면 기본 3행 × 4열.
-## (전투 데이터에서 크기를 정해 넘겨 준다 — 전투 데이터 리소스는 나중에 만든다)
+## (BattleSession 이 BattleData 의 격자 크기를 넘겨 준다)
 func _init(battle_units: Array[BattleUnit], battle_seed: int = 0,
 		rows: int = BattleTypes.DEFAULT_GRID_ROWS,
 		ally_cols: int = BattleTypes.DEFAULT_GRID_COLS,
@@ -441,7 +435,7 @@ func lose_hp(target: BattleUnit, amount: int, source = null) -> void:
 		_on_unit_died(target)
 
 
-## target 이 방어도(쉴드)를 amount 만큼 얻는다. 방어도는 라운드 시작 시 초기화된다(Task 7).
+## target 이 방어도(쉴드)를 amount 만큼 얻는다. 방어도는 라운드 시작 시 초기화된다.
 func add_block(target: BattleUnit, amount: int, source = null) -> void:
 	if amount <= 0 or target == null or not target.alive:
 		return

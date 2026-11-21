@@ -49,15 +49,11 @@ static func _from_index(dir: String, id: String) -> KeywordData:
 
 
 ## 폴더의 키워드 파일을 모두 읽어 { id: 경로 } 표를 만든다.
-## 내보낸 게임에서는 파일 이름 끝에 .remap 이 붙으므로 떼고 읽는다.
+## (.remap 처리는 ResDir.tres_paths 가 한다)
 static func _scan(dir: String) -> Dictionary:
 	var out := {}
-	for f in DirAccess.get_files_at(dir):
-		var file := f.trim_suffix(".remap")
-		if file.get_extension() != "tres":
-			continue
-		var path := dir.path_join(file)
+	for path in ResDir.tres_paths(dir):
 		var kw := load(path) as KeywordData
 		if kw:
-			out[kw.id if not kw.id.is_empty() else file.get_basename()] = path
+			out[kw.id if not kw.id.is_empty() else path.get_file().get_basename()] = path
 	return out

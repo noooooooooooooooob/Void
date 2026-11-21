@@ -46,6 +46,8 @@ extends Control
 @export var test_items: Array[ConsumableData] = []
 ## 의뢰의 일반 전투에서 이겼을 때 소비 아이템 1개가 나올 확률 (0 ~ 1, 전투 공통 값). 보스·시험 전투는 드랍 없음
 @export_range(0.0, 1.0) var item_drop_chance := 0.4
+## 의뢰의 일반 전투에서 이겼을 때 카드 보상으로 보여 줄 후보 장수 (그중 1장을 고른다). 보스·시험 전투는 카드 보상 없음
+@export var card_reward_count := 3
 
 @export_group("피격 반응 (공통값)")
 ## hit 때 대상 위치에 띄우는 이펙트 씬 (한 번 재생하고 스스로 지워지는 씬). 비우면 이펙트 없음. 카드 연출 씬의 hit_effect 가 있으면 그것
@@ -60,8 +62,11 @@ extends Control
 @export var shake_time := 0.2
 ## 효과음 음높이를 매번 이만큼(비율) 안에서 무작위로 바꾼다 (0.08 = ±8%)
 @export var pitch_jitter := 0.08
-## 히트스톱: hit 순간 연출(공격자·이펙트·이동)과 대상 그림을 함께 멈추는 시간 (초). 카드 연출 씬의 hitstop_time 이 0 이상이면 그것
-@export var hitstop_time := 0.07
+## 히트스톱: hit 순간 연출(공격자·이펙트·이동)과 대상 그림을 함께 느리게 하는 시간 (초). 카드 연출 씬의 hitstop_time 이 0 이상이면 그것
+## (2026-11-21 사용자 결정: 정지 대신 슬로우모션)
+@export var hitstop_time := 0.15
+## 히트스톱 동안의 배속 (0 = 정지, 0.2 = 5배 느리게). 카드 연출 씬의 hitstop_speed 가 0 이상이면 그것
+@export var hitstop_speed := 0.2
 ## 피격 번쩍임: hit 순간 대상 그림을 이 색(1 보다 크면 하얗게 빛남)으로 했다가 flash_time 초 동안 원래 색으로
 @export var flash_color := Color(3, 3, 3)
 ## 피격 번쩍임이 사라지는 시간 (초)
@@ -85,8 +90,11 @@ extends Control
 ## 치명타 피해 숫자 크기 배율
 @export var crit_number_scale := 1.3
 ## 치명타가 있으면 결과 표시 때 화면을 hit_shake × 이 값으로 한 번 더 흔든다
+## (hit_shake 등은 카드별 값이 있으면 그것 — 2026-11-21)
 @export var crit_shake_boost := 1.3
-## 쓰러뜨린 결과면 결과 표시 때 화면 흔들림·히트스톱을 공통값 × 이 값으로 한 번 더
+## 치명타가 있으면 결과 표시 때 히트스톱 슬로우모션을 hitstop_time × 이 값 동안 한 번 더 (2026-11-21)
+@export var crit_hitstop_boost := 1.3
+## 쓰러뜨린 결과면 결과 표시 때 화면 흔들림·히트스톱 슬로우모션을 (카드별 값 또는 공통값) × 이 값으로 한 번 더
 @export var kill_boost := 1.8
 
 const GRID_CELL := preload("res://Scenes/ui/battle_screen/grid_cell.tscn")
@@ -95,6 +103,8 @@ const TURN_PORTRAIT := preload("res://Scenes/ui/battle_screen/turn_portrait.tscn
 const STATUS_ROW := preload("res://Scenes/ui/battle_screen/unit_status_row.tscn")
 const FLOAT_NUMBER := preload("res://Scenes/ui/battle_screen/float_number.tscn")
 const CARD_VIEW := preload("res://Scenes/ui/card_view/card_view.tscn")
+## 카드 보상 후보 한 칸의 틀 (상점과 같은 칸: CardView %Card + Button %Button)
+const CARD_OFFER := preload("res://Scenes/ui/shop_screen/shop_card_offer.tscn")
 
 ## 지금 진행 중인 세션
 var session: BattleSession
@@ -106,8 +116,10 @@ var selected_index := -1
 var selected_item := -1
 ## 드랍 후보 아이템 폴더 (이 폴더의 소비 아이템 중 하나가 같은 확률로 나온다). 테스트에서 바꾼다.
 var drop_pool_dir := StageRun.ITEM_DIR
-## 결과 창에서 아직 정하지 않은 드랍 아이템 (받기·바꾸기·넘어가기 전). 없으면 null
-var pending_drop: ConsumableData = null
+## 카드 보상 후보 폴더 (하위 폴더 포함, 파티 캐릭터의 카드만 후보). 테스트에서 바꾼다.
+var card_pool_dir := CardPool.DEFAULT_DIR
+## 이번 승리의 보상 (결과 창 보상 목록). 의뢰 전투에서 이겼을 때만 있고, 패배·시험 전투는 null
+var reward: BattleReward = null
 
 # --- 씬의 노드 ---
 @onready var _bg_layer: Control = %BackgroundLayer
@@ -135,12 +147,21 @@ var pending_drop: ConsumableData = null
 @onready var _result_label: Label = %ResultLabel
 @onready var _restart_button: Button = %RestartButton
 @onready var _drop_box: Control = %DropBox
-@onready var _drop_label: Label = %DropLabel
+@onready var _drop_label: Label = %DropLabel    # 바꿀 칸 고르기 안내 (받을 아이템 이름 포함)
 @onready var _drop_slots: HBoxContainer = %DropSlots
-@onready var _take_button: Button = %TakeButton
+@onready var _reward_list: VBoxContainer = %RewardList     # 결과 창 보상 목록
+@onready var _reward_template: Button = %RewardTemplate     # 보상 한 줄의 틀 (숨김, 복제해서 쓴다)
+@onready var _card_pick: Control = %CardPick                # 카드 보상 고르기 창
+@onready var _card_pick_row: HBoxContainer = %CardPickRow   # 카드 후보 칸들
+@onready var _card_pick_skip: Button = %CardPickSkip        # 카드 고르기 창 닫기 (보상 줄은 남음)
+@onready var _result_box: Control = $ResultOverlay/Box       # 결과 글자·보상 목록·계속 버튼 묶음 (카드 고르기 창이 열리면 숨김)
 @onready var _skip_button: Button = %SkipButton
 @onready var _enemy_timer: Timer = %EnemyTimer
 @onready var _perf_layer: Control = %PerformanceLayer
+## 연출 카메라가 움직이는 월드 묶음 (배경·격자). UI 는 여기에 없어서 고정된다
+@onready var _world: Control = %World
+## 연출 카메라가 움직이는 앞쪽 월드 묶음 (연출·숫자 레이어). World 와 같은 변환을 받는다 — 그리기 순서를 지키려고 둘로 나눔
+@onready var _world_front: Control = %WorldFront
 @onready var _queue: PerformanceQueue = %PerformanceQueue
 @onready var _hit_sound: AudioStreamPlayer = %HitSound
 
@@ -159,6 +180,12 @@ var _recorder: PerformanceRecorder  # 이번 전투의 이벤트 → 연출 단�
 var _pending_winner := -1  # 연출 중에 전투가 끝났으면 이긴 편 (연출이 끝나면 결과 창). 없으면 -1
 var _lifts: Array[float] = []  # 손패 카드마다 떠오른 정도 (0 = 내려감, 1 = 다 떠오름). 손패를 다시 깔아도 번호로 이어진다
 var _zoom_tween: Tween  # 지금 돌아오는 중인 줌 펀치 (줌이 겹치면 앞의 것을 멈추려고 기억)
+var _cam_perf: CardPerformance  # 마지막으로 카메라를 따라간 연출
+var _cam_following := false  # 연출 카메라를 따라가는 중인지 (연출이 지워지면 _cam_perf 가 null 처럼 보여서 따로 기억)
+var _cam0 := Transform2D.IDENTITY  # 그 연출의 시작 카메라 자세
+var _cam_base := Transform2D.IDENTITY  # 그 연출이 시작할 때의 월드 변환 (앞 연출이 덜 돌아왔어도 튀지 않게)
+var _cam_return := 0.2  # 그 연출이 끝난 뒤 카메라가 돌아오는 시간 (초)
+var _cam_tween: Tween  # 카메라 복귀 tween
 var _fx_rng := RandomNumberGenerator.new()  # 흔들림·음높이·아이템 드랍 판정용 난수. 전투 rng 와 따로 (전투 결과 재현에 영향 없게)
 
 
@@ -170,9 +197,11 @@ func _ready() -> void:
 	_bag_panel.item_released.connect(_on_item_released)
 	_bag_panel.discard_requested.connect(_on_item_discard)
 	_bag_panel.visible = false
-	# 결과 창의 드랍: 받기 / 넘어가기 / (가방이 가득 찼을 때) 바꿀 칸 누르기
-	_take_button.pressed.connect(take_drop)
+	# 결과 창의 보상: 가방이 가득 찼을 때 바꿀 칸 누르기 / 취소, 카드 고르기 창 넘어가기
 	_skip_button.pressed.connect(skip_drop)
+	_card_pick_skip.pressed.connect(close_card_pick)
+	_reward_template.visible = false
+	_card_pick.visible = false
 	for i in _drop_slots.get_child_count():
 		var slot := _drop_slots.get_child(i) as ItemSlot
 		slot.index = i
@@ -327,6 +356,13 @@ func select_item(index: int) -> bool:
 
 ## 취소 (우클릭 / ESC). 순서: 이동 모드 → 고른 아이템 → (고른 카드가 없으면) 열린 가방 닫기 → 고른 카드 내려놓기.
 func cancel() -> void:
+	# 결과 창: 카드 고르기 창 → 바꿀 칸 고르기 순서로 닫는다 (보상 줄은 남음)
+	if _card_pick.visible:
+		close_card_pick()
+		return
+	if _drop_box.visible:
+		skip_drop()
+		return
 	if _move_mode:
 		_move_mode = false
 		refresh()
@@ -357,33 +393,77 @@ func press_end_turn() -> void:
 	session.end_player_turn()
 
 
-## 드랍 받기: 가방에 빈 칸이 있을 때만 넣는다 (가득 찼으면 아무것도 하지 않음 — 바꿀 칸을 눌러야 한다).
-func take_drop() -> void:
-	if pending_drop == null or not session.inventory.add(pending_drop):
+## 보상 줄 "공허 조각": 의뢰 지갑에 넣는다 (한 번만).
+func click_shards() -> void:
+	if reward and reward.claim_shards(StageRun.wallet):
+		_draw_rewards()
+		_focus_result()   # 누른 줄이 사라져도 키보드 포커스가 남게
+
+
+## 보상 줄 "아이템": 가방에 빈 칸이 있으면 바로 넣고, 가득 찼으면 바꿀 칸 고르기(DropBox)를 연다.
+func click_item() -> void:
+	if reward == null or reward.item == null:
 		return
-	_close_drop()
+	if reward.claim_item(session.inventory):
+		_close_drop()
+	else:
+		_show_swap()
 
 
-## 가방이 가득 찼을 때: index 칸의 아이템을 버리고 드랍으로 바꾼다.
+## 가방이 가득 찼을 때: index 칸의 아이템을 버리고 보상 아이템으로 바꾼다.
 func swap_drop(index: int) -> void:
-	if pending_drop == null or not session.inventory.replace(index, pending_drop):
+	if reward == null or not reward.swap_item(session.inventory, index):
 		return
 	_close_drop()
 
 
-## 드랍을 받지 않고 넘어간다.
+## 바꿀 칸 고르기 취소: 아이템 보상 줄은 그대로 남는다.
 func skip_drop() -> void:
-	if pending_drop == null:
-		return
 	_close_drop()
 
 
-## 드랍을 정했다: 드랍 구역을 닫고 결과 버튼("계속")을 보인다.
+## 보상 줄 "카드 추가": 카드 후보(승리 때 정한 그대로) 고르기 창을 연다.
+## 칸 하나 = 상점 카드 칸 틀(shop_card_offer.tscn: 카드 + 버튼). 버튼 = "<주인> 덱에 추가"
+## 창이 열린 동안은 결과 묶음(계속·다른 보상 줄·바꿀 칸)을 숨겨, 고르거나 넘어가기 전에는 다른 것을 누를 수 없게 한다.
+func open_card_pick() -> void:
+	if reward == null or reward.cards.is_empty():
+		return
+	_drop_box.visible = false
+	_result_box.visible = false
+	for c in _card_pick_row.get_children():
+		_card_pick_row.remove_child(c)
+		c.queue_free()
+	for i in reward.cards.size():
+		var offer := CARD_OFFER.instantiate()
+		_card_pick_row.add_child(offer)
+		(offer.get_node("%Card") as CardView).set_card(reward.cards[i])
+		var button: Button = offer.get_node("%Button")
+		button.text = reward.card_owners[i].data.display_name + " 덱에 추가"
+		button.pressed.connect(pick_card.bind(i))
+	_card_pick.visible = true
+	(_card_pick_row.get_child(0).get_node("%Button") as Button).grab_focus()
+
+
+## 카드 후보 index 를 골라 주인의 의뢰 덱에 넣고 창을 닫는다.
+func pick_card(index: int) -> void:
+	if reward and reward.claim_card(index):
+		close_card_pick()
+
+
+## 카드 고르기 창을 닫는다. 고르지 않았으면 카드 보상 줄은 남는다 (다시 열면 같은 후보).
+func close_card_pick() -> void:
+	_card_pick.visible = false
+	_result_box.visible = true
+	_draw_rewards()
+	_focus_result()
+
+
+## 바꿀 칸 고르기 구역을 닫고 보상 목록·가방을 다시 그린다.
 func _close_drop() -> void:
-	pending_drop = null
-	_draw_drop()
+	_drop_box.visible = false
+	_draw_rewards()
 	_draw_bag()
-	_restart_button.grab_focus()
+	_focus_result()
 
 
 ## "다시 하기": 같은 전투 데이터로 새 전투 (시드 +1).
@@ -412,8 +492,11 @@ func _start(s: BattleSession) -> void:
 	_pending_winner = -1
 	_log_texts.clear()
 	_result.visible = false
-	pending_drop = null
-	_draw_drop()
+	reward = null
+	_drop_box.visible = false
+	_card_pick.visible = false
+	_result_box.visible = true
+	_draw_rewards()
 	_build_board()
 	_recorder = PerformanceRecorder.new(session.battle)
 	session.changed.connect(_on_changed)
@@ -559,43 +642,51 @@ func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 	var snd: AudioStream = perf.hit_sound if perf.hit_sound else hit_sound
 	var screen := perf.hit_shake if perf.hit_shake >= 0.0 else hit_shake
 	var stop := perf.hitstop_time if perf.hitstop_time >= 0.0 else hitstop_time
+	var slow := perf.hitstop_speed if perf.hitstop_speed >= 0.0 else hitstop_speed
 	var push := perf.knockback if perf.knockback >= 0.0 else knockback
+	var push_back := perf.knockback_return if perf.knockback_return >= 0.0 else knockback_return
+	var unit_shake := perf.hit_unit_shake if perf.hit_unit_shake >= 0.0 else hit_unit_shake
+	var s_time := perf.shake_time if perf.shake_time >= 0.0 else shake_time
+	var f_color := perf.flash_color if perf.flash_color.a > 0.0 else flash_color
+	var f_time := perf.flash_time if perf.flash_time >= 0.0 else flash_time
+	var jitter := perf.pitch_jitter if perf.pitch_jitter >= 0.0 else pitch_jitter
 	var from: UnitToken = _tokens.get(step.actor)
 	# 1. 대상마다: 캐릭터 그림·UI 흔들림, 대상 위치에 이펙트
 	for u in step.hit_targets():
 		var t: UnitToken = _tokens.get(u)
 		if t == null:
 			continue
-		Shaker.shake(t.sprite(), hit_unit_shake, shake_time, _fx_rng)
-		Shaker.shake(t.ui_box(), hit_unit_shake, shake_time, _fx_rng)
-		_flash(t.sprite())
+		Shaker.shake(t.sprite(), unit_shake, s_time, _fx_rng)
+		Shaker.shake(t.ui_box(), unit_shake, s_time, _fx_rng)
+		_flash(t.sprite(), f_color, f_time)
+		t.play_hit()
 		if from and u != step.actor:
-			_knockback(t.sprite(), signf(t.get_global_rect().get_center().x - from.get_global_rect().get_center().x), push)
+			_knockback(t.sprite(), signf(t.get_global_rect().get_center().x - from.get_global_rect().get_center().x), push, push_back)
 		if fx:
 			var e: Node = fx.instantiate()
 			_perf_layer.add_child(e)
 			if e is Node2D or e is Control:
 				e.global_position = t.get_global_rect().get_center()
 	# 2. 화면 전체 흔들림
-	Shaker.shake(self, screen, shake_time, _fx_rng)
+	Shaker.shake(self, screen, s_time, _fx_rng)
 	# 3. 효과음 (음높이는 매번 조금씩 다르게)
 	if snd:
 		_hit_sound.stream = snd
-		_hit_sound.pitch_scale = 1.0 + _fx_rng.randf_range(-pitch_jitter, pitch_jitter)
+		_hit_sound.pitch_scale = 1.0 + _fx_rng.randf_range(-jitter, jitter)
 		_hit_sound.play()
-	# 4. 히트스톱 (공격자만 멈추면 어색하므로 대상 그림도 함께)
-	_hitstop(perf, step.hit_targets(), stop)
+	# 4. 히트스톱 슬로우모션 (공격자만 느려지면 어색하므로 대상 그림도 함께)
+	_hitstop(perf, step.hit_targets(), stop, slow)
 
 
-## 피격 번쩍임: 그림을 flash_color 로 했다가 flash_time 초 동안 원래 색(흰색)으로
-func _flash(sprite: CanvasItem) -> void:
-	sprite.modulate = flash_color
-	sprite.create_tween().tween_property(sprite, "modulate", Color.WHITE, flash_time)
+## 피격 번쩍임: 그림을 color 로 했다가 time 초 동안 원래 색(흰색)으로 (값은 _on_hit 이 공통값/카드별 값으로 정함)
+func _flash(sprite: CanvasItem, color: Color, time: float) -> void:
+	sprite.modulate = color
+	sprite.create_tween().tween_property(sprite, "modulate", Color.WHITE, maxf(time, 0.001))
 
 
-## 넉백: 그림을 dir(+1 오른쪽 / −1 왼쪽) 쪽으로 dist 픽셀 밀었다가 knockback_return 초 동안 제자리로.
+## 넉백: 그림을 dir(+1 오른쪽 / −1 왼쪽) 쪽으로 dist 픽셀 밀었다가 back 초 동안 제자리로.
 ## 흔들림(position)과 겹쳐도 되게 그림의 offset 을 움직인다. 겹친 넉백도 원래 offset 으로 돌아온다.
-func _knockback(sprite: AnimatedSprite2D, dir: float, dist: float) -> void:
+func _knockback(sprite: AnimatedSprite2D, dir: float, dist: float, back: float) -> void:
 	if dist <= 0.0 or dir == 0.0:
 		return
 	var home: Vector2 = sprite.get_meta(&"_kb_home", sprite.offset)
@@ -605,7 +696,7 @@ func _knockback(sprite: AnimatedSprite2D, dir: float, dist: float) -> void:
 	var sx := absf(sprite.global_scale.x) if sprite.global_scale.x != 0.0 else 1.0
 	sprite.offset = home + Vector2(dir * dist / sx, 0)
 	var tw := sprite.create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
-	tw.tween_property(sprite, "offset", home, knockback_return)
+	tw.tween_property(sprite, "offset", home, maxf(back, 0.001))
 	tw.finished.connect(func():
 		var n := int(sprite.get_meta(&"_kb_count", 1)) - 1
 		sprite.set_meta(&"_kb_count", n)
@@ -615,29 +706,30 @@ func _knockback(sprite: AnimatedSprite2D, dir: float, dist: float) -> void:
 			sprite.remove_meta(&"_kb_count"))
 
 
-## 연출 씬·이동·대상 그림을 time 초 동안 멈췄다가 다시 움직인다. UI·타이머·흔들림은 멈추지 않는다
-## (Engine.time_scale 을 쓰지 않는 이유).
-func _hitstop(perf: CardPerformance, targets: Array[BattleUnit], time: float) -> void:
+## 연출 씬·이동·대상 그림을 time 초 동안 speed 배속으로 느리게(0 이면 멈춤) 했다가 보통 속도로 되돌린다.
+## UI·타이머·흔들림은 느려지지 않는다 (Engine.time_scale 을 쓰지 않는 이유).
+func _hitstop(perf: CardPerformance, targets: Array[BattleUnit], time: float, speed := 0.0) -> void:
 	if time <= 0.0:
 		return
 	var sprites: Array[AnimatedSprite2D] = []
 	for u in targets:
 		if _tokens.has(u):
 			sprites.append(_tokens[u].sprite())
-	var tw := _queue.move_tween if _queue.current_performance() == perf else null
-	# 멈춤은 노드마다 센다: 겹친 히트스톱이 있어도 각 노드는 자기를 멈춘 히트스톱이 다 끝날 때 풀린다
+	var tw := _queue.return_tween if _queue.current_performance() == perf else null
+	# 느리게 하기는 노드마다 센다: 겹친 히트스톱이 있어도 각 노드는 자기를 느리게 한 히트스톱이 다 끝날 때 풀린다
+	speed = maxf(speed, 0.0)
 	if _hold(perf):
-		perf.set_paused(true)
+		perf.set_speed(speed)
 		if tw and tw.is_valid():
-			tw.pause()
+			tw.set_speed_scale(speed)
 	for sp in sprites:
 		if _hold(sp):
-			sp.speed_scale = 0.0
+			sp.speed_scale = speed
 	await get_tree().create_timer(time).timeout
 	if is_instance_valid(perf) and _release(perf):
-		perf.set_paused(false)
+		perf.set_speed(1.0)
 		if tw and tw.is_valid():
-			tw.play()
+			tw.set_speed_scale(1.0)
 	for sp in sprites:
 		if is_instance_valid(sp) and _release(sp):
 			sp.speed_scale = 1.0
@@ -682,15 +774,24 @@ func number_scale(amount: int, max_hp: int, crit: bool) -> float:
 	return s * crit_number_scale if crit else s
 
 
-## 쓰러뜨린 결과·치명타 결과 강조: 화면 흔들림(+히트스톱) 한 번 더
+## 쓰러뜨린 결과·치명타 결과 강조: 화면 흔들림 + 히트스톱 슬로우모션 한 번 더 (2026-11-21 사용자 결정).
+## 기준값은 재생 중인 연출 씬의 카드별 값이 있으면 그것, 없으면 공통값 (hit 때와 같은 규칙)
 func _emphasize(step: PerformanceStep) -> void:
 	var perf := _queue.current_performance()
+	var screen := perf.hit_shake if perf and perf.hit_shake >= 0.0 else hit_shake
+	var s_time := perf.shake_time if perf and perf.shake_time >= 0.0 else shake_time
+	var stop := perf.hitstop_time if perf and perf.hitstop_time >= 0.0 else hitstop_time
+	var slow := perf.hitstop_speed if perf and perf.hitstop_speed >= 0.0 else hitstop_speed
+	# 1. 쓰러뜨림: 흔들림 세기·시간, 슬로우모션 시간 모두 kill_boost 배 (쓰러뜨림과 치명타가 겹치면 쓰러뜨림만)
 	if not step.killed().is_empty():
-		Shaker.shake(self, hit_shake * kill_boost, shake_time * kill_boost, _fx_rng)
+		Shaker.shake(self, screen * kill_boost, s_time * kill_boost, _fx_rng)
 		if perf:
-			_hitstop(perf, step.hit_targets(), hitstop_time * kill_boost)
+			_hitstop(perf, step.hit_targets(), stop * kill_boost, slow)
+	# 2. 치명타: 흔들림 세기 crit_shake_boost 배, 슬로우모션 시간 crit_hitstop_boost 배
 	elif not step.crit_targets().is_empty():
-		Shaker.shake(self, hit_shake * crit_shake_boost, shake_time, _fx_rng)
+		Shaker.shake(self, screen * crit_shake_boost, s_time, _fx_rng)
+		if perf:
+			_hitstop(perf, step.hit_targets(), stop * crit_hitstop_boost, slow)
 
 
 ## 이벤트 하나를 떠오르는 숫자·전투 기록·라운드 번호로 보여 준다. pop_damage 가 false 면 피해 숫자는 안 띄운다.
@@ -772,37 +873,80 @@ func _show_result(winner: int) -> void:
 	# 의뢰 전투: 이기면 지도로 계속, 지면 의뢰 실패 → 시작 화면 (CLAUDE.md 의뢰 스테이지 규칙)
 	if _stage_mode:
 		_restart_button.text = "계속" if _won else "처음으로"
-	# 공허 조각: 의뢰 전투에서 이기면 전투 데이터의 보상만큼 (일반·보스 모두, 상점 설계 2026-11-17)
-	if _stage_mode and _won and battle_data:
-		StageRun.wallet.add(battle_data.shard_reward)
-		_result_label.text += "\n공허 조각 +%d" % battle_data.shard_reward
-	# 드랍 판정: 의뢰의 일반 전투에서 이겼을 때만 (보스는 이기면 의뢰가 끝나므로 없음, 시험 전투도 없음).
-	# 난수는 전투 난수(Battle.rng)가 아니라 화면용 난수 — 같은 시드의 전투 결과가 드랍 때문에 달라지지 않게.
-	pending_drop = null
-	if _stage_mode and _won and not StageRun.is_boss_battle():
-		pending_drop = StageRun.roll_item_drop(item_drop_chance, StageRun.item_pool(drop_pool_dir), _fx_rng)
-	_draw_drop()
+	# 보상: 의뢰 전투에서 이겼을 때만. 결과 창의 보상 줄을 눌러야 챙겨지고, "계속"을 누르면 안 챙긴 건 사라진다
+	reward = _roll_reward() if _stage_mode and _won else null
+	_drop_box.visible = false
+	_card_pick.visible = false
+	_result_box.visible = true
+	_draw_rewards()
 	_result.visible = true
-	if pending_drop == null:
-		_restart_button.grab_focus()
+	_focus_result()
 
 
-## 결과 창의 드랍 구역을 그린다. 드랍을 정하기 전에는 결과 버튼("계속")을 숨긴다.
-## 빈 칸이 있으면 받기 / 넘어가기, 가방이 가득 찼으면 바꿀 칸(가방 5칸) / 넘어가기.
-func _draw_drop() -> void:
-	var has := pending_drop != null
-	_drop_box.visible = has
-	_restart_button.visible = not has
-	if not has:
+## 이번 승리의 보상을 정한다 (전투 보상 설계 2026-11-19).
+## - 공허 조각: 전투 데이터의 shard_reward (일반·보스 모두)
+## - 아이템: 일반 전투만, item_drop_chance 확률로 후보 중 하나
+## - 카드: 일반 전투만, 살아 있는 파티원의 카드 중 card_reward_count 장 (상점과 같은 규칙)
+## 보스는 이기면 의뢰가 끝나므로 아이템·카드 없음.
+## 난수는 전투 난수(Battle.rng)가 아니라 화면용 난수 — 같은 시드의 전투 결과가 보상 때문에 달라지지 않게.
+func _roll_reward() -> BattleReward:
+	var shards := battle_data.shard_reward if battle_data else 0
+	var drop: ConsumableData = null
+	var cards: Array[CardData] = []
+	var owners: Array[BattleUnit] = []
+	if not StageRun.is_boss_battle():
+		drop = StageRun.roll_item_drop(item_drop_chance, StageRun.item_pool(drop_pool_dir), _fx_rng)
+		var picked := CardPool.pick_party_cards(StageRun.living_party(), CardPool.load_all(card_pool_dir),
+				card_reward_count, _fx_rng)
+		cards.assign(picked.cards)
+		owners.assign(picked.owners)
+	return BattleReward.new(shards, drop, cards, owners)
+
+
+## 결과 창의 보상 목록을 남은 보상만큼 다시 그린다 (줄 = RewardTemplate 복제).
+## 줄 순서: 공허 조각 → 아이템 → 카드 추가. 남은 보상이 없으면 목록을 숨긴다.
+func _draw_rewards() -> void:
+	for c in _reward_list.get_children():
+		if c != _reward_template:
+			_reward_list.remove_child(c)
+			c.queue_free()
+	_reward_list.visible = reward != null and not reward.is_empty()
+	if not _reward_list.visible:
 		return
-	var full := session.inventory.is_full()
-	_drop_label.text = "아이템 획득: " + pending_drop.display_name + (" (가방이 가득 참)" if full else "")
-	_take_button.visible = not full
-	_drop_slots.visible = full
-	if full:
-		var items := session.inventory.items
-		for i in _drop_slots.get_child_count():
-			(_drop_slots.get_child(i) as ItemSlot).set_item(items[i] if i < items.size() else null)
+	if reward.shards > 0:
+		_add_reward_row("공허 조각 %d" % reward.shards, click_shards)
+	if reward.item:
+		_add_reward_row("아이템: " + reward.item.display_name, click_item)
+	if not reward.cards.is_empty():
+		_add_reward_row("카드 추가", open_card_pick)
+
+
+## 결과 창의 키보드 포커스: 남은 보상 줄이 있으면 첫 줄, 없으면 "계속" 버튼.
+## 스페이스/엔터 한 번에 "계속"이 눌려 안 챙긴 보상이 사라지지 않게 한다 (코드 리뷰 2026-11-19).
+func _focus_result() -> void:
+	for row in _reward_list.get_children():
+		if row != _reward_template and row.visible and _reward_list.visible:
+			(row as Button).grab_focus()
+			return
+	_restart_button.grab_focus()
+
+
+## 보상 줄 하나를 만든다: 템플릿을 복제해 글자를 넣고, 누르면 action 을 부른다.
+func _add_reward_row(text: String, action: Callable) -> void:
+	var row := _reward_template.duplicate() as Button
+	row.text = text
+	row.visible = true
+	row.pressed.connect(action)
+	_reward_list.add_child(row)
+
+
+## 가방이 가득 찼을 때 바꿀 칸 고르기 구역을 연다 (가방 5칸을 보여 준다).
+func _show_swap() -> void:
+	_drop_label.text = "가방이 가득 찼어요 — [%s] 대신 버릴 칸을 고르세요" % reward.item.display_name
+	var items := session.inventory.items
+	for i in _drop_slots.get_child_count():
+		(_drop_slots.get_child(i) as ItemSlot).set_item(items[i] if i < items.size() else null)
+	_drop_box.visible = true
 
 
 ## 결과 창 버튼: 의뢰 전투면 지도로(승리)/시작 화면으로(패배), 아니면 "다시 하기"
@@ -1054,9 +1198,54 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	_update_camera()
 	if selected or selected_item >= 0:
 		_update_arrow()
 	_update_hand_lift(delta, _hand_index_under(get_global_mouse_position()))
+
+
+## 연출 카메라 (설계 docs/superpowers/specs/2026-11-19-performance-timeline-design.md 3장):
+## 재생 중인 연출에 Camera 가 있으면 시작 자세 대비 지금 자세만큼 월드 묶음을 움직이고,
+## perform 이 끝나면(행위자 복귀와 함께) return_time 동안 원래대로 돌린다. Camera 가 없는 연출은 월드를 건드리지 않는다.
+func _update_camera() -> void:
+	var perf := _queue.current_performance()
+	if perf and perf.has_camera() and perf != _cam_perf:
+		_cam_perf = perf
+		_cam_following = true
+		_cam0 = perf.camera_xform()
+		_cam_base = _world.get_transform()
+		_cam_return = perf.return_time if perf.return_time >= 0.0 else _queue.default_return_time
+		if _cam_tween and _cam_tween.is_valid():
+			_cam_tween.kill()
+		perf.done.connect(_return_camera, CONNECT_ONE_SHOT)
+	if not _cam_following:
+		return
+	if perf == null or perf != _cam_perf:
+		_return_camera()
+		return
+	# 연출 루트 좌표 → 월드 묶음 좌표 (WorldFront 기준이라 월드 자신의 변환이 섞이지 않는다)
+	var t := _world_front.get_global_transform().affine_inverse() * perf.get_global_transform()
+	_set_world_xform(_cam_base * CameraMath.world_xform(t, _cam0, perf.camera_xform()))
+
+
+## 카메라 따라가기를 멈추고 return_time 동안 월드를 원래대로 돌린다
+func _return_camera() -> void:
+	if not _cam_following:
+		return
+	_cam_following = false
+	var from := _world.get_transform()
+	_cam_tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	_cam_tween.tween_method(func(k: float): _set_world_xform(from.interpolate_with(Transform2D.IDENTITY, k)),
+		0.0, 1.0, maxf(_cam_return, 0.01))
+
+
+## 월드 묶음 둘(World·WorldFront)에 같은 변환을 넣는다
+func _set_world_xform(x: Transform2D) -> void:
+	for w: Control in [_world, _world_front]:
+		w.pivot_offset = Vector2.ZERO
+		w.position = x.origin
+		w.rotation = x.get_rotation()
+		w.scale = x.get_scale()
 
 
 ## 마우스 아래의 손패 카드 번호 (없으면 -1).
@@ -1162,10 +1351,13 @@ func _attack_type(card: CardData) -> String:
 	return session.battle.effective_card(session.active, card).attack_type if session.active else card.attack_type
 
 
+## 전투 기록에 쓸 "누가": 행위자 이름. 행위자가 없으면(상태·아이템으로 생긴 효과) 출처 이름을 괄호로.
 func _who(e: BattleEvent) -> String:
 	if e.actor:
 		return e.actor.data.display_name
-	return "(%s)" % (e.source.display_name if e.source is StatusData else "상태")
+	if e.source is StatusData or e.source is ConsumableData:
+		return "(%s)" % e.source.display_name
+	return "(상태)"
 
 
 func _pop(u: BattleUnit, text: String, color: Color, size_scale := 1.0) -> void:

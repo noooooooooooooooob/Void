@@ -72,3 +72,17 @@ func test_empty_message_when_no_cards():
 	var g := _gallery()
 	assert_eq(g.card_views().size(), 0)
 	assert_true(g.empty_label.visible)
+
+
+func test_sections_are_copies_of_scene_templates():
+	# 덱 제목·카드 줄은 씬의 틀(에디터에서 모양을 고침)을 복제한다. 틀은 숨겨져 있고 카드에 세지 않는다
+	_three_decks()
+	var g := _gallery()
+	var title_template: Label = g.get_node("%SectionTitleTemplate")
+	var row_template: HFlowContainer = g.get_node("%CardRowTemplate")
+	assert_false(title_template.visible)
+	assert_false(row_template.visible)
+	var titles := g.get_node("%Sections").get_children().filter(func(c): return c.has_meta("deck"))
+	assert_eq(titles.size(), 3)
+	assert_eq(titles[0].get_theme_font_size("font_size"), title_template.get_theme_font_size("font_size"))
+	assert_eq(g.card_views().size(), 4)

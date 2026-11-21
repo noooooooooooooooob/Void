@@ -158,3 +158,35 @@ func test_float_number_paths_vary():
 		ends.append(f)
 	await wait_seconds(0.4)
 	assert_ne(ends[0].position, ends[1].position)
+
+
+func test_unit_token_card_without_animation_stays_idle():
+	# 강화본이 아닌 카드(파일 자체)는 카드 폴더를 뒤지지 않고 그냥 넘어간다
+	var frames := SpriteFrames.new()
+	frames.add_animation(&"idle")
+	frames.add_frame(&"idle", PlaceholderTexture2D.new())
+	var u := _unit(A)
+	u.data.battle_frames = frames
+	var t: UnitToken = _scene("res://Scenes/ui/battle_screen/unit_token.tscn")
+	t.set_unit(u)
+	t.play_card_animation(CardData.new())
+	assert_eq(t.sprite().animation, &"idle")
+	assert_false(UnitToken.is_embedded_upgrade(CardData.new()))
+	assert_true(UnitToken.is_embedded_upgrade(load("res://cards/data/브람/돌주먹.tres").upgrades[0]))
+
+
+func test_unit_token_plays_upgraded_card_animation_from_base_outside_deck():
+	# 상점에서 산 뒤 강화한 카드: 원래 카드가 기본 덱에 없어도 원래 카드의 animation 을 쓴다
+	var base: CardData = load("res://cards/data/브람/돌주먹.tres")
+	var up: CardData = base.upgrades[0]
+	assert_eq(up.animation, &"", "강화본은 animation 칸이 비어 있어야 이 테스트가 의미 있다")
+	var frames := SpriteFrames.new()
+	frames.add_animation(base.animation)
+	frames.add_frame(base.animation, PlaceholderTexture2D.new())
+	frames.set_animation_loop(base.animation, false)
+	var u := _unit(A)
+	u.data.battle_frames = frames
+	var t: UnitToken = _scene("res://Scenes/ui/battle_screen/unit_token.tscn")
+	t.set_unit(u)
+	t.play_card_animation(up)
+	assert_eq(t.sprite().animation, base.animation)

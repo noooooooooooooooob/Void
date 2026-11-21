@@ -2,33 +2,78 @@
 
 [ext_resource type="Script" uid="uid://b60ttgo8hxj7t" path="res://Scripts/performances/card_performance.gd" id="1_2h47h"]
 [ext_resource type="SpriteFrames" uid="uid://ciiv4k826tf1k" path="res://entities/units/bram_frames.tres" id="2_gmvyg"]
+[ext_resource type="Texture2D" uid="uid://bb0r5siyvne7d" path="res://Art/characters/bram_welburn/bram_idle.png" id="2_j2uut"]
+[ext_resource type="AudioStream" uid="uid://cmxwffl8x7uoo" path="res://Audio/test.mp3" id="4_j2uut"]
 
-[sub_resource type="Animation" id="Animation_j2uut"]
+[sub_resource type="Animation" id="Animation_u6wrg"]
 length = 0.7
-tracks/0/type = "method"
+tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".")
+tracks/0/path = NodePath("Actor:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.15, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [Vector2(0, 0), Vector2(130, 0), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Actor:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [&"idle", &"punch", &"idle"]
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Camera:zoom:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(1, -0.05, 0, 0.1, 0, 1.15, -0.05, 0, 0.1, 0, 1, -0.1, 0, 0.05, 0),
+"times": PackedFloat32Array(0, 0.3, 0.7)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Camera:zoom:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(1, -0.05, 0, 0.1, 0, 1.15, -0.05, 0, 0.1, 0, 1, -0.1, 0, 0.05, 0),
+"times": PackedFloat32Array(0, 0.3, 0.7)
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
 "values": [{
-"args": [-120.0, 0.0, 0.15],
-"method": &"move"
-}, {
 "args": [],
 "method": &"hit"
 }]
 }
-tracks/1/type = "method"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
 "times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -36,40 +81,57 @@ tracks/1/keys = {
 "method": &"show_results"
 }]
 }
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Actor")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1),
-"values": [{
-"args": [&"idle"],
-"method": &"play"
-}, {
-"args": [&"punch"],
-"method": &"play"
-}, {
-"args": [&"idle"],
-"method": &"play"
-}]
+tracks/6/type = "audio"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("PunchSound")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("4_j2uut")
+}],
+"times": PackedFloat32Array(0.3)
 }
+tracks/6/use_blend = true
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_u6wrg"]
 _data = {
-&"perform": SubResource("Animation_j2uut")
+&"perform": SubResource("Animation_u6wrg")
 }
 
 [node name="BramStoneFist" type="Node2D" unique_id=1516994417]
 script = ExtResource("1_2h47h")
+hit_shake = 30.0
+hitstop_time = 0.5
+knockback = 100.0
+
+[node name="Home" type="Marker2D" parent="." unique_id=1514169718]
+
+[node name="Target" type="Marker2D" parent="." unique_id=1870636185]
+position = Vector2(180, 0)
+
+[node name="Preview" type="Sprite2D" parent="Target" unique_id=1244510842]
+modulate = Color(1, 0.6, 0.6, 0.5)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_j2uut")
+offset = Vector2(0, -200)
+flip_h = true
 
 [node name="Actor" type="AnimatedSprite2D" parent="." unique_id=879024434]
 unique_name_in_owner = true
+scale = Vector2(0.2, 0.2)
 sprite_frames = ExtResource("2_gmvyg")
 animation = &"idle"
 offset = Vector2(0, -200)
+
+[node name="Camera" type="Camera2D" parent="." unique_id=2012596386]
+position = Vector2(90, -20)
+enabled = false
+
+[node name="PunchSound" type="AudioStreamPlayer" parent="." unique_id=957047487]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1763857072]
 unique_name_in_owner = true

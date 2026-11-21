@@ -51,8 +51,10 @@ func test_room_follows_entering_node():
 	var r := _run()
 	r.progress.entering = _node_of(r, K.EVENT)
 	assert_eq(r.room(), r.Room.EVENT)
-	r.progress.entering = _node_of(r, K.SHOP)
-	assert_eq(r.room(), r.Room.SHOP)
+
+func test_room_has_no_shop_kind():
+	# 상점은 ShopScreen 이 맡아서 방 화면에는 오지 않는다 (2026-11-17)
+	assert_false(StageRun.Room.has("SHOP"))
 
 func test_room_is_clear_after_boss():
 	var r := _run()

@@ -12,6 +12,22 @@ func _perf(keys: Array, length := 0.3) -> PackedScene:
 	p.free()
 	return ps
 
+# 위치 트랙 연출: Actor x 키(에디터 Home 0 → Target 200), 길이 절반에 hit
+func _perf_x(x_keys: Array, length: float) -> PackedScene:
+	var p: CardPerformance = PerfBuild.build([[length * 0.5, "hit", []]], length, x_keys)
+	var ps := PackedScene.new()
+	ps.pack(p)
+	p.free()
+	return ps
+
+# 카메라 연출: Camera:zoom 키, 길이 절반에 hit
+func _perf_cam(zoom_keys: Array, length: float) -> PackedScene:
+	var p: CardPerformance = PerfBuild.build([[length * 0.5, "hit", []]], length, [], [], zoom_keys)
+	var ps := PackedScene.new()
+	ps.pack(p)
+	p.free()
+	return ps
+
 # 기본 연출: 0.1초 hit, 0.2초 show_results, 길이 0.3초
 func _std_perf() -> PackedScene:
 	return _perf([[0.1, "hit", []], [0.2, "show_results", []]])
@@ -146,7 +162,7 @@ func test_no_show_results_key_shows_at_end():
 	assert_eq(_hp_text(s, _unit(s, "적A")), "35/45")
 
 func test_auto_return_after_move():
-	var s := _screen(_data(45, null, _perf([[0.0, "move", [-80.0, 0.0, 0.05]]], 0.15)))
+	var s := _screen(_data(45, null, _perf_x([[0.0, 0.0], [0.05, 200.0]], 0.15)))
 	var hero := s.session.active
 	var sprite: AnimatedSprite2D = s._tokens[hero].sprite()
 	var before := sprite.visible
@@ -158,13 +174,40 @@ func test_auto_return_after_move():
 	await wait_frames(1)
 	assert_eq(s.get_node("%PerformanceLayer").get_child_count(), 0)
 
-func test_move_goes_near_target_cell():
-	var s := _screen(_data(45, null, _perf([[0.0, "move", [-80.0, 0.0, 0.05]]], 0.3)))
+func test_actor_starts_on_own_sprite():
+	var s := _screen(_data(45, null, _perf_x([[0.0, 0.0], [0.2, 0.0], [0.3, 200.0]], 0.4)))
+	await wait_process_frames(2)
+	var hero_sprite: Node2D = s._tokens[s.session.active].sprite()
+	var home := hero_sprite.global_position
 	_use(s, "연출타격")
-	await wait_seconds(0.15)
-	var perf: Node2D = s.get_node("%PerformanceLayer").get_child(0)
-	var foe_center: Vector2 = s._tokens[_unit(s, "적A")].get_global_rect().get_center()
-	assert_almost_eq(perf.global_position, foe_center + Vector2(-80, 0), Vector2(1, 1))
+	await wait_frames(2)
+	var actor: Node2D = s.get_node("%PerformanceLayer").get_child(0).get_node("%Actor")
+	assert_almost_eq(actor.global_position.x, home.x, 3.0)
+
+func test_actor_reaches_target_sprite():
+	var s := _screen(_data(45, null, _perf_x([[0.0, 0.0], [0.05, 200.0]], 0.3)))
+	await wait_process_frames(2)  # 격자 배치가 끝난 뒤 (실제 게임에서는 늘 끝나 있음)
+	_use(s, "연출타격")
+	await wait_seconds(0.1)  # hit(0.15초) 흔들림 전에 잰다
+	var actor: Node2D = s.get_node("%PerformanceLayer").get_child(0).get_node("%Actor")
+	var foe_sprite: Node2D = s._tokens[_unit(s, "적A")].sprite()
+	assert_almost_eq(actor.global_position, foe_sprite.global_position, Vector2(2, 2))
+
+func test_actor_walks_back_home_before_cleanup():
+	var s := _screen(_data(45, null, _perf_x([[0.0, 0.0], [0.05, 200.0]], 0.1)))
+	await wait_process_frames(2)
+	var home: Vector2 = s._tokens[s.session.active].sprite().global_position
+	_use(s, "연출타격")
+	var perf: CardPerformance = s.get_node("%PerformanceLayer").get_child(0)
+	var actor: Node2D = perf.get_node("%Actor")
+	var far := 0.0  # 가장 멀리 간 거리
+	var last := actor.global_position
+	while is_instance_valid(perf) and not perf.is_queued_for_deletion():
+		last = actor.global_position
+		far = maxf(far, absf(last.x - home.x))
+		await wait_process_frames(1)
+	assert_gt(far, 100.0)  # 대상까지 갔다가
+	assert_almost_eq(last.x, home.x, 5.0)  # 지워지기 직전에는 거의 제자리 (마지막 한 프레임 차이)
 
 func test_hit_shakes_target_sprite_and_ui():
 	var s := _screen()
@@ -227,6 +270,7 @@ func test_hit_spawns_effect_on_target():
 func test_hitstop_pauses_performance_and_target():
 	var s := _screen()
 	s.hitstop_time = 0.1
+	s.hitstop_speed = 0.0  # 0 배속 = 예전 정지
 	var foe_sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
 	_use(s, "연출타격")
 	await wait_for_signal(_queue(s).hit, 1.0)
@@ -236,6 +280,103 @@ func test_hitstop_pauses_performance_and_target():
 	await wait_seconds(0.2)
 	assert_eq(perf.get_node("%AnimationPlayer").speed_scale, 1.0)
 	assert_eq(foe_sprite.speed_scale, 1.0)
+
+# 슬로우모션 (2026-11-21): 기본은 멈추지 않고 hitstop_speed 배속으로 느리게
+func test_hitstop_slows_performance_and_target():
+	var s := _screen()
+	s.hitstop_time = 0.4  # 신호를 기다렸다 깨어나는 사이에 끝나지 않게 넉넉히
+	s.hitstop_speed = 0.2
+	var foe_sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	var perf := _queue(s).current_performance()
+	assert_almost_eq(perf.get_node("%AnimationPlayer").speed_scale, 0.2, 0.001)
+	assert_almost_eq(foe_sprite.speed_scale, 0.2, 0.001)
+	await wait_seconds(0.5)
+	if is_instance_valid(perf):  # 연출이 끝나 지워졌을 수 있음
+		assert_eq(perf.get_node("%AnimationPlayer").speed_scale, 1.0)
+	assert_eq(foe_sprite.speed_scale, 1.0)
+
+func test_hitstop_defaults_slow_motion():
+	var s: BattleScreen = load("res://Scenes/ui/battle_screen/battle_screen.tscn").instantiate()
+	assert_almost_eq(s.hitstop_speed, 0.2, 0.001)
+	assert_almost_eq(s.hitstop_time, 0.15, 0.001)
+	s.free()
+
+func test_card_override_hitstop_speed():
+	var ps := _perf([[0.1, "hit", []]], 0.4)
+	var p: CardPerformance = ps.instantiate()
+	p.hitstop_speed = 0.5
+	p.hitstop_time = 0.2
+	ps.pack(p)
+	p.free()
+	var s := _screen(_data(45, null, ps))
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	assert_almost_eq(_queue(s).current_performance().get_node("%AnimationPlayer").speed_scale, 0.5, 0.001)
+
+func test_hit_plays_target_hit_animation():
+	var data := _data()
+	var frames := SpriteFrames.new()
+	for anim in [&"idle", &"hit"]:
+		if not frames.has_animation(anim):
+			frames.add_animation(anim)
+		frames.add_frame(anim, PlaceholderTexture2D.new())
+	frames.set_animation_loop(&"hit", false)
+	data.enemies[0].unit.battle_frames = frames
+	var s := _screen(data)
+	var sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	assert_eq(sprite.animation, &"hit")
+
+func test_hit_without_hit_animation_keeps_idle():
+	var data := _data()
+	var frames := SpriteFrames.new()
+	if not frames.has_animation(&"idle"):
+		frames.add_animation(&"idle")
+	frames.add_frame(&"idle", PlaceholderTexture2D.new())
+	data.enemies[0].unit.battle_frames = frames
+	var s := _screen(data)
+	var sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	assert_eq(sprite.animation, &"idle")
+
+# 카드별 피격 반응 값 (2026-11-21): 연출 씬 루트에 값이 있으면 공통값 대신
+func _perf_with(props: Dictionary) -> PackedScene:
+	var ps := _perf([[0.1, "hit", []]], 0.6)
+	var p: CardPerformance = ps.instantiate()
+	for k in props:
+		p.set(k, props[k])
+	ps.pack(p)
+	p.free()
+	return ps
+
+func test_card_override_flash_color():
+	var s := _screen(_data(45, null, _perf_with({"flash_color": Color(0, 2, 0)})))
+	var sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	assert_gt(sprite.modulate.g, sprite.modulate.r)
+
+func test_card_override_knockback_return_keeps_pushed_longer():
+	var s := _screen(_data(45, null, _perf_with({"knockback_return": 2.0, "hitstop_time": 0.0})))
+	var sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
+	var home := sprite.offset
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	await wait_seconds(0.4)  # 공통값 0.25초면 이미 돌아왔을 때
+	assert_ne(sprite.offset, home)
+
+func test_card_override_unit_shake_zero_keeps_sprite_still():
+	var s := _screen(_data(45, null, _perf_with({"hit_unit_shake": 0.0, "hitstop_time": 0.0})))
+	var sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
+	var pos := sprite.position
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).hit, 1.0)
+	await wait_process_frames(2)
+	assert_eq(sprite.position, pos)
 
 func test_card_override_hitstop_zero_skips_pause():
 	var ps := _perf([[0.1, "hit", []]], 0.2)
@@ -284,6 +425,61 @@ func test_kill_adds_extra_screen_shake_at_results():
 	await wait_for_signal(_queue(s).step_results, 1.0)
 	await wait_frames(2)
 	assert_ne(s.position, home)
+
+# 강조 (2026-11-21): 쓰러뜨림·치명타 모두 슬로우모션, 기준은 카드별 값이 있으면 그것
+func _results_perf(props := {}) -> PackedScene:
+	var ps := _perf([[0.1, "show_results", []]], 0.8)
+	var p: CardPerformance = ps.instantiate()
+	for k in props:
+		p.set(k, props[k])
+	ps.pack(p)
+	p.free()
+	return ps
+
+func _perf_speed(s: BattleScreen) -> float:
+	var perf := _queue(s).current_performance()
+	return perf.get_node("%AnimationPlayer").speed_scale if perf else -1.0
+
+func test_kill_emphasis_slows_instead_of_stopping():
+	var s := _screen(_data(10, null, _results_perf()))
+	s.hitstop_time = 0.4
+	s.hitstop_speed = 0.3
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).step_results, 1.0)
+	assert_almost_eq(_perf_speed(s), 0.3, 0.001)
+
+func test_crit_emphasis_slows():
+	var data := _data(1000, null, _results_perf())
+	var hero: UnitData = data.allies[0].unit
+	hero.crit_rate = 100
+	for c in hero.deck:
+		c.effects[0].can_crit = true
+	var s := _screen(data)
+	s.hitstop_time = 0.4
+	s.hitstop_speed = 0.3
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).step_results, 1.0)
+	assert_almost_eq(_perf_speed(s), 0.3, 0.001)
+
+func test_no_crit_no_kill_no_emphasis_slow():
+	var s := _screen(_data(1000, null, _results_perf()))
+	s.hitstop_time = 0.4
+	s.hitstop_speed = 0.3
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).step_results, 1.0)
+	assert_eq(_perf_speed(s), 1.0)
+
+func test_kill_emphasis_uses_card_values():
+	var s := _screen(_data(10, null, _results_perf({"hitstop_speed": 0.5, "hitstop_time": 0.4})))
+	s.hitstop_speed = 0.3
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).step_results, 1.0)
+	assert_almost_eq(_perf_speed(s), 0.5, 0.001)
+
+func test_crit_hitstop_boost_default():
+	var s: BattleScreen = load("res://Scenes/ui/battle_screen/battle_screen.tscn").instantiate()
+	assert_almost_eq(s.crit_hitstop_boost, 1.3, 0.001)
+	s.free()
 
 func test_zoom_punch_returns_to_one():
 	var s := _screen(_data(45, null, _perf([[0.05, "zoom", [0.1, 0.5]]], 0.4)))
@@ -344,3 +540,91 @@ func test_item_refused_and_dimmed_during_performance():
 	await wait_for_signal(_queue(s).drained, 2.0)
 	assert_false(s.get_node("%BagPanel").slots()[0].is_dimmed())
 	assert_true(s.select_item(0))
+
+func test_camera_zoom_scales_world_not_ui():
+	var s := _screen(_data(45, null, _perf_cam([[0.0, Vector2.ONE], [0.1, Vector2(2, 2)]], 0.4)))
+	await wait_process_frames(2)
+	_use(s, "연출타격")
+	await wait_seconds(0.25)
+	assert_almost_eq(s.get_node("%World").scale, Vector2(2, 2), Vector2(0.05, 0.05))
+	assert_eq(s.get_node("%Hand").get_global_transform().get_scale(), Vector2.ONE)
+
+func test_world_returns_after_performance():
+	var s := _screen(_data(45, null, _perf_cam([[0.0, Vector2.ONE], [0.1, Vector2(2, 2)]], 0.2)))
+	await wait_process_frames(2)
+	_use(s, "연출타격")
+	await wait_for_signal(_queue(s).drained, 2.0)
+	await wait_seconds(0.4)
+	assert_almost_eq(s.get_node("%World").scale, Vector2.ONE, Vector2(0.01, 0.01))
+	assert_almost_eq(s.get_node("%World").position, Vector2.ZERO, Vector2(0.5, 0.5))
+
+func test_no_camera_world_untouched():
+	var s := _screen()
+	_use(s, "연출타격")
+	await wait_seconds(0.15)
+	assert_eq(s.get_node("%World").scale, Vector2.ONE)
+	assert_eq(s.get_node("%World").position, Vector2.ZERO)
+
+
+# 카메라가 Home·Target 중간(w=0.5)에 있고 실제 거리가 에디터와 달라도, 시작하자마자 월드가 어긋나지 않는다
+func test_camera_start_does_not_shift_world():
+	var s := _screen(_data(45, null, _perf_cam([[0.0, Vector2.ONE], [0.3, Vector2.ONE]], 0.4)))
+	await wait_process_frames(2)
+	_use(s, "연출타격")
+	await wait_process_frames(4)
+	assert_almost_eq(s.get_node("%World").position, Vector2.ZERO, Vector2(1, 1))
+
+# 자신 카드는 대상이 자기라도 에디터 모양 그대로 움직인다 (설계 2장: 실제Target = 실제Home + d)
+func test_self_card_keeps_editor_shape():
+	var b := BlockEffect.new()
+	b.percent = 100
+	var c := CardData.new()
+	c.name_ko = "연출방어"
+	c.attack_type = "self"
+	c.sp = 1
+	c.effects.assign([b])
+	c.performance = _perf_x([[0.0, 0.0], [0.05, 200.0]], 0.3)
+	var d := _data()
+	d.allies[0].unit.deck.assign([c, c, c, c, c])
+	var s := _screen(d)
+	await wait_process_frames(2)
+	var sprite: Node2D = s._tokens[s.session.active].sprite()
+	var home := sprite.global_position
+	_use(s, "연출방어")
+	await wait_seconds(0.12)
+	var actor: Node2D = s.get_node("%PerformanceLayer").get_child(0).get_node("%Actor")
+	# 에디터 200 × 그림 배율만큼 (자기 자신에게 뭉개지면 0)
+	assert_almost_eq(actor.global_position.x - home.x, 200.0 * sprite.global_scale.x, 2.0)
+
+# 카메라는 행위자 복귀와 함께 돌아오기 시작한다 (연출이 지워질 때까지 기다리지 않음)
+func test_camera_returns_with_actor():
+	var p: CardPerformance = PerfBuild.build([[0.05, "hit", []]], 0.15, [[0.0, 0.0], [0.05, 200.0]], [], [[0.0, Vector2.ONE], [0.1, Vector2(2, 2)]])
+	var ps := PackedScene.new()
+	ps.pack(p)
+	p.free()
+	var s := _screen(_data(45, null, ps))
+	await wait_process_frames(2)
+	_use(s, "연출타격")
+	var perf: CardPerformance = s.get_node("%PerformanceLayer").get_child(0)
+	await wait_for_signal(perf.done, 2.0)
+	var smallest := 99.0
+	while is_instance_valid(perf) and not perf.is_queued_for_deletion():
+		smallest = minf(smallest, s.get_node("%World").scale.x)
+		await wait_process_frames(1)
+	assert_lt(smallest, 1.9)
+
+# 연출 씬을 화면 크기로 짰을 때(Actor 에 그림 배율을 직접 넣음): 루트는 배율 1, Actor 는 유닛 그림과 같은 크기
+func test_screen_scale_authoring_keeps_root_at_one():
+	var p: CardPerformance = PerfBuild.build([[0.1, "hit", []]], 0.3)
+	p.get_node("Actor").scale = Vector2(0.2, 0.2)
+	var ps := PackedScene.new()
+	ps.pack(p)
+	p.free()
+	var s := _screen(_data(45, null, ps))
+	await wait_process_frames(2)
+	var sprite: Node2D = s._tokens[s.session.active].sprite()
+	_use(s, "연출타격")
+	await wait_process_frames(1)
+	var perf: CardPerformance = s.get_node("%PerformanceLayer").get_child(0)
+	assert_almost_eq(perf.global_scale, sprite.global_scale / Vector2(0.2, 0.2), Vector2(0.001, 0.001))
+	assert_almost_eq(perf.get_node("%Actor").global_scale, sprite.global_scale, Vector2(0.001, 0.001))
