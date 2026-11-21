@@ -1,0 +1,121 @@
+[gd_scene format=3 uid="uid://b4yy0v4jchs0b"]
+
+[ext_resource type="Texture2D" uid="uid://bcds2xdbao7qp" path="res://Art/ui/office/panel_bg.svg" id="1_ib4xj"]
+[ext_resource type="Script" uid="uid://bgqbc8muqe8q1" path="res://Scripts/ui/office_panel.gd" id="1_pp5n7"]
+[ext_resource type="FontFile" uid="uid://c4325xmxdye0y" path="res://Art/fonts/ibm_plex_mono/ibm_plex_mono_semibold.ttf" id="2_srnt5"]
+
+[node name="OfficePanel" type="Control" unique_id=2086747318]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1400.0
+offset_bottom = 944.0
+script = ExtResource("1_pp5n7")
+
+[node name="Bg" type="TextureRect" parent="." unique_id=198119464]
+layout_mode = 0
+offset_left = -60.0
+offset_top = -40.0
+offset_right = -60.0
+offset_bottom = -40.0
+mouse_filter = 2
+texture = ExtResource("1_ib4xj")
+
+[node name="InnerLine" type="ReferenceRect" parent="." unique_id=694509663]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 1392.0
+offset_bottom = 936.0
+mouse_filter = 2
+border_color = Color(0.702, 0.631, 0.878, 0.25)
+editor_only = false
+
+[node name="Number" type="Label" parent="." unique_id=1877651015]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 48.0
+offset_top = 40.0
+offset_right = 48.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(0.8, 0.722, 1, 1)
+theme_override_fonts/font = ExtResource("2_srnt5")
+theme_override_font_sizes/font_size = 15
+text = "No.01"
+
+[node name="Total" type="Label" parent="." unique_id=547314787]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 112.0
+offset_top = 40.0
+offset_right = 112.0
+offset_bottom = 40.0
+theme_type_variation = &"MonoNumber"
+theme_override_font_sizes/font_size = 15
+text = "/ 07"
+
+[node name="Titles" type="HBoxContainer" parent="." unique_id=342766544]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 62.0
+offset_right = 48.0
+offset_bottom = 62.0
+mouse_filter = 2
+theme_override_constants/separation = 18
+
+[node name="TitleKo" type="Label" parent="Titles" unique_id=121877221]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PanelTitle"
+text = "패널"
+
+[node name="TitleEn" type="Label" parent="Titles" unique_id=319576946]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+theme_type_variation = &"PanelTitleEn"
+text = "Panel"
+
+[node name="PathLabel" type="Label" parent="." unique_id=804875346]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 750.0
+offset_top = 44.0
+offset_right = 1250.0
+offset_bottom = 67.0
+theme_type_variation = &"MonoLabel"
+text = "BUREAU"
+horizontal_alignment = 2
+
+[node name="CloseButton" type="Button" parent="." unique_id=1639102942]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1262.0
+offset_top = 36.0
+offset_right = 1356.0
+offset_bottom = 72.0
+theme_type_variation = &"GhostButton"
+text = "ESC  닫기"
+
+[node name="HeadRule" type="ColorRect" parent="." unique_id=831805734]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 140.0
+offset_right = 1352.0
+offset_bottom = 141.0
+mouse_filter = 2
+color = Color(0.702, 0.631, 0.878, 0.4)
+
+[node name="Content" type="MarginContainer" parent="." unique_id=1092120733]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 48.0
+offset_top = 168.0
+offset_right = 1352.0
+offset_bottom = 904.0
+
+[node name="Placeholder" type="Label" parent="Content" unique_id=1673389800]
+layout_mode = 2
+theme_type_variation = &"StatusText"
+text = "준비 중"
+horizontal_alignment = 1
+vertical_alignment = 1

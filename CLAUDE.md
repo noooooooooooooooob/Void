@@ -31,7 +31,7 @@
   - 조작(림버스식): W/S·↑/↓ 또는 클릭으로 다음 노드 고르기 → 스페이스/엔터 또는 고른 노드 다시 클릭으로 실행
   - 지금은 이벤트(A/B 선택, 효과 없음)는 자리만, 상점은 아래 "공허 조각·상점", 보스는 시험 전투와 같은 적 구성의 보스용 데이터
 - 의뢰 내 체력 유지, HP 0 파티원은 남은 전투 제외, 의뢰 종료 시 전원 회복
-- 보스 승리 = 성공(노드 클리어), 패배/도주 = 실패(월드맵 복귀). 의뢰 전투 승리 시 결과 창에 **보상 목록**(2026-11-19, 설계 `docs/superpowers/specs/2026-11-19-battle-rewards-design.md`): 줄을 클릭해야 챙겨지고, "계속"은 언제든 누를 수 있으며 안 챙긴 보상은 사라진다 (`BattleReward`)
+- 보스 승리 = 성공(노드 클리어), 패배/도주 = 실패(사무소 복귀). 스테이지 지도·전투 화면의 **"← 사무소로"** 버튼 = 확인 없이 도주 (2026-11-21, `StageRun.leave_run`). 의뢰 전투 승리 시 결과 창에 **보상 목록**(2026-11-19, 설계 `docs/superpowers/specs/2026-11-19-battle-rewards-design.md`): 줄을 클릭해야 챙겨지고, "계속"은 언제든 누를 수 있으며 안 챙긴 보상은 사라진다 (`BattleReward`)
   - 공허 조각 `BattleData.shard_reward` (일반·보스)
   - 소비 아이템: 일반 전투만, 확률(기본 40%, `BattleScreen.item_drop_chance`)로 1개 (`items/consumables/` 중 무작위). 가방이 가득 차면 바꿀 칸 고르기 / 취소(줄 남음)
   - 카드 추가: 일반 전투만, 살아 있는 파티원 캐릭터의 카드(공용·적 전용 제외)에서 겹치지 않게 3장(`BattleScreen.card_reward_count`) → 1장 골라 그 카드 주인의 의뢰 덱으로, 넘어가기면 줄 남음(다시 열면 같은 3장). 후보가 없으면 줄 없음
@@ -106,7 +106,7 @@ res://
   Scenes/        # 모든 씬 .tscn — 안은 Scripts/ 와 같은 기능별 폴더 (ui/battle_screen/, ui/card_view/ …)
     backgrounds/ #   전투 배경 씬 (루트 Control, 겹·패럴랙스는 씬 안에서). BattleData.background 가 가리킴. 격자판(battle_board.tscn)을 아군·적용으로 넣으면 그 칸을 씀. 칸 모양은 에디터 2D 화면 핸들로 맞춤: 보드를 고르면 네 모서리(원근 자동 분할), 칸을 고르면 그 칸의 꼭짓점(`addons/board_shape_editor`)
   Art/           # 게임에 들어가는 그림 (.png) — 종류별 폴더, 캐릭터·적은 이름별로
-    characters/<이름>/  enemies/<이름>/  ui/  backgrounds/  vfx/
+    characters/<이름>/  enemies/<이름>/  ui/  backgrounds/  vfx/  fonts/<글꼴>/ (OFL.txt 라이선스 같이)
   Art_src/       # 원본 작업 파일 (.aseprite, .psd) — .gdignore 로 Godot 이 무시
   addons/        # 플러그인 (GUT, GoPeak, card_importer) — 플러그인 스크립트는 여기 그대로
   tests/         # GUT 테스트 (Scripts/ 와 같은 기능별 폴더)

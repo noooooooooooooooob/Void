@@ -34,3 +34,14 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
+
+[node name="BackButton" type="Button" parent="." unique_id=193150182]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 184.0
+offset_bottom = 68.0
+focus_mode = 0
+theme_type_variation = &"GhostButton"
+text = "←  사무소로"

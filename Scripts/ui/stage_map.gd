@@ -56,6 +56,8 @@ func _ready() -> void:
 		views.append(view)
 	# 4. 현재 위치·커서·지나온 길 표시
 	refresh()
+	# 5. "← 사무소로": 확인 없이 의뢰를 끝내고 사무소로
+	%BackButton.pressed.connect(StageRun.leave_run)
 
 
 ## 노드의 화면 위치 (Map 기준, 노드 중심). 열 → 가로, 행 → 세로

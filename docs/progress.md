@@ -1,6 +1,6 @@
 # Project Void 개발 진행 상황
 
-마지막 갱신: 2026-11-19
+마지막 갱신: 2026-11-21
 
 코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
 
@@ -37,6 +37,22 @@
 | 상점·공허 조각 (시험판, 2026-11-17) | 의뢰 안 재화 **공허 조각**: 의뢰 전투 승리마다 `BattleData.shard_reward`(일반 20, 보스 50 — 보스는 새 `battles/boss_battle.tres`), 결과 창에 "공허 조각 +N", 의뢰가 끝나면 0. 상점 노드 → **상점 화면**: 파티(살아 있는 파티원) 캐릭터 카드 5장·소비 아이템 3개를 겹치지 않게 진열해 구매(카드 50, 아이템 30), **카드 제거**(75)·**카드 강화**(60, 원래 카드의 강화 중 최대 3개에서 고름, 강화한 카드는 다른 강화로 바꾸기). 가격 고정, 값은 `shop/shop_data.tres`. 덱 변경은 **의뢰 덱**(`BattleUnit.run_deck`)에만, 유닛 원본 덱은 그대로. 나가면 노드 클리어. 가방 아이템은 끌어서 **버리기** 칸에 놓으면 버림(상점·전투) | `Scripts/shop/`, `Scripts/cards/card_pool.gd`, `Scripts/stage/wallet.gd`, `Scripts/ui/shop_screen.gd`, `Scenes/ui/shop_screen/`, 설계 `docs/superpowers/specs/2026-11-17-shop-design.md` |
 | 전투 보상 목록 (2026-11-19) | 의뢰 전투 승리 → 결과 창에 보상 줄(공허 조각 / 아이템 / 카드 추가)을 **클릭해서 챙김**(슬더스식). 조각 자동 지급·받기 버튼 없앰. 아이템은 가방이 가득 차면 바꿀 칸 고르기·취소. **카드 보상 새로 추가**: 살아 있는 파티원 카드 중 3장 → 1장 골라 주인의 의뢰 덱으로(넘어가기 가능). 보스는 조각만. "계속"은 언제든, 안 챙긴 보상은 사라짐. 카드 후보 뽑기는 상점과 같은 함수(`CardPool.pick_party_cards`) | `Scripts/stage/battle_reward.gd`, `Scripts/ui/battle_screen.gd`, 씬 `ResultOverlay/Box/RewardList`·`ResultOverlay/CardPick`, 설계 `docs/superpowers/specs/2026-11-19-battle-rewards-design.md` |
 | 그림 추가 (코드에서 아직 안 씀) | 캐릭터 10명 일러스트·픽셀 아트(`mo_liang` 은 일러스트만), 배경 5장, 공허 지도 | `Art/characters/`, `Art/backgrounds/`, `Art/ui/void_map.png` |
+
+## 진행 중: UI 뼈대 — 타이틀 · 메인 메뉴 · 사무소 (`feat/ui-frame`, 2026-11-21~)
+
+Figma `Project Void UI Wireframes` › **v6 · 연보라 사이드 패널** 기준. 설계 `docs/superpowers/specs/2026-11-21-ui-frame-design.md`, 계획 `docs/superpowers/plans/2026-11-21-ui-frame.md`.
+
+- 범위 (사용자 결정): 공용 테마(연보라 팔레트) · 타이틀 → 메인 메뉴(T-A/T-B) · 사무소(00-A, 왼쪽 레일 7개 + 오른쪽 위 자금·설정 HUD + 패널 자리) · 패널 7개는 빈 틀. 다음 차례는 의뢰 게시판. 메인 메뉴·사무소 배경 그림은 사용자가 준비
+- 끝남: Figma 그림 15개(`Art/ui/title·main_menu·office/`), 스크립트(`ui_palette`, `menu_cursor`, `notice_label`, `main_menu_item`, `title_screen` 새로 씀, `rail_menu_item`, `office_panel`, `office_screen`), 테스트, **의뢰가 끝나면 시작 화면 대신 사무소로** (`StageRun.OFFICE_SCENE`)
+- 글꼴 4종 `Art/fonts/` (Noto Serif KR · Noto Sans KR · Cormorant Garamond · IBM Plex Mono, OFL)
+- 2026-11-21 테마·씬 완료: `Scenes/ui/void_theme.tres`(프로젝트 설정 `gui/theme/custom`, Label 변형 11개·PrimaryButton·GhostButton), `title_screen/main_menu_item.tscn`, `title_screen/title_screen.tscn`(uid 유지), `office_screen/rail_menu_item.tscn`·`office_panel.tscn`·`office_screen.tscn`. 타이틀 → 새 게임 → 사무소 → 의뢰 게시판 "시험 의뢰 출발" → 스테이지 지도
+  - 만드는 법: 숫자·색·노드는 GoPeak MCP, MCP 가 못 하는 것(테마의 글꼴·StyleBox, 씬 인스턴스 넣기)만 에디터에서 손으로. 그라데이션은 씬 안 리소스 대신 **SVG 그림**(`Art/ui/title/*.svg`, `Art/ui/office/rail_*.svg` 등)으로 만들어 TextureRect 에 늘려 씀
+  - 글꼴 변형: `Art/fonts/cormorant_garamond/cormorant_garamond_semibold_italic.tres`(wght 600), `Art/fonts/ibm_plex_mono/ibm_plex_mono_medium_wide.tres`(자간 2)
+  - 배경 그림(사용자 제작): `Art/backgrounds/main_screen.png`(타이틀 키 아트)·`lobby_screen.png`(사무소). 스토리에 따라 바꿀 `_void` 판도 같이 넣어 둠 — 바꾸는 기능은 스토리 진행 상태가 생기면
+  - `title_screen.gd` 버그 수정: 삼항식 안 배열이 타입 없는 Array 라 `Array[CanvasItem]` 에 못 넣어 실행 시 멈추던 것
+- 2026-11-21 사용자 피드백 반영: 타이틀은 **클릭**으로도 시작(화면 전체 루트가 클릭을 먼저 받아서 `_gui_input` 에서 처리), 메뉴 확인은 **엔터·스페이스·E**. 새 게임에서 엔터를 누르면 나던 오류(장면이 바뀌어 트리에서 빠진 뒤 `get_viewport()` 가 null) 수정 — 입력 처리 표시를 먼저 하고 실행. 메뉴 줄 클릭도 같은 순서로. **스테이지 지도·전투 화면에 "← 사무소로" 버튼**: 확인 없이 의뢰를 끝내고 사무소로 (`StageRun.leave_run`, 결과는 실패와 같음)
+- 테스트: 844개 중 843 통과. 실패 1개 `test_performance_stage_view.gd::test_slowmo_ends_by_itself`(이번 작업과 무관한 연출 미리보기 쪽, 단독 실행해도 실패)
+- 주의: 이어하기·불러오기는 저장 기능 전까지 비활성, 자금·하루·배지 숫자는 시스템이 없어 자리만. Figma 와 픽셀 단위 비교·다듬기는 아직
 
 ## 진행 중: 의뢰 스테이지 (`feat/stage-run`, 2026-11-07~10)
 

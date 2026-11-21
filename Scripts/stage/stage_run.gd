@@ -3,11 +3,11 @@ extends Node
 ## 씬이 바뀌어도(지도 → 전투 → 지도) 지도·현재 위치·파티 체력이 남는다.
 ##
 ## 흐름:
-##   시작 화면 → 지도(StageMap)가 start_run() → 노드 고르고 enter_selected()
+##   사무소(의뢰 게시판) → 지도(StageMap)가 start_run() → 노드 고르고 enter_selected()
 ##     전투·보스 → 전투 화면(stage 모드) → 승리 complete_node() / 패배 fail_run()
 ##     이벤트 → 방 화면(RoomScreen) → 선택지 complete_node()
 ##     상점 → 상점 화면(ShopScreen) → 나가기 complete_node()
-##   complete_node() 후 보스까지 끝났으면 방 화면(의뢰 성공) → "처음으로" end_run()
+##   complete_node() 후 보스까지 끝났으면 방 화면(의뢰 성공) → "처음으로" end_run() → 사무소
 ## 규칙 (CLAUDE.md 의뢰 스테이지): 의뢰 안에서는 체력 유지, HP 0 파티원은 남은 전투 제외,
 ##   의뢰가 끝나면 전원 회복(다음 start_run 에서 파티를 새로 만든다)
 
@@ -16,7 +16,8 @@ extends Node
 enum Room { EVENT, CLEAR }
 
 ## 씬 경로 (파일을 옮기면 여기도 고친다)
-const TITLE_SCENE := "res://Scenes/ui/title_screen/title_screen.tscn"
+## 의뢰가 끝나면(성공·실패) 돌아갈 사무소 (2026-11-21, 그전엔 시작 화면)
+const OFFICE_SCENE := "res://Scenes/ui/office_screen/office_screen.tscn"
 const STAGE_MAP_SCENE := "res://Scenes/ui/stage_map/stage_map.tscn"
 const BATTLE_SCENE := "res://Scenes/ui/battle_screen/battle_screen.tscn"
 const ROOM_SCENE := "res://Scenes/ui/room_screen/room_screen.tscn"
@@ -140,7 +141,7 @@ func room() -> Room:
 ## 보스였으면 방 화면(의뢰 성공), 아니면 지도로 돌아간다
 func complete_node() -> void:
 	if not is_active():
-		_go(TITLE_SCENE)
+		_go(OFFICE_SCENE)
 		return
 	progress.complete()
 	if progress.is_finished():
@@ -149,16 +150,23 @@ func complete_node() -> void:
 		_go(STAGE_MAP_SCENE)
 
 
-## 의뢰 실패 (전투 패배): 의뢰를 끝내고 시작 화면으로
+## 의뢰 실패 (전투 패배): 의뢰를 끝내고 사무소로
 func fail_run() -> void:
 	end_run()
-	_go(TITLE_SCENE)
+	_go(OFFICE_SCENE)
 
 
-## 의뢰 성공 화면의 "처음으로": 의뢰를 끝내고 시작 화면으로
+## 지도·전투 화면의 "← 사무소로" 버튼: 확인 없이 의뢰를 끝내고 사무소로 (2026-11-21 사용자 결정).
+## 결과는 실패와 같다 — 파티 체력·가방·공허 조각이 모두 사라진다
+func leave_run() -> void:
+	end_run()
+	_go(OFFICE_SCENE)
+
+
+## 의뢰 성공 화면의 "처음으로": 의뢰를 끝내고 사무소로
 func finish_run() -> void:
 	end_run()
-	_go(TITLE_SCENE)
+	_go(OFFICE_SCENE)
 
 
 ## 씬을 바꾼다. 씬 안에서 부르면 그 프레임이 끝난 뒤에 바뀐다

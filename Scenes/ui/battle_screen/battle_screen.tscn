@@ -12,6 +12,9 @@
 [ext_resource type="Resource" uid="uid://bwwjccfn24hbc" path="res://items/consumables/분노 포션.tres" id="7_hxvqh"]
 [ext_resource type="Resource" uid="uid://2i21cekyg8p1" path="res://items/consumables/쉴드 포션.tres" id="8_8gv40"]
 [ext_resource type="PackedScene" uid="uid://dcesqstjti4i6" path="res://Scenes/ui/battle_screen/item_slot.tscn" id="8_yl6x5"]
+[ext_resource type="Script" uid="uid://dfgy5fwg8m8ri" path="res://Scripts/ui/bag_panel.gd" id="10_yp0aa"]
+[ext_resource type="Script" uid="uid://c6qyuebwpxrt" path="res://Scripts/ui/target_arrow.gd" id="12_hxvqh"]
+[ext_resource type="Script" uid="uid://kx27ja1gd2aw" path="res://Scripts/ui/item_slot.gd" id="14_8gv40"]
 
 [node name="BattleScreen" type="Control" unique_id=1934429999]
 layout_mode = 3
@@ -230,7 +233,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="BagPanel" parent="." unique_id=1869143465 instance=ExtResource("6_78nqw")]
+[node name="BagPanel" type="PanelContainer" parent="." unique_id=1869143465 instance=ExtResource("6_78nqw")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
@@ -238,9 +241,13 @@ offset_left = 1060.0
 offset_top = 600.0
 offset_right = 1880.0
 offset_bottom = 730.0
+script = ExtResource("10_yp0aa")
 
-[node name="TargetArrow" parent="." unique_id=1135533263 instance=ExtResource("3_h06ft")]
+[node name="TargetArrow" type="Node2D" parent="." unique_id=1135533263 instance=ExtResource("3_h06ft")]
 unique_name_in_owner = true
+top_level = true
+z_index = 100
+script = ExtResource("12_hxvqh")
 
 [node name="ResultOverlay" type="ColorRect" parent="." unique_id=910010746]
 unique_name_in_owner = true
@@ -300,20 +307,30 @@ layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="Slot0" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=685467998 instance=ExtResource("8_yl6x5")]
+[node name="Slot0" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=685467998 instance=ExtResource("8_yl6x5")]
+custom_minimum_size = Vector2(150, 84)
 layout_mode = 2
+script = ExtResource("14_8gv40")
 
-[node name="Slot1" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=993027061 instance=ExtResource("8_yl6x5")]
+[node name="Slot1" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=993027061 instance=ExtResource("8_yl6x5")]
+custom_minimum_size = Vector2(150, 84)
 layout_mode = 2
+script = ExtResource("14_8gv40")
 
-[node name="Slot2" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=270287327 instance=ExtResource("8_yl6x5")]
+[node name="Slot2" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=270287327 instance=ExtResource("8_yl6x5")]
+custom_minimum_size = Vector2(150, 84)
 layout_mode = 2
+script = ExtResource("14_8gv40")
 
-[node name="Slot3" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=1460131112 instance=ExtResource("8_yl6x5")]
+[node name="Slot3" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=1460131112 instance=ExtResource("8_yl6x5")]
+custom_minimum_size = Vector2(150, 84)
 layout_mode = 2
+script = ExtResource("14_8gv40")
 
-[node name="Slot4" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=667572604 instance=ExtResource("8_yl6x5")]
+[node name="Slot4" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=667572604 instance=ExtResource("8_yl6x5")]
+custom_minimum_size = Vector2(150, 84)
 layout_mode = 2
+script = ExtResource("14_8gv40")
 
 [node name="DropButtons" type="HBoxContainer" parent="ResultOverlay/Box/DropBox" unique_id=1960784437]
 layout_mode = 2
@@ -386,3 +403,14 @@ script = ExtResource("4_5dyec")
 
 [node name="HitSound" type="AudioStreamPlayer" parent="." unique_id=256951789]
 unique_name_in_owner = true
+
+[node name="BackButton" type="Button" parent="." unique_id=1324800908]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 184.0
+offset_bottom = 68.0
+focus_mode = 0
+theme_type_variation = &"GhostButton"
+text = "←  사무소로"

@@ -155,3 +155,8 @@ func test_scene_for_each_node_kind():
 	assert_eq(r.scene_for(_node_of(r, K.BOSS)), r.BATTLE_SCENE)
 	assert_eq(r.scene_for(_node_of(r, K.EVENT)), r.ROOM_SCENE)
 	assert_eq(r.scene_for(_node_of(r, K.SHOP)), r.SHOP_SCENE)
+
+func test_run_end_returns_to_office():
+	# 의뢰가 끝나면(성공·실패) 시작 화면이 아니라 사무소로 (2026-11-21)
+	assert_eq(StageRun.OFFICE_SCENE, "res://Scenes/ui/office_screen/office_screen.tscn")
+	assert_true(ResourceLoader.exists(StageRun.OFFICE_SCENE), "사무소 씬이 있어야 함")

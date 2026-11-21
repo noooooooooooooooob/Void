@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" format=3 uid="uid://csicnbyuchdyq"]
+
+[ext_resource type="FontFile" uid="uid://bu6e4dm55lnfj" path="res://Art/fonts/cormorant_garamond/cormorant_garamond_italic_variable.ttf" id="1_8hjcq"]
+
+[resource]
+base_font = ExtResource("1_8hjcq")
+variation_opentype = {
+2003265652: 600
+}

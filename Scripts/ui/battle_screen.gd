@@ -192,6 +192,8 @@ var _fx_rng := RandomNumberGenerator.new()  # 흔들림·음높이·아이템 �
 func _ready() -> void:
 	_end_turn.pressed.connect(press_end_turn)
 	_bag_button.pressed.connect(toggle_bag)
+	# "← 사무소로": 확인 없이 의뢰를 끝내고 사무소로 (F6 시험 전투에서도 사무소로)
+	%BackButton.pressed.connect(StageRun.leave_run)
 	_move_button.pressed.connect(toggle_move)
 	_bag_panel.item_pressed.connect(_on_item_pressed)
 	_bag_panel.item_released.connect(_on_item_released)

@@ -1,0 +1,133 @@
+[gd_scene format=3 uid="uid://bv41n43ujd5h6"]
+
+[ext_resource type="Texture2D" uid="uid://dlkyqn7greo5w" path="res://Art/ui/office/rail_sel_gradient.svg" id="1_bgbq3"]
+[ext_resource type="Script" uid="uid://btannia5r6oag" path="res://Scripts/ui/rail_menu_item.gd" id="1_gisty"]
+[ext_resource type="Texture2D" uid="uid://dcgh6uefcs7w4" path="res://Art/ui/office/rail_pointer.svg" id="2_qcxqu"]
+[ext_resource type="Texture2D" uid="uid://dsiwcuqbb23h6" path="res://Art/ui/office/badge_rose.svg" id="3_2j6fk"]
+[ext_resource type="Texture2D" uid="uid://d3pxd6u1wjf8c" path="res://Art/ui/office/badge_amber.svg" id="3_iasfe"]
+[ext_resource type="FontFile" uid="uid://c4325xmxdye0y" path="res://Art/fonts/ibm_plex_mono/ibm_plex_mono_semibold.ttf" id="4_ny3vw"]
+
+[node name="RailMenuItem" type="Control" unique_id=1575773434]
+custom_minimum_size = Vector2(448, 88)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 448.0
+offset_bottom = 88.0
+script = ExtResource("1_gisty")
+rose_badge = ExtResource("3_2j6fk")
+amber_badge = ExtResource("3_iasfe")
+
+[node name="SelBg" type="TextureRect" parent="." unique_id=717118575]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 408.0
+offset_bottom = 88.0
+mouse_filter = 2
+texture = ExtResource("1_bgbq3")
+expand_mode = 1
+
+[node name="SelBar" type="ColorRect" parent="." unique_id=560509405]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 4.0
+offset_bottom = 88.0
+mouse_filter = 2
+color = Color(0.8, 0.722, 1, 1)
+
+[node name="Pointer" type="TextureRect" parent="." unique_id=912302335]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 408.0
+offset_top = 28.0
+offset_right = 408.0
+offset_bottom = 28.0
+mouse_filter = 2
+texture = ExtResource("2_qcxqu")
+
+[node name="Link" type="ColorRect" parent="." unique_id=1246462924]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 408.0
+offset_top = 43.0
+offset_right = 448.0
+offset_bottom = 45.0
+mouse_filter = 2
+color = Color(0.8, 0.722, 1, 0.6)
+
+[node name="Sep" type="ColorRect" parent="." unique_id=677302812]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 87.0
+offset_right = 392.0
+offset_bottom = 88.0
+mouse_filter = 2
+color = Color(0.702, 0.631, 0.878, 0.16)
+
+[node name="Number" type="Label" parent="." unique_id=2105590338]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 24.0
+offset_bottom = 20.0
+theme_type_variation = &"MonoNumber"
+text = "01"
+
+[node name="TitleKo" type="Label" parent="." unique_id=436066462]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 66.0
+offset_top = 10.0
+offset_right = 66.0
+offset_bottom = 10.0
+theme_type_variation = &"TitleKo"
+text = "의뢰 게시판"
+
+[node name="TitleEn" type="Label" parent="." unique_id=97006311]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 67.0
+offset_top = 47.0
+offset_right = 67.0
+offset_bottom = 47.0
+theme_type_variation = &"TitleEn"
+text = "Requests"
+
+[node name="Right" type="HBoxContainer" parent="." unique_id=1579712389]
+layout_mode = 0
+offset_left = 192.0
+offset_top = 20.0
+offset_right = 392.0
+offset_bottom = 44.0
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="Badge" type="TextureRect" parent="Right" unique_id=1605078967]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("3_2j6fk")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BadgeCount" type="Label" parent="Right/Badge" unique_id=606999774]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("4_ny3vw")
+theme_override_font_sizes/font_size = 12
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Status" type="Label" parent="Right" unique_id=197440876]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"StatusText"

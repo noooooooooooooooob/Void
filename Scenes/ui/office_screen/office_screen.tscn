@@ -1,0 +1,515 @@
+[gd_scene format=3 uid="uid://pltad7wklrlt"]
+
+[ext_resource type="Texture2D" uid="uid://pqj77s5s1fqm" path="res://Art/backgrounds/lobby_screen.png" id="1_ivtwx"]
+[ext_resource type="Script" uid="uid://bcxx2tgl5obbd" path="res://Scripts/ui/office_screen.gd" id="1_r4vve"]
+[ext_resource type="Texture2D" uid="uid://dbf0xxo13okq3" path="res://Art/ui/office/office_grade.svg" id="2_cjkn6"]
+[ext_resource type="PackedScene" uid="uid://b5k3ixvdrl8bf" path="res://Scenes/ui/stage_map/stage_map.tscn" id="2_m1jxf"]
+[ext_resource type="Texture2D" uid="uid://bqk1n2vmq1hqw" path="res://Art/ui/office/rail_bg.svg" id="3_3xdl6"]
+[ext_resource type="Script" uid="uid://cqd2sempb66eu" path="res://Scripts/ui/notice_label.gd" id="3_xc16o"]
+[ext_resource type="Texture2D" uid="uid://df4a4fhdohntv" path="res://Art/ui/office/rail_diamond.svg" id="4_mnq3t"]
+[ext_resource type="PackedScene" uid="uid://b4yy0v4jchs0b" path="res://Scenes/ui/office_screen/office_panel.tscn" id="5_4hiev"]
+[ext_resource type="FontFile" uid="uid://bjnijpdqh352w" path="res://Art/fonts/noto_serif_kr/noto_serif_kr_bold.otf" id="5_34p82"]
+[ext_resource type="FontFile" uid="uid://c4325xmxdye0y" path="res://Art/fonts/ibm_plex_mono/ibm_plex_mono_semibold.ttf" id="6_mpcxj"]
+[ext_resource type="Script" uid="uid://bgqbc8muqe8q1" path="res://Scripts/ui/office_panel.gd" id="6_ojh3c"]
+[ext_resource type="FontVariation" uid="uid://csicnbyuchdyq" path="res://Art/fonts/cormorant_garamond/cormorant_garamond_semibold_italic.tres" id="7_h6aq4"]
+[ext_resource type="Texture2D" uid="uid://cupijw6mpvqpn" path="res://Art/ui/office/funds_plate.svg" id="8_ndi68"]
+[ext_resource type="Texture2D" uid="uid://b86fgsd2k1mqk" path="res://Art/ui/office/funds_diamond.svg" id="9_fm2cq"]
+[ext_resource type="FontFile" uid="uid://b5j2oe1q1rfql" path="res://Art/fonts/ibm_plex_mono/ibm_plex_mono_medium.ttf" id="10_d33an"]
+[ext_resource type="PackedScene" uid="uid://bv41n43ujd5h6" path="res://Scenes/ui/office_screen/rail_menu_item.tscn" id="10_q3eep"]
+[ext_resource type="Texture2D" uid="uid://bxod6sjo3lx3c" path="res://Art/ui/office/settings_button.svg" id="11_okekv"]
+[ext_resource type="FontFile" uid="uid://c13si8xashwfm" path="res://Art/fonts/noto_sans_kr/noto_sans_kr_medium.otf" id="12_6l8h4"]
+[ext_resource type="Script" uid="uid://btannia5r6oag" path="res://Scripts/ui/rail_menu_item.gd" id="12_ggube"]
+[ext_resource type="Texture2D" uid="uid://dsiwcuqbb23h6" path="res://Art/ui/office/badge_rose.svg" id="13_x7ov4"]
+[ext_resource type="Texture2D" uid="uid://d3pxd6u1wjf8c" path="res://Art/ui/office/badge_amber.svg" id="14_yiii3"]
+
+[node name="OfficeScreen" type="Control" unique_id=607673499]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_r4vve")
+stage_scene = ExtResource("2_m1jxf")
+
+[node name="Bg" type="ColorRect" parent="." unique_id=1317565030]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.102, 0.086, 0.149, 1)
+
+[node name="OfficeArt" type="TextureRect" parent="." unique_id=524022292]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_ivtwx")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LavenderGrade" type="TextureRect" parent="." unique_id=260332194]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_cjkn6")
+expand_mode = 1
+
+[node name="Panels" type="Control" parent="." unique_id=130956704]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Requests" type="Control" parent="Panels" unique_id=2086747318 instance=ExtResource("5_4hiev")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 480.0
+offset_top = 96.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+script = ExtResource("6_ojh3c")
+title_ko = "의뢰 게시판"
+title_en = "Requests"
+path_label = "BUREAU   /   REQUESTS"
+
+[node name="TestQuestButton" type="Button" parent="Panels/Requests" unique_id=1727220573]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 522.0
+offset_top = 500.0
+offset_right = 878.0
+offset_bottom = 576.0
+theme_type_variation = &"PrimaryButton"
+text = "시험 의뢰 출발"
+
+[node name="VoidMap" type="Control" parent="Panels" unique_id=1502112603 instance=ExtResource("5_4hiev")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 480.0
+offset_top = 96.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+script = ExtResource("6_ojh3c")
+number = 2
+title_ko = "공허 지도"
+title_en = "Void Map"
+path_label = "BUREAU   /   VOID MAP"
+
+[node name="Personnel" type="Control" parent="Panels" unique_id=1109078988 instance=ExtResource("5_4hiev")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 480.0
+offset_top = 96.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+script = ExtResource("6_ojh3c")
+number = 3
+title_ko = "사원 명부"
+title_en = "Personnel"
+path_label = "BUREAU   /   PERSONNEL"
+
+[node name="Promotion" type="Control" parent="Panels" unique_id=96298419 instance=ExtResource("5_4hiev")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 480.0
+offset_top = 96.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+script = ExtResource("6_ojh3c")
+number = 4
+title_ko = "승급장"
+title_en = "Promotion Hall"
+path_label = "BUREAU   /   PROMOTION"
+
+[node name="Spa" type="Control" parent="Panels" unique_id=1024215093 instance=ExtResource("5_4hiev")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 480.0
+offset_top = 96.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+script = ExtResource("6_ojh3c")
+number = 5
+title_ko = "스파"
+title_en = "Spa"
+path_label = "BUREAU   /   SPA"
+
+[node name="Storage" type="Control" parent="Panels" unique_id=1999564642 instance=ExtResource("5_4hiev")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 480.0
+offset_top = 96.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+script = ExtResource("6_ojh3c")
+number = 6
+title_ko = "창고"
+title_en = "Storage"
+path_label = "BUREAU   /   STORAGE"
+
+[node name="Journal" type="Control" parent="Panels" unique_id=3283959 instance=ExtResource("5_4hiev")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 480.0
+offset_top = 96.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+script = ExtResource("6_ojh3c")
+number = 7
+title_ko = "일지"
+title_en = "Journal"
+path_label = "BUREAU   /   JOURNAL"
+
+[node name="SideRail" type="Control" parent="." unique_id=811740938]
+anchors_preset = 0
+offset_right = 480.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="RailBg" type="TextureRect" parent="SideRail" unique_id=1961768764]
+layout_mode = 0
+offset_right = 440.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("3_3xdl6")
+expand_mode = 1
+
+[node name="Edge" type="ColorRect" parent="SideRail" unique_id=234669956]
+layout_mode = 0
+offset_left = 439.0
+offset_right = 440.0
+offset_bottom = 1080.0
+mouse_filter = 2
+color = Color(0.702, 0.631, 0.878, 0.55)
+
+[node name="VerticalLabel" type="Label" parent="SideRail" unique_id=1203088450]
+modulate = Color(1, 1, 1, 0.45)
+layout_mode = 0
+offset_left = 436.0
+offset_top = 230.0
+offset_right = 436.0
+offset_bottom = 230.0
+rotation = 1.5708
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 10
+text = "THE PROTAGONIST'S BUREAU   —   DISTRICT 07   —   EST. 1924"
+
+[node name="Diamond" type="TextureRect" parent="SideRail" unique_id=1911026475]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 55.0
+offset_right = 49.0
+offset_bottom = 55.0
+mouse_filter = 2
+texture = ExtResource("4_mnq3t")
+
+[node name="Name" type="Label" parent="SideRail" unique_id=139833838]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 40.0
+offset_right = 76.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(0.8, 0.722, 1, 1)
+theme_override_fonts/font = ExtResource("5_34p82")
+theme_override_font_sizes/font_size = 30
+text = "주인공 사무소"
+
+[node name="NameEn" type="Label" parent="SideRail" unique_id=551797893]
+layout_mode = 0
+offset_left = 77.0
+offset_top = 82.0
+offset_right = 77.0
+offset_bottom = 82.0
+theme_type_variation = &"TitleEn"
+theme_override_font_sizes/font_size = 21
+text = "The Protagonist's Bureau"
+
+[node name="DayLabel" type="Label" parent="SideRail" unique_id=115718430]
+layout_mode = 0
+offset_left = 77.0
+offset_top = 116.0
+offset_right = 77.0
+offset_bottom = 116.0
+theme_type_variation = &"MonoLabel"
+text = "DAY 03  ·  AFTERNOON  ·  CLOUDY"
+
+[node name="Rule" type="ColorRect" parent="SideRail" unique_id=1546609013]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 152.0
+offset_right = 404.0
+offset_bottom = 153.0
+mouse_filter = 2
+color = Color(0.702, 0.631, 0.878, 0.4)
+
+[node name="Index" type="Label" parent="SideRail" unique_id=1744872204]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 170.0
+offset_right = 48.0
+offset_bottom = 170.0
+theme_override_colors/font_color = Color(0.698, 0.631, 0.878, 1)
+theme_override_fonts/font = ExtResource("6_mpcxj")
+theme_override_font_sizes/font_size = 11
+text = "INDEX"
+
+[node name="IndexCount" type="Label" parent="SideRail" unique_id=1439874607]
+layout_mode = 0
+offset_left = 362.0
+offset_top = 170.0
+offset_right = 362.0
+offset_bottom = 170.0
+theme_type_variation = &"MonoLabel"
+text = "— 07"
+
+[node name="RailMenu" type="VBoxContainer" parent="SideRail" unique_id=787205098]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 32.0
+offset_top = 200.0
+offset_right = 480.0
+offset_bottom = 200.0
+theme_override_constants/separation = 8
+
+[node name="Requests" type="Control" parent="SideRail/RailMenu" unique_id=1575773434 instance=ExtResource("10_q3eep")]
+custom_minimum_size = Vector2(448, 88)
+layout_mode = 2
+script = ExtResource("12_ggube")
+title_ko = "의뢰 게시판"
+title_en = "Requests"
+rose_badge = ExtResource("13_x7ov4")
+amber_badge = ExtResource("14_yiii3")
+
+[node name="VoidMap" type="Control" parent="SideRail/RailMenu" unique_id=1805814967 instance=ExtResource("10_q3eep")]
+custom_minimum_size = Vector2(448, 88)
+layout_mode = 2
+script = ExtResource("12_ggube")
+number = "02"
+title_ko = "공허 지도"
+title_en = "Void Map"
+rose_badge = ExtResource("13_x7ov4")
+amber_badge = ExtResource("14_yiii3")
+
+[node name="Personnel" type="Control" parent="SideRail/RailMenu" unique_id=103529511 instance=ExtResource("10_q3eep")]
+custom_minimum_size = Vector2(448, 88)
+layout_mode = 2
+script = ExtResource("12_ggube")
+number = "03"
+title_ko = "사원 명부"
+title_en = "Personnel"
+rose_badge = ExtResource("13_x7ov4")
+amber_badge = ExtResource("14_yiii3")
+
+[node name="Promotion" type="Control" parent="SideRail/RailMenu" unique_id=1198403643 instance=ExtResource("10_q3eep")]
+custom_minimum_size = Vector2(448, 88)
+layout_mode = 2
+script = ExtResource("12_ggube")
+number = "04"
+title_ko = "승급장"
+title_en = "Promotion Hall"
+rose_badge = ExtResource("13_x7ov4")
+amber_badge = ExtResource("14_yiii3")
+
+[node name="Spa" type="Control" parent="SideRail/RailMenu" unique_id=1400337923 instance=ExtResource("10_q3eep")]
+custom_minimum_size = Vector2(448, 88)
+layout_mode = 2
+script = ExtResource("12_ggube")
+number = "05"
+title_ko = "스파"
+title_en = "Spa"
+rose_badge = ExtResource("13_x7ov4")
+amber_badge = ExtResource("14_yiii3")
+
+[node name="Storage" type="Control" parent="SideRail/RailMenu" unique_id=1838352742 instance=ExtResource("10_q3eep")]
+custom_minimum_size = Vector2(448, 88)
+layout_mode = 2
+script = ExtResource("12_ggube")
+number = "06"
+title_ko = "창고"
+title_en = "Storage"
+rose_badge = ExtResource("13_x7ov4")
+amber_badge = ExtResource("14_yiii3")
+
+[node name="Journal" type="Control" parent="SideRail/RailMenu" unique_id=1956255748 instance=ExtResource("10_q3eep")]
+custom_minimum_size = Vector2(448, 88)
+layout_mode = 2
+script = ExtResource("12_ggube")
+number = "07"
+title_ko = "일지"
+title_en = "Journal"
+rose_badge = ExtResource("13_x7ov4")
+amber_badge = ExtResource("14_yiii3")
+
+[node name="EndDayButton" type="Button" parent="SideRail" unique_id=1035624560]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 48.0
+offset_top = 940.0
+offset_right = 404.0
+offset_bottom = 1016.0
+theme_type_variation = &"PrimaryButton"
+
+[node name="Ko" type="Label" parent="SideRail/EndDayButton" unique_id=1371926158]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 8.0
+offset_right = 32.0
+offset_bottom = 8.0
+theme_override_colors/font_color = Color(0.102, 0.086, 0.149, 1)
+theme_override_fonts/font = ExtResource("5_34p82")
+theme_override_font_sizes/font_size = 24
+text = "하루 마치기"
+
+[node name="En" type="Label" parent="SideRail/EndDayButton" unique_id=1626300552]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 44.0
+offset_right = 32.0
+offset_bottom = 44.0
+theme_override_colors/font_color = Color(0.102, 0.086, 0.149, 0.7)
+theme_override_fonts/font = ExtResource("7_h6aq4")
+theme_override_font_sizes/font_size = 15
+text = "End the Day"
+
+[node name="Arrow" type="Label" parent="SideRail/EndDayButton" unique_id=114604722]
+layout_mode = 0
+offset_left = 300.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 20.0
+theme_override_colors/font_color = Color(0.102, 0.086, 0.149, 1)
+theme_override_font_sizes/font_size = 26
+text = "→"
+
+[node name="Hud" type="Control" parent="." unique_id=1112978838]
+anchors_preset = 0
+offset_left = 1528.0
+offset_top = 24.0
+offset_right = 1880.0
+offset_bottom = 80.0
+mouse_filter = 2
+
+[node name="FundsPlate" type="TextureRect" parent="Hud" unique_id=1697758493]
+layout_mode = 0
+mouse_filter = 2
+texture = ExtResource("8_ndi68")
+
+[node name="FundsDiamond" type="TextureRect" parent="Hud" unique_id=1084816157]
+layout_mode = 0
+offset_left = 19.0
+offset_top = 21.0
+offset_right = 19.0
+offset_bottom = 21.0
+mouse_filter = 2
+texture = ExtResource("9_fm2cq")
+
+[node name="FundsCaption" type="Label" parent="Hud" unique_id=1019884678]
+layout_mode = 0
+offset_left = 46.0
+offset_top = 6.0
+offset_right = 46.0
+offset_bottom = 6.0
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 10
+text = "FUNDS · 자금"
+
+[node name="FundsRow" type="HBoxContainer" parent="Hud" unique_id=119195765]
+layout_mode = 0
+offset_left = 46.0
+offset_top = 20.0
+offset_right = 46.0
+offset_bottom = 20.0
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="FundsLabel" type="Label" parent="Hud/FundsRow" unique_id=1242208883]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_mpcxj")
+theme_override_font_sizes/font_size = 22
+text = "0"
+
+[node name="Cr" type="Label" parent="Hud/FundsRow" unique_id=707199]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.678, 0.639, 0.8, 1)
+theme_override_fonts/font = ExtResource("7_h6aq4")
+theme_override_font_sizes/font_size = 16
+text = "cr."
+
+[node name="Plus" type="Label" parent="Hud" unique_id=1159022600]
+layout_mode = 0
+offset_left = 212.0
+offset_top = 12.0
+offset_right = 212.0
+offset_bottom = 12.0
+theme_override_colors/font_color = Color(0.471, 0.431, 0.58, 1)
+theme_override_fonts/font = ExtResource("10_d33an")
+theme_override_font_sizes/font_size = 22
+text = "+"
+
+[node name="SettingsButton" type="TextureButton" parent="Hud" unique_id=292509791]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 264.0
+offset_right = 352.0
+offset_bottom = 56.0
+texture_normal = ExtResource("11_okekv")
+
+[node name="Ko" type="Label" parent="Hud/SettingsButton" unique_id=1175185248]
+layout_mode = 0
+offset_top = 8.0
+offset_right = 88.0
+offset_bottom = 31.0
+theme_override_fonts/font = ExtResource("12_6l8h4")
+theme_override_font_sizes/font_size = 15
+text = "설정"
+horizontal_alignment = 1
+
+[node name="En" type="Label" parent="Hud/SettingsButton" unique_id=1154865510]
+layout_mode = 0
+offset_top = 32.0
+offset_right = 88.0
+offset_bottom = 55.0
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 9
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="EmptyHint" type="Label" parent="." unique_id=182654031]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1260.0
+offset_top = 1000.0
+offset_right = 1860.0
+offset_bottom = 1023.0
+theme_override_colors/font_color = Color(0.949, 0.929, 0.988, 0.7)
+theme_override_font_sizes/font_size = 14
+text = "메뉴를 고르면 오른쪽에 창이 열립니다"
+horizontal_alignment = 2
+
+[node name="Notice" type="Label" parent="." unique_id=1362764189]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 460.0
+offset_top = 1000.0
+offset_right = 1460.0
+offset_bottom = 1024.0
+theme_type_variation = &"StatusText"
+horizontal_alignment = 1
+script = ExtResource("3_xc16o")

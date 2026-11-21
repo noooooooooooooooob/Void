@@ -1,7 +1,20 @@
-[gd_scene format=3 uid="uid://4j0800vekvrf"]
+[gd_scene format=3 uid="uid://bmj4g8acdo5ev"]
 
 [ext_resource type="Script" uid="uid://gb44x6igk73j" path="res://Scripts/ui/title_screen.gd" id="1_s84n8"]
-[ext_resource type="PackedScene" uid="uid://b5k3ixvdrl8bf" path="res://Scenes/ui/stage_map/stage_map.tscn" id="2_22d8f"]
+[ext_resource type="Texture2D" uid="uid://b44diavn2et4c" path="res://Art/ui/title/lavender_grade.svg" id="2_22d8f"]
+[ext_resource type="PackedScene" uid="uid://pltad7wklrlt" path="res://Scenes/ui/office_screen/office_screen.tscn" id="2_s7roi"]
+[ext_resource type="Texture2D" uid="uid://dfeuj2ve5ckwa" path="res://Art/backgrounds/main_screen.png" id="2_w7rxo"]
+[ext_resource type="Texture2D" uid="uid://c30xfse8hquip" path="res://Art/ui/title/vignette.svg" id="3_1qn60"]
+[ext_resource type="Texture2D" uid="uid://5bcu5ngh2vyi" path="res://Art/ui/title/left_fade.svg" id="4_1vd5w"]
+[ext_resource type="Texture2D" uid="uid://dd6uky1xh3v88" path="res://Art/ui/title/bottom_fade.svg" id="5_n5d5u"]
+[ext_resource type="Texture2D" uid="uid://b5lut8uwnkk4l" path="res://Art/ui/title/logo_backdrop.svg" id="6_p1fis"]
+[ext_resource type="Texture2D" uid="uid://c85l5w5lvvl5g" path="res://Art/ui/title/press_key_backdrop.svg" id="7_cru3i"]
+[ext_resource type="Texture2D" uid="uid://ny2kuykrag1" path="res://Art/ui/main_menu/logo_diamond.svg" id="8_cyoyx"]
+[ext_resource type="FontFile" uid="uid://c4325xmxdye0y" path="res://Art/fonts/ibm_plex_mono/ibm_plex_mono_semibold.ttf" id="9_6wkoc"]
+[ext_resource type="Texture2D" uid="uid://db7hom27tei3u" path="res://Art/ui/main_menu/save_card_plate.svg" id="10_gkr08"]
+[ext_resource type="Script" uid="uid://cqd2sempb66eu" path="res://Scripts/ui/notice_label.gd" id="10_rgbmc"]
+[ext_resource type="PackedScene" uid="uid://dfrdutfsf8fei" path="res://Scenes/ui/title_screen/main_menu_item.tscn" id="10_yukm4"]
+[ext_resource type="Script" uid="uid://bnn53cirpqiyl" path="res://Scripts/ui/main_menu_item.gd" id="11_s2ssk"]
 
 [node name="TitleScreen" type="Control" unique_id=1423069208]
 layout_mode = 3
@@ -11,40 +24,348 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_s84n8")
-next_scene = ExtResource("2_22d8f")
+office_scene = ExtResource("2_s7roi")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1057805360]
+[node name="Bg" type="ColorRect" parent="." unique_id=471232286]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.24740553, 0.20598522, 0.23438382, 1)
+mouse_filter = 2
+color = Color(0.102, 0.086, 0.149, 1)
 
-[node name="Menu" type="VBoxContainer" parent="Background" unique_id=1802245950]
+[node name="KeyArt" type="TextureRect" parent="." unique_id=802669218]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -29.0
-offset_right = 20.0
-offset_bottom = 29.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_w7rxo")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="Title" type="Label" parent="Background/Menu" unique_id=1267742775]
+[node name="LavenderGrade" type="TextureRect" parent="." unique_id=1578728921]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_22d8f")
+expand_mode = 1
+
+[node name="Vignette" type="TextureRect" parent="." unique_id=925422957]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_1qn60")
+expand_mode = 1
+
+[node name="LeftFade" type="TextureRect" parent="." unique_id=471279520]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 1100.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("4_1vd5w")
+expand_mode = 1
+
+[node name="BottomFade" type="TextureRect" parent="." unique_id=550229605]
+layout_mode = 0
+offset_top = 880.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("5_n5d5u")
+expand_mode = 1
+
+[node name="VerticalLabel" type="Label" parent="." unique_id=2033449042]
+modulate = Color(1, 1, 1, 0.45)
+layout_mode = 0
+offset_left = 1890.0
+offset_top = 300.0
+offset_right = 1890.0
+offset_bottom = 300.0
+rotation = 1.5708
+theme_type_variation = &"MonoLabel"
+text = "VOID PURIFIER   —   DISTRICT 07   —   EST. 1924"
+
+[node name="LogoBackdrop" type="TextureRect" parent="." unique_id=128832623]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 330.0
+offset_top = 160.0
+offset_right = 330.0
+offset_bottom = 160.0
+mouse_filter = 2
+texture = ExtResource("6_p1fis")
+
+[node name="PressKeyBackdrop" type="TextureRect" parent="." unique_id=1389293190]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 510.0
+offset_top = 680.0
+offset_right = 510.0
+offset_bottom = 680.0
+mouse_filter = 2
+texture = ExtResource("7_cru3i")
+
+[node name="Logo" type="VBoxContainer" parent="." unique_id=1627530758]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 460.0
+offset_top = 300.0
+offset_right = 1460.0
+offset_bottom = 300.0
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="Sub" type="Label" parent="Logo" unique_id=282247654]
 layout_mode = 2
+theme_type_variation = &"MonoLabel"
+theme_override_colors/font_color = Color(0.8, 0.722, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "A  VOID  PURIFICATION  TALE"
 horizontal_alignment = 1
 
-[node name="StartButton" type="Button" parent="Background/Menu" unique_id=1474107256]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 200)
+[node name="TitleKo" type="Label" parent="Logo" unique_id=1652136997]
 layout_mode = 2
-theme_override_font_sizes/font_size = 64
-text = "시작"
+theme_type_variation = &"LogoKo"
+text = "공허 정화자"
+horizontal_alignment = 1
 
-[connection signal="pressed" from="Background/Menu/StartButton" to="." method="_on_start_button_pressed"]
+[node name="TitleEn" type="Label" parent="Logo" unique_id=1592065651]
+layout_mode = 2
+theme_type_variation = &"LogoEn"
+text = "Void Purifier"
+horizontal_alignment = 1
+
+[node name="Working" type="Label" parent="Logo" unique_id=1423094126]
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+theme_override_colors/font_color = Color(0.949, 0.929, 0.988, 0.55)
+theme_override_font_sizes/font_size = 12
+text = "가제  ·  WORKING TITLE"
+horizontal_alignment = 1
+
+[node name="RuleRow" type="HBoxContainer" parent="Logo" unique_id=743588085]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = -5
+alignment = 1
+
+[node name="Line" type="ColorRect" parent="Logo/RuleRow" unique_id=1256973768]
+custom_minimum_size = Vector2(400, 1)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+color = Color(0.8, 0.722, 1, 0.6)
+
+[node name="Diamond" type="TextureRect" parent="Logo/RuleRow" unique_id=65180063]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("8_cyoyx")
+stretch_mode = 3
+
+[node name="PressAnyKey" type="Control" parent="." unique_id=525655630]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 560.0
+offset_top = 790.0
+offset_right = 1360.0
+offset_bottom = 850.0
+mouse_filter = 2
+
+[node name="LineL" type="ColorRect" parent="PressAnyKey" unique_id=1889045315]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 28.0
+offset_right = 240.0
+offset_bottom = 29.0
+mouse_filter = 2
+color = Color(0.8, 0.722, 1, 0.6)
+
+[node name="LineR" type="ColorRect" parent="PressAnyKey" unique_id=210749103]
+layout_mode = 0
+offset_left = 560.0
+offset_top = 28.0
+offset_right = 700.0
+offset_bottom = 29.0
+mouse_filter = 2
+color = Color(0.8, 0.722, 1, 0.6)
+
+[node name="PressAnyKeyText" type="Label" parent="PressAnyKey" unique_id=1069741238]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 16.0
+offset_right = 800.0
+offset_bottom = 40.0
+theme_override_colors/font_color = Color(0.8, 0.722, 1, 1)
+theme_override_fonts/font = ExtResource("9_6wkoc")
+theme_override_font_sizes/font_size = 16
+text = "PRESS ANY KEY"
+horizontal_alignment = 1
+
+[node name="Ko" type="Label" parent="PressAnyKey" unique_id=1380901797]
+layout_mode = 0
+offset_top = 40.0
+offset_right = 800.0
+offset_bottom = 63.0
+theme_type_variation = &"StatusText"
+text = "아무 키나 누르세요"
+horizontal_alignment = 1
+
+[node name="Menu" type="VBoxContainer" parent="." unique_id=618770792]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 104.0
+offset_top = 440.0
+offset_right = 624.0
+offset_bottom = 440.0
+theme_override_constants/separation = 8
+
+[node name="Continue" type="Control" parent="Menu" unique_id=1540801926 instance=ExtResource("10_yukm4")]
+custom_minimum_size = Vector2(520, 64)
+layout_mode = 2
+script = ExtResource("11_s2ssk")
+title_ko = "이어하기"
+title_en = "Continue"
+
+[node name="NewGame" type="Control" parent="Menu" unique_id=1185472046 instance=ExtResource("10_yukm4")]
+custom_minimum_size = Vector2(520, 64)
+layout_mode = 2
+script = ExtResource("11_s2ssk")
+number = "02"
+title_ko = "새 게임"
+title_en = "New Game"
+
+[node name="Load" type="Control" parent="Menu" unique_id=1330866965 instance=ExtResource("10_yukm4")]
+custom_minimum_size = Vector2(520, 64)
+layout_mode = 2
+script = ExtResource("11_s2ssk")
+number = "03"
+title_ko = "불러오기"
+title_en = "Load"
+
+[node name="Settings" type="Control" parent="Menu" unique_id=1275052362 instance=ExtResource("10_yukm4")]
+custom_minimum_size = Vector2(520, 64)
+layout_mode = 2
+script = ExtResource("11_s2ssk")
+number = "04"
+title_ko = "설정"
+title_en = "Settings"
+
+[node name="Credits" type="Control" parent="Menu" unique_id=192942510 instance=ExtResource("10_yukm4")]
+custom_minimum_size = Vector2(520, 64)
+layout_mode = 2
+script = ExtResource("11_s2ssk")
+number = "05"
+title_ko = "제작진"
+title_en = "Credits"
+
+[node name="Quit" type="Control" parent="Menu" unique_id=1723972456 instance=ExtResource("10_yukm4")]
+custom_minimum_size = Vector2(520, 64)
+layout_mode = 2
+script = ExtResource("11_s2ssk")
+number = "06"
+title_ko = "종료"
+title_en = "Quit"
+
+[node name="SaveCard" type="Control" parent="." unique_id=1978737907]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 0
+offset_left = 620.0
+offset_top = 432.0
+offset_right = 1020.0
+offset_bottom = 622.0
+mouse_filter = 2
+
+[node name="Link" type="ColorRect" parent="SaveCard" unique_id=354879410]
+layout_mode = 0
+offset_left = -60.0
+offset_top = 40.0
+offset_bottom = 41.0
+mouse_filter = 2
+color = Color(0.8, 0.722, 1, 0.6)
+
+[node name="Plate" type="TextureRect" parent="SaveCard" unique_id=692009398]
+layout_mode = 0
+offset_left = -20.0
+offset_top = -20.0
+offset_right = -20.0
+offset_bottom = -20.0
+mouse_filter = 2
+texture = ExtResource("10_gkr08")
+
+[node name="Caption" type="Label" parent="SaveCard" unique_id=1454945032]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 24.0
+offset_bottom = 20.0
+theme_type_variation = &"MonoLabel"
+text = "LAST SAVE  ·  최근 기록"
+
+[node name="Day" type="Label" parent="SaveCard" unique_id=1926411196]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 44.0
+offset_right = 24.0
+offset_bottom = 44.0
+theme_type_variation = &"TitleKo"
+text = "DAY 03  ·  오후"
+
+[node name="Detail" type="Label" parent="SaveCard" unique_id=665720569]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 90.0
+offset_right = 24.0
+offset_bottom = 90.0
+theme_type_variation = &"StatusText"
+text = "저장 기능 준비 중"
+
+[node name="Hint" type="Label" parent="." unique_id=811367733]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.6)
+layout_mode = 0
+offset_left = 1020.0
+offset_top = 1020.0
+offset_right = 1820.0
+offset_bottom = 1043.0
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 12
+text = "ENTER  선택      ↑ ↓  이동      ESC  뒤로"
+horizontal_alignment = 2
+
+[node name="Version" type="Label" parent="." unique_id=1937246130]
+modulate = Color(1, 1, 1, 0.5)
+layout_mode = 0
+offset_left = 120.0
+offset_top = 1022.0
+offset_right = 120.0
+offset_bottom = 1022.0
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 12
+text = "v0.1.0"
+
+[node name="Notice" type="Label" parent="." unique_id=1470687000]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 460.0
+offset_top = 980.0
+offset_right = 1460.0
+offset_bottom = 1004.0
+theme_type_variation = &"StatusText"
+horizontal_alignment = 1
+script = ExtResource("10_rgbmc")

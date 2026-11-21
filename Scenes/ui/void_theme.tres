@@ -1,0 +1,123 @@
+[gd_resource type="Theme" format=3 uid="uid://duclqgolp11xj"]
+
+[ext_resource type="FontFile" uid="uid://c2acwh1gwk6m6" path="res://Art/fonts/noto_sans_kr/noto_sans_kr_regular.otf" id="1_dgnk2"]
+[ext_resource type="FontFile" uid="uid://c13si8xashwfm" path="res://Art/fonts/noto_sans_kr/noto_sans_kr_medium.otf" id="1_o5htg"]
+[ext_resource type="FontFile" uid="uid://bjnijpdqh352w" path="res://Art/fonts/noto_serif_kr/noto_serif_kr_bold.otf" id="1_ufcw5"]
+[ext_resource type="FontVariation" uid="uid://csicnbyuchdyq" path="res://Art/fonts/cormorant_garamond/cormorant_garamond_semibold_italic.tres" id="2_3nydk"]
+[ext_resource type="FontFile" uid="uid://c4325xmxdye0y" path="res://Art/fonts/ibm_plex_mono/ibm_plex_mono_semibold.ttf" id="3_3x1f7"]
+[ext_resource type="FontVariation" uid="uid://do6oo613uctuo" path="res://Art/fonts/ibm_plex_mono/ibm_plex_mono_medium_wide.tres" id="3_xtcls"]
+[ext_resource type="Texture2D" uid="uid://d3606nmyptb0q" path="res://Art/ui/office/end_day_button.svg" id="6_j5jfd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b6vaw"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7019608, 0.6313726, 0.8784314, 0.54901963)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mhq1e"]
+texture = ExtResource("6_j5jfd")
+texture_margin_left = 36.0
+texture_margin_top = 36.0
+texture_margin_right = 36.0
+texture_margin_bottom = 36.0
+expand_margin_left = 24.0
+expand_margin_top = 24.0
+expand_margin_right = 24.0
+expand_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_j5jfd"]
+texture = ExtResource("6_j5jfd")
+texture_margin_left = 36.0
+texture_margin_top = 36.0
+texture_margin_right = 36.0
+texture_margin_bottom = 36.0
+expand_margin_left = 24.0
+expand_margin_top = 24.0
+expand_margin_right = 24.0
+expand_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cebvc"]
+texture = ExtResource("6_j5jfd")
+texture_margin_left = 36.0
+texture_margin_top = 36.0
+texture_margin_right = 36.0
+texture_margin_bottom = 36.0
+expand_margin_left = 24.0
+expand_margin_top = 24.0
+expand_margin_right = 24.0
+expand_margin_bottom = 24.0
+
+[resource]
+default_font = ExtResource("1_dgnk2")
+default_font_size = 16
+GhostButton/base_type = &"Button"
+GhostButton/colors/font_color = Color(0.949, 0.929, 0.988, 1)
+GhostButton/font_sizes/font_size = 15
+GhostButton/fonts/font = ExtResource("1_o5htg")
+GhostButton/styles/hover = SubResource("StyleBoxFlat_b6vaw")
+GhostButton/styles/normal = SubResource("StyleBoxFlat_b6vaw")
+GhostButton/styles/pressed = SubResource("StyleBoxFlat_b6vaw")
+Label/colors/font_color = Color(0.949, 0.929, 0.988, 1)
+LogoEn/base_type = &"Label"
+LogoEn/colors/font_color = Color(0.8, 0.722, 1, 1)
+LogoEn/font_sizes/font_size = 50
+LogoEn/fonts/font = ExtResource("2_3nydk")
+LogoKo/base_type = &"Label"
+LogoKo/colors/font_color = Color(0.949, 0.929, 0.988, 1)
+LogoKo/colors/font_shadow_color = Color(0.6, 0.502, 1, 0.55)
+LogoKo/constants/shadow_offset_x = 0
+LogoKo/constants/shadow_offset_y = 0
+LogoKo/constants/shadow_outline_size = 30
+LogoKo/font_sizes/font_size = 108
+LogoKo/fonts/font = ExtResource("1_ufcw5")
+MenuEn/base_type = &"Label"
+MenuEn/colors/font_color = Color(0.678, 0.639, 0.8, 0.85)
+MenuEn/font_sizes/font_size = 20
+MenuEn/fonts/font = ExtResource("2_3nydk")
+MenuKo/base_type = &"Label"
+MenuKo/colors/font_color = Color(0.949, 0.929, 0.988, 1)
+MenuKo/font_sizes/font_size = 28
+MenuKo/fonts/font = ExtResource("1_ufcw5")
+MonoLabel/base_type = &"Label"
+MonoLabel/colors/font_color = Color(0.471, 0.431, 0.58, 1)
+MonoLabel/font_sizes/font_size = 11
+MonoLabel/fonts/font = ExtResource("3_xtcls")
+MonoNumber/base_type = &"Label"
+MonoNumber/colors/font_color = Color(0.471, 0.431, 0.58, 1)
+MonoNumber/font_sizes/font_size = 14
+MonoNumber/fonts/font = ExtResource("3_3x1f7")
+PanelTitle/base_type = &"Label"
+PanelTitle/colors/font_color = Color(0.949, 0.929, 0.988, 1)
+PanelTitle/font_sizes/font_size = 48
+PanelTitle/fonts/font = ExtResource("1_ufcw5")
+PanelTitleEn/base_type = &"Label"
+PanelTitleEn/colors/font_color = Color(0.678, 0.639, 0.8, 1)
+PanelTitleEn/font_sizes/font_size = 28
+PanelTitleEn/fonts/font = ExtResource("2_3nydk")
+PrimaryButton/base_type = &"Button"
+PrimaryButton/colors/font_color = Color(0.102, 0.086, 0.149, 1)
+PrimaryButton/colors/font_hover_color = Color(0.102, 0.086, 0.149, 1)
+PrimaryButton/colors/font_pressed_color = Color(0.102, 0.086, 0.149, 1)
+PrimaryButton/font_sizes/font_size = 24
+PrimaryButton/fonts/font = ExtResource("1_ufcw5")
+PrimaryButton/icons/icon = null
+PrimaryButton/styles/hover = SubResource("StyleBoxTexture_mhq1e")
+PrimaryButton/styles/normal = SubResource("StyleBoxTexture_j5jfd")
+PrimaryButton/styles/pressed = SubResource("StyleBoxTexture_cebvc")
+StatusText/base_type = &"Label"
+StatusText/colors/font_color = Color(0.678, 0.639, 0.8, 1)
+StatusText/font_sizes/font_size = 13
+TitleEn/base_type = &"Label"
+TitleEn/colors/font_color = Color(0.678, 0.639, 0.8, 0.8)
+TitleEn/font_sizes/font_size = 18
+TitleEn/fonts/font = ExtResource("2_3nydk")
+TitleKo/base_type = &"Label"
+TitleKo/colors/font_color = Color(0.949, 0.929, 0.988, 1)
+TitleKo/font_sizes/font_size = 25
+TitleKo/fonts/font = ExtResource("1_ufcw5")

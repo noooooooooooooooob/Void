@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://dfrdutfsf8fei"]
+
+[ext_resource type="Script" uid="uid://bnn53cirpqiyl" path="res://Scripts/ui/main_menu_item.gd" id="1_byyk4"]
+[ext_resource type="Texture2D" uid="uid://cmcvwm52wl5vu" path="res://Art/ui/main_menu/menu_sel_gradient.svg" id="1_ffvmo"]
+[ext_resource type="Texture2D" uid="uid://cw22ew00kk314" path="res://Art/ui/main_menu/menu_arrow.svg" id="2_bbsjk"]
+
+[node name="MainMenuItem" type="Control" unique_id=1540801926]
+custom_minimum_size = Vector2(520, 64)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 520.0
+offset_bottom = 64.0
+script = ExtResource("1_byyk4")
+
+[node name="SelBg" type="TextureRect" parent="." unique_id=1354670817]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 440.0
+offset_bottom = 64.0
+mouse_filter = 2
+texture = ExtResource("1_ffvmo")
+expand_mode = 1
+
+[node name="SelBar" type="ColorRect" parent="." unique_id=1652215269]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 4.0
+offset_bottom = 64.0
+mouse_filter = 2
+color = Color(0.8, 0.722, 1, 1)
+
+[node name="Arrow" type="TextureRect" parent="." unique_id=1895337833]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 448.0
+offset_top = 22.0
+offset_right = 448.0
+offset_bottom = 22.0
+mouse_filter = 2
+texture = ExtResource("2_bbsjk")
+
+[node name="Number" type="Label" parent="." unique_id=392720854]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 22.0
+offset_right = 20.0
+offset_bottom = 22.0
+theme_type_variation = &"MonoNumber"
+text = "01"
+
+[node name="Titles" type="HBoxContainer" parent="." unique_id=231269226]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 12.0
+offset_right = 60.0
+offset_bottom = 12.0
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="TitleKo" type="Label" parent="Titles" unique_id=932402340]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MenuKo"
+text = "이어하기"
+
+[node name="TitleEn" type="Label" parent="Titles" unique_id=1926315768]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+theme_type_variation = &"MenuEn"
+text = "Continue"
