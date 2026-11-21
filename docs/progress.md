@@ -1,6 +1,6 @@
 # Project Void 개발 진행 상황
 
-마지막 갱신: 2026-11-19
+마지막 갱신: 2026-11-21
 
 코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
 
@@ -115,6 +115,7 @@
 
 ## 구조 변경
 
+- 2026-11-21: 브랜치 정리 — `feat/shop`(카드 연출·소비 아이템·상점·전투 보상·연출 타임라인·피격 반응)을 `main` 에 fast-forward 머지. 그 안에 다 들어 있던 `feat/bram-sprites`·`feat/card-performance` 와 `feat/shop` 은 로컬·원격 모두 삭제. 지금 브랜치는 `main` 하나
 - 2026-11-19: 전투 화면 씬에 월드 묶음 `World`(Background·AllyGrid·EnemyGrid)·`WorldFront`(PerformanceLayer·FloatLayer) 추가 — 연출 카메라가 UI 를 빼고 움직이게. 노드는 모두 `%이름` 으로 찾으므로 경로 영향 없음. 헤드리스로 씬을 고칠 때는 원래 PackedScene 에 `pack` 하고 `--editor` 모드로 저장해야 uid 가 유지됨
 - 2026-11-17 (코드 리뷰 반영): ① 전투가 끝나도 `Battle` 이 메모리에서 안 풀리던 것 — 되돌아가는 참조(`BattleUnit.battle`, `StatusInstance.owner·applier`, 규칙 객체 4개의 `.battle`)를 약한 참조(WeakRef)로. ② 상점에서 산 뒤 강화한 카드도 원래 카드의 동작 이름을 씀(`CardPool.find_base`). ③ 아이템 특수 효과 피해의 전투 기록이 "(상태)" 대신 아이템 이름. ④ 안 쓰는 `StageRun.Room.SHOP` 삭제. ⑤ 폴더의 `.tres` 찾기(.remap 처리)를 `Scripts/util/res_dir.gd`(`ResDir.tres_paths`) 하나로 — 카드 목록·키워드·소비 아이템·카드 갤러리. ⑥ 카드 갤러리의 덱 제목·카드 줄을 씬의 숨긴 틀(`SectionTitleTemplate`·`CardRowTemplate`)에서 복제. ⑦ 오래된 주석 정리. 전투 화면 스크립트(1186줄) 나누기는 보류
 - 2026-11-09: 캐릭터 후보 그림 35장을 `Art_src/` 에서 뺌 (게임에 안 쓰는 그림, 저장소 밖 로컬 폴더 `C:\C\ProjectVoid_Assets` 에 보관)
