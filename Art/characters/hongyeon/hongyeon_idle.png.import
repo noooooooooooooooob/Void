@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpkvwofgrtik4"
-path="res://.godot/imported/hongyeon_illust.png-462022e0ab17242f5905377ce3fa334a.ctex"
+uid="uid://cse6ph0pfvuwt"
+path="res://.godot/imported/hongyeon_idle.png-4906169a218ea918d2180589c63f8183.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/characters/hongyeon/hongyeon_illust.png"
-dest_files=["res://.godot/imported/hongyeon_illust.png-462022e0ab17242f5905377ce3fa334a.ctex"]
+source_file="res://Art/characters/hongyeon/hongyeon_idle.png"
+dest_files=["res://.godot/imported/hongyeon_idle.png-4906169a218ea918d2180589c63f8183.ctex"]
 
 [params]
 
