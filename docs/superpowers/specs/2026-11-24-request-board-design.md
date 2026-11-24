@@ -1,6 +1,6 @@
 # 의뢰 게시판 설계
 
-작성 2026-11-24 · 브랜치 `main` (UI 뼈대 다음 단계)
+작성 2026-11-24 · 브랜치 `feat/request-board` (UI 뼈대 다음 단계)
 디자인 원본: Figma `Project Void UI Wireframes` › **v6 · 연보라 사이드 패널** › **01-A 의뢰 게시판** (패널 노드 `77:146`)
 (https://www.figma.com/design/cPKjLHuAgOEmvdLHLDsYnr/Project-Void-UI-Wireframes?node-id=77-74)
 
