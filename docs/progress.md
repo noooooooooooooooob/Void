@@ -1,6 +1,6 @@
 # Project Void 개발 진행 상황
 
-마지막 갱신: 2026-11-21
+마지막 갱신: 2026-11-23
 
 코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
 
@@ -16,13 +16,14 @@
 | 소비 아이템 특수 효과 (2026-11-17) | 웹 효과 줄로 못 적는 아이템을 Godot `effects` 로 구현: **폭탄** 범위 안 적마다 고정 피해 10(치명 없음, 방어도에 막힘), **쉴드 포션** 고정 방어도 10, **분노 포션** 새 상태 분노(`rage_potion`, 공격 +10% × 수치, 받은 유닛 자신의 엔드 페이즈에 전부 사라짐). 다시 가져와도 유지. 분노 포션의 웹 버프 줄은 여전히 가져올 때 빠짐 | `items/consumables/폭탄·쉴드 포션·분노 포션.tres`, `statuses/data/rage_potion.tres`, 설계 `docs/superpowers/specs/2026-11-17-consumable-special-effects-design.md` |
 | 이동 버튼 (2026-11-17) | 이동 칸(하늘색)이 항상 떠 있던 것을 **이동 버튼**으로 바꿈: 버튼을 눌러야 갈 수 있는 칸이 빛나고, 칸을 누르면 이동 후 모드가 꺼짐. ESC·우클릭·카드/아이템 고르기·차례 종료로도 꺼짐. 이동력 0·적 차례·연출 중엔 버튼 비활성 | `battle_screen.gd` (`toggle_move`, `is_move_mode`), 씬 `BottomRight/MoveButton`, 설계 `docs/superpowers/specs/2026-11-17-move-button-design.md` |
 | 키워드 파일 이름 (2026-11-10) | `cards/keywords/` 파일 이름을 id 대신 키워드 이름으로 (겹치면 `_<id>`). 게임은 `KeywordData.find` 로 파일 안의 id 로 찾음. 기존 id 이름 파일은 다음 카드 가져오기 때 자동으로 이름이 바뀜 | `Scripts/cards/keyword_data.gd`, `addons/card_importer/card_importer.gd` |
+| 홍연 전투 그림·혈갑 이펙트 (2026-11-23) | 홍연 idle(128px 8칸, 칸당 300ms)을 전투 그림으로 연결 (`hongyeon`·시험용 홍연 둘 다). 유닛별 그림 배율 `UnitData.battle_scale`(브람 일러스트 = 1, 128px 픽셀 = 10 → 화면 2배)·픽셀 그림 Nearest(`battle_pixel_art`), 중심 위치는 배율과 상관없이 같음. 상태에 **전투 이펙트** 칸(`StatusData.effect_behind`/`effect_front`): 그 상태를 가진 동안 유닛 그림 뒤·앞에 반복 재생, 상태가 사라지면 같이 사라짐. 혈갑에 bloodswirl(80칸, 20 FPS) 연결. 연출 씬(Actor)에는 아직 배율 미적용 | `entities/units/hongyeon_frames.tres`, `statuses/effects/`, `Art/vfx/hongyeon/`, `Scripts/ui/unit_token.gd`, 씬 `unit_token.tscn` 의 `Sprite/EffectBehind`·`EffectFront` |
 | 카드 화면 | 웹 에디터와 같은 카드 모양, 마우스를 올리면 키워드 설명. 2026-11-17: "+N" 강화 배지를 없애고 **강화 버전 카드는 옅은 금색 바탕 + 금빛 광채**로 구분 (색은 `CardView` 인스펙터 "강화 버전 모양") | `ui/card_view/card_view.tscn` |
 | 카드 갤러리 | 에디터에서 열기만 해도 카드가 보임. 인스펙터 Deck 으로 덱별 보기, 실행(F6) 시 탭 | `ui/card_gallery/card_gallery.tscn` |
 | 테스트 도구 | GUT 9.7.1 (실행 방법은 CLAUDE.md) | `addons/gut`, `tests/` |
 | 예시 데이터 | 유닛 홍연(덱 10장, 패시브 피의 갈망, 장비 시험용 검), 상태 피의 갈망(잃은 HP 1%당 공격 +0.5%, 임시 값), 장비 시험용 검(공격 +5) | `entities/units/hongyeon.tres`, `statuses/data/`, `statuses/equipment/` |
 | 상태 데이터 | 출혈(드로우 페이즈 고정 피해 × 수치), 혈갑(차례 종료 방어도 × 수치), 핏방울(패시브, 적이 받은 출혈 피해만큼 쌓임) — 에디터 인스펙터로 제작 | `statuses/data/` |
 | 소비 아이템 (시험판, 2026-11-17) | 파티 공용 가방 5칸(의뢰 동안 유지), 전투 중 TAB/가방 버튼으로 열어 **카드처럼 끌어서** 아군에게 사용(아군 차례의 카드 사용 페이즈만, 비용 없음), HP 회복·SP 회복(SP 는 최대 초과 가능, 다음 차례 시작에 최대로). 의뢰의 일반 전투 승리 시 40% 로 1개 드랍 → 결과 창에서 받기 / 넘어가기, 가방이 가득 차면 바꿀 칸 고르기. 보스·F6 시험 전투는 드랍 없음. 아이템은 웹 에디터에서 가져옴 (시험 아이템 회복약·기력약은 2026-11-17 삭제) | `Scripts/items/`, `items/consumables/`, `Scenes/ui/battle_screen/bag_panel.tscn`·`item_slot.tscn`, 규칙 `Battle.use_item`·`StageRun.roll_item_drop`. 설계 `docs/superpowers/specs/2026-11-17-consumable-items-design.md` |
-| 전투 화면 (시험판) | 시험용 홍연(타격 4·사격 3·방어 3) vs 시험용 적 A·B 한 판을 직접 플레이. 원거리·근접 카드는 휜 화살표로 대상 지정, 자신 카드는 두 번 클릭/끌어 올리기, 빈 칸 클릭으로 이동, 적 차례 0.7초 간격 자동, 떠오르는 숫자·전투 기록, 승리/패배 → 다시 하기. 손패에 계산된 수치 표시 | `ui/battle_screen/battle_screen.tscn` 열고 F6. 데이터 `battles/test_battle.tres` |
+| 전투 화면 (시험판) | 홍연·브람 (2026-11-23 시험용 홍연 → 진짜 홍연, 보스 전투도 같음) vs 시험용 적 A·B 한 판을 직접 플레이. 원거리·근접 카드는 휜 화살표로 대상 지정, 자신 카드는 두 번 클릭/끌어 올리기, 빈 칸 클릭으로 이동, 적 차례 0.7초 간격 자동, 떠오르는 숫자·전투 기록, 승리/패배 → 다시 하기. 손패에 계산된 수치 표시 | `ui/battle_screen/battle_screen.tscn` 열고 F6. 데이터 `battles/test_battle.tres` |
 | 전투 데이터 | 격자 크기 + 아군/적 배치 리소스 (`BattleData`), 진행 담당 `BattleSession` (의뢰 파티를 밖에서 넣을 수 있음) | `Scripts/battle/battle_data.gd`, `battle_session.gd` |
 | 시작 화면 | 게임 메인 씬. 시작 버튼 → 스테이지 지도 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
 | 의뢰 진행 (시험판, 2026-11-10) | 의뢰마다 랜덤 지도(시작 → 3열×3행 전투 6·이벤트 3 → 상점 → 보스), 연결선, W/S·클릭으로 다음 노드 고르기, 스페이스·엔터로 실행. 전투 승리 → 지도, 패배 → 시작 화면, 보스 승리 → 의뢰 성공. 의뢰 안에서 HP 유지, HP 0 파티원 제외. 이벤트는 자리만(상점은 2026-11-17 상점 화면), 보스는 시험 전투 | `Scenes/ui/stage_map/`, `Scenes/ui/room_screen/`, `Scripts/stage/` (StageRun 자동 로드·StageProgress), 테스트 `tests/stage/`, `tests/ui/` |

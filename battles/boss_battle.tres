@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="BattleData" format=3 uid="uid://cl2llqsow8ogq"]
 
 [ext_resource type="Script" uid="uid://bdkb4lvbm8n5j" path="res://Scripts/battle/battle_slot.gd" id="1_gk2eb"]
-[ext_resource type="Resource" uid="uid://vv4lak7p21rq" path="res://entities/units/test/test_hongyeon.tres" id="2_y652j"]
+[ext_resource type="Resource" uid="uid://b0dqweeokxjet" path="res://entities/units/hongyeon.tres" id="2_gk2eb"]
 [ext_resource type="Resource" uid="uid://b1mvfbsokntdu" path="res://entities/units/bram_welburn.tres" id="3_4vj6y"]
 [ext_resource type="PackedScene" uid="uid://goar44l5p1ya" path="res://Scenes/backgrounds/mountain_shrine.tscn" id="4_fiyhm"]
 [ext_resource type="Resource" uid="uid://y0jambaxxf4u" path="res://entities/units/test/test_enemy_a.tres" id="5_upfhu"]
@@ -10,7 +10,7 @@
 
 [sub_resource type="Resource" id="Resource_fcyid"]
 script = ExtResource("1_gk2eb")
-unit = ExtResource("2_y652j")
+unit = ExtResource("2_gk2eb")
 cell = Vector2i(3, 1)
 
 [sub_resource type="Resource" id="Resource_18tx5"]

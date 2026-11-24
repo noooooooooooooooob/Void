@@ -190,3 +190,54 @@ func test_unit_token_plays_upgraded_card_animation_from_base_outside_deck():
 	t.set_unit(u)
 	t.play_card_animation(up)
 	assert_eq(t.sprite().animation, base.animation)
+
+
+func test_unit_token_battle_scale_keeps_anchor_and_pixel_filter():
+	# 작은 픽셀 그림(홍연 128px)은 유닛 배율로 키우되, 화면에서 그림 중심 위치는 씬 기본과 같아야 한다
+	var t: UnitToken = _scene("res://Scenes/ui/battle_screen/unit_token.tscn")
+	var base_scale := t.sprite().scale
+	var base_shift := t.sprite().offset * base_scale
+	var u := _unit(A)
+	u.data.battle_frames = SpriteFrames.new()
+	u.data.battle_scale = 10.0
+	u.data.battle_pixel_art = true
+	t.set_unit(u)
+	assert_eq(t.sprite().scale, base_scale * 10.0)
+	assert_eq(t.sprite().offset * t.sprite().scale, base_shift)
+	assert_eq(t.sprite().texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
+
+
+func test_unit_token_shows_status_effect_while_status_held():
+	var behind := SpriteFrames.new()
+	var front := SpriteFrames.new()
+	var st := StatusData.new()
+	st.id = "blood_armor"
+	st.effect_behind = behind
+	st.effect_front = front
+	var u := _unit(A)
+	var t: UnitToken = _scene("res://Scenes/ui/battle_screen/unit_token.tscn")
+	t.set_unit(u)
+	var eb: AnimatedSprite2D = t.sprite().get_node("EffectBehind")
+	var ef: AnimatedSprite2D = t.sprite().get_node("EffectFront")
+	assert_false(eb.visible or ef.visible, "상태가 없으면 이펙트도 없다")
+	u.add_status(st, 3, u)
+	t.refresh()
+	assert_true(eb.visible and ef.visible)
+	assert_eq(eb.sprite_frames, behind)
+	assert_eq(ef.sprite_frames, front)
+	assert_true(eb.show_behind_parent, "behind 는 캐릭터 뒤에 그린다")
+	u.remove_status("blood_armor")
+	t.refresh()
+	assert_false(eb.visible or ef.visible, "상태가 사라지면 이펙트도 사라진다")
+
+
+func test_unit_token_hides_color_box_when_unit_has_sprite():
+	# 편 색 박스는 그림이 없는 유닛의 자리 표시. 그림이 있으면 숨긴다 (연출 미리보기와 같음)
+	var t: UnitToken = _scene("res://Scenes/ui/battle_screen/unit_token.tscn")
+	var plain := _unit(E)
+	t.set_unit(plain)
+	assert_true(t.get_node("%Body").visible)
+	var drawn := _unit(A)
+	drawn.data.battle_frames = SpriteFrames.new()
+	t.set_unit(drawn)
+	assert_false(t.get_node("%Body").visible)

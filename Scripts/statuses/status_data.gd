@@ -37,3 +37,10 @@ extends Resource
 ## 카드 대체: { 원본 CardData: 대체 CardData }.
 ## 이 상태를 가진 유닛이 원본 카드를 보거나 쓰면 대체 카드로 취급한다. (예: 혈갑: 공격태세 → 해체 카드가 피의 참격으로)
 @export var replacements: Dictionary = {}
+
+@export_group("전투 이펙트")
+## 이 상태를 가진 동안 유닛 그림 **뒤**에 반복 재생할 애니메이션 묶음 (첫 애니메이션을 튼다). 비우면 없음.
+## 예) 혈갑: bloodswirl_behind. 수치를 쓰는 상태는 수치가 0 이 되어 사라지면 같이 사라진다.
+@export var effect_behind: SpriteFrames
+## 이 상태를 가진 동안 유닛 그림 **앞**에 반복 재생할 애니메이션 묶음. 비우면 없음.
+@export var effect_front: SpriteFrames

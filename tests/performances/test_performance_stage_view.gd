@@ -279,6 +279,7 @@ func test_rebuilds_mirror_when_source_changes():
 
 func test_follows_source_state_each_sync():
 	var v := _view()
+	v.set_actor(_bram_index())  # 돌주먹의 주인 (punch 동작이 브람 그림 묶음에 있음)
 	var src := _fist()
 	v.set_source(src)
 	v.sync()
@@ -313,7 +314,7 @@ func test_units_show_side_colored_box_like_game():
 	var v := _view()
 	var ally_box: ColorRect = v.ally_sprite(0).get_parent().get_node("Box")
 	var enemy_box: ColorRect = v.enemy_sprite().get_parent().get_node("Box")
-	assert_true(ally_box.visible)
+	# 그림 묶음이 있는 유닛은 박스를 숨긴다 (홍연·브람 모두 그림 있음) — 색만 확인
 	assert_eq(ally_box.color, Color("2f6f6a"))
 	assert_eq(enemy_box.color, Color("7a2f3a"))
 

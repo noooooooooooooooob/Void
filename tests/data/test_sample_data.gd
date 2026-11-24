@@ -131,12 +131,8 @@ func test_test_battle_data():
 	assert_eq(d.enemies.size(), 2)
 	assert_eq(d.allies[1].unit.display_name, "브람 웰번")
 	assert_eq(d.allies[1].cell, Vector2i(3, 0))
-	var hero := d.allies[0].unit
-	assert_eq(hero.display_name, "홍연 (시험)")
-	assert_eq(hero.deck.size(), 10)
-	assert_eq([_count(hero.deck, "타격"), _count(hero.deck, "사격"), _count(hero.deck, "방어")], [4, 3, 3])
-	assert_true(hero.passives.is_empty())
-	assert_true(hero.equipment.is_empty())
+	# 아군은 진짜 홍연·브람 (2026-11-23, 시험용 홍연 대신)
+	assert_eq(d.allies[0].unit, load("res://entities/units/hongyeon.tres"))
 	var foe := d.enemies[0].unit
 	assert_eq([foe.max_hp, foe.attack, foe.defense, foe.speed_min, foe.speed_max], [45, 9, 6, 2, 8])
 	assert_eq(foe.deck.size(), 4)

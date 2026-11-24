@@ -347,7 +347,7 @@ func test_real_test_battle_plays_through_with_hongyeon_and_bram():
 			s.session.end_player_turn()
 	assert_true(s.session.is_finished())
 	assert_true(acted.has("브람 웰번"), str(acted.keys()))
-	assert_true(acted.has("홍연 (시험)"), str(acted.keys()))
+	assert_true(acted.has("홍연"), str(acted.keys()))
 
 # 손패: 평소엔 아래로 내려가 있고, 마우스를 올린 카드만 떠오른다.
 func _card_top(s: BattleScreen, i: int) -> float:
