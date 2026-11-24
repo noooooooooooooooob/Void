@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RequestData" format=3 uid="uid://4isht1d33cb1"]
+
+[ext_resource type="Script" uid="uid://bqyw7ng7acpwr" path="res://Scripts/requests/request_data.gd" id="1_qbux7"]
+
+[resource]
+script = ExtResource("1_qbux7")
+code = "REQ-0312"
+title = "하수도에서 올라온 검은 것"
+kind = 0.0
+chapter = 3.0
+urgent = true
+client_ko = "하수도 감독관"
+client_en = "Sewer Overseer"
+quote = "“밤마다 하수구에서 기름 같은 게 올라와요. 아랫동네 애들이 아침에 일어나질 않습니다. 부탁드립니다, 소장님.”"
+rank = "3급 이상"
+region = "남부 · 하수도"
+enemies = "괴한 ×1 · 잡졸 ×2"
+objectives = ["하수도 입구 조사", "공허 균열 발견", "핵 회수 및 정화", "탈출 후 감독관에게 보고"]
+reward_text = "자금 500 · 카드 팩 ×1"
+difficulty = 3.0

@@ -7,7 +7,11 @@ extends Control
 ## - 한 번에 패널 하나. 같은 메뉴를 다시 누르거나 ESC·닫기 → 닫힘, 다른 메뉴 → 바로 바뀜
 ## - 숫자키 1~7 로도 연다
 ## - 오른쪽 위 자금 HUD, 설정·하루 마치기 버튼(아직 "준비 중")
-## - 의뢰 게시판 패널의 임시 버튼 "시험 의뢰 출발" → 스테이지 지도 (의뢰 게시판을 만들면 지운다)
+## - 의뢰 게시판 패널 안의 게시판(%RequestsBoard, requests_board.tscn): "의뢰 수락" → StageRun.start_request,
+##   "지도에서 보기" → 공허 지도 패널 (2026-11-24, 그전의 임시 버튼 "시험 의뢰 출발"을 대신함)
+
+## 공허 지도 패널 번호 (0 부터, 레일 02). "지도에서 보기" 가 연다
+const VOID_MAP_INDEX := 1
 
 ## 자금 (cr.). 자금 시스템이 생기기 전까지 이 값을 그대로 보여 준다
 @export var funds := 0:
@@ -15,8 +19,6 @@ extends Control
 		funds = v
 		if is_node_ready():
 			%FundsLabel.text = format_funds(funds)
-## 임시 의뢰 버튼이 넘어갈 씬. 인스펙터에서 stage_map.tscn 을 끌어다 넣는다
-@export var stage_scene: PackedScene
 
 ## 지금 열린 패널 번호 (0 부터, 없으면 -1). 테스트에서도 읽는다
 var open_index := -1
@@ -43,7 +45,11 @@ func _ready() -> void:
 	# 2. 버튼들
 	%SettingsButton.pressed.connect(func(): %Notice.show_text("설정은 준비 중입니다"))
 	%EndDayButton.pressed.connect(func(): %Notice.show_text("하루 마치기는 준비 중입니다"))
-	%TestQuestButton.pressed.connect(_on_test_quest_pressed)
+	# 의뢰 게시판 (씬에 아직 안 넣었으면 건너뜀)
+	var board := get_node_or_null("%RequestsBoard") as RequestsBoard
+	if board:
+		board.accepted.connect(_on_request_accepted)
+		board.map_requested.connect(open_panel.bind(VOID_MAP_INDEX))
 	# 3. 처음 모양: 패널 없음, 안내 글 보임, 자금 표시
 	%FundsLabel.text = format_funds(funds)
 	_update_rail()
@@ -98,12 +104,9 @@ func _update_rail() -> void:
 	%EmptyHint.visible = open_index < 0
 
 
-## 임시: 지금 있는 의뢰(스테이지 지도)로. StageMap 이 들어가면서 start_run 한다
-func _on_test_quest_pressed() -> void:
-	if stage_scene == null:
-		push_warning("OfficeScreen: stage_scene 이 비어 있어요")
-		return
-	get_tree().change_scene_to_packed(stage_scene)
+## 의뢰 게시판 "의뢰 수락": 그 의뢰로 의뢰를 시작하고 스테이지 지도로 (StageRun 이 씬을 바꾼다)
+func _on_request_accepted(request: RequestData) -> void:
+	StageRun.start_request(request)
 
 
 ## 자금을 세 자리마다 쉼표로 ("1250" → "1,250", 음수도)

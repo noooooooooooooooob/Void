@@ -99,7 +99,19 @@ func test_funds_label_follows_value():
 	o.funds = 1250
 	assert_eq(o.get_node("%FundsLabel").text, "1,250")
 
-func test_test_quest_points_to_stage_map():
+func test_requests_board_sits_in_first_panel():
 	var o := _office()
-	assert_not_null(o.stage_scene)
-	assert_eq(o.stage_scene.resource_path, "res://Scenes/ui/stage_map/stage_map.tscn")
+	var board := o.get_node("%RequestsBoard")
+	assert_true(board is RequestsBoard)
+	assert_true(_panels(o)[0].is_ancestor_of(board), "의뢰 게시판 패널 안")
+	assert_true(board.accepted.is_connected(o._on_request_accepted), "수락 → 의뢰 시작")
+	assert_false(_panels(o)[0].show_placeholder, "의뢰 게시판은 '준비 중' 글을 끈다")
+	assert_true(_panels(o)[1].show_placeholder)
+
+func test_map_button_opens_void_map_panel():
+	var o := _office()
+	o.open_panel(0)
+	o.get_node("%RequestsBoard").map_requested.emit()
+	assert_eq(o.open_index, 1)
+	assert_true(_panels(o)[1].visible)
+	assert_false(_panels(o)[0].visible)

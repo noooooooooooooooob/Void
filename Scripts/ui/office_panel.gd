@@ -34,6 +34,11 @@ signal close_requested
 	set(v):
 		path_label = v
 		_refresh()
+## 내용 자리의 "준비 중" 글을 보일지. 내용을 채운 패널(의뢰 게시판)은 끈다
+@export var show_placeholder := true:
+	set(v):
+		show_placeholder = v
+		_refresh()
 ## 열기·닫기에 걸리는 시간 (초)
 @export var open_time := 0.18
 ## 열 때 왼쪽에서 밀려 들어오는 거리 (픽셀)
@@ -107,3 +112,4 @@ func _refresh() -> void:
 	%TitleKo.text = title_ko
 	%TitleEn.text = title_en
 	%PathLabel.text = path_label
+	%Content.get_node("Placeholder").visible = show_placeholder

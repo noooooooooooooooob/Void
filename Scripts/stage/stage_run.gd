@@ -3,7 +3,8 @@ extends Node
 ## 씬이 바뀌어도(지도 → 전투 → 지도) 지도·현재 위치·파티 체력이 남는다.
 ##
 ## 흐름:
-##   사무소(의뢰 게시판) → 지도(StageMap)가 start_run() → 노드 고르고 enter_selected()
+##   사무소 의뢰 게시판 "의뢰 수락" → start_request() → 지도(StageMap) → 노드 고르고 enter_selected()
+##     (지도 씬을 F6 으로 바로 열면 StageMap 이 start_run() 한다)
 ##     전투·보스 → 전투 화면(stage 모드) → 승리 complete_node() / 패배 fail_run()
 ##     이벤트 → 방 화면(RoomScreen) → 선택지 complete_node()
 ##     상점 → 상점 화면(ShopScreen) → 나가기 complete_node()
@@ -38,6 +39,9 @@ var party: Array[BattleUnit] = []
 var inventory := Inventory.new()
 ## 공허 조각 지갑. 의뢰 시작 때 0 이고 의뢰가 끝나면 사라진다 (상점 설계 2026-11-17)
 var wallet := Wallet.new()
+## 의뢰 게시판에서 수락한 의뢰 (2026-11-24). 게시판을 거치지 않고 시작했거나 의뢰 중이 아니면 null.
+## 지금은 기억만 한다 — 어떤 의뢰든 같은 1층 지도로 시작 (의뢰별 지도·보상은 나중에)
+var current_request: RequestData = null
 
 
 ## 의뢰 중인지 (지도가 만들어져 있는지)
@@ -49,6 +53,7 @@ func is_active() -> bool:
 ## seed_value: 0 이면 매번 다른 지도
 func start_run(seed_value: int = 0) -> void:
 	progress = StageProgress.new(StageGenerator.new(seed_value).generate())
+	current_request = null
 	party.clear()
 	inventory = Inventory.new()
 	wallet = Wallet.new()
@@ -57,9 +62,17 @@ func start_run(seed_value: int = 0) -> void:
 			party.append(u)
 
 
+## 의뢰 게시판의 "의뢰 수락": 그 의뢰를 기억하고 새 의뢰를 시작한 뒤 스테이지 지도로 (2026-11-24)
+func start_request(request: RequestData, seed_value: int = 0) -> void:
+	start_run(seed_value)
+	current_request = request
+	_go(STAGE_MAP_SCENE)
+
+
 ## 의뢰를 끝내고 상태를 비운다 (다음 start_run 에서 전원 회복된 파티로 시작)
 func end_run() -> void:
 	progress = null
+	current_request = null
 	party.clear()
 	inventory = Inventory.new()
 	wallet = Wallet.new()
@@ -171,4 +184,7 @@ func finish_run() -> void:
 
 ## 씬을 바꾼다. 씬 안에서 부르면 그 프레임이 끝난 뒤에 바뀐다
 func _go(path: String) -> void:
+	# 트리 밖(테스트에서 new() 로 만든 StageRun)이면 씬을 바꾸지 않는다. 자동 로드는 항상 트리 안
+	if not is_inside_tree():
+		return
 	get_tree().change_scene_to_file.call_deferred(path)

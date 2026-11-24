@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="521" height="147" viewBox="0 0 521 147" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="Plate" d="M12.5 0.5H508.5L520.5 12.5V134.5L508.5 146.5H12.5L0.5 134.5V12.5L12.5 0.5Z" fill="url(#paint0_linear_0_12)" stroke="#B3A1E0" stroke-opacity="0.35"/>
+<defs>
+<linearGradient id="paint0_linear_0_12" x1="0.5" y1="73.5" x2="520.5" y2="73.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3D3654"/>
+<stop offset="1" stop-color="#29243B"/>
+</linearGradient>
+</defs>
+</svg>

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RequestData" format=3 uid="uid://bfov4ss66skk2"]
+
+[ext_resource type="Script" uid="uid://bqyw7ng7acpwr" path="res://Scripts/requests/request_data.gd" id="1_800pj"]
+
+[resource]
+script = ExtResource("1_800pj")
+code = "REQ-0400"
+title = "동부 장터의 소문"
+kind = 0.0
+chapter = 4.0
+client_ko = "장터 상인회"
+client_en = "Market Guild"
+rank = "3급 이상"
+region = "동부 · 장터"
+objectives = null
+difficulty = 2.0
+locked = true
+unlock_hint = "3장 완료 후 해금"

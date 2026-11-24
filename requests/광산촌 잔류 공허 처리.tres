@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RequestData" format=3 uid="uid://dcifh0p5md6ei"]
+
+[ext_resource type="Script" uid="uid://bqyw7ng7acpwr" path="res://Scripts/requests/request_data.gd" id="1_4nrhn"]
+
+[resource]
+script = ExtResource("1_4nrhn")
+code = "REQ-0301"
+title = "광산촌 잔류 공허 처리"
+client_ko = "광산 관리인"
+client_en = "Mine Warden"
+quote = "“지난번 정화 뒤로도 갱도 깊은 데서 검은 안개가 새어 나옵니다. 남은 걸 마저 처리해 주셨으면 합니다.”"
+rank = "4급 이상"
+region = "서부 · 광산촌"
+enemies = "괴한 ×1 · 잡졸 ×1"
+objectives = ["갱도 입구 확보", "잔류 공허 정화", "관리인에게 보고"]
+reward_text = "자금 240 · 재료 ×3"
+difficulty = 2.0

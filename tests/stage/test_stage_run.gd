@@ -160,3 +160,23 @@ func test_run_end_returns_to_office():
 	# 의뢰가 끝나면(성공·실패) 시작 화면이 아니라 사무소로 (2026-11-21)
 	assert_eq(StageRun.OFFICE_SCENE, "res://Scenes/ui/office_screen/office_screen.tscn")
 	assert_true(ResourceLoader.exists(StageRun.OFFICE_SCENE), "사무소 씬이 있어야 함")
+
+func test_start_request_remembers_request_and_starts_run():
+	var r: Node = StageRunScript.new()
+	autofree(r)
+	var req := RequestData.new()
+	req.code = "REQ-0312"
+	r.start_request(req, 3)
+	assert_true(r.is_active())
+	assert_eq(r.current_request, req)
+	assert_gt(r.party.size(), 0)
+
+func test_end_run_and_plain_start_clear_request():
+	var r: Node = StageRunScript.new()
+	autofree(r)
+	r.start_request(RequestData.new(), 3)
+	r.end_run()
+	assert_null(r.current_request)
+	r.start_request(RequestData.new(), 3)
+	r.start_run(3)
+	assert_null(r.current_request, "게시판 없이 시작하면 의뢰 없음")

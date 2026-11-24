@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="251.5" height="341.5" viewBox="0 0 251.5 341.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="Client Portrait" d="M14.75 0.75H236.75L250.75 14.75V326.75L236.75 340.75H14.75L0.75 326.75V14.75L14.75 0.75Z" fill="url(#paint0_linear_0_20)" stroke-width="1.5" stroke="#66D1C7" stroke-opacity="0.8"/>
+<defs>
+<linearGradient id="paint0_linear_0_20" x1="125.75" y1="0.75" x2="125.75" y2="340.75" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3D3654"/>
+<stop offset="1" stop-color="#1A1626"/>
+</linearGradient>
+</defs>
+</svg>

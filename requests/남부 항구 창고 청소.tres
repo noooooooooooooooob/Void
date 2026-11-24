@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RequestData" format=3 uid="uid://b3cvaxi28l75m"]
+
+[ext_resource type="Script" uid="uid://bqyw7ng7acpwr" path="res://Scripts/requests/request_data.gd" id="1_swsid"]
+
+[resource]
+script = ExtResource("1_swsid")
+code = "REQ-0298"
+title = "남부 항구 창고 청소"
+client_ko = "항만 조합"
+client_en = "Harbor Union"
+quote = "“창고 안쪽에서 밤마다 문 긁는 소리가 나요. 짐꾼들이 들어가길 꺼립니다. 한번 싹 정리해 주십시오.”"
+rank = "5급 이상"
+region = "남부 · 항구"
+enemies = "잡졸 ×3"
+objectives = ["창고 구역 진입", "공허 잔재 정리", "조합장에게 보고"]
+reward_text = "자금 180"

@@ -1,0 +1,180 @@
+[gd_scene format=3 uid="uid://cxbnxgeg67nrt"]
+
+[ext_resource type="Script" uid="uid://bh2jwbrlxv0dq" path="res://Scripts/ui/request_card.gd" id="1_s5s7m"]
+[ext_resource type="Texture2D" uid="uid://bp2kduj5uqrm2" path="res://Art/ui/requests/card_plate_selected.svg" id="2_bpddc"]
+[ext_resource type="Texture2D" uid="uid://sj057f41ryue" path="res://Art/ui/requests/card_plate.svg" id="2_vfpio"]
+[ext_resource type="Texture2D" uid="uid://css5v3nwsvu20" path="res://Art/ui/requests/card_plate_locked.svg" id="3_yp01l"]
+[ext_resource type="Texture2D" uid="uid://ccomcawpqkm7m" path="res://Art/ui/requests/chip_urgent.svg" id="4_fe1ex"]
+[ext_resource type="Texture2D" uid="uid://517tfvpxr8dj" path="res://Art/ui/requests/diff_on.svg" id="5_e5nip"]
+
+[node name="RequestCard" type="Control" unique_id=152446221]
+custom_minimum_size = Vector2(520, 146)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 520.0
+offset_bottom = 146.0
+script = ExtResource("1_s5s7m")
+
+[node name="Plate" type="TextureRect" parent="." unique_id=1963019419]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 521.0
+offset_bottom = 147.0
+mouse_filter = 2
+texture = ExtResource("2_vfpio")
+
+[node name="PlateSelected" type="TextureRect" parent="." unique_id=856905577]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = -19.0
+offset_top = -19.0
+offset_right = 539.0
+offset_bottom = 165.0
+mouse_filter = 2
+texture = ExtResource("2_bpddc")
+
+[node name="PlateLocked" type="TextureRect" parent="." unique_id=1856776559]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 521.0
+offset_bottom = 93.0
+mouse_filter = 2
+texture = ExtResource("3_yp01l")
+
+[node name="Chip" type="NinePatchRect" parent="." unique_id=998683602]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 18.0
+offset_right = 64.0
+offset_bottom = 43.0
+texture = ExtResource("4_fe1ex")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="ChipLabel" type="Label" parent="Chip" unique_id=1002052169]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 10.0
+offset_top = 3.0
+offset_right = 10.0
+offset_bottom = 3.0
+theme_override_colors/font_color = Color(0.102, 0.086, 0.149, 1)
+theme_override_font_sizes/font_size = 12
+text = "긴급"
+
+[node name="Code" type="Label" parent="." unique_id=1547066606]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 360.0
+offset_top = 22.0
+offset_right = 500.0
+offset_bottom = 45.0
+theme_type_variation = &"MonoLabel"
+text = "REQ-0312"
+horizontal_alignment = 2
+
+[node name="Title" type="Label" parent="." unique_id=1720263513]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 50.0
+offset_right = 20.0
+offset_bottom = 50.0
+theme_type_variation = &"TitleKo"
+theme_override_font_sizes/font_size = 22
+text = "3장 · 하수도에서 올라온 검은 것"
+
+[node name="Client" type="Label" parent="." unique_id=833352642]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 86.0
+offset_right = 20.0
+offset_bottom = 86.0
+theme_type_variation = &"StatusText"
+text = "의뢰인 · 하수도 감독관"
+
+[node name="Reward" type="Label" parent="." unique_id=1454833438]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 112.0
+offset_right = 20.0
+offset_bottom = 112.0
+theme_override_colors/font_color = Color(0.949, 0.929, 0.988, 0.85)
+theme_override_font_sizes/font_size = 13
+text = "자금 500 · 카드 팩 ×1"
+
+[node name="Difficulty" type="HBoxContainer" parent="." unique_id=1648463136]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 446.0
+offset_top = 114.0
+offset_right = 497.0
+offset_bottom = 125.0
+mouse_filter = 2
+theme_override_constants/separation = 9
+
+[node name="Diff1" type="TextureRect" parent="Difficulty" unique_id=297767147]
+custom_minimum_size = Vector2(11, 11)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_e5nip")
+stretch_mode = 5
+
+[node name="Diff2" type="TextureRect" parent="Difficulty" unique_id=378688854]
+custom_minimum_size = Vector2(11, 11)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_e5nip")
+stretch_mode = 5
+
+[node name="Diff3" type="TextureRect" parent="Difficulty" unique_id=2079555480]
+custom_minimum_size = Vector2(11, 11)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_e5nip")
+stretch_mode = 5
+
+[node name="LockedTitle" type="Label" parent="." unique_id=411192478]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 20.0
+offset_bottom = 20.0
+theme_type_variation = &"TitleKo"
+theme_override_colors/font_color = Color(0.471, 0.431, 0.58, 1)
+theme_override_font_sizes/font_size = 20
+text = "4장 · 동부 장터의 소문"
+
+[node name="LockedHint" type="Label" parent="." unique_id=901784451]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 20.0
+offset_top = 56.0
+offset_right = 20.0
+offset_bottom = 56.0
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 12
+text = "3장 완료 후 해금"
+
+[node name="LockedLabel" type="Label" parent="." unique_id=894100300]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 380.0
+offset_top = 34.0
+offset_right = 500.0
+offset_bottom = 57.0
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 12
+text = "L O C K E D"
+horizontal_alignment = 2

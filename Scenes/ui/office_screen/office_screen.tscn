@@ -3,14 +3,13 @@
 [ext_resource type="Texture2D" uid="uid://pqj77s5s1fqm" path="res://Art/backgrounds/lobby_screen.png" id="1_ivtwx"]
 [ext_resource type="Script" uid="uid://bcxx2tgl5obbd" path="res://Scripts/ui/office_screen.gd" id="1_r4vve"]
 [ext_resource type="Texture2D" uid="uid://dbf0xxo13okq3" path="res://Art/ui/office/office_grade.svg" id="2_cjkn6"]
-[ext_resource type="PackedScene" uid="uid://b5k3ixvdrl8bf" path="res://Scenes/ui/stage_map/stage_map.tscn" id="2_m1jxf"]
 [ext_resource type="Texture2D" uid="uid://bqk1n2vmq1hqw" path="res://Art/ui/office/rail_bg.svg" id="3_3xdl6"]
 [ext_resource type="Script" uid="uid://cqd2sempb66eu" path="res://Scripts/ui/notice_label.gd" id="3_xc16o"]
 [ext_resource type="Texture2D" uid="uid://df4a4fhdohntv" path="res://Art/ui/office/rail_diamond.svg" id="4_mnq3t"]
 [ext_resource type="PackedScene" uid="uid://b4yy0v4jchs0b" path="res://Scenes/ui/office_screen/office_panel.tscn" id="5_4hiev"]
 [ext_resource type="FontFile" uid="uid://bjnijpdqh352w" path="res://Art/fonts/noto_serif_kr/noto_serif_kr_bold.otf" id="5_34p82"]
+[ext_resource type="PackedScene" uid="uid://d2xagdew48uhn" path="res://Scenes/ui/office_screen/requests_board.tscn" id="5_q3eep"]
 [ext_resource type="FontFile" uid="uid://c4325xmxdye0y" path="res://Art/fonts/ibm_plex_mono/ibm_plex_mono_semibold.ttf" id="6_mpcxj"]
-[ext_resource type="Script" uid="uid://bgqbc8muqe8q1" path="res://Scripts/ui/office_panel.gd" id="6_ojh3c"]
 [ext_resource type="FontVariation" uid="uid://csicnbyuchdyq" path="res://Art/fonts/cormorant_garamond/cormorant_garamond_semibold_italic.tres" id="7_h6aq4"]
 [ext_resource type="Texture2D" uid="uid://cupijw6mpvqpn" path="res://Art/ui/office/funds_plate.svg" id="8_ndi68"]
 [ext_resource type="Texture2D" uid="uid://b86fgsd2k1mqk" path="res://Art/ui/office/funds_diamond.svg" id="9_fm2cq"]
@@ -18,9 +17,6 @@
 [ext_resource type="PackedScene" uid="uid://bv41n43ujd5h6" path="res://Scenes/ui/office_screen/rail_menu_item.tscn" id="10_q3eep"]
 [ext_resource type="Texture2D" uid="uid://bxod6sjo3lx3c" path="res://Art/ui/office/settings_button.svg" id="11_okekv"]
 [ext_resource type="FontFile" uid="uid://c13si8xashwfm" path="res://Art/fonts/noto_sans_kr/noto_sans_kr_medium.otf" id="12_6l8h4"]
-[ext_resource type="Script" uid="uid://btannia5r6oag" path="res://Scripts/ui/rail_menu_item.gd" id="12_ggube"]
-[ext_resource type="Texture2D" uid="uid://dsiwcuqbb23h6" path="res://Art/ui/office/badge_rose.svg" id="13_x7ov4"]
-[ext_resource type="Texture2D" uid="uid://d3pxd6u1wjf8c" path="res://Art/ui/office/badge_amber.svg" id="14_yiii3"]
 
 [node name="OfficeScreen" type="Control" unique_id=607673499]
 layout_mode = 3
@@ -30,7 +26,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_r4vve")
-stage_scene = ExtResource("2_m1jxf")
 
 [node name="Bg" type="ColorRect" parent="." unique_id=1317565030]
 layout_mode = 1
@@ -75,105 +70,96 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Requests" type="Control" parent="Panels" unique_id=2086747318 instance=ExtResource("5_4hiev")]
+[node name="Requests" parent="Panels" unique_id=2086747318 instance=ExtResource("5_4hiev")]
 layout_mode = 1
-anchors_preset = 0
 offset_left = 480.0
 offset_top = 96.0
 offset_right = 1880.0
 offset_bottom = 1040.0
-script = ExtResource("6_ojh3c")
 title_ko = "의뢰 게시판"
 title_en = "Requests"
 path_label = "BUREAU   /   REQUESTS"
+show_placeholder = false
 
-[node name="TestQuestButton" type="Button" parent="Panels/Requests" unique_id=1727220573]
+[node name="RequestsBoard" parent="Panels/Requests" unique_id=1985691114 instance=ExtResource("5_q3eep")]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 522.0
-offset_top = 500.0
-offset_right = 878.0
-offset_bottom = 576.0
-theme_type_variation = &"PrimaryButton"
-text = "시험 의뢰 출발"
+offset_left = 48.0
+offset_top = 168.0
+offset_right = 1352.0
+offset_bottom = 904.0
 
-[node name="VoidMap" type="Control" parent="Panels" unique_id=1502112603 instance=ExtResource("5_4hiev")]
+[node name="VoidMap" parent="Panels" unique_id=1502112603 instance=ExtResource("5_4hiev")]
 layout_mode = 1
-anchors_preset = 0
 offset_left = 480.0
 offset_top = 96.0
 offset_right = 1880.0
 offset_bottom = 1040.0
-script = ExtResource("6_ojh3c")
 number = 2
 title_ko = "공허 지도"
 title_en = "Void Map"
 path_label = "BUREAU   /   VOID MAP"
+show_placeholder = null
 
-[node name="Personnel" type="Control" parent="Panels" unique_id=1109078988 instance=ExtResource("5_4hiev")]
+[node name="Personnel" parent="Panels" unique_id=1109078988 instance=ExtResource("5_4hiev")]
 layout_mode = 1
-anchors_preset = 0
 offset_left = 480.0
 offset_top = 96.0
 offset_right = 1880.0
 offset_bottom = 1040.0
-script = ExtResource("6_ojh3c")
 number = 3
 title_ko = "사원 명부"
 title_en = "Personnel"
 path_label = "BUREAU   /   PERSONNEL"
+show_placeholder = null
 
-[node name="Promotion" type="Control" parent="Panels" unique_id=96298419 instance=ExtResource("5_4hiev")]
+[node name="Promotion" parent="Panels" unique_id=96298419 instance=ExtResource("5_4hiev")]
 layout_mode = 1
-anchors_preset = 0
 offset_left = 480.0
 offset_top = 96.0
 offset_right = 1880.0
 offset_bottom = 1040.0
-script = ExtResource("6_ojh3c")
 number = 4
 title_ko = "승급장"
 title_en = "Promotion Hall"
 path_label = "BUREAU   /   PROMOTION"
+show_placeholder = null
 
-[node name="Spa" type="Control" parent="Panels" unique_id=1024215093 instance=ExtResource("5_4hiev")]
+[node name="Spa" parent="Panels" unique_id=1024215093 instance=ExtResource("5_4hiev")]
 layout_mode = 1
-anchors_preset = 0
 offset_left = 480.0
 offset_top = 96.0
 offset_right = 1880.0
 offset_bottom = 1040.0
-script = ExtResource("6_ojh3c")
 number = 5
 title_ko = "스파"
 title_en = "Spa"
 path_label = "BUREAU   /   SPA"
+show_placeholder = null
 
-[node name="Storage" type="Control" parent="Panels" unique_id=1999564642 instance=ExtResource("5_4hiev")]
+[node name="Storage" parent="Panels" unique_id=1999564642 instance=ExtResource("5_4hiev")]
 layout_mode = 1
-anchors_preset = 0
 offset_left = 480.0
 offset_top = 96.0
 offset_right = 1880.0
 offset_bottom = 1040.0
-script = ExtResource("6_ojh3c")
 number = 6
 title_ko = "창고"
 title_en = "Storage"
 path_label = "BUREAU   /   STORAGE"
+show_placeholder = null
 
-[node name="Journal" type="Control" parent="Panels" unique_id=3283959 instance=ExtResource("5_4hiev")]
+[node name="Journal" parent="Panels" unique_id=3283959 instance=ExtResource("5_4hiev")]
 layout_mode = 1
-anchors_preset = 0
 offset_left = 480.0
 offset_top = 96.0
 offset_right = 1880.0
 offset_bottom = 1040.0
-script = ExtResource("6_ojh3c")
 number = 7
 title_ko = "일지"
 title_en = "Journal"
 path_label = "BUREAU   /   JOURNAL"
+show_placeholder = null
 
 [node name="SideRail" type="Control" parent="." unique_id=811740938]
 anchors_preset = 0
@@ -286,74 +272,46 @@ offset_right = 480.0
 offset_bottom = 200.0
 theme_override_constants/separation = 8
 
-[node name="Requests" type="Control" parent="SideRail/RailMenu" unique_id=1575773434 instance=ExtResource("10_q3eep")]
-custom_minimum_size = Vector2(448, 88)
+[node name="Requests" parent="SideRail/RailMenu" unique_id=1575773434 instance=ExtResource("10_q3eep")]
 layout_mode = 2
-script = ExtResource("12_ggube")
 title_ko = "의뢰 게시판"
 title_en = "Requests"
-rose_badge = ExtResource("13_x7ov4")
-amber_badge = ExtResource("14_yiii3")
 
-[node name="VoidMap" type="Control" parent="SideRail/RailMenu" unique_id=1805814967 instance=ExtResource("10_q3eep")]
-custom_minimum_size = Vector2(448, 88)
+[node name="VoidMap" parent="SideRail/RailMenu" unique_id=1805814967 instance=ExtResource("10_q3eep")]
 layout_mode = 2
-script = ExtResource("12_ggube")
 number = "02"
 title_ko = "공허 지도"
 title_en = "Void Map"
-rose_badge = ExtResource("13_x7ov4")
-amber_badge = ExtResource("14_yiii3")
 
-[node name="Personnel" type="Control" parent="SideRail/RailMenu" unique_id=103529511 instance=ExtResource("10_q3eep")]
-custom_minimum_size = Vector2(448, 88)
+[node name="Personnel" parent="SideRail/RailMenu" unique_id=103529511 instance=ExtResource("10_q3eep")]
 layout_mode = 2
-script = ExtResource("12_ggube")
 number = "03"
 title_ko = "사원 명부"
 title_en = "Personnel"
-rose_badge = ExtResource("13_x7ov4")
-amber_badge = ExtResource("14_yiii3")
 
-[node name="Promotion" type="Control" parent="SideRail/RailMenu" unique_id=1198403643 instance=ExtResource("10_q3eep")]
-custom_minimum_size = Vector2(448, 88)
+[node name="Promotion" parent="SideRail/RailMenu" unique_id=1198403643 instance=ExtResource("10_q3eep")]
 layout_mode = 2
-script = ExtResource("12_ggube")
 number = "04"
 title_ko = "승급장"
 title_en = "Promotion Hall"
-rose_badge = ExtResource("13_x7ov4")
-amber_badge = ExtResource("14_yiii3")
 
-[node name="Spa" type="Control" parent="SideRail/RailMenu" unique_id=1400337923 instance=ExtResource("10_q3eep")]
-custom_minimum_size = Vector2(448, 88)
+[node name="Spa" parent="SideRail/RailMenu" unique_id=1400337923 instance=ExtResource("10_q3eep")]
 layout_mode = 2
-script = ExtResource("12_ggube")
 number = "05"
 title_ko = "스파"
 title_en = "Spa"
-rose_badge = ExtResource("13_x7ov4")
-amber_badge = ExtResource("14_yiii3")
 
-[node name="Storage" type="Control" parent="SideRail/RailMenu" unique_id=1838352742 instance=ExtResource("10_q3eep")]
-custom_minimum_size = Vector2(448, 88)
+[node name="Storage" parent="SideRail/RailMenu" unique_id=1838352742 instance=ExtResource("10_q3eep")]
 layout_mode = 2
-script = ExtResource("12_ggube")
 number = "06"
 title_ko = "창고"
 title_en = "Storage"
-rose_badge = ExtResource("13_x7ov4")
-amber_badge = ExtResource("14_yiii3")
 
-[node name="Journal" type="Control" parent="SideRail/RailMenu" unique_id=1956255748 instance=ExtResource("10_q3eep")]
-custom_minimum_size = Vector2(448, 88)
+[node name="Journal" parent="SideRail/RailMenu" unique_id=1956255748 instance=ExtResource("10_q3eep")]
 layout_mode = 2
-script = ExtResource("12_ggube")
 number = "07"
 title_ko = "일지"
 title_en = "Journal"
-rose_badge = ExtResource("13_x7ov4")
-amber_badge = ExtResource("14_yiii3")
 
 [node name="EndDayButton" type="Button" parent="SideRail" unique_id=1035624560]
 unique_name_in_owner = true

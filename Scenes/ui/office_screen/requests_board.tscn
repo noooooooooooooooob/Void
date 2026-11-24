@@ -1,0 +1,485 @@
+[gd_scene format=3 uid="uid://d2xagdew48uhn"]
+
+[ext_resource type="Texture2D" uid="uid://cs347m6xxiiny" path="res://Art/ui/requests/chip_filled.svg" id="1_2ihqc"]
+[ext_resource type="Script" uid="uid://jjlg77nl11iu" path="res://Scripts/ui/requests_board.gd" id="1_k82qj"]
+[ext_resource type="Texture2D" uid="uid://caekm2gepbn5y" path="res://Art/ui/requests/chip_main.svg" id="2_um1fq"]
+[ext_resource type="Texture2D" uid="uid://bvd5du5vdajm0" path="res://Art/ui/requests/chip_repeat.svg" id="3_a0nav"]
+[ext_resource type="Texture2D" uid="uid://8sh5ped02dmj" path="res://Art/ui/requests/client_portrait.svg" id="4_ysw5o"]
+[ext_resource type="Texture2D" uid="uid://c1heek6earye1" path="res://Art/ui/requests/check_off.svg" id="5_x1q6p"]
+[ext_resource type="Texture2D" uid="uid://b1yhh70y4l3pl" path="res://Art/ui/requests/reward_slot.svg" id="6_1yu64"]
+[ext_resource type="Texture2D" uid="uid://bq6fa32fnfi6p" path="res://Art/ui/requests/button_map.svg" id="7_aetxc"]
+[ext_resource type="Texture2D" uid="uid://dmenkp5famw18" path="res://Art/ui/requests/button_accept.svg" id="8_78der"]
+[ext_resource type="Texture2D" uid="uid://cxgtdndv22g3o" path="res://Art/ui/requests/stamp_outer.svg" id="9_j660m"]
+[ext_resource type="Texture2D" uid="uid://dle428o300vto" path="res://Art/ui/requests/stamp_inner.svg" id="10_4rojt"]
+
+[node name="RequestsBoard" type="Control" unique_id=1985691114]
+custom_minimum_size = Vector2(1304, 736)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1304.0
+offset_bottom = 736.0
+mouse_filter = 2
+script = ExtResource("1_k82qj")
+
+[node name="Filters" type="HBoxContainer" parent="." unique_id=336365287]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 300.0
+offset_bottom = 25.0
+theme_override_constants/separation = 8
+
+[node name="FilterAll" type="NinePatchRect" parent="Filters" unique_id=277178602]
+custom_minimum_size = Vector2(52, 25)
+layout_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+texture = ExtResource("1_2ihqc")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Label" type="Label" parent="Filters/FilterAll" unique_id=1020352429]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 3.0
+offset_right = 10.0
+offset_bottom = 3.0
+theme_override_font_sizes/font_size = 12
+text = "전체 4"
+
+[node name="FilterMain" type="NinePatchRect" parent="Filters" unique_id=1693949281]
+custom_minimum_size = Vector2(67, 25)
+layout_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+texture = ExtResource("2_um1fq")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Label" type="Label" parent="Filters/FilterMain" unique_id=1752611715]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 3.0
+offset_right = 10.0
+offset_bottom = 3.0
+theme_override_font_sizes/font_size = 12
+text = "본 이야기"
+
+[node name="FilterRepeat" type="NinePatchRect" parent="Filters" unique_id=984047647]
+custom_minimum_size = Vector2(67, 25)
+layout_mode = 2
+mouse_filter = 0
+mouse_default_cursor_shape = 2
+texture = ExtResource("3_a0nav")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+
+[node name="Label" type="Label" parent="Filters/FilterRepeat" unique_id=1253259874]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 3.0
+offset_right = 10.0
+offset_bottom = 3.0
+theme_override_font_sizes/font_size = 12
+text = "반복 의뢰"
+
+[node name="CardList" type="VBoxContainer" parent="." unique_id=862799471]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 44.0
+offset_right = 520.0
+offset_bottom = 664.0
+theme_override_constants/separation = 14
+
+[node name="Divider" type="ColorRect" parent="." unique_id=104893520]
+layout_mode = 0
+offset_left = 552.0
+offset_right = 553.0
+offset_bottom = 720.0
+mouse_filter = 2
+color = Color(0.698, 0.631, 0.878, 0.25)
+
+[node name="Detail" type="Control" parent="." unique_id=795331841]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 584.0
+offset_right = 1304.0
+offset_bottom = 736.0
+mouse_filter = 2
+
+[node name="PortraitFrame" type="TextureRect" parent="Detail" unique_id=782979274]
+layout_mode = 0
+offset_left = -0.75
+offset_top = -0.75
+offset_right = 251.25
+offset_bottom = 341.25
+mouse_filter = 2
+texture = ExtResource("4_ysw5o")
+
+[node name="Portrait" type="TextureRect" parent="Detail" unique_id=1557322479]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 246.0
+offset_bottom = 336.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PortraitHint" type="Label" parent="Detail" unique_id=765291668]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 160.0
+offset_right = 250.0
+offset_bottom = 183.0
+theme_override_colors/font_color = Color(0.471, 0.431, 0.58, 1)
+theme_override_font_sizes/font_size = 12
+text = "의뢰인 초상"
+horizontal_alignment = 1
+
+[node name="ClientKo" type="Label" parent="Detail" unique_id=780294833]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 354.0
+offset_right = 250.0
+offset_bottom = 380.0
+theme_type_variation = &"TitleKo"
+theme_override_colors/font_color = Color(0.4, 0.82, 0.78, 1)
+theme_override_font_sizes/font_size = 18
+text = "하수도 감독관"
+horizontal_alignment = 1
+
+[node name="ClientEn" type="Label" parent="Detail" unique_id=630144094]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 382.0
+offset_right = 250.0
+offset_bottom = 405.0
+theme_type_variation = &"TitleEn"
+theme_override_font_sizes/font_size = 17
+text = "Sewer Overseer"
+horizontal_alignment = 1
+
+[node name="ChapterLine" type="Label" parent="Detail" unique_id=209025007]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 282.0
+offset_top = 4.0
+offset_right = 282.0
+offset_bottom = 4.0
+theme_type_variation = &"MonoLabel"
+theme_override_colors/font_color = Color(0.8, 0.722, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "CHAPTER 03  —  MAIN STORY"
+
+[node name="DetailTitle" type="Label" parent="Detail" unique_id=634236042]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 282.0
+offset_top = 28.0
+offset_right = 582.0
+offset_bottom = 118.0
+theme_type_variation = &"TitleKo"
+theme_override_font_sizes/font_size = 34
+text = "하수도에서 올라온 검은 것"
+autowrap_mode = 3
+
+[node name="QuoteBar" type="ColorRect" parent="Detail" unique_id=224722057]
+layout_mode = 0
+offset_left = 282.0
+offset_top = 134.0
+offset_right = 285.0
+offset_bottom = 210.0
+mouse_filter = 2
+color = Color(0.8, 0.722, 1, 0.8)
+
+[node name="Quote" type="Label" parent="Detail" unique_id=272449161]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 300.0
+offset_top = 134.0
+offset_right = 710.0
+offset_bottom = 214.0
+theme_override_colors/font_color = Color(0.949, 0.929, 0.988, 0.85)
+theme_override_constants/line_spacing = 8
+theme_override_font_sizes/font_size = 15
+text = "“밤마다 하수구에서 기름 같은 게 올라와요.”"
+autowrap_mode = 3
+
+[node name="RankKey" type="Label" parent="Detail" unique_id=1342871615]
+layout_mode = 0
+offset_left = 282.0
+offset_top = 262.0
+offset_right = 282.0
+offset_bottom = 262.0
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 12
+text = "권장 등급"
+
+[node name="Rank" type="Label" parent="Detail" unique_id=1451525790]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 380.0
+offset_top = 260.0
+offset_right = 380.0
+offset_bottom = 260.0
+theme_override_font_sizes/font_size = 14
+text = "3급 이상"
+
+[node name="RankLine" type="ColorRect" parent="Detail" unique_id=142011917]
+layout_mode = 0
+offset_left = 282.0
+offset_top = 284.0
+offset_right = 712.0
+offset_bottom = 285.0
+mouse_filter = 2
+color = Color(0.698, 0.631, 0.878, 0.15)
+
+[node name="RegionKey" type="Label" parent="Detail" unique_id=1110558758]
+layout_mode = 0
+offset_left = 282.0
+offset_top = 292.0
+offset_right = 282.0
+offset_bottom = 292.0
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 12
+text = "지역"
+
+[node name="Region" type="Label" parent="Detail" unique_id=1290800609]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 380.0
+offset_top = 290.0
+offset_right = 380.0
+offset_bottom = 290.0
+theme_override_font_sizes/font_size = 14
+text = "남부 · 하수도"
+
+[node name="RegionLine" type="ColorRect" parent="Detail" unique_id=1294425370]
+layout_mode = 0
+offset_left = 282.0
+offset_top = 314.0
+offset_right = 712.0
+offset_bottom = 315.0
+mouse_filter = 2
+color = Color(0.698, 0.631, 0.878, 0.15)
+
+[node name="EnemiesKey" type="Label" parent="Detail" unique_id=2089359480]
+layout_mode = 0
+offset_left = 282.0
+offset_top = 322.0
+offset_right = 282.0
+offset_bottom = 322.0
+theme_type_variation = &"MonoLabel"
+theme_override_font_sizes/font_size = 12
+text = "적 정보"
+
+[node name="Enemies" type="Label" parent="Detail" unique_id=54240618]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 380.0
+offset_top = 320.0
+offset_right = 380.0
+offset_bottom = 320.0
+theme_override_font_sizes/font_size = 14
+text = "괴한 ×1 · 잡졸 ×2"
+
+[node name="EnemiesLine" type="ColorRect" parent="Detail" unique_id=1127318522]
+layout_mode = 0
+offset_left = 282.0
+offset_top = 344.0
+offset_right = 712.0
+offset_bottom = 345.0
+mouse_filter = 2
+color = Color(0.698, 0.631, 0.878, 0.15)
+
+[node name="ObjectivesHead" type="Label" parent="Detail" unique_id=1000345337]
+layout_mode = 0
+offset_top = 440.0
+offset_bottom = 440.0
+theme_type_variation = &"MonoLabel"
+theme_override_colors/font_color = Color(0.8, 0.722, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "OBJECTIVES · 목표"
+
+[node name="ObjectiveList" type="VBoxContainer" parent="Detail" unique_id=96228727]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 472.0
+offset_right = 350.0
+offset_bottom = 612.0
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="ObjectiveTemplate" type="HBoxContainer" parent="Detail/ObjectiveList" unique_id=812951715]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="Check" type="TextureRect" parent="Detail/ObjectiveList/ObjectiveTemplate" unique_id=1841483817]
+custom_minimum_size = Vector2(23, 23)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_x1q6p")
+stretch_mode = 5
+
+[node name="Text" type="Label" parent="Detail/ObjectiveList/ObjectiveTemplate" unique_id=460680030]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "목표"
+
+[node name="RewardsHead" type="Label" parent="Detail" unique_id=869018244]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 440.0
+offset_right = 380.0
+offset_bottom = 440.0
+theme_type_variation = &"MonoLabel"
+theme_override_colors/font_color = Color(0.8, 0.722, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "REWARDS · 보상"
+
+[node name="RewardSlots" type="HBoxContainer" parent="Detail" unique_id=1539795328]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 472.0
+offset_right = 704.0
+offset_bottom = 545.0
+mouse_filter = 2
+theme_override_constants/separation = 11
+
+[node name="Slot1" type="TextureRect" parent="Detail/RewardSlots" unique_id=84071313]
+custom_minimum_size = Vector2(73, 73)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_1yu64")
+
+[node name="Slot2" type="TextureRect" parent="Detail/RewardSlots" unique_id=2117010269]
+custom_minimum_size = Vector2(73, 73)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_1yu64")
+
+[node name="Slot3" type="TextureRect" parent="Detail/RewardSlots" unique_id=1443551410]
+custom_minimum_size = Vector2(73, 73)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_1yu64")
+
+[node name="Slot4" type="TextureRect" parent="Detail/RewardSlots" unique_id=522794215]
+custom_minimum_size = Vector2(73, 73)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_1yu64")
+
+[node name="RewardText" type="Label" parent="Detail" unique_id=1417338458]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 380.0
+offset_top = 556.0
+offset_right = 380.0
+offset_bottom = 556.0
+theme_type_variation = &"StatusText"
+theme_override_font_sizes/font_size = 12
+text = "자금 500 · 카드 팩 ×1"
+
+[node name="MapButton" type="TextureButton" parent="Detail" unique_id=1430845463]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 249.5
+offset_top = 659.5
+offset_right = 470.5
+offset_bottom = 720.5
+focus_mode = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("7_aetxc")
+
+[node name="Label" type="Label" parent="Detail/MapButton" unique_id=1586097975]
+layout_mode = 0
+offset_top = 16.0
+offset_right = 221.0
+offset_bottom = 44.0
+theme_type_variation = &"TitleKo"
+theme_override_colors/font_color = Color(0.8, 0.722, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "지도에서 보기"
+horizontal_alignment = 1
+
+[node name="AcceptButton" type="TextureButton" parent="Detail" unique_id=291437316]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 463.5
+offset_top = 637.5
+offset_right = 742.5
+offset_bottom = 742.5
+focus_mode = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("8_78der")
+
+[node name="Label" type="Label" parent="Detail/AcceptButton" unique_id=252341763]
+layout_mode = 0
+offset_left = 22.5
+offset_top = 38.0
+offset_right = 256.5
+offset_bottom = 66.0
+theme_type_variation = &"TitleKo"
+theme_override_colors/font_color = Color(0.102, 0.086, 0.149, 1)
+theme_override_font_sizes/font_size = 18
+text = "의뢰 수락"
+horizontal_alignment = 1
+
+[node name="Stamp" type="Control" parent="Detail" unique_id=1939187725]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.9)
+anchors_preset = 0
+offset_left = 604.0
+offset_top = -18.0
+offset_right = 736.0
+offset_bottom = 114.0
+rotation = -0.2443461
+pivot_offset = Vector2(66, 66)
+mouse_filter = 2
+
+[node name="Outer" type="TextureRect" parent="Detail/Stamp" unique_id=601300916]
+layout_mode = 0
+offset_right = 132.0
+offset_bottom = 132.0
+mouse_filter = 2
+texture = ExtResource("9_j660m")
+
+[node name="Inner" type="TextureRect" parent="Detail/Stamp" unique_id=1513687042]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 124.0
+offset_bottom = 124.0
+mouse_filter = 2
+texture = ExtResource("10_4rojt")
+
+[node name="Ko" type="Label" parent="Detail/Stamp" unique_id=351240935]
+layout_mode = 0
+offset_top = 40.0
+offset_right = 132.0
+offset_bottom = 76.0
+theme_type_variation = &"TitleKo"
+theme_override_colors/font_color = Color(0.941, 0.451, 0.549, 0.9)
+theme_override_font_sizes/font_size = 26
+text = "긴급"
+horizontal_alignment = 1
+
+[node name="En" type="Label" parent="Detail/Stamp" unique_id=284730971]
+layout_mode = 0
+offset_top = 78.0
+offset_right = 132.0
+offset_bottom = 101.0
+theme_type_variation = &"MonoLabel"
+theme_override_colors/font_color = Color(0.941, 0.451, 0.549, 0.9)
+text = "U R G E N T"
+horizontal_alignment = 1
