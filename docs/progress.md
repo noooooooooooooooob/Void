@@ -1,6 +1,6 @@
 # Project Void 개발 진행 상황
 
-마지막 갱신: 2026-11-21
+마지막 갱신: 2026-11-24
 
 코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
 
@@ -24,9 +24,9 @@
 | 소비 아이템 (시험판, 2026-11-17) | 파티 공용 가방 5칸(의뢰 동안 유지), 전투 중 TAB/가방 버튼으로 열어 **카드처럼 끌어서** 아군에게 사용(아군 차례의 카드 사용 페이즈만, 비용 없음), HP 회복·SP 회복(SP 는 최대 초과 가능, 다음 차례 시작에 최대로). 의뢰의 일반 전투 승리 시 40% 로 1개 드랍 → 결과 창에서 받기 / 넘어가기, 가방이 가득 차면 바꿀 칸 고르기. 보스·F6 시험 전투는 드랍 없음. 아이템은 웹 에디터에서 가져옴 (시험 아이템 회복약·기력약은 2026-11-17 삭제) | `Scripts/items/`, `items/consumables/`, `Scenes/ui/battle_screen/bag_panel.tscn`·`item_slot.tscn`, 규칙 `Battle.use_item`·`StageRun.roll_item_drop`. 설계 `docs/superpowers/specs/2026-11-17-consumable-items-design.md` |
 | 전투 화면 (시험판) | 시험용 홍연(타격 4·사격 3·방어 3) vs 시험용 적 A·B 한 판을 직접 플레이. 원거리·근접 카드는 휜 화살표로 대상 지정, 자신 카드는 두 번 클릭/끌어 올리기, 빈 칸 클릭으로 이동, 적 차례 0.7초 간격 자동, 떠오르는 숫자·전투 기록, 승리/패배 → 다시 하기. 손패에 계산된 수치 표시 | `ui/battle_screen/battle_screen.tscn` 열고 F6. 데이터 `battles/test_battle.tres` |
 | 전투 데이터 | 격자 크기 + 아군/적 배치 리소스 (`BattleData`), 진행 담당 `BattleSession` (의뢰 파티를 밖에서 넣을 수 있음) | `Scripts/battle/battle_data.gd`, `battle_session.gd` |
-| 시작 화면 | 게임 메인 씬. 시작 버튼 → 스테이지 지도 | `Scenes/ui/title_screen/title_screen.tscn` (F5) |
+| 타이틀·메인 메뉴·사무소 (2026-11-21) | 게임 메인 씬. 타이틀(아무 키·클릭) → 메인 메뉴(↑↓/W·S, 엔터·스페이스·E) → 새 게임 → 사무소(왼쪽 레일 7개, 패널은 빈 틀) → 의뢰 게시판 "시험 의뢰 출발" → 스테이지 지도. 의뢰가 끝나면(성공·실패) 사무소로, 지도·전투 화면의 "← 사무소로" 는 확인 없이 도주. 공용 테마(연보라) | `Scenes/ui/title_screen/`, `Scenes/ui/office_screen/`, `Scenes/ui/void_theme.tres` (F5). 아래 "UI 뼈대 작업 기록" |
 | 의뢰 진행 (시험판, 2026-11-10) | 의뢰마다 랜덤 지도(시작 → 3열×3행 전투 6·이벤트 3 → 상점 → 보스), 연결선, W/S·클릭으로 다음 노드 고르기, 스페이스·엔터로 실행. 전투 승리 → 지도, 패배 → 시작 화면, 보스 승리 → 의뢰 성공. 의뢰 안에서 HP 유지, HP 0 파티원 제외. 이벤트는 자리만(상점은 2026-11-17 상점 화면), 보스는 시험 전투 | `Scenes/ui/stage_map/`, `Scenes/ui/room_screen/`, `Scripts/stage/` (StageRun 자동 로드·StageProgress), 테스트 `tests/stage/`, `tests/ui/` |
-| 브람 (2026-11-09) | 유닛 브람 웰번(덱 10장), 카드 10장·강화 10장 효과, 상태 도발·대신 맞기. 새 규칙: 쉴드 전부 소모(`BlockCost`), 현재 쉴드 비례(`CurrentBlockValue`), 쉴드 제거(`RemoveBlockEffect`), 끌어오기(`PullEffect`), 도발(`StatusData.taunts`), 대신 맞기(`StatusData.guarded_by_applier`). 시험 전투(`battles/test_battle.tres`)에 배치됨, 전투 그림 칸이 없어 그림 미연결 | `entities/units/bram_welburn.tres`, `cards/data/브람/`, `statuses/data/` |
+| 브람 (2026-11-09) | 유닛 브람 웰번(덱 10장), 카드 10장·강화 10장 효과, 상태 도발·대신 맞기. 새 규칙: 쉴드 전부 소모(`BlockCost`), 현재 쉴드 비례(`CurrentBlockValue`), 쉴드 제거(`RemoveBlockEffect`), 끌어오기(`PullEffect`), 도발(`StatusData.taunts`), 대신 맞기(`StatusData.guarded_by_applier`). 시험 전투(`battles/test_battle.tres`)에 배치됨. 전투 그림은 아래 "전투 스프라이트"(2026-11-13) | `entities/units/bram_welburn.tres`, `cards/data/브람/`, `statuses/data/` |
 | 전투 격자판 (2026-11-10) | 편마다 5×5 칸 판(`battle_board.tscn`)을 배경 씬에 아군용·적용으로 하나씩 넣고 칸 위치·크기·모양을 에디터에서 꾸민다. 전투가 시작되면 맞닿는 쪽 열·가운데 행부터 전투 크기만큼만 켜고 나머지는 숨김. 판이 없는 배경은 기존 정사각형 격자. 2026-11-11: 칸을 원근 사각형으로. 보드 네 모서리(`corners`)를 바닥에 맞추면 25칸이 자동으로 나뉘고, 필요한 칸만 꼭짓점(`custom_corners`)을 직접 조정. 색·표시·클릭 판정이 칸 모양을 따름. 에디터 2D 화면에서 핸들로 드래그 | `Scenes/ui/battle_screen/battle_board.tscn`, `Scripts/ui/battle_board.gd`, `Scripts/ui/grid_cell.gd`, `Scripts/ui/board_shape.gd`, `addons/board_shape_editor/`, 설계 `docs/superpowers/specs/2026-11-11-board-cell-shape-design.md` |
 | 전투 스프라이트 (2026-11-13) | 유닛마다 `UnitData.battle_frames`(SpriteFrames)를 두고 유닛 박스의 `Sprite`(AnimatedSprite2D)가 `idle` 을 반복. 카드를 쓰면 `CardData.animation` 이름의 동작을 한 번 재생하고 idle 로 돌아옴(강화본은 칸이 비면 원래 카드 이름). 지금은 브람만, 동작마다 그림 1장(placeholder): punch·uppercut·guard·victory_pose. 묶음이 없는 유닛은 색 박스 그대로 | `entities/units/bram_frames.tres`, `Art/characters/bram_welburn/bram_*.png`, `Scripts/ui/unit_token.gd` |
 | 카드 연출 (2026-11-14) | 카드마다 연출 씬(`CardData.performance`, 루트 `CardPerformance`)의 AnimationPlayer `perform` 타임라인으로 이동·동작·이펙트를 정하고, Call Method 키 `move(x, y, 시간)`(대상 칸 기준)·`hit()`(맞는 반응, 여러 번)·`show_results()`(결과 한 번에)·`zoom(세기, 시간)` 을 찍는다. 연출 끝나면 자동 복귀. 계산은 즉시, 화면은 `PerformanceRecorder`→`PerformanceQueue` 로 단계별 재생하고 연출 중엔 입력·적 행동·결과 창 대기. hit 반응: 캐릭터 그림·화면·캐릭터 UI 랜덤 흔들림, 피격 이펙트, 효과음(음높이 무작위), 히트스톱, 번쩍임, 넉백. 결과: 숫자는 부호 없이 색으로 구분(피해 빨강·회복 초록·방어도 파랑)하고 매번 조금씩 다른 방향으로 떠오름, 피해 클수록·치명타면 큰 숫자, 처치·치명 때 추가 흔들림. 공통값은 BattleScreen, 카드별 변경은 연출 씬 루트. 시험: 브람 돌주먹. HP 바 잔상은 HP 바가 생긴 뒤 | `Scripts/performances/`, `Scripts/ui/performance_queue.gd`, `Scripts/ui/shaker.gd`, `Scenes/performances/bram_stone_fist.tscn`, 설계 `docs/superpowers/specs/2026-11-14-card-performance-design.md` |
@@ -38,7 +38,7 @@
 | 전투 보상 목록 (2026-11-19) | 의뢰 전투 승리 → 결과 창에 보상 줄(공허 조각 / 아이템 / 카드 추가)을 **클릭해서 챙김**(슬더스식). 조각 자동 지급·받기 버튼 없앰. 아이템은 가방이 가득 차면 바꿀 칸 고르기·취소. **카드 보상 새로 추가**: 살아 있는 파티원 카드 중 3장 → 1장 골라 주인의 의뢰 덱으로(넘어가기 가능). 보스는 조각만. "계속"은 언제든, 안 챙긴 보상은 사라짐. 카드 후보 뽑기는 상점과 같은 함수(`CardPool.pick_party_cards`) | `Scripts/stage/battle_reward.gd`, `Scripts/ui/battle_screen.gd`, 씬 `ResultOverlay/Box/RewardList`·`ResultOverlay/CardPick`, 설계 `docs/superpowers/specs/2026-11-19-battle-rewards-design.md` |
 | 그림 추가 (코드에서 아직 안 씀) | 캐릭터 10명 일러스트·픽셀 아트(`mo_liang` 은 일러스트만), 배경 5장, 공허 지도 | `Art/characters/`, `Art/backgrounds/`, `Art/ui/void_map.png` |
 
-## 진행 중: UI 뼈대 — 타이틀 · 메인 메뉴 · 사무소 (`feat/ui-frame`, 2026-11-21~)
+## UI 뼈대 작업 기록 — 타이틀 · 메인 메뉴 · 사무소 (2026-11-21, `feat/ui-frame` → `main` 바로 머지, 2026-11-24)
 
 Figma `Project Void UI Wireframes` › **v6 · 연보라 사이드 패널** 기준. 설계 `docs/superpowers/specs/2026-11-21-ui-frame-design.md`, 계획 `docs/superpowers/plans/2026-11-21-ui-frame.md`.
 
@@ -51,10 +51,10 @@ Figma `Project Void UI Wireframes` › **v6 · 연보라 사이드 패널** 기�
   - 배경 그림(사용자 제작): `Art/backgrounds/main_screen.png`(타이틀 키 아트)·`lobby_screen.png`(사무소). 스토리에 따라 바꿀 `_void` 판도 같이 넣어 둠 — 바꾸는 기능은 스토리 진행 상태가 생기면
   - `title_screen.gd` 버그 수정: 삼항식 안 배열이 타입 없는 Array 라 `Array[CanvasItem]` 에 못 넣어 실행 시 멈추던 것
 - 2026-11-21 사용자 피드백 반영: 타이틀은 **클릭**으로도 시작(화면 전체 루트가 클릭을 먼저 받아서 `_gui_input` 에서 처리), 메뉴 확인은 **엔터·스페이스·E**. 새 게임에서 엔터를 누르면 나던 오류(장면이 바뀌어 트리에서 빠진 뒤 `get_viewport()` 가 null) 수정 — 입력 처리 표시를 먼저 하고 실행. 메뉴 줄 클릭도 같은 순서로. **스테이지 지도·전투 화면에 "← 사무소로" 버튼**: 확인 없이 의뢰를 끝내고 사무소로 (`StageRun.leave_run`, 결과는 실패와 같음)
-- 테스트: 844개 중 843 통과. 실패 1개 `test_performance_stage_view.gd::test_slowmo_ends_by_itself`(이번 작업과 무관한 연출 미리보기 쪽, 단독 실행해도 실패)
+- 테스트 (2026-11-24 머지 직전): 847개 중 846 통과. 실패 1개 `test_performance_stage_view.gd::test_slowmo_ends_by_itself`(이번 작업과 무관한 연출 화면 창 쪽, 단독 실행해도 실패). `test_card_performance.gd::test_looping_perform_still_finishes` 는 가끔 실패(시간에 따라 달라짐)
 - 주의: 이어하기·불러오기는 저장 기능 전까지 비활성, 자금·하루·배지 숫자는 시스템이 없어 자리만. Figma 와 픽셀 단위 비교·다듬기는 아직
 
-## 진행 중: 의뢰 스테이지 (`feat/stage-run`, 2026-11-07~10)
+## 의뢰 스테이지 작업 기록 (2026-11-07~10, `main` 머지 — PR #3)
 
 - 2026-11-08: 사무소 허브, 로스터, 캐릭터 페이지, 카드 공방, 공허 지도, 파티 선택, ESC 메뉴, 비스듬한 전투 격자, 브람 덱·유닛을 만들었다가 **전부 되돌림** (`3a823f6`). 씬·데이터를 에디터가 아니라 헤드리스 스크립트로 만들었기 때문. 지금은 코드가 없고 git 기록에만 있음 (`eedcfb6`~`dd22343`). 그림 파일만 다시 넣음 (`f899b9c`)
 - 2026-11-09: 머지 전 정리 — 생성기 "첫 열은 모두 전투" 규칙 추가, `CLAUDE.md` 1층 규칙을 새 규칙으로 수정, `title_screen.gd`·`stage_map.gd`·`stage_node_view.gd` 를 `Scripts/ui/` 로 이동, 잘리던 지도를 화면 가운데로 옮기고 노드 글자 가운데 정렬
@@ -68,11 +68,11 @@ Figma `Project Void UI Wireframes` › **v6 · 연보라 사이드 패널** 기�
 - 기획 결정 필요: 파티 위치를 다음 전투로 이어갈지(지금은 이어짐), 대신 맞기를 브람 자신에게 쓸 수 있게 둘지(지금은 SP 만 쓰고 효과 없음)
 - 의뢰 파티가 비면 전투 화면이 만피 새 아군을 만듦. 지금은 도달할 수 없지만 파티 선택을 넣을 때 막아야 함
 
-## 진행 중: 전투 시스템 (카드·효과·턴)
+## 전투 시스템 (카드·효과·턴) — 완료
 
 - 설계: [docs/superpowers/specs/2026-11-03-card-effect-system-design.md](superpowers/specs/2026-11-03-card-effect-system-design.md)
 - 구현 계획: [docs/superpowers/plans/2026-11-03-card-effect-system.md](superpowers/plans/2026-11-03-card-effect-system.md)
-- 브랜치: `feat/battle-system`
+- 브랜치: `feat/battle-system` (`main` 머지 — PR #1)
 
 | # | 단계 | 상태 | 커밋 |
 |---|---|---|---|
@@ -131,6 +131,8 @@ Figma `Project Void UI Wireframes` › **v6 · 연보라 사이드 패널** 기�
 
 ## 구조 변경
 
+- 2026-11-24: `feat/ui-frame`(테마·타이틀·메인 메뉴·사무소)을 PR 없이 `main` 에 머지 (`main` 의 문서 커밋 2개를 먼저 합치고 fast-forward). 메인 씬은 그대로 `title_screen.tscn`, 의뢰가 끝나면 시작 화면 대신 사무소로. 팀원의 `hongyeon` 브랜치(홍연 그림 교체)는 `feat/ui-frame` 위에서 만든 것이라 머지해도 충돌 없음
+- 2026-11-21: 브랜치 정리 — `feat/shop`(카드 연출·소비 아이템·상점·전투 보상·연출 타임라인·피격 반응)을 `main` 에 fast-forward 머지. 그 안에 다 들어 있던 `feat/bram-sprites`·`feat/card-performance` 와 `feat/shop` 은 로컬·원격 모두 삭제. 지금 브랜치는 `main` 하나
 - 2026-11-19: 전투 화면 씬에 월드 묶음 `World`(Background·AllyGrid·EnemyGrid)·`WorldFront`(PerformanceLayer·FloatLayer) 추가 — 연출 카메라가 UI 를 빼고 움직이게. 노드는 모두 `%이름` 으로 찾으므로 경로 영향 없음. 헤드리스로 씬을 고칠 때는 원래 PackedScene 에 `pack` 하고 `--editor` 모드로 저장해야 uid 가 유지됨
 - 2026-11-17 (코드 리뷰 반영): ① 전투가 끝나도 `Battle` 이 메모리에서 안 풀리던 것 — 되돌아가는 참조(`BattleUnit.battle`, `StatusInstance.owner·applier`, 규칙 객체 4개의 `.battle`)를 약한 참조(WeakRef)로. ② 상점에서 산 뒤 강화한 카드도 원래 카드의 동작 이름을 씀(`CardPool.find_base`). ③ 아이템 특수 효과 피해의 전투 기록이 "(상태)" 대신 아이템 이름. ④ 안 쓰는 `StageRun.Room.SHOP` 삭제. ⑤ 폴더의 `.tres` 찾기(.remap 처리)를 `Scripts/util/res_dir.gd`(`ResDir.tres_paths`) 하나로 — 카드 목록·키워드·소비 아이템·카드 갤러리. ⑥ 카드 갤러리의 덱 제목·카드 줄을 씬의 숨긴 틀(`SectionTitleTemplate`·`CardRowTemplate`)에서 복제. ⑦ 오래된 주석 정리. 전투 화면 스크립트(1186줄) 나누기는 보류
 - 2026-11-09: 캐릭터 후보 그림 35장을 `Art_src/` 에서 뺌 (게임에 안 쓰는 그림, 저장소 밖 로컬 폴더 `C:\C\ProjectVoid_Assets` 에 보관)

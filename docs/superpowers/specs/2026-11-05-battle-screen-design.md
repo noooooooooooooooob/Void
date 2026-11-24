@@ -1,6 +1,6 @@
 # 전투 화면 (시험판) 설계
 
-작성 2026-11-05 · 브랜치 `feat/battle-system`
+작성 2026-11-05 · 브랜치 `feat/battle-system` (`main` 머지 — PR #1)
 
 ## 1. 왜 만드는가
 
