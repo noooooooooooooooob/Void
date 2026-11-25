@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dvi6gn50js0fm"]
+
+[ext_resource type="Script" uid="uid://dejh27bqo0xun" path="res://Scripts/performances/smear_driver.gd" id="1_vfnja"]
+
+[node name="Smear" type="Node" unique_id=1086841631]
+script = ExtResource("1_vfnja")

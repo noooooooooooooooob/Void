@@ -75,3 +75,11 @@ func test_punch_sound_plays_during_game_playback():
 	p.play(load("res://entities/units/bram_frames.tres"))
 	await wait_seconds(0.35)
 	assert_true(p.get_node("PunchSound").playing)
+
+
+func test_actor_has_smear():
+	var p: Node = load(SCENE).instantiate()
+	var smear := p.get_node_or_null("Actor/Smear")
+	assert_true(smear is SmearDriver)
+	assert_eq(smear.scene_file_path if smear else "", "res://Scenes/performances/smear.tscn")
+	p.free()
