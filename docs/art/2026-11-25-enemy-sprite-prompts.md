@@ -27,13 +27,33 @@ transparent background, no text, no shadow on ground,
 dark gothic 1920s occult city RPG, corrupted by the Void: violet-black ooze and glowing purple cracks
 ```
 
-### 애니메이션 시트로 받고 싶을 때 (공통 + 적 설명 뒤에 붙인다)
+### 동작 시트 프롬프트 (공통 + 적 설명 + 아래 셋 중 하나를 붙여서, 동작마다 한 번씩 받는다)
 
 ```
-sprite sheet, 8 frames in one horizontal row, each frame 128x128, same character in every frame,
-idle breathing loop, feet stay at the same height in every frame
+idle:   sprite sheet, 8 frames in one horizontal row, each frame 128x128, same character in every frame,
+        idle breathing loop, subtle body sway, feet stay at the same height in every frame
+hit:    sprite sheet, 4 frames in one horizontal row, each frame 128x128, same character in every frame,
+        hit reaction: flinches and recoils backwards then returns to the idle pose, feet stay planted
+attack: sprite sheet, 6 frames in one horizontal row, each frame 128x128, same character in every frame,
+        <아래 표의 공격 동작 영어 문구>, wind-up then strike toward the left then recover, feet stay at the same height
 ```
-`idle` 대신 `hit reaction, 4 frames, recoils backwards then returns` / `<공격 동작 설명>, 6 frames` 로 바꿔 동작별로 받는다.
+
+### 완성 예시 (결정에 먹힌 광부 — 공격 동작 시트)
+
+```
+pixel art game sprite, single character, full body, side view facing left,
+128x128 pixel canvas, character about 100 pixels tall, feet touching the bottom edge,
+chibi proportions about 3 heads tall, crisp 1px dark outline, limited palette, flat cel shading,
+transparent background, no text, no shadow on ground,
+dark gothic 1920s occult city RPG, corrupted by the Void: violet-black ooze and glowing purple cracks,
+undead miner in worn overalls and a cracked lamp helmet, amethyst crystals growing from shoulders and arm,
+hollow glowing violet eyes, holding a pickaxe,
+sprite sheet, 6 frames in one horizontal row, each frame 128x128, same character in every frame,
+raises the pickaxe overhead and slams it down in front, wind-up then strike toward the left then recover,
+feet stay at the same height
+```
+
+한 번에 3개 동작이 잘 안 맞으면: 먼저 `idle` 첫 칸 한 장을 뽑아 마음에 드는 모습을 정하고, 그 그림을 참고 이미지로 넣은 채 `hit`·`attack` 시트를 받으면 모습이 덜 달라진다.
 
 ---
 
@@ -47,8 +67,11 @@ idle breathing loop, feet stay at the same height in every frame
 
 ```
 수정 진드기: small beetle-like mite, six legs, amethyst crystal shards growing from its shell, violet light leaking from cracks
+수정 진드기 공격 동작: leaps forward and bites with its mandibles
 결정에 먹힌 광부: undead miner in worn overalls and a cracked lamp helmet, amethyst crystals growing from shoulders and arm, hollow glowing violet eyes, holding a pickaxe
+결정에 먹힌 광부 공격 동작: raises the pickaxe overhead and slams it down in front
 대장간 골렘: squat stocky golem made of dark ore and amethyst crystals, glowing forge core in its chest burning orange and violet, one arm shaped like a blunt anvil
+대장간 골렘 공격 동작: lifts its anvil arm high and smashes it down
 ```
 
 ## 2. 푸른 거울 대성당 — `battle/dream_mirror_cathedral.png`
@@ -61,8 +84,11 @@ idle breathing loop, feet stay at the same height in every frame
 
 ```
 촛불 도깨비불: small floating lantern spirit with a blue flame inside, two thin ghostly hands under the lantern
+촛불 도깨비불 공격 동작: the flame swells and shoots a blue fireball forward
 거울 사제: hooded priest whose face is a cracked hand mirror reflecting the viewer, long dark robe with blue trim, swinging a chained censer
+거울 사제 공격 동작: swings the chained censer in an arc while chanting, mirror face flashing
 비친 기사: knight in armor made of shattered blue glass, hollow inside so you can see through it, holding a glass greatsword
+비친 기사 공격 동작: wide horizontal cleave with the glass greatsword
 ```
 
 ## 3. 공허 거울 벌판 — `battle/void_mirror_expanse.png` (깊은 공허, 후반)
@@ -75,8 +101,11 @@ idle breathing loop, feet stay at the same height in every frame
 
 ```
 공허 사냥개: quadruped hound made of black starry ooze, glowing violet cracks across its body, eyeless face with only a wide mouth
+공허 사냥개 공격 동작: crouches low then pounces forward
 잔영: humanoid shadow silhouette, shattered mirror shards slowly orbiting around it, each shard reflecting a different face
+잔영 공격 동작: flings orbiting mirror shards forward
 틈새 감시자: giant floating eye set inside an ornate gilded mirror frame, violet void tendrils hanging below the frame
+틈새 감시자 공격 동작: the eye narrows then fires a violet beam forward
 ```
 
 ## 4. 연보라 성 안뜰 — `battle/lilac_castle_courtyard.png`
@@ -89,8 +118,11 @@ idle breathing loop, feet stay at the same height in every frame
 
 ```
 시든 장미 덩굴: cluster of thorny vines rising from the ground, one wilted violet rose at the tip opening like a mouth
+시든 장미 덩굴 공격 동작: the vines whip forward like a lash
 빈 근위병: empty suit of lilac steel castle guard armor animated by void mist leaking from the helmet slits, holding a halberd
+빈 근위병 공격 동작: thrusts the halberd straight forward
 분수 가고일: stone gargoyle from a castle fountain, stone wings, violet water dripping from its mouth and eyes
+분수 가고일 공격 동작: spreads its stone wings, leaps up and dives forward
 ```
 
 ## 5. 산중 신사 테라스 — `battle/mountain_shrine_terrace.png`
@@ -103,8 +135,11 @@ idle breathing loop, feet stay at the same height in every frame
 
 ```
 종이 등롱 요괴: torn paper lantern creature with a single eye and a long tongue, hopping
+종이 등롱 요괴 공격 동작: hops forward and lashes its long tongue
 원령 무녀: ghostly shrine maiden in white robes with a red sash, torn paper talismans stuck to her body, violet tears, holding a staff with small bells
+원령 무녀 공격 동작: shakes the bell staff and throws paper talismans forward
 금 간 수호 석상: stone guardian lion-dog statue from a shrine gate, violet cracks spreading over its body, moss and red cord wrapped around it
+금 간 수호 석상 공격 동작: lowers its head and charges forward
 ```
 
 ## 6. 네온 비 거리 — `battle/neon_rain_cyberpunk_street.png`
@@ -117,8 +152,11 @@ idle breathing loop, feet stay at the same height in every frame
 
 ```
 간판 미믹: broken neon sign creature walking on dangling electric cable legs, flickering glowing eyes instead of letters
+간판 미믹 공격 동작: sparks crackle and it fires an electric zap forward
 네온 깡패: street thug in a wet raincoat, glowing pink and cyan tattoos on neck and arms, holding a steel pipe
+네온 깡패 공격 동작: swings the steel pipe in a wide overhead arc
 우산 자객: masked assassin in a long coat, blade hidden in an umbrella, pink glow inside the umbrella canopy
+우산 자객 공격 동작: draws the blade from the umbrella and slashes forward
 ```
 
 ## 7. 황혼 공업 거리 — `battle/twilight_industrial_rift.png`
@@ -131,8 +169,11 @@ idle breathing loop, feet stay at the same height in every frame
 
 ```
 매연 덩어리: small blob of sooty smog with two ember-like glowing eyes, soot flakes falling from it
+매연 덩어리 공격 동작: puffs up and blows a cloud of black smog forward
 공장 망령: 1920s factory worker in overalls wearing a gas mask with void leaking from it, holding a large wrench
+공장 망령 공격 동작: raises the wrench and whacks it down
 증기 거한: hulking brute carrying a boiler on its back, riveted iron arm, violet steam bursting from a crack in its chest
+증기 거한 공격 동작: pulls back the riveted iron arm and punches forward, steam venting
 ```
 
 ---
