@@ -520,3 +520,15 @@ func test_crit_check_on_emphasis_at_results():
 	assert_lt(ap.speed_scale, 1.0)
 	assert_true(v.is_screen_shaking())
 	v.release_slowmo()
+
+# 2026-11-25: 인스펙터에서 바꾼 스머지 값이 연출 화면 복제본에도 바로 들어간다 (씬을 다시 열지 않아도)
+func test_smear_values_follow_source():
+	var vs := _with_source()
+	var src_smear: SmearDriver = vs[1].get_node("Actor/Smear")
+	src_smear.length_ratio = 1.5
+	src_smear.max_length = 900.0
+	src_smear.decay_time = 0.4
+	src_smear.min_move = 5.0
+	vs[0].sync()
+	var m: SmearDriver = vs[0].mirror().get_node("Actor/Smear")
+	assert_eq([m.length_ratio, m.max_length, m.decay_time, m.min_move], [1.5, 900.0, 0.4, 5.0])

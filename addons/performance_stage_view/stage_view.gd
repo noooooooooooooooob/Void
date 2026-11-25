@@ -50,9 +50,11 @@ const REACTION_KEYS := [&"hit_shake", &"hit_unit_shake", &"shake_time", &"flash_
 const OVERRIDE_KEYS := [&"hit_shake", &"hit_unit_shake", &"shake_time", &"flash_color", &"flash_time",
 	&"knockback", &"knockback_return", &"hitstop_time", &"hitstop_speed", &"hit_sound", &"pitch_jitter"]
 
-## 원본 → 복제본으로 옮길 속성 (노드 종류 상관없이 있는 것만)
+## 원본 → 복제본으로 옮길 속성 (노드 종류 상관없이 있는 것만).
+## 끝의 넷은 스머지(SmearDriver) 값 — 인스펙터에서 바꾸면 씬을 다시 열지 않아도 바로 보이게 (2026-11-25)
 const COPY_PROPS := [&"position", &"rotation", &"scale", &"visible", &"modulate", &"self_modulate", &"z_index",
-	&"sprite_frames", &"animation", &"frame", &"flip_h", &"flip_v", &"offset", &"texture", &"zoom"]
+	&"sprite_frames", &"animation", &"frame", &"flip_h", &"flip_v", &"offset", &"texture", &"zoom",
+	&"min_move", &"length_ratio", &"max_length", &"decay_time"]
 
 @onready var _background_list: OptionButton = %BackgroundList
 @onready var _enemy_list: OptionButton = %EnemyList
