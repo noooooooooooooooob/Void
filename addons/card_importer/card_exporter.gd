@@ -97,7 +97,6 @@ func _face_entry(card: CardData) -> Dictionary:
 		"name": {"ko": card.name_ko, "en": card.name_en},
 		"description": {"ko": card.description_ko, "en": card.description_en},
 		"sp": card.sp,
-		"cost": card.cost,
 		"category": card.category,
 		"attackType": card.attack_type,
 		"area": area,

@@ -23,8 +23,6 @@ extends Resource
 @export_multiline var description_en: String
 ## 사용할 때 드는 SP. 전투에서 자동으로 SP 비용으로 처리된다 (costs 에 따로 넣지 않는다).
 @export var sp: int = 1
-## 덱 코스트 (덱에 넣을 때의 비용. 규칙은 아직 미정)
-@export var cost: int = 0
 ## 분류: attack 공격(빨강) / skill 스킬(파랑) / special 특수(보라) / enemy 적 전용(검정, 플레이어 덱에 안 나옴)
 @export_enum("attack", "skill", "special", "enemy") var category: String = "attack"
 ## 공격 종류

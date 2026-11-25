@@ -5,7 +5,7 @@ extends PanelContainer
 ##
 ## - 노드 구성·배치·글자 크기·스타일은 card_view.tscn 에서 에디터로 편집한다.
 ##   여기서는 카드마다 달라지는 것(글자, 그림, 범위 칸, 분류 색)만 바꾼다.
-## - 모양은 웹 카드 에디터의 카드와 같다: 이름 / 그림 + SP 원 / 공격 종류·범위 / 키워드 / 설명 / 코스트.
+## - 모양은 웹 카드 에디터의 카드와 같다: 이름 / 그림 + SP 원 / 공격 종류·범위 / 키워드 / 설명.
 ## - 강화 버전 카드는 바탕이 옅은 금색이고 둘레에 금빛 광채가 있다 (2026-11-17 사용자 결정: "+N" 배지 대신 카드 모양으로 구분).
 ## - 마우스를 올리면 카드 오른쪽에 키워드 이름과 설명이 뜬다 (화면이 모자라면 왼쪽).
 ## - @tool 이라 갤러리 씬을 에디터에서 열기만 해도 카드가 그려진다.
@@ -44,7 +44,6 @@ var card: CardData
 # --- 씬의 노드 (card_view.tscn 에서 "고유 이름으로 접근"이 켜진 노드들) ---
 @onready var name_label: Label = %Name              ## 카드 이름
 @onready var sp_label: Label = %Sp                  ## SP 원 안의 숫자
-@onready var cost_label: Label = %Cost              ## 아래쪽 "코스트 N"
 @onready var description_label: Label = %Description  ## 카드 설명
 @onready var keywords_label: Label = %Keywords      ## 설명 위의 키워드 이름들 (주황)
 @onready var attack_badge: Label = %AttackBadge     ## 오른쪽 위 공격 종류 배지
@@ -102,7 +101,6 @@ func set_card(c: CardData) -> void:
 	# 2. 글자
 	name_label.text = c.name_ko if not c.name_ko.is_empty() else "이름 없음"
 	sp_label.text = str(c.sp)
-	cost_label.text = "코스트 %d" % c.cost
 	description_label.text = c.description_ko
 	attack_badge.text = ATTACK_BADGES.get(c.attack_type, "?")
 

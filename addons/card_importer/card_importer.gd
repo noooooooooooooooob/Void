@@ -11,7 +11,7 @@ extends RefCounted
 ##   art/<파일 이름>                  그림
 ##
 ## 다시 가져올 때 규칙:
-##   - 웹 에디터가 담당하는 칸(이름, 설명, SP, 코스트, 분류, 공격 종류, 범위, 키워드, 그림)만 덮어쓴다.
+##   - 웹 에디터가 담당하는 칸(이름, 설명, SP, 분류, 공격 종류, 범위, 키워드, 그림)만 덮어쓴다.
 ##   - Godot 에서 붙인 costs / conditions / effects 는 그대로 둔다. 강화 단계도 같은 규칙.
 ##   - 웹 에디터에서 지운 카드·키워드, 더 이상 쓰지 않는 그림은 지운다.
 ##   - 카드 파일은 파일 이름이 아니라 파일 안의 id 로 찾는다. 이름·덱이 바뀌면 파일을 옮긴다(이름 바꾸기).
@@ -330,7 +330,6 @@ func _fill(card: CardData, face: Dictionary, used_art: Dictionary) -> void:
 	card.description_en = _text(face, "description", "en")
 	# JSON 숫자는 float 로 읽히므로 int 로 바꾼다.
 	card.sp = int(face.get("sp", 0))
-	card.cost = int(face.get("cost", 0))
 	card.category = str(face.get("category", "attack"))
 	card.attack_type = str(face.get("attackType", "melee"))
 	# 범위: [[x, y], ...] → Vector2i 배열 (기준 칸 기준 오프셋, −2..2)
