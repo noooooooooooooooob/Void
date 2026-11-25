@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dwwuy4scf7yb2"
-path="res://.godot/imported/golden_vortex_void.png-50db06b37f2e5ea165b3c1f7d515f69b.ctex"
+uid="uid://cw6q8b33uu2pq"
+path="res://.godot/imported/main_screen_void.png-21a03626d300d8b0f0507b7b3d781942.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/backgrounds/golden_vortex_void.png"
-dest_files=["res://.godot/imported/golden_vortex_void.png-50db06b37f2e5ea165b3c1f7d515f69b.ctex"]
+source_file="res://Art/backgrounds/screens/title_void.png"
+dest_files=["res://.godot/imported/main_screen_void.png-21a03626d300d8b0f0507b7b3d781942.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cfheul1otqm4y"
-path="res://.godot/imported/misty_castle_garden.png-0200eb251e9de88a1446c39c47a95dbe.ctex"
+uid="uid://b1umjcil7ibb0"
+path="res://.godot/imported/twilight_industrial_rift.png-23930c47d6de74a354f150ce2a626cf9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/backgrounds/misty_castle_garden.png"
-dest_files=["res://.godot/imported/misty_castle_garden.png-0200eb251e9de88a1446c39c47a95dbe.ctex"]
+source_file="res://Art/backgrounds/battle/twilight_industrial_rift.png"
+dest_files=["res://.godot/imported/twilight_industrial_rift.png-23930c47d6de74a354f150ce2a626cf9.ctex"]
 
 [params]
 

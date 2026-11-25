@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://goar44l5p1ya"]
 
-[ext_resource type="Texture2D" uid="uid://k7kvyqli8ga3" path="res://Art/backgrounds/mountain_shrine_terrace.png" id="1_u8l2e"]
+[ext_resource type="Texture2D" uid="uid://k7kvyqli8ga3" path="res://Art/backgrounds/battle/mountain_shrine_terrace.png" id="1_u8l2e"]
 [ext_resource type="PackedScene" uid="uid://c5yxjecsyp5ug" path="res://Scenes/ui/battle_screen/battle_board.tscn" id="2_u8l2e"]
 
 [node name="MountainShrine" type="Control" unique_id=796481465]

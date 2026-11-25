@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://pqj77s5s1fqm"
-path="res://.godot/imported/lobby_screen.png-9e5eb032ae9bfb3d87ab10d09d7fc85d.ctex"
+uid="uid://k7kvyqli8ga3"
+path="res://.godot/imported/mountain_shrine_terrace.png-9179cf3c137951c3bed8ed6b9445a70a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/backgrounds/lobby_screen.png"
-dest_files=["res://.godot/imported/lobby_screen.png-9e5eb032ae9bfb3d87ab10d09d7fc85d.ctex"]
+source_file="res://Art/backgrounds/battle/mountain_shrine_terrace.png"
+dest_files=["res://.godot/imported/mountain_shrine_terrace.png-9179cf3c137951c3bed8ed6b9445a70a.ctex"]
 
 [params]
 

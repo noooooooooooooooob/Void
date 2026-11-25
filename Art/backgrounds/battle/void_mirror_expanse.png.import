@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cr2vvi71acu77"
-path="res://.godot/imported/neon_rain_cyberpunk_street.png-699001ced12eb13cc804fe0cdce5e15d.ctex"
+uid="uid://dwwuy4scf7yb2"
+path="res://.godot/imported/golden_vortex_void.png-50db06b37f2e5ea165b3c1f7d515f69b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/backgrounds/neon_rain_cyberpunk_street.png"
-dest_files=["res://.godot/imported/neon_rain_cyberpunk_street.png-699001ced12eb13cc804fe0cdce5e15d.ctex"]
+source_file="res://Art/backgrounds/battle/void_mirror_expanse.png"
+dest_files=["res://.godot/imported/golden_vortex_void.png-50db06b37f2e5ea165b3c1f7d515f69b.ctex"]
 
 [params]
 

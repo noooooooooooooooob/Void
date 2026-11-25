@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfeuj2ve5ckwa"
-path="res://.godot/imported/main_screen.png-b238043c49a3be6e9d7a781416495448.ctex"
+uid="uid://cfheul1otqm4y"
+path="res://.godot/imported/misty_castle_garden.png-0200eb251e9de88a1446c39c47a95dbe.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/backgrounds/main_screen.png"
-dest_files=["res://.godot/imported/main_screen.png-b238043c49a3be6e9d7a781416495448.ctex"]
+source_file="res://Art/backgrounds/battle/lilac_castle_courtyard.png"
+dest_files=["res://.godot/imported/misty_castle_garden.png-0200eb251e9de88a1446c39c47a95dbe.ctex"]
 
 [params]
 

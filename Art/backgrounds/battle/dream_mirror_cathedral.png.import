@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b1umjcil7ibb0"
-path="res://.godot/imported/twilight_industrial_rift.png-23930c47d6de74a354f150ce2a626cf9.ctex"
+uid="uid://cu0vtu65w7jw2"
+path="res://.godot/imported/dream_mirror_cathedral.png-60f480a698a339fca7c8c0b57a998542.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/backgrounds/twilight_industrial_rift.png"
-dest_files=["res://.godot/imported/twilight_industrial_rift.png-23930c47d6de74a354f150ce2a626cf9.ctex"]
+source_file="res://Art/backgrounds/battle/dream_mirror_cathedral.png"
+dest_files=["res://.godot/imported/dream_mirror_cathedral.png-60f480a698a339fca7c8c0b57a998542.ctex"]
 
 [params]
 

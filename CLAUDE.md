@@ -108,6 +108,7 @@ res://
     backgrounds/ #   전투 배경 씬 (루트 Control, 겹·패럴랙스는 씬 안에서). BattleData.background 가 가리킴. 격자판(battle_board.tscn)을 아군·적용으로 넣으면 그 칸을 씀. 칸 모양은 에디터 2D 화면 핸들로 맞춤: 보드를 고르면 네 모서리(원근 자동 분할), 칸을 고르면 그 칸의 꼭짓점(`addons/board_shape_editor`)
   Art/           # 게임에 들어가는 그림 (.png) — 종류별 폴더, 캐릭터·적은 이름별로
     characters/<이름>/  enemies/<이름>/  ui/  backgrounds/  vfx/  fonts/<글꼴>/ (OFL.txt 라이선스 같이)
+    backgrounds/battle/ (전투 배경 그림)  backgrounds/screens/ (타이틀·사무소 등 화면 배경, 씬 이름으로: title, office, `_void` = 공허판)
   Art_src/       # 원본 작업 파일 (.aseprite, .psd) — .gdignore 로 Godot 이 무시
   addons/        # 플러그인 (GUT, GoPeak, card_importer) — 플러그인 스크립트는 여기 그대로
   tests/         # GUT 테스트 (Scripts/ 와 같은 기능별 폴더)
