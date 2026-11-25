@@ -49,6 +49,21 @@ static func cell_quad(corners: PackedVector2Array, col: int, row: int, gap: floa
 	])
 
 
+## 판을 가운데 기준으로 가로 cols_factor 배, 세로 rows_factor 배 넓힌 새 네 모서리 (2026-11-25).
+## 화면에서 늘리는 게 아니라 판이 덮는 "바닥"을 넓힌다: 원래 원근 평면에서 uv 범위를 0~1 → -a~1+a 로 키워
+## 그 자리의 점을 새 모서리로 쓴다. 그래서 변은 원래 변의 연장선 위에 있고(원근 그대로), 판 가운데 점은 움직이지 않는다.
+## 칸 수는 그대로라 칸 하나하나가 그만큼 커진다. 같은 배율의 역수(1/배율)로 다시 하면 정확히 되돌아온다.
+static func stretch(corners: PackedVector2Array, cols_factor: float, rows_factor: float) -> PackedVector2Array:
+	var a := (cols_factor - 1.0) * 0.5  # 가로로 양쪽에 덧붙일 몫 (판 폭 대비)
+	var b := (rows_factor - 1.0) * 0.5  # 세로로 위아래에 덧붙일 몫 (판 깊이 대비)
+	return PackedVector2Array([
+		point_at(corners, Vector2(-a, -b)),
+		point_at(corners, Vector2(1.0 + a, -b)),
+		point_at(corners, Vector2(1.0 + a, 1.0 + b)),
+		point_at(corners, Vector2(-a, 1.0 + b)),
+	])
+
+
 ## points 중 at 에서 radius 안에 있는 가장 가까운 점의 번호. 없으면 -1.
 static func nearest_handle(points: PackedVector2Array, at: Vector2, radius: float) -> int:
 	var best := -1

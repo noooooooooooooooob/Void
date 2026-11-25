@@ -99,7 +99,6 @@ number = 2
 title_ko = "공허 지도"
 title_en = "Void Map"
 path_label = "BUREAU   /   VOID MAP"
-show_placeholder = null
 
 [node name="Personnel" parent="Panels" unique_id=1109078988 instance=ExtResource("5_4hiev")]
 layout_mode = 1
@@ -111,7 +110,6 @@ number = 3
 title_ko = "사원 명부"
 title_en = "Personnel"
 path_label = "BUREAU   /   PERSONNEL"
-show_placeholder = null
 
 [node name="Promotion" parent="Panels" unique_id=96298419 instance=ExtResource("5_4hiev")]
 layout_mode = 1
@@ -123,7 +121,6 @@ number = 4
 title_ko = "승급장"
 title_en = "Promotion Hall"
 path_label = "BUREAU   /   PROMOTION"
-show_placeholder = null
 
 [node name="Spa" parent="Panels" unique_id=1024215093 instance=ExtResource("5_4hiev")]
 layout_mode = 1
@@ -135,7 +132,6 @@ number = 5
 title_ko = "스파"
 title_en = "Spa"
 path_label = "BUREAU   /   SPA"
-show_placeholder = null
 
 [node name="Storage" parent="Panels" unique_id=1999564642 instance=ExtResource("5_4hiev")]
 layout_mode = 1
@@ -147,7 +143,6 @@ number = 6
 title_ko = "창고"
 title_en = "Storage"
 path_label = "BUREAU   /   STORAGE"
-show_placeholder = null
 
 [node name="Journal" parent="Panels" unique_id=3283959 instance=ExtResource("5_4hiev")]
 layout_mode = 1
@@ -159,7 +154,6 @@ number = 7
 title_ko = "일지"
 title_en = "Journal"
 path_label = "BUREAU   /   JOURNAL"
-show_placeholder = null
 
 [node name="SideRail" type="Control" parent="." unique_id=811740938]
 anchors_preset = 0

@@ -32,3 +32,44 @@ func test_collinear_corners_do_not_crash():
 func test_nearest_handle():
 	assert_eq(BoardShape.nearest_handle(SQ, Vector2(648, 3), 10.0), 1)
 	assert_eq(BoardShape.nearest_handle(SQ, Vector2(300, 300), 10.0), -1)
+
+# --- 판 늘리기 (2026-11-25) ---
+
+const TRAPEZOID := [Vector2(184, 333), Vector2(757, 333), Vector2(716, 674), Vector2(-86, 674)]
+
+func _pts(a: Array) -> PackedVector2Array:
+	return PackedVector2Array(a)
+
+func test_stretch_by_one_keeps_corners():
+	var out := BoardShape.stretch(_pts(TRAPEZOID), 1.0, 1.0)
+	for i in 4:
+		assert_almost_eq(out[i], TRAPEZOID[i], Vector2(0.001, 0.001))
+
+func test_stretch_rows_on_square_doubles_height_around_center():
+	var sq := _pts([Vector2(0, 0), Vector2(100, 0), Vector2(100, 100), Vector2(0, 100)])
+	var out := BoardShape.stretch(sq, 1.0, 2.0)
+	assert_almost_eq(out[0], Vector2(0, -50), Vector2(0.001, 0.001))
+	assert_almost_eq(out[2], Vector2(100, 150), Vector2(0.001, 0.001))
+
+func test_stretch_keeps_center_and_side_lines():
+	var c := _pts(TRAPEZOID)
+	var out := BoardShape.stretch(c, 1.0, 1.6)
+	# 판 가운데 점은 그대로
+	assert_almost_eq(BoardShape.point_at(out, Vector2(0.5, 0.5)), BoardShape.point_at(c, Vector2(0.5, 0.5)), Vector2(0.01, 0.01))
+	# 새 왼쪽 위 모서리는 원래 왼쪽 변의 연장선 위 (원근 유지)
+	var d1: Vector2 = c[3] - c[0]
+	var d2: Vector2 = out[0] - c[0]
+	assert_almost_eq(d1.cross(d2), 0.0, 0.5)
+
+func test_stretch_rows_makes_middle_rows_taller():
+	var c := _pts(TRAPEZOID)
+	var out := BoardShape.stretch(c, 1.0, 1.6)
+	var before := BoardShape.cell_quad(c, 2, 2, 0.0)
+	var after := BoardShape.cell_quad(out, 2, 2, 0.0)
+	assert_gt(after[3].y - after[0].y, (before[3].y - before[0].y) * 1.4)
+
+func test_stretch_then_inverse_returns():
+	var c := _pts(TRAPEZOID)
+	var back := BoardShape.stretch(BoardShape.stretch(c, 1.0, 1.5), 1.0, 1.0 / 1.5)
+	for i in 4:
+		assert_almost_eq(back[i], c[i], Vector2(0.01, 0.01))

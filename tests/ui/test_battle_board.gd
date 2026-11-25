@@ -108,3 +108,33 @@ func test_too_big_battle_is_not_supported():
 	assert_true(b.supports(5, 5))
 	assert_false(b.supports(6, 3))
 	assert_false(b.supports(3, 6))
+
+# --- 판 늘리기 칸 (2026-11-25) ---
+
+func test_row_stretch_reshapes_and_returns():
+	var b := _board(A)
+	b.corners = TRAP
+	b.row_stretch = 1.5
+	var want := BoardShape.stretch(TRAP, 1.0, 1.5)
+	for i in 4:
+		assert_almost_eq(b.corners[i], want[i], Vector2(0.01, 0.01))
+	b.row_stretch = 1.0
+	for i in 4:
+		assert_almost_eq(b.corners[i], TRAP[i], Vector2(0.01, 0.01), "1 로 돌리면 원래대로")
+
+func test_col_stretch_keeps_rows():
+	var b := _board(A)
+	b.corners = TRAP
+	b.col_stretch = 2.0
+	assert_almost_eq(b.corners[0].y, TRAP[0].y, 0.01)
+	assert_almost_eq(b.corners[3].y, TRAP[3].y, 0.01)
+	assert_lt(b.corners[0].x, TRAP[0].x)
+
+func test_stretch_values_before_ready_do_not_reshape():
+	var b: BattleBoard = load(BOARD).instantiate()
+	b.corners = TRAP
+	b.row_stretch = 1.5  # 씬을 불러올 때처럼 준비 전에 값이 들어옴
+	add_child_autofree(b)
+	assert_eq(b.row_stretch, 1.5)
+	for i in 4:
+		assert_almost_eq(b.corners[i], TRAP[i], Vector2(0.01, 0.01))

@@ -36,6 +36,37 @@ const SIZE := 5
 			layout_cells()
 
 
+var _row_stretch := 1.0  # row_stretch 의 실제 값 (setter 안에서 다시 setter 를 부르지 않으려고 따로 담는다)
+var _col_stretch := 1.0  # col_stretch 의 실제 값
+
+@export_group("판 늘리기")
+## 판의 세로(앞뒤) 배율. 인스펙터에서 숫자를 끌면 판이 가운데 줄 기준으로 바로 늘었다 줄었다 한다 (원근 유지, Ctrl+Z 됨).
+## 값은 "처음 판 대비" 가 아니라 지금까지 늘린 누적 배율 — 1 로 돌리면 이 칸을 처음 쓰기 전 모양으로 돌아간다.
+## 아군·적 판에 같은 값을 쓰면 두 판의 좌우 대칭이 유지된다 (2026-11-25)
+@export_range(0.25, 4.0, 0.01, "or_greater") var row_stretch: float = 1.0:
+	get:
+		return _row_stretch
+	set(value):
+		_apply_stretch(_col_stretch, value)
+## 판의 가로 배율. row_stretch 와 같은 방식 (판 가운데 기준, 원근 유지)
+@export_range(0.25, 4.0, 0.01, "or_greater") var col_stretch: float = 1.0:
+	get:
+		return _col_stretch
+	set(value):
+		_apply_stretch(value, _row_stretch)
+
+
+## 배율을 바꾸고, 바뀐 비율만큼 corners 를 넓히거나 좁힌다.
+## 씬을 불러올 때(준비 전)는 값만 담는다 — 저장된 corners 가 이미 그 배율이 적용된 모양이라서
+func _apply_stretch(new_col: float, new_row: float) -> void:
+	if new_col <= 0.0 or new_row <= 0.0:
+		return
+	if is_node_ready() and corners.size() == 4:
+		corners = BoardShape.stretch(corners, new_col / _col_stretch, new_row / _row_stretch)
+	_col_stretch = new_col
+	_row_stretch = new_row
+
+
 func _ready() -> void:
 	# 칸의 꼭짓점이 바뀌면 다시 배치한다 (@tool 이라 에디터에서도 연결된다)
 	for c in get_children():
