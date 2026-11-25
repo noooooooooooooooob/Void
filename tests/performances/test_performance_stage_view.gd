@@ -456,6 +456,8 @@ func test_playing_through_hit_slows_source_then_release():
 
 func test_slowmo_ends_by_itself():
 	var vs := _with_source()
+	# 슬로우모션 시간을 테스트가 정한다 — 돌주먹 씬의 카드별 값(지금 0.5초)은 연출 조정으로 바뀌므로 기대지 않는다
+	vs[1].hitstop_time = 0.1
 	var ap: AnimationPlayer = vs[1].get_node("AnimationPlayer")
 	ap.play(&"perform")
 	ap.seek(HIT - 0.02, true)
