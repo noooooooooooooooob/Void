@@ -28,6 +28,9 @@ uniform float average_gain = 2.0;
 // 지금 프레임이 그리는 영역 (텍스처 UV 기준 x, y, 너비, 높이). 아틀라스 프레임이면 그 칸만 — 옆 프레임을 꼬리로 읽지 않게.
 // smear_driver.gd 가 매 프레임 넣는다 (SmearDriver.frame_region)
 uniform vec4 region = vec4(0.0, 0.0, 1.0, 1.0);
+// 그림 반전 (x = -1 이면 flip_h, y = -1 이면 flip_v). 엔진은 반전을 UV 로 처리해 꼭짓점과 UV 의 방향이 반대가 되므로,
+// 꼭짓점을 넓히는 방향만 뒤집는다. smear_driver.gd 가 넣는다
+uniform vec2 flip = vec2(1.0, 1.0);
 
 varying vec2 tex_size;
 // 넓힌 UV. fragment 의 UV 는 엔진이 그림 영역(0~1)으로 잘라 버려서(clip_uv) 여백에 가장자리 줄이 늘어지므로 따로 넘긴다
@@ -46,7 +49,7 @@ void vertex() {
 	// 1. 그림 사각형을 사방으로 pad 만큼 넓히고, UV 도 같은 만큼 바깥으로 (영역 밖은 fragment 에서 투명).
 	//    방향은 프레임 영역의 가운데 기준 (아틀라스면 UV 가 그 칸 범위라서)
 	vec2 dir = sign(UV - (region.xy + region.zw * 0.5));
-	VERTEX += dir * pad;
+	VERTEX += dir * flip * pad;
 	UV += dir * pad * TEXTURE_PIXEL_SIZE;
 	uv_ext = UV;
 	tex_size = 1.0 / TEXTURE_PIXEL_SIZE;
