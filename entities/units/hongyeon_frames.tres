@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://clsjvjhaikvkc"]
+
+[ext_resource type="Texture2D" uid="uid://cse6ph0pfvuwt" path="res://Art/characters/hongyeon/hongyeon_idle.png" id="1_4xhur"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jamgu"]
+atlas = ExtResource("1_4xhur")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jtdox"]
+atlas = ExtResource("1_4xhur")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6cc3g"]
+atlas = ExtResource("1_4xhur")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bn4wt"]
+atlas = ExtResource("1_4xhur")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qjvh5"]
+atlas = ExtResource("1_4xhur")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ryqc6"]
+atlas = ExtResource("1_4xhur")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uhli7"]
+atlas = ExtResource("1_4xhur")
+region = Rect2(768, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jav3i"]
+atlas = ExtResource("1_4xhur")
+region = Rect2(896, 0, 128, 128)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 3.0,
+"texture": SubResource("AtlasTexture_jamgu")
+}, {
+"duration": 3.0,
+"texture": SubResource("AtlasTexture_jtdox")
+}, {
+"duration": 3.0,
+"texture": SubResource("AtlasTexture_6cc3g")
+}, {
+"duration": 3.0,
+"texture": SubResource("AtlasTexture_bn4wt")
+}, {
+"duration": 3.0,
+"texture": SubResource("AtlasTexture_qjvh5")
+}, {
+"duration": 3.0,
+"texture": SubResource("AtlasTexture_ryqc6")
+}, {
+"duration": 3.0,
+"texture": SubResource("AtlasTexture_uhli7")
+}, {
+"duration": 3.0,
+"texture": SubResource("AtlasTexture_jav3i")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 10.0
+}]

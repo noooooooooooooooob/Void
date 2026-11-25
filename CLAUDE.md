@@ -99,7 +99,7 @@ res://
     stage/       #   의뢰 진행 (지도, StageRun, 공허 조각 지갑)
     ui/          #   화면 스크립트 (card_view, card_gallery …)
   cards/         # 카드 데이터 .tres (data/<덱>/, keywords/, art/) — 카드 가져오기로 생성
-  statuses/      # 상태(data/)·장비(equipment/) .tres
+  statuses/      # 상태(data/)·장비(equipment/)·상태 전투 이펙트 SpriteFrames(effects/) .tres
   items/         # 소비 아이템 .tres (consumables/)
   shop/          # 상점 설정 .tres (shop_data.tres)
   battles/       # 전투 데이터 .tres (test_battle, boss_battle)

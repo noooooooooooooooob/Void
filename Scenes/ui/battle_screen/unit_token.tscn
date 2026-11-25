@@ -24,6 +24,15 @@ position = Vector2(50, 50)
 scale = Vector2(0.2, 0.2)
 offset = Vector2(0, -200)
 
+[node name="EffectBehind" type="AnimatedSprite2D" parent="Sprite" unique_id=1026875407]
+visible = false
+show_behind_parent = true
+texture_filter = 1
+
+[node name="EffectFront" type="AnimatedSprite2D" parent="Sprite" unique_id=1339158298]
+visible = false
+texture_filter = 1
+
 [node name="Box" type="VBoxContainer" parent="." unique_id=1740090346]
 layout_mode = 0
 anchor_right = 1.0

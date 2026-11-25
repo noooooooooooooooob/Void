@@ -11,6 +11,9 @@ signal pressed(unit: BattleUnit)
 @export var enemy_color := Color("7a2f3a")
 ## 대상으로 강조할 때 더하는 밝기
 @export var highlight_boost := 0.35
+## 상태 이펙트(혈갑 등) 그림의 배율. UnitData.battle_scale 과 같은 단위 (10 = 128px 픽셀 그림을 화면 2배로).
+## 이펙트는 유닛 그림의 자식이라 흔들림·숨김을 같이 따라가고, 크기만 이 값으로 맞춘다.
+@export var effect_scale := 10.0
 
 ## 이 박스가 보여 주는 유닛
 var unit: BattleUnit
@@ -20,6 +23,10 @@ var unit: BattleUnit
 @onready var _hp: Label = %Hp             # "HP/최대"
 @onready var _block: Label = %Block       # 방어도 (0 이면 숨김)
 @onready var _sprite: AnimatedSprite2D = %Sprite  # 전투 그림 (유닛의 battle_frames)
+@onready var _effect_behind: AnimatedSprite2D = $Sprite/EffectBehind  # 상태 이펙트 (그림 뒤)
+@onready var _effect_front: AnimatedSprite2D = $Sprite/EffectFront    # 상태 이펙트 (그림 앞)
+@onready var _base_scale := _sprite.scale    # 씬에 정한 기본 그림 크기 (battle_scale 1 일 때)
+@onready var _base_offset := _sprite.offset  # 씬에 정한 기본 그림 위치 보정
 var _highlight := false
 
 
@@ -48,6 +55,7 @@ func refresh() -> void:
 	var base := ally_color if unit.side == BattleTypes.Side.ALLY else enemy_color
 	_body.color = base.lightened(highlight_boost) if _highlight else base
 	modulate.a = 1.0 if unit.alive else 0.35
+	_refresh_effects()
 
 
 ## 연출 중 결과를 보여 줄 때: 실제 유닛 값 대신 그 단계가 끝났을 때의 값으로 HP·방어도·흐림만 다시 그린다.
@@ -116,14 +124,51 @@ static func is_embedded_upgrade(card: CardData) -> bool:
 	return card != null and card.resource_path.contains("::")
 
 
-## 유닛의 애니메이션 묶음을 Sprite 에 넣고 idle 을 튼다. 묶음이 없는 유닛(홍연, 적)은 그림을 숨긴다.
+## 유닛의 애니메이션 묶음을 Sprite 에 넣고(배율·필터 포함) idle 을 튼다. 묶음이 없는 유닛(적 등)은 그림을 숨긴다.
 func _setup_sprite() -> void:
 	if unit == null or not is_node_ready():
 		return
 	var frames := unit.data.battle_frames
 	_sprite.visible = frames != null
 	_sprite.sprite_frames = frames
+	# 편 색 박스는 그림이 없는 유닛의 자리 표시 — 그림이 있으면 숨긴다 (대상 표시는 격자 칸이 한다)
+	_body.visible = frames == null
+	# 유닛 배율: 크기는 곱하고 offset 은 나눠서, 그림 중심의 화면 위치는 씬 기본과 같게 둔다
+	var k := unit.data.battle_scale if unit.data.battle_scale > 0.0 else 1.0
+	_sprite.scale = _base_scale * k
+	_sprite.offset = _base_offset / k
+	_sprite.texture_filter = TEXTURE_FILTER_NEAREST if unit.data.battle_pixel_art else TEXTURE_FILTER_PARENT_NODE
+	# 이펙트는 그림의 자식이라 그림 배율이 곱해진다 → 나눠서 effect_scale 크기로, 중심은 그림 중심에 맞춘다
+	var e := effect_scale / k
+	for fx in [_effect_behind, _effect_front]:
+		fx.scale = Vector2(e, e)
+		fx.offset = _sprite.offset / e
 	_play_idle()
+
+
+## 유닛이 가진 상태 중 이펙트가 있는 첫 상태의 이펙트를 그림 앞뒤에 반복 재생한다. 없으면 숨긴다.
+## 상태가 사라지면(수치 0 등) 다음 refresh 때 같이 사라진다.
+func _refresh_effects() -> void:
+	var behind: SpriteFrames = null
+	var front: SpriteFrames = null
+	if unit.alive:
+		for inst in unit.statuses:
+			if inst.data.effect_behind or inst.data.effect_front:
+				behind = inst.data.effect_behind
+				front = inst.data.effect_front
+				break
+	_show_effect(_effect_behind, behind)
+	_show_effect(_effect_front, front)
+
+
+## 이펙트 노드 하나에 묶음을 넣고 튼다. 같은 묶음이면 처음부터 다시 틀지 않는다 (refresh 가 자주 불리므로).
+func _show_effect(fx: AnimatedSprite2D, frames: SpriteFrames) -> void:
+	fx.visible = frames != null
+	if frames == fx.sprite_frames:
+		return
+	fx.sprite_frames = frames
+	if frames and not frames.get_animation_names().is_empty():
+		fx.play(frames.get_animation_names()[0])
 
 
 ## 서 있는 동작(idle)을 튼다. 묶음에 idle 이 없으면 그대로 둔다.

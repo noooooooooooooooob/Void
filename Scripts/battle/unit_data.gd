@@ -13,6 +13,12 @@ extends Resource
 ## 애니메이션 "idle" = 서 있을 때. 카드를 쓰면 그 카드의 animation 이름을 한 번 재생하고 idle 로 돌아온다.
 ## 비워 두면 그림 없이 색 박스만 보인다.
 @export var battle_frames: SpriteFrames
+## 전투 그림 배율. 전투 화면 유닛 박스의 기본 크기(큰 일러스트용)에 곱한다.
+## 1 = 그대로 (브람 1202px 일러스트). 128px 픽셀 그림은 10 (= 화면에서 2배 정수 배율).
+## 그림 중심의 화면 위치는 배율과 상관없이 같게 맞춘다.
+@export var battle_scale: float = 1.0
+## 픽셀 그림이면 켠다 — 키워도 흐려지지 않게 Nearest 로 그린다 (끄면 일러스트용 Linear).
+@export var battle_pixel_art: bool = false
 @export_group("스탯")
 ## 최대 HP
 @export var max_hp: int = 100

@@ -283,6 +283,10 @@ func sync() -> void:
 		if from and to:
 			for p in COPY_PROPS:
 				if p in from and p in to:
+					# 동작 이름은 복제본에 들어 있는 그림 묶음에 그 이름이 있을 때만 옮긴다 (없는 이름·빈 묶음이면 엔진 에러).
+					# 행위자에게 유닛 그림 묶음을 씌울 때는 아래에서 있는 이름만 다시 맞춘다
+					if p == &"animation" and to is AnimatedSprite2D 							and (to.sprite_frames == null or not to.sprite_frames.has_animation(from.get(p))):
+						continue
 					to.set(p, from.get(p))
 	# 행위자의 그림 묶음으로 (실제 게임은 play(행위자 battle_frames)). 묶음이 없는 아군이면 씬의 것 그대로.
 	# 원본에서 동작 이름·프레임 번호를 옮겨 받은 뒤 묶음만 바꾼다
