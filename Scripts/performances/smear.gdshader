@@ -1,8 +1,8 @@
-// 스머지(스미어) 시험판 셰이더 — 그림을 지나온 쪽으로 늘린다 (줄무늬 또는 전체 고르게, 몸 뒤 또는 앞까지).
+// 스머지(스미어) 셰이더 — 그림을 지나온 쪽으로 늘린다 (줄무늬 또는 전체 고르게, 몸 뒤 또는 앞까지).
 // smear_driver.gd 가 부모 그림(AnimatedSprite2D)에 붙이고 smear 값을 매 프레임 넣는다.
 // 원리: 메시 스미어(godotshaders.com/shader/mesh-smearing)를 2D 로 — 꼭짓점 대신 픽셀이
 // "이동 방향 앞쪽"의 그림 색을 끌어와 지나온 자리에 꼬리가 남는다.
-// 기본(2026-11-25 선택): 전체 고르게(min_length 1) + 평균(부드러운 블러) + 몸 앞 0.2. 줄무늬는 min_length < 1, average 끔
+// 기본(2026-11-25 사용자 선택): 전체 고르게(min_length 1) + 평균(부드러운 블러) + 몸 앞 0.2. 줄무늬는 min_length < 1, average 끔
 shader_type canvas_item;
 
 // 꼬리 벡터 (그림 픽셀 단위, 지금 위치 → 지나온 쪽). 0 이면 효과 없음
@@ -25,6 +25,9 @@ uniform float dither : hint_range(0.0, 1.0) = 0.0;
 uniform bool average = true;
 // 평균일 때 꼬리 불투명도 배율 (평균은 그림이 걸린 비율만큼만 진해서 옅어 보이므로)
 uniform float average_gain = 2.0;
+// 지금 프레임이 그리는 영역 (텍스처 UV 기준 x, y, 너비, 높이). 아틀라스 프레임이면 그 칸만 — 옆 프레임을 꼬리로 읽지 않게.
+// smear_driver.gd 가 매 프레임 넣는다 (SmearDriver.frame_region)
+uniform vec4 region = vec4(0.0, 0.0, 1.0, 1.0);
 
 varying vec2 tex_size;
 // 넓힌 UV. fragment 의 UV 는 엔진이 그림 영역(0~1)으로 잘라 버려서(clip_uv) 여백에 가장자리 줄이 늘어지므로 따로 넘긴다
@@ -40,8 +43,9 @@ float hash2(vec2 p) {
 }
 
 void vertex() {
-	// 1. 그림 사각형을 사방으로 pad 만큼 넓히고, UV 도 같은 만큼 바깥으로 (0~1 밖은 fragment 에서 투명)
-	vec2 dir = sign(UV - 0.5);
+	// 1. 그림 사각형을 사방으로 pad 만큼 넓히고, UV 도 같은 만큼 바깥으로 (영역 밖은 fragment 에서 투명).
+	//    방향은 프레임 영역의 가운데 기준 (아틀라스면 UV 가 그 칸 범위라서)
+	vec2 dir = sign(UV - (region.xy + region.zw * 0.5));
 	VERTEX += dir * pad;
 	UV += dir * pad * TEXTURE_PIXEL_SIZE;
 	uv_ext = UV;
@@ -49,9 +53,11 @@ void vertex() {
 	tint = COLOR;
 }
 
-// uv 가 그림 안(0~1)이면 1, 밖이면 0. (TEXTURE 는 함수 인자로 못 넘겨서 샘플은 fragment 에서 하고 이 값을 곱한다)
+// uv 가 지금 프레임 영역 안이면 1, 밖이면 0. (TEXTURE 는 함수 인자로 못 넘겨서 샘플은 fragment 에서 하고 이 값을 곱한다)
 float inside(vec2 uv) {
-	return step(0.0, uv.x) * step(0.0, uv.y) * step(uv.x, 1.0) * step(uv.y, 1.0);
+	vec2 lo = region.xy;
+	vec2 hi = region.xy + region.zw;
+	return step(lo.x, uv.x) * step(lo.y, uv.y) * step(uv.x, hi.x) * step(uv.y, hi.y);
 }
 
 void fragment() {

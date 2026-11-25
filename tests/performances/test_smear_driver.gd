@@ -108,3 +108,28 @@ func test_atlas_frame_region_sent():
 
 func test_plain_texture_region_is_whole():
 	assert_eq(SmearDriver.frame_region(_tex()), Vector4(0, 0, 1, 1))
+
+
+func test_shader_has_region_uniform():
+	var names := SmearDriver.SMEAR_SHADER.get_shader_uniform_list().map(func(u): return u.name)
+	assert_has(names, "region")
+
+
+func test_shader_compiles_when_drawn():
+	# 셰이더 문법 오류는 그릴 때 엔진 에러로 나온다 — GUT 가 예상 밖 에러로 잡는다
+	var s := _sprite()
+	_driver(s)
+	s.position.x += 300
+	await wait_process_frames(3)
+	assert_not_null(s.material)
+
+
+func test_replaces_copied_smear_material():
+	# 연출 화면 탭은 Actor 를 material 째 복제한다 — 스머지 material 이면 내 것으로 새로 만든다 (원본과 공유 안 함)
+	var s := _sprite()
+	var copied := ShaderMaterial.new()
+	copied.shader = SmearDriver.SMEAR_SHADER
+	s.material = copied
+	_driver(s)
+	assert_ne(s.material, copied)
+	assert_eq((s.material as ShaderMaterial).shader, SmearDriver.SMEAR_SHADER)

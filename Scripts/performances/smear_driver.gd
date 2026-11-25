@@ -34,8 +34,10 @@ func _ready() -> void:
 	_sprite = get_parent() as Node2D
 	if _sprite == null:
 		return
-	# 이미 다른 material 이 있으면 덮어쓰지 않는다 (설계: 경고만)
-	if _sprite.material != null:
+	# 이미 다른 material 이 있으면 덮어쓰지 않는다 (설계: 경고만).
+	# 스머지 material 이면 복제로 따라온 것(연출 화면 탭) — 원본과 공유하지 않게 새로 만든다
+	var old := _sprite.material as ShaderMaterial
+	if _sprite.material != null and not (old and old.shader == SMEAR_SHADER):
 		push_warning("SmearDriver: %s 에 이미 material 이 있어 스머지를 끕니다" % _sprite.name)
 		return
 	_mat = ShaderMaterial.new()
