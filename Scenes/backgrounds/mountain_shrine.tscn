@@ -184,9 +184,9 @@ offset_bottom = 799.802
 
 [node name="Enemy Board" parent="." unique_id=426616299 instance=ExtResource("2_u8l2e")]
 layout_mode = 0
-offset_left = 1013.0
+offset_left = 1001.0
 offset_top = 122.0
-offset_right = 1653.0
+offset_right = 1641.0
 offset_bottom = 762.0
 side = 1
 corners = PackedVector2Array(-30.835, 278.15, 503.987, 278.15, 923.964, 808.565, 32.939, 808.565)
