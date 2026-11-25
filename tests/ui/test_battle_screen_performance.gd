@@ -330,6 +330,21 @@ func test_hit_plays_target_hit_animation():
 	await wait_for_signal(_queue(s).hit, 1.0)
 	assert_eq(sprite.animation, &"hit")
 
+func test_card_without_performance_plays_target_hit_animation():
+	# 연출 씬이 없는 카드(타격 등)도 피해를 받은 유닛은 hit 동작 (2026-11-25)
+	var data := _data()
+	var frames := SpriteFrames.new()
+	for anim in [&"idle", &"hit"]:
+		if not frames.has_animation(anim):
+			frames.add_animation(anim)
+		frames.add_frame(anim, PlaceholderTexture2D.new())
+	frames.set_animation_loop(&"hit", false)
+	data.enemies[0].unit.battle_frames = frames
+	var s := _screen(data)
+	var sprite: AnimatedSprite2D = s._tokens[_unit(s, "적A")].sprite()
+	_use(s, "타격")
+	assert_eq(sprite.animation, &"hit")
+
 func test_hit_without_hit_animation_keeps_idle():
 	var data := _data()
 	var frames := SpriteFrames.new()

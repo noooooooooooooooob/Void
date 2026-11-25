@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://wgo2sdi33ixp"]
+
+[ext_resource type="Texture2D" uid="uid://sl1snsvbcuis" path="res://Art/enemies/industrial_rift/steam_brute/steam_brute_attack.png" id="1_3aycl"]
+[ext_resource type="Texture2D" uid="uid://dpxregng33wd7" path="res://Art/enemies/industrial_rift/steam_brute/steam_brute_hit.png" id="2_b7vwq"]
+[ext_resource type="Texture2D" uid="uid://bmrg2v524jexq" path="res://Art/enemies/industrial_rift/steam_brute/steam_brute_idle.png" id="3_08ujp"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_3aycl")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_b7vwq")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_08ujp")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

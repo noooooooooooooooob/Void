@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://b1vk61pt2vemf"]
+
+[ext_resource type="SpriteFrames" uid="uid://vddcejn31o0u" path="res://entities/units/enemies/amethyst_mine/crystal_miner_frames.tres" id="1_gw048"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="2_ikuas"]
+[ext_resource type="Resource" uid="uid://bcro5bq723igu" path="res://cards/data/common/타격.tres" id="3_i5a4c"]
+[ext_resource type="Resource" uid="uid://8tur81lky8gg" path="res://cards/data/common/사격.tres" id="4_8bn1e"]
+[ext_resource type="Resource" uid="uid://hgxecy5umc0r" path="res://cards/data/common/방어.tres" id="5_k2ogd"]
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="6_kqx31"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="7_ymp6t"]
+[ext_resource type="Script" uid="uid://d1mc58d4xcsay" path="res://Scripts/battle/unit_data.gd" id="8_nkgsc"]
+
+[resource]
+script = ExtResource("8_nkgsc")
+display_name = "결정에 먹힌 광부"
+battle_frames = ExtResource("1_gw048")
+battle_scale = 2.7
+max_hp = 45
+attack = 9
+defense = 6
+speed_min = 2
+speed_max = 8
+deck = Array[ExtResource("2_ikuas")]([ExtResource("3_i5a4c"), ExtResource("3_i5a4c"), ExtResource("4_8bn1e"), ExtResource("5_k2ogd")])

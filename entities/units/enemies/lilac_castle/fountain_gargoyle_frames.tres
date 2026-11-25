@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cmm8a1tu707dt"]
+
+[ext_resource type="Texture2D" uid="uid://y3fkwjej0gq" path="res://Art/enemies/lilac_castle/fountain_gargoyle/fountain_gargoyle_attack.png" id="1_vr5h4"]
+[ext_resource type="Texture2D" uid="uid://nys0glvjv6fu" path="res://Art/enemies/lilac_castle/fountain_gargoyle/fountain_gargoyle_hit.png" id="2_oop0u"]
+[ext_resource type="Texture2D" uid="uid://bb8lgngfdyax" path="res://Art/enemies/lilac_castle/fountain_gargoyle/fountain_gargoyle_idle.png" id="3_fivnw"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_vr5h4")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_oop0u")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_fivnw")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

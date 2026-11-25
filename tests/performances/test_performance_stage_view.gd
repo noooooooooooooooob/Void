@@ -81,7 +81,7 @@ func test_set_background_unknown_keeps_battle_background():
 	assert_eq(bgs[0].scene_file_path, (load(BATTLE) as BattleData).background.resource_path)
 
 const BRAM := "res://entities/units/bram_welburn.tres"
-const ENEMY_A := "res://entities/units/test/test_enemy_a.tres"
+const ENEMY_A := "res://entities/units/enemies/mountain_shrine/cracked_komainu.tres"  # 시험 전투의 첫 적 (2026-11-25)
 
 func _bram_index() -> int:
 	var data: BattleData = load(BATTLE)
@@ -103,6 +103,7 @@ func test_box_hidden_when_unit_has_sprite():
 func test_box_shown_when_unit_has_no_sprite():
 	# 그림이 없는 유닛(시험용 적 A)은 박스로 대신
 	var v := _view()
+	v.set_enemy("res://entities/units/test/test_enemy_a.tres")
 	assert_true(_box(v.enemy_sprite()).is_visible_in_tree())
 
 func test_actor_box_hidden_with_performance():
@@ -159,7 +160,7 @@ func test_is_enemy_unit_from_battles():
 func test_set_enemy_unknown_keeps_battle_enemy():
 	var v := _view()
 	v.set_enemy("res://entities/units/없는유닛.tres")
-	assert_null(v.enemy_sprite().sprite_frames)
+	assert_eq(v.enemy_sprite().sprite_frames, (load(ENEMY_A) as UnitData).battle_frames)
 	var list: OptionButton = v.get_node("%EnemyList")
 	assert_eq(list.get_item_metadata(list.selected), ENEMY_A)
 

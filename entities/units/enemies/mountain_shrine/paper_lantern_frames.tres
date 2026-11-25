@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://bid5mpddnlk6b"]
+
+[ext_resource type="Texture2D" uid="uid://b1w2dw8ukfxr0" path="res://Art/enemies/mountain_shrine/paper_lantern/paper_lantern_attack.png" id="1_tk3lx"]
+[ext_resource type="Texture2D" uid="uid://dj3iblvtbeodq" path="res://Art/enemies/mountain_shrine/paper_lantern/paper_lantern_hit.png" id="2_imch3"]
+[ext_resource type="Texture2D" uid="uid://cr4vl0hus5ri8" path="res://Art/enemies/mountain_shrine/paper_lantern/paper_lantern_idle.png" id="3_cnl8o"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tk3lx")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_imch3")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_cnl8o")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

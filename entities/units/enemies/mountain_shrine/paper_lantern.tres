@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://ntd1ccyrn87x"]
+
+[ext_resource type="SpriteFrames" uid="uid://bid5mpddnlk6b" path="res://entities/units/enemies/mountain_shrine/paper_lantern_frames.tres" id="1_rjx31"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="2_h2jxk"]
+[ext_resource type="Resource" uid="uid://bcro5bq723igu" path="res://cards/data/common/타격.tres" id="3_lthto"]
+[ext_resource type="Resource" uid="uid://8tur81lky8gg" path="res://cards/data/common/사격.tres" id="4_bvw7n"]
+[ext_resource type="Resource" uid="uid://hgxecy5umc0r" path="res://cards/data/common/방어.tres" id="5_3fu5s"]
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="6_ubr6y"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="7_rffe5"]
+[ext_resource type="Script" uid="uid://d1mc58d4xcsay" path="res://Scripts/battle/unit_data.gd" id="8_aoiyx"]
+
+[resource]
+script = ExtResource("8_aoiyx")
+display_name = "종이 등롱 요괴"
+battle_frames = ExtResource("1_rjx31")
+battle_scale = 2.7
+max_hp = 45
+attack = 9
+defense = 6
+speed_min = 2
+speed_max = 8
+deck = Array[ExtResource("2_h2jxk")]([ExtResource("3_lthto"), ExtResource("3_lthto"), ExtResource("4_bvw7n"), ExtResource("5_3fu5s")])

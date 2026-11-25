@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://bksooof47pf3"]
+
+[ext_resource type="Texture2D" uid="uid://b0x42upk6be3m" path="res://Art/enemies/lilac_castle/hollow_guard/hollow_guard_attack.png" id="1_5uyuw"]
+[ext_resource type="Texture2D" uid="uid://whokemmn1d0c" path="res://Art/enemies/lilac_castle/hollow_guard/hollow_guard_hit.png" id="2_cjvgh"]
+[ext_resource type="Texture2D" uid="uid://cnyouth77cu7t" path="res://Art/enemies/lilac_castle/hollow_guard/hollow_guard_idle.png" id="3_hrjy0"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_5uyuw")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_cjvgh")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_hrjy0")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

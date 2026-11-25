@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://47ntp1q1dxli"]
+
+[ext_resource type="SpriteFrames" uid="uid://beydyj0ujqntg" path="res://entities/units/enemies/void_mirror/afterimage_frames.tres" id="1_78s73"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="2_c1ab4"]
+[ext_resource type="Resource" uid="uid://bcro5bq723igu" path="res://cards/data/common/타격.tres" id="3_6d66t"]
+[ext_resource type="Resource" uid="uid://8tur81lky8gg" path="res://cards/data/common/사격.tres" id="4_r1jo8"]
+[ext_resource type="Resource" uid="uid://hgxecy5umc0r" path="res://cards/data/common/방어.tres" id="5_lcxyi"]
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="6_g0mpq"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="7_jf71n"]
+[ext_resource type="Script" uid="uid://d1mc58d4xcsay" path="res://Scripts/battle/unit_data.gd" id="8_lnr5c"]
+
+[resource]
+script = ExtResource("8_lnr5c")
+display_name = "잔영"
+battle_frames = ExtResource("1_78s73")
+battle_scale = 2.7
+max_hp = 45
+attack = 9
+defense = 6
+speed_min = 2
+speed_max = 8
+deck = Array[ExtResource("2_c1ab4")]([ExtResource("3_6d66t"), ExtResource("3_6d66t"), ExtResource("4_r1jo8"), ExtResource("5_lcxyi")])

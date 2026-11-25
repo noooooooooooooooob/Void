@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://c1y4i3jce6hfa"]
+
+[ext_resource type="Texture2D" uid="uid://dwiag6wwo5qhg" path="res://Art/enemies/amethyst_mine/crystal_tick/crystal_tick_attack.png" id="1_ii6ia"]
+[ext_resource type="Texture2D" uid="uid://q6q7yqw3jajj" path="res://Art/enemies/amethyst_mine/crystal_tick/crystal_tick_hit.png" id="2_28vj5"]
+[ext_resource type="Texture2D" uid="uid://yrguih8m62ob" path="res://Art/enemies/amethyst_mine/crystal_tick/crystal_tick_idle.png" id="3_h5cfu"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_ii6ia")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_28vj5")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_h5cfu")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

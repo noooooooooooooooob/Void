@@ -128,7 +128,7 @@ func test_test_battle_data():
 	var d: BattleData = load("res://battles/test_battle.tres")
 	assert_eq([d.rows, d.ally_cols, d.enemy_cols], [3, 4, 4])
 	assert_eq(d.allies.size(), 2)
-	assert_eq(d.enemies.size(), 2)
+	assert_eq(d.enemies.size(), 3)  # 산 신사 적 3종 (2026-11-25)
 	assert_eq(d.allies[1].unit.display_name, "브람 웰번")
 	assert_eq(d.allies[1].cell, Vector2i(3, 0))
 	# 아군은 진짜 홍연·브람 (2026-11-23, 시험용 홍연 대신)

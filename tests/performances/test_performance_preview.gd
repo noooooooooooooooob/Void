@@ -75,7 +75,7 @@ func test_actor_lands_on_target_row_even_right_after_start():
 	var perf: CardPerformance = s.get_node("%PerformanceLayer").get_child(0)
 	var foe: BattleUnit = null
 	for u in s.session.battle.units:
-		if u.data.display_name == "시험용 적 A":
+		if u.data.display_name == "금 간 수호 석상":  # 시험 전투의 첫 적 (2026-11-25)
 			foe = u
 	assert_almost_eq(perf.get_node("%Actor").global_position.y, s._tokens[foe].sprite().global_position.y, 10.0)
 

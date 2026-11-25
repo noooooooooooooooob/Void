@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://dgdrlnr5gp6uj"]
+
+[ext_resource type="Texture2D" uid="uid://74lc2vudmg5g" path="res://Art/enemies/mountain_shrine/cracked_komainu/cracked_komainu_attack.png" id="1_lfx7d"]
+[ext_resource type="Texture2D" uid="uid://yump00dabrng" path="res://Art/enemies/mountain_shrine/cracked_komainu/cracked_komainu_hit.png" id="2_ap8y5"]
+[ext_resource type="Texture2D" uid="uid://brjpkpw6afopx" path="res://Art/enemies/mountain_shrine/cracked_komainu/cracked_komainu_idle.png" id="3_a5tpa"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_lfx7d")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ap8y5")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_a5tpa")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

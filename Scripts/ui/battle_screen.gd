@@ -612,9 +612,16 @@ func _on_step_results(step: PerformanceStep) -> void:
 		var to: String = (" → " + step.target.data.display_name) if step.target and step.target != step.actor else ""
 		_add_log("%s: %s%s" % [step.actor.data.display_name, step.card.name_ko, to])
 		var token: UnitToken = _tokens.get(step.actor)
-		if token and step.card.performance == null:
-			token.play_card_animation(step.card)
 		var totals := step.damage_totals()
+		if step.card.performance == null:
+			if token:
+				token.play_card_animation(step.card)
+			# 연출 씬이 없으면 hit 키도 없으므로, 피해를 받은 유닛의 맞는 동작을 여기서 튼다 (2026-11-25).
+			# 쓴 유닛 자신은 빼서 공격 동작을 끊지 않는다
+			for u in totals:
+				var hit_token: UnitToken = _tokens.get(u)
+				if hit_token and u != step.actor:
+					hit_token.play_hit()
 		var crits := step.crit_targets()
 		for u in totals:
 			var crit := crits.has(u)

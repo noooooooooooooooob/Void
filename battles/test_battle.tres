@@ -4,9 +4,10 @@
 [ext_resource type="Resource" uid="uid://b0dqweeokxjet" path="res://entities/units/hongyeon.tres" id="2_y2g4p"]
 [ext_resource type="PackedScene" uid="uid://goar44l5p1ya" path="res://Scenes/backgrounds/mountain_shrine.tscn" id="3_2pcsf"]
 [ext_resource type="Resource" uid="uid://b1mvfbsokntdu" path="res://entities/units/bram_welburn.tres" id="3_xt4bk"]
-[ext_resource type="Resource" uid="uid://y0jambaxxf4u" path="res://entities/units/test/test_enemy_a.tres" id="3_y2g4p"]
-[ext_resource type="Resource" uid="uid://cq8wrkbmrw82u" path="res://entities/units/test/test_enemy_b.tres" id="4_xt4bk"]
 [ext_resource type="Script" uid="uid://eybl28yfjnt7" path="res://Scripts/battle/battle_data.gd" id="5_82yrc"]
+[ext_resource type="Resource" uid="uid://wd6aq4poynop" path="res://entities/units/enemies/mountain_shrine/cracked_komainu.tres" id="5_xt4bk"]
+[ext_resource type="Resource" uid="uid://ntd1ccyrn87x" path="res://entities/units/enemies/mountain_shrine/paper_lantern.tres" id="6_82yrc"]
+[ext_resource type="Resource" uid="uid://d1cfx5fqqhsea" path="res://entities/units/enemies/mountain_shrine/vengeful_miko.tres" id="7_5xjpn"]
 
 [sub_resource type="Resource" id="Resource_5xjpn"]
 script = ExtResource("1_r251t")
@@ -20,16 +21,21 @@ cell = Vector2i(3, 0)
 
 [sub_resource type="Resource" id="Resource_wnmxg"]
 script = ExtResource("1_r251t")
-unit = ExtResource("3_y2g4p")
+unit = ExtResource("5_xt4bk")
 cell = Vector2i(3, 0)
 
 [sub_resource type="Resource" id="Resource_c7fog"]
 script = ExtResource("1_r251t")
-unit = ExtResource("4_xt4bk")
+unit = ExtResource("6_82yrc")
 cell = Vector2i(2, 2)
+
+[sub_resource type="Resource" id="Resource_piwkk"]
+script = ExtResource("1_r251t")
+unit = ExtResource("7_5xjpn")
+metadata/_custom_type_script = "uid://bdkb4lvbm8n5j"
 
 [resource]
 script = ExtResource("5_82yrc")
 allies = Array[ExtResource("1_r251t")]([SubResource("Resource_5xjpn"), SubResource("Resource_82yrc")])
-enemies = Array[ExtResource("1_r251t")]([SubResource("Resource_wnmxg"), SubResource("Resource_c7fog")])
+enemies = Array[ExtResource("1_r251t")]([SubResource("Resource_wnmxg"), SubResource("Resource_c7fog"), SubResource("Resource_piwkk")])
 background = ExtResource("3_2pcsf")

@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://ceupl2r1ygs65"]
+
+[ext_resource type="Texture2D" uid="uid://b0awam671xem6" path="res://Art/enemies/dream_cathedral/mirror_priest/mirror_priest_attack.png" id="1_seuqc"]
+[ext_resource type="Texture2D" uid="uid://ctt5e7ylodyy0" path="res://Art/enemies/dream_cathedral/mirror_priest/mirror_priest_hit.png" id="2_wy3g2"]
+[ext_resource type="Texture2D" uid="uid://bbe0xr1ei1da3" path="res://Art/enemies/dream_cathedral/mirror_priest/mirror_priest_idle.png" id="3_khbom"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_seuqc")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_wy3g2")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_khbom")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

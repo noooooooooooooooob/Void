@@ -15,6 +15,14 @@ const MENU_EXPORT := "카드 내보내기..."
 const EXPORT_FILE_NAME := "project-void-cards.zip"
 ## 미리보기에서 구역(추가/갱신/삭제)마다 이름을 최대 몇 개까지 보여줄지. 넘으면 "외 N장".
 const MAX_NAMES := 20
+## 적 그림 가져오기 메뉴 이름 (2026-11-25). Art/enemies/ → entities/units/enemies/ (EnemyFramesBuilder)
+const MENU_ENEMIES := "적 그림 가져오기..."
+## 적 그림 폴더 (Art/enemies/<이름>/<이름>_<동작>.png)
+const ENEMY_ART_DIR := "res://Art/enemies"
+## 적 그림 묶음·유닛을 만들 폴더
+const ENEMY_UNIT_DIR := "res://entities/units/enemies"
+## 새 적 유닛의 스탯·덱을 복사해 올 유닛 (시험용 적 A)
+const ENEMY_TEMPLATE := "res://entities/units/test/test_enemy_a.tres"
 
 ## zip 선택 창 (처음 열 때 만들고 재사용)
 var _file_dialog: EditorFileDialog
@@ -32,21 +40,65 @@ var _consumables: ConsumableImporter
 var _export_dialog: EditorFileDialog
 ## 내보내기 결과 안내 창
 var _export_result: AcceptDialog
+## 적 그림 가져오기 확인 창 (미리보기 + "적용")
+var _enemy_confirm: ConfirmationDialog
+## 적 그림 가져오기 결과 안내 창
+var _enemy_result: AcceptDialog
 
 
 ## 플러그인이 켜질 때: 도구 메뉴에 항목 추가.
 func _enter_tree() -> void:
 	add_tool_menu_item(MENU, _open)
 	add_tool_menu_item(MENU_EXPORT, _open_export)
+	add_tool_menu_item(MENU_ENEMIES, _open_enemies)
 
 
 ## 플러그인이 꺼질 때: 메뉴 항목과 만들어 둔 창들을 정리.
 func _exit_tree() -> void:
 	remove_tool_menu_item(MENU)
 	remove_tool_menu_item(MENU_EXPORT)
-	for d in [_file_dialog, _confirm, _error, _export_dialog, _export_result]:
+	remove_tool_menu_item(MENU_ENEMIES)
+	for d in [_file_dialog, _confirm, _error, _export_dialog, _export_result, _enemy_confirm, _enemy_result]:
 		if d:
 			d.queue_free()
+
+
+## 적 그림 가져오기 메뉴를 눌렀을 때: 찾은 적 목록을 보여주고 "적용"을 기다린다.
+func _open_enemies() -> void:
+	var found := EnemyFramesBuilder.scan(ENEMY_ART_DIR)
+	var names := PackedStringArray(found.keys())
+	names.sort()
+	if _enemy_confirm == null:
+		_enemy_confirm = ConfirmationDialog.new()
+		_enemy_confirm.title = "적 그림 가져오기"
+		_enemy_confirm.ok_button_text = "적용"
+		_enemy_confirm.confirmed.connect(_on_enemies_confirmed)
+		EditorInterface.get_base_control().add_child(_enemy_confirm)
+	_enemy_confirm.dialog_text = "%s 에서 적 %d종을 찾았어요: %s\n\n%s 에 그림 묶음(<이름>_frames.tres)을 다시 채우고,\n없는 적 유닛(<이름>.tres)은 시험용 적 A 의 스탯·덱으로 새로 만듭니다.\n이미 있는 유닛의 이름·스탯·덱은 그대로 둡니다." \
+		% [ENEMY_ART_DIR, names.size(), _names(names), ENEMY_UNIT_DIR]
+	_enemy_confirm.popup_centered()
+
+
+## 적 그림 가져오기 "적용": 파일을 쓰고 다시 스캔한 뒤 결과를 알려 준다.
+func _on_enemies_confirmed() -> void:
+	var builder := EnemyFramesBuilder.new()
+	var errors := builder.apply(ENEMY_ART_DIR, ENEMY_UNIT_DIR, load(ENEMY_TEMPLATE) as UnitData)
+	EditorInterface.get_resource_filesystem().scan()
+	if _enemy_result == null:
+		_enemy_result = AcceptDialog.new()
+		_enemy_result.title = "적 그림 가져오기"
+		EditorInterface.get_base_control().add_child(_enemy_result)
+	var lines := PackedStringArray()
+	lines.append("그림 묶음 새로 %d개: %s" % [builder.frames_added.size(), _names(builder.frames_added)])
+	lines.append("그림 묶음 다시 채움 %d개: %s" % [builder.frames_updated.size(), _names(builder.frames_updated)])
+	lines.append("적 유닛 새로 %d개: %s" % [builder.units_added.size(), _names(builder.units_added)])
+	if not errors.is_empty():
+		lines.append("")
+		lines.append("⚠ " + "\n⚠ ".join(errors))
+	_enemy_result.dialog_text = "\n".join(lines)
+	# 확인 창이 닫힌 뒤에 띄운다 (열려 있으면 Godot 이 새 창을 거부한다)
+	_enemy_result.popup_centered.call_deferred()
+	print("[Card Importer] 적 그림 가져오기 완료")
 
 
 ## 내보내기 메뉴를 눌렀을 때: 저장 위치 선택 창을 연다.

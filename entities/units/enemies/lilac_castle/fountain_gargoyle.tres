@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://yn4exysoh0ly"]
+
+[ext_resource type="SpriteFrames" uid="uid://cmm8a1tu707dt" path="res://entities/units/enemies/lilac_castle/fountain_gargoyle_frames.tres" id="1_yan3j"]
+[ext_resource type="Script" uid="uid://drftxxrplk2cw" path="res://Scripts/cards/card_data.gd" id="2_bcwvm"]
+[ext_resource type="Resource" uid="uid://bcro5bq723igu" path="res://cards/data/common/타격.tres" id="3_2rhbp"]
+[ext_resource type="Resource" uid="uid://8tur81lky8gg" path="res://cards/data/common/사격.tres" id="4_86xoo"]
+[ext_resource type="Resource" uid="uid://hgxecy5umc0r" path="res://cards/data/common/방어.tres" id="5_8w6h4"]
+[ext_resource type="Script" uid="uid://c8h6cb4oavceo" path="res://Scripts/statuses/equipment_data.gd" id="6_j207y"]
+[ext_resource type="Script" uid="uid://n76kyaheekpc" path="res://Scripts/statuses/status_data.gd" id="7_1ff4r"]
+[ext_resource type="Script" uid="uid://d1mc58d4xcsay" path="res://Scripts/battle/unit_data.gd" id="8_dq57n"]
+
+[resource]
+script = ExtResource("8_dq57n")
+display_name = "분수 가고일"
+battle_frames = ExtResource("1_yan3j")
+battle_scale = 2.7
+max_hp = 45
+attack = 9
+defense = 6
+speed_min = 2
+speed_max = 8
+deck = Array[ExtResource("2_bcwvm")]([ExtResource("3_2rhbp"), ExtResource("3_2rhbp"), ExtResource("4_86xoo"), ExtResource("5_8w6h4")])

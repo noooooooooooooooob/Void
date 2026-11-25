@@ -16,3 +16,4 @@ name_ko = "타격"
 description_ko = "ATK 100%"
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_vb72x")]([SubResource("Resource_3sfs5")])
+animation = &"attack"

@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://dts1nklo2uq74"]
+
+[ext_resource type="Texture2D" uid="uid://jem2gioybdad" path="res://Art/enemies/dream_cathedral/reflected_knight/reflected_knight_attack.png" id="1_jolpy"]
+[ext_resource type="Texture2D" uid="uid://dm4ku6862cd11" path="res://Art/enemies/dream_cathedral/reflected_knight/reflected_knight_hit.png" id="2_r3cv8"]
+[ext_resource type="Texture2D" uid="uid://1b5exmbq6jak" path="res://Art/enemies/dream_cathedral/reflected_knight/reflected_knight_idle.png" id="3_jc2qq"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_jolpy")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_r3cv8")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_jc2qq")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

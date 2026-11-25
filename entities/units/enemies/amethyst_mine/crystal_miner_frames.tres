@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://vddcejn31o0u"]
+
+[ext_resource type="Texture2D" uid="uid://s1dlmcocppx1" path="res://Art/enemies/amethyst_mine/crystal_miner/crystal_miner_attack.png" id="1_ai0bm"]
+[ext_resource type="Texture2D" uid="uid://cjwl22jupjpep" path="res://Art/enemies/amethyst_mine/crystal_miner/crystal_miner_hit.png" id="2_fxhdx"]
+[ext_resource type="Texture2D" uid="uid://bbuwhhyb6qlsw" path="res://Art/enemies/amethyst_mine/crystal_miner/crystal_miner_idle.png" id="3_7qjj0"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_ai0bm")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_fxhdx")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_7qjj0")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

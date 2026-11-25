@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://r2x35iqe1iem"]
+
+[ext_resource type="Texture2D" uid="uid://blw7n78rjv8k5" path="res://Art/enemies/dream_cathedral/lantern_wisp/lantern_wisp_attack.png" id="1_jprtn"]
+[ext_resource type="Texture2D" uid="uid://dgq0oweor6lbf" path="res://Art/enemies/dream_cathedral/lantern_wisp/lantern_wisp_hit.png" id="2_67yi8"]
+[ext_resource type="Texture2D" uid="uid://di7d3kgid1442" path="res://Art/enemies/dream_cathedral/lantern_wisp/lantern_wisp_idle.png" id="3_qlgd1"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_jprtn")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_67yi8")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_qlgd1")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}]

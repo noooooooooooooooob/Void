@@ -19,6 +19,7 @@
 - 카드 데이터: 웹 카드 에디터 → 내보내기 zip → Godot **프로젝트 → 도구 → 카드 가져오기...** (`addons/card_importer`). `cards/data/` 의 `.tres` 는 웹 에디터 칸만 덮어쓰고 effects/costs/conditions 는 유지. 파일 이름 = 카드 이름(겹치면 `_<id>`), 찾을 때는 파일 안의 id 기준
 - 장비 데이터 (2026-11-10): 웹 에디터 **장비** 탭(이름·설명·그림·종류 무기/방어구/장신구·등급 노말/레어/유니크/유물·스탯 줄·키워드) → 같은 zip → **카드 가져오기**가 `statuses/equipment/<종류>/<이름>.tres` 로 만든다. 웹 칸만 덮어쓰고 `statuses`(특별한 버프·특수 효과)는 Godot 담당이라 유지. id 없는 장비 파일은 건드리지 않고, 유닛이 착용 중인 장비는 웹에서 지워도 남김. 장비 스탯(`EquipmentData.stats`)은 착용 중 항상 적용, 빼면 바로 빠짐
 - 소비 아이템 데이터 (2026-11-16, 2026-11-17 갱신): 웹 에디터 **소비 아이템** 탭(이름·설명·그림·키워드·**사용 대상** 아군/적/둘 다·**범위** 5×5·효과 줄 `heal_hp`/`heal_sp`/`buff`, 수치 음수 가능) → zip `cards.json` 의 `consumables` → **카드 가져오기**가 `items/consumables/<이름>.tres`(`ConsumableData`, 그림 `items/consumables/art/`)로 만든다 (`addons/card_importer/consumable_importer.gd`). 웹 칸만 덮어쓰고 `effects`(특수 효과)는 Godot 담당이라 유지, id 없는 파일은 건드리지 않음. **스탯 버프(`buff`) 줄은 Godot 에 아직 없어 빼고 가져오고** 확인 창에 경고 (설계 `docs/superpowers/specs/2026-11-17-consumable-targets-design.md`)
+- 적 그림 (2026-11-25): `Art/enemies/<배경>/<이름>/<이름>_<동작>.png` (idle 반복, hit·attack 등은 한 번, 여러 장이면 `_<번호>`) → **프로젝트 → 도구 → 적 그림 가져오기...** 가 `entities/units/enemies/<배경>/` 에 `<이름>_frames.tres`(매번 다시 채움, uid 유지)와 `<이름>.tres`(없을 때만, 시험용 적 A 의 스탯·덱 복사)를 만든다 (`addons/card_importer/enemy_frames_builder.gd`). 이미 있는 유닛의 이름·스탯·덱은 건드리지 않음
 - 반대 방향: Godot **프로젝트 → 도구 → 카드 내보내기...** → 같은 형식의 zip → 웹 카드 에디터의 **가져오기** 버튼. 추가·변경만 하고 삭제하지 않음. effects/costs/conditions 는 웹 에디터에 없어서 나가지 않음
 
 ## 확정된 게임 규칙 (Notion "구현 확정", 2026-10-11)
