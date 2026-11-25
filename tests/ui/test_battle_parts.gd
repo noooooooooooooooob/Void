@@ -192,19 +192,31 @@ func test_unit_token_plays_upgraded_card_animation_from_base_outside_deck():
 	assert_eq(t.sprite().animation, base.animation)
 
 
-func test_unit_token_battle_scale_keeps_anchor_and_pixel_filter():
-	# 작은 픽셀 그림(홍연 128px)은 유닛 배율로 키우되, 화면에서 그림 중심 위치는 씬 기본과 같아야 한다
+func test_unit_token_battle_scale_and_foot_pivot_and_pixel_filter():
+	# 작은 픽셀 그림(홍연 128px)은 유닛 배율로 키우고, 기준점은 발밑 (캔버스 아래 가운데 = Sprite 노드 위치)
 	var t: UnitToken = _scene("res://Scenes/ui/battle_screen/unit_token.tscn")
 	var base_scale := t.sprite().scale
-	var base_shift := t.sprite().offset * base_scale
 	var u := _unit(A)
-	u.data.battle_frames = SpriteFrames.new()
+	var frames := SpriteFrames.new()
+	var img := Image.create(128, 128, false, Image.FORMAT_RGBA8)
+	frames.add_frame(&"default", ImageTexture.create_from_image(img))
+	u.data.battle_frames = frames
 	u.data.battle_scale = 10.0
 	u.data.battle_pixel_art = true
 	t.set_unit(u)
 	assert_eq(t.sprite().scale, base_scale * 10.0)
-	assert_eq(t.sprite().offset * t.sprite().scale, base_shift)
+	assert_eq(t.sprite().offset, Vector2(0, -64))
 	assert_eq(t.sprite().texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
+
+
+func test_sprite_pivot_prefers_idle_and_falls_back():
+	var frames := SpriteFrames.new()
+	frames.add_frame(&"default", ImageTexture.create_from_image(Image.create(10, 40, false, Image.FORMAT_RGBA8)))
+	frames.add_animation(&"idle")
+	frames.add_frame(&"idle", ImageTexture.create_from_image(Image.create(10, 100, false, Image.FORMAT_RGBA8)))
+	assert_eq(SpritePivot.foot_offset(frames), Vector2(0, -50))
+	assert_eq(SpritePivot.foot_offset(null, Vector2(1, 2)), Vector2(1, 2))
+	assert_eq(SpritePivot.foot_offset(SpriteFrames.new(), Vector2(3, 4)), Vector2(3, 4))
 
 
 func test_unit_token_shows_status_effect_while_status_held():

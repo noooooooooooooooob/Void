@@ -1,6 +1,6 @@
 # Project Void 개발 진행 상황
 
-마지막 갱신: 2026-11-24
+마지막 갱신: 2026-11-25
 
 코드 구조 관계도 (Figma): https://www.figma.com/design/tQfd1uNHyAqbmYuwPUHkan — 카드 데이터 흐름 / 데이터 구조 / 전투 런타임, 구현됨·예정 색 구분
 
@@ -17,6 +17,7 @@
 | 이동 버튼 (2026-11-17) | 이동 칸(하늘색)이 항상 떠 있던 것을 **이동 버튼**으로 바꿈: 버튼을 눌러야 갈 수 있는 칸이 빛나고, 칸을 누르면 이동 후 모드가 꺼짐. ESC·우클릭·카드/아이템 고르기·차례 종료로도 꺼짐. 이동력 0·적 차례·연출 중엔 버튼 비활성 | `battle_screen.gd` (`toggle_move`, `is_move_mode`), 씬 `BottomRight/MoveButton`, 설계 `docs/superpowers/specs/2026-11-17-move-button-design.md` |
 | 키워드 파일 이름 (2026-11-10) | `cards/keywords/` 파일 이름을 id 대신 키워드 이름으로 (겹치면 `_<id>`). 게임은 `KeywordData.find` 로 파일 안의 id 로 찾음. 기존 id 이름 파일은 다음 카드 가져오기 때 자동으로 이름이 바뀜 | `Scripts/cards/keyword_data.gd`, `addons/card_importer/card_importer.gd` |
 | 홍연 전투 그림·혈갑 이펙트 (2026-11-23) | 홍연 idle(128px 8칸, 칸당 300ms)을 전투 그림으로 연결 (`hongyeon`·시험용 홍연 둘 다). 유닛별 그림 배율 `UnitData.battle_scale`(브람 일러스트 = 1, 128px 픽셀 = 10 → 화면 2배)·픽셀 그림 Nearest(`battle_pixel_art`), 중심 위치는 배율과 상관없이 같음. 상태에 **전투 이펙트** 칸(`StatusData.effect_behind`/`effect_front`): 그 상태를 가진 동안 유닛 그림 뒤·앞에 반복 재생, 상태가 사라지면 같이 사라짐. 혈갑에 bloodswirl(80칸, 20 FPS) 연결. 연출 씬(Actor)에는 아직 배율 미적용 | `entities/units/hongyeon_frames.tres`, `statuses/effects/`, `Art/vfx/hongyeon/`, `Scripts/ui/unit_token.gd`, 씬 `unit_token.tscn` 의 `Sprite/EffectBehind`·`EffectFront` |
+| 전투 그림 발밑 피벗 (2026-11-25) | 전투 그림의 기준점을 **발밑**으로: 규약 = 한 그림 묶음의 프레임은 모두 같은 캔버스 크기, 두 발 가운데가 캔버스 아래 가운데 (`SpritePivot.foot_offset` → offset = (0, -캔버스 높이/2)). 유닛 박스의 `Sprite` 노드 위치(지금 칸 중심)에 발이 선다 — 높이를 바꾸려면 `unit_token.tscn` 의 `Sprite` position. 브람 5동작 PNG 를 1548×1362 공통 캔버스로 패딩(동작 바뀔 때 안 튐), 홍연 idle 을 4px 왼쪽으로, 상태 이펙트도 바닥 가운데가 발밑에. 연출 Actor·연출 화면 탭도 같은 규약 | `Scripts/ui/sprite_pivot.gd`, `Scripts/ui/unit_token.gd`, `Scripts/performances/card_performance.gd`, `addons/performance_stage_view/stage_view.gd`, `Art/characters/bram_welburn/`, `Art/characters/hongyeon/hongyeon_idle.png` |
 | 카드 화면 | 웹 에디터와 같은 카드 모양, 마우스를 올리면 키워드 설명. 2026-11-17: "+N" 강화 배지를 없애고 **강화 버전 카드는 옅은 금색 바탕 + 금빛 광채**로 구분 (색은 `CardView` 인스펙터 "강화 버전 모양") | `ui/card_view/card_view.tscn` |
 | 카드 갤러리 | 에디터에서 열기만 해도 카드가 보임. 인스펙터 Deck 으로 덱별 보기, 실행(F6) 시 탭 | `ui/card_gallery/card_gallery.tscn` |
 | 테스트 도구 | GUT 9.7.1 (실행 방법은 CLAUDE.md) | `addons/gut`, `tests/` |

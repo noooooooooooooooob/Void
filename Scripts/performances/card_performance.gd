@@ -129,6 +129,8 @@ func set_actor_authored(p: Vector2) -> void:
 func play(frames: SpriteFrames) -> void:
 	if frames:
 		_actor.sprite_frames = frames
+		# 기준점은 발밑 — 유닛 박스 그림과 같은 규약 (SpritePivot). Home 에 행위자의 두 발 가운데가 선다
+		_actor.offset = SpritePivot.foot_offset(frames, _actor.offset)
 	# Target 의 미리보기 그림은 에디터용
 	var target := get_node_or_null(^"Target")
 	if target:
