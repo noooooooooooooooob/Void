@@ -26,7 +26,6 @@ var unit: BattleUnit
 @onready var _effect_behind: AnimatedSprite2D = $Sprite/EffectBehind  # 상태 이펙트 (그림 뒤)
 @onready var _effect_front: AnimatedSprite2D = $Sprite/EffectFront    # 상태 이펙트 (그림 앞)
 @onready var _base_scale := _sprite.scale    # 씬에 정한 기본 그림 크기 (battle_scale 1 일 때)
-@onready var _base_offset := _sprite.offset  # 씬에 정한 기본 그림 위치 보정
 var _highlight := false
 
 
@@ -133,16 +132,15 @@ func _setup_sprite() -> void:
 	_sprite.sprite_frames = frames
 	# 편 색 박스는 그림이 없는 유닛의 자리 표시 — 그림이 있으면 숨긴다 (대상 표시는 격자 칸이 한다)
 	_body.visible = frames == null
-	# 유닛 배율: 크기는 곱하고 offset 은 나눠서, 그림 중심의 화면 위치는 씬 기본과 같게 둔다
+	# 유닛 배율은 크기에만 곱한다. 기준점은 발밑 — Sprite 노드 위치(씬에서 정함)에 두 발 가운데가 선다
 	var k := unit.data.battle_scale if unit.data.battle_scale > 0.0 else 1.0
 	_sprite.scale = _base_scale * k
-	_sprite.offset = _base_offset / k
+	_sprite.offset = SpritePivot.foot_offset(frames, _sprite.offset)
 	_sprite.texture_filter = TEXTURE_FILTER_NEAREST if unit.data.battle_pixel_art else TEXTURE_FILTER_PARENT_NODE
-	# 이펙트는 그림의 자식이라 그림 배율이 곱해진다 → 나눠서 effect_scale 크기로, 중심은 그림 중심에 맞춘다
+	# 이펙트는 그림의 자식이라 그림 배율이 곱해진다 → 나눠서 effect_scale 크기로. 바닥 가운데는 발밑(그림 노드 원점)에 (_show_effect)
 	var e := effect_scale / k
 	for fx in [_effect_behind, _effect_front]:
 		fx.scale = Vector2(e, e)
-		fx.offset = _sprite.offset / e
 	_play_idle()
 
 
@@ -167,6 +165,7 @@ func _show_effect(fx: AnimatedSprite2D, frames: SpriteFrames) -> void:
 	if frames == fx.sprite_frames:
 		return
 	fx.sprite_frames = frames
+	fx.offset = SpritePivot.foot_offset(frames)
 	if frames and not frames.get_animation_names().is_empty():
 		fx.play(frames.get_animation_names()[0])
 

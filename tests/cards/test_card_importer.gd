@@ -66,7 +66,8 @@ func test_new_common_card_created_with_fields():
 	assert_eq(card.description_ko, "설명")
 	assert_eq(card.description_en, "desc")
 	assert_eq(card.sp, 2)
-	assert_eq(card.cost, 2)
+	# 2026-11-25: 덱 코스트는 없앰 — 예전 zip 에 cost 가 있어도 무시
+	assert_false("cost" in card)
 	assert_eq(card.category, "skill")
 	assert_eq(card.attack_type, "ranged")
 	assert_eq(card.area, [Vector2i(0, 0), Vector2i(1, 0)] as Array[Vector2i])

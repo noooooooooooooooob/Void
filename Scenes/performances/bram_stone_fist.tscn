@@ -4,6 +4,7 @@
 [ext_resource type="SpriteFrames" uid="uid://ciiv4k826tf1k" path="res://entities/units/bram_frames.tres" id="2_gmvyg"]
 [ext_resource type="Texture2D" uid="uid://bb0r5siyvne7d" path="res://Art/characters/bram_welburn/bram_idle.png" id="2_j2uut"]
 [ext_resource type="AudioStream" uid="uid://cmxwffl8x7uoo" path="res://Audio/test.mp3" id="4_j2uut"]
+[ext_resource type="PackedScene" uid="uid://dvi6gn50js0fm" path="res://Scenes/performances/smear.tscn" id="4_u6wrg"]
 
 [sub_resource type="Animation" id="Animation_u6wrg"]
 length = 0.7
@@ -117,7 +118,7 @@ position = Vector2(180, 0)
 modulate = Color(1, 0.6, 0.6, 0.5)
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_j2uut")
-offset = Vector2(0, -200)
+offset = Vector2(0, -681)
 flip_h = true
 
 [node name="Actor" type="AnimatedSprite2D" parent="." unique_id=879024434]
@@ -126,6 +127,8 @@ scale = Vector2(0.2, 0.2)
 sprite_frames = ExtResource("2_gmvyg")
 animation = &"idle"
 offset = Vector2(0, -200)
+
+[node name="Smear" parent="Actor" unique_id=1086841631 instance=ExtResource("4_u6wrg")]
 
 [node name="Camera" type="Camera2D" parent="." unique_id=2012596386]
 position = Vector2(90, -20)

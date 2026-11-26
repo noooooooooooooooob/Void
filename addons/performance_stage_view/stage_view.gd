@@ -50,9 +50,11 @@ const REACTION_KEYS := [&"hit_shake", &"hit_unit_shake", &"shake_time", &"flash_
 const OVERRIDE_KEYS := [&"hit_shake", &"hit_unit_shake", &"shake_time", &"flash_color", &"flash_time",
 	&"knockback", &"knockback_return", &"hitstop_time", &"hitstop_speed", &"hit_sound", &"pitch_jitter"]
 
-## 원본 → 복제본으로 옮길 속성 (노드 종류 상관없이 있는 것만)
+## 원본 → 복제본으로 옮길 속성 (노드 종류 상관없이 있는 것만).
+## 끝의 넷은 스머지(SmearDriver) 값 — 인스펙터에서 바꾸면 씬을 다시 열지 않아도 바로 보이게 (2026-11-25)
 const COPY_PROPS := [&"position", &"rotation", &"scale", &"visible", &"modulate", &"self_modulate", &"z_index",
-	&"sprite_frames", &"animation", &"frame", &"flip_h", &"flip_v", &"offset", &"texture", &"zoom"]
+	&"sprite_frames", &"animation", &"frame", &"flip_h", &"flip_v", &"offset", &"texture", &"zoom",
+	&"min_move", &"length_ratio", &"max_length", &"decay_time"]
 
 @onready var _background_list: OptionButton = %BackgroundList
 @onready var _enemy_list: OptionButton = %EnemyList
@@ -296,6 +298,8 @@ func sync() -> void:
 		var anim_name: StringName = m_actor.animation
 		var fr: int = m_actor.frame
 		m_actor.sprite_frames = frames
+		# 기준점은 발밑 (원본 씬의 offset 대신 게임과 같은 SpritePivot 규약)
+		m_actor.offset = SpritePivot.foot_offset(frames, m_actor.offset)
 		if frames.has_animation(anim_name):
 			m_actor.animation = anim_name
 			m_actor.frame = fr
@@ -472,7 +476,7 @@ func _draw_hit_reaction(t: float, actor_sprite: Node2D) -> void:
 	var sp := _enemy_sprite as AnimatedSprite2D
 	if sp == null:
 		return
-	var base_offset: Vector2 = (_template.get_node(^"Sprite") as AnimatedSprite2D).offset
+	var base_offset := SpritePivot.foot_offset(sp.sprite_frames, (_template.get_node(^"Sprite") as AnimatedSprite2D).offset)
 	# 1. 반응 없는 모양으로
 	sp.modulate = Color.WHITE
 	sp.offset = base_offset
@@ -598,6 +602,8 @@ func _add_unit(slot: BattleSlot, side: int, data: BattleData, boards: Dictionary
 	if slot.unit and slot.unit.battle_frames:
 		s.sprite_frames = slot.unit.battle_frames
 		s.animation = &"idle"
+		# 기준점은 발밑 (게임 UnitToken 과 같은 SpritePivot 규약)
+		s.offset = SpritePivot.foot_offset(s.sprite_frames, s.offset)
 	return s
 
 

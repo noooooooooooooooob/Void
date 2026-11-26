@@ -26,7 +26,7 @@ func _face(name_ko: String, sp := 1, art = null) -> Dictionary:
 	return {
 		"name": {"ko": name_ko, "en": name_ko + "_en"},
 		"description": {"ko": "설명", "en": "desc"},
-		"sp": sp, "cost": 2, "category": "skill", "attackType": "ranged",
+		"sp": sp, "category": "skill", "attackType": "ranged",
 		"area": [[0, 0], [1, 0]], "keywords": ["k1"], "art": art,
 	}
 
@@ -65,7 +65,6 @@ func test_card_fields_match_web_export_format():
 	assert_eq(card.name, {"ko": "베기", "en": "베기_en"})
 	assert_eq(card.description, {"ko": "설명", "en": "desc"})
 	assert_eq(card.sp, 1)
-	assert_eq(card.cost, 2)
 	assert_eq(card.category, "skill")
 	assert_eq(card.attackType, "ranged")
 	assert_eq(card.area, [[0, 0], [1, 0]])
@@ -79,6 +78,12 @@ func test_godot_parts_are_not_exported():
 	assert_false(card.has("effects"))
 	assert_false(card.has("costs"))
 	assert_false(card.has("conditions"))
+
+# 2026-11-25: 덱 코스트는 없앰 — 내보내기에도 없다
+func test_cost_is_not_exported():
+	_import({"keywords": [], "decks": [], "cards": [_card("c1", "베기")]})
+	var card := _by_id(CardExporter.new(root).build().cards, "c1")
+	assert_false(card.has("cost"))
 
 func test_upgrades_exported_as_faces():
 	_import({"keywords": [], "decks": [], "cards": [_card("c1", "베기", null, [_face("베기+", 3)])]})

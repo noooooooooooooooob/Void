@@ -20,7 +20,6 @@ func _card() -> CardData:
 	c.name_ko = "피의 참격"
 	c.description_ko = "핏방울을 전부 소모"
 	c.sp = 2
-	c.cost = 3
 	c.category = "special"
 	c.attack_type = "ranged"
 	c.area = [Vector2i(0, 0), Vector2i(1, 0)] as Array[Vector2i]
@@ -39,7 +38,8 @@ func test_texts():
 	var v := _view(_card())
 	assert_eq(v.name_label.text, "피의 참격")
 	assert_eq(v.sp_label.text, "2")
-	assert_eq(v.cost_label.text, "코스트 3")
+	# 2026-11-25: 덱 코스트는 없앰 — 카드에 코스트 글자가 없다
+	assert_null(v.get_node_or_null("%Cost"))
 	assert_eq(v.description_label.text, "핏방울을 전부 소모")
 	assert_eq(v.attack_badge.text, "원")
 
