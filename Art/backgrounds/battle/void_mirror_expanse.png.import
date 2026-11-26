@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwwuy4scf7yb2"
-path="res://.godot/imported/golden_vortex_void.png-50db06b37f2e5ea165b3c1f7d515f69b.ctex"
+path="res://.godot/imported/void_mirror_expanse.png-1c39da1ba7fa1e1bf640a5906ce6b543.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://Art/backgrounds/battle/void_mirror_expanse.png"
-dest_files=["res://.godot/imported/golden_vortex_void.png-50db06b37f2e5ea165b3c1f7d515f69b.ctex"]
+dest_files=["res://.godot/imported/void_mirror_expanse.png-1c39da1ba7fa1e1bf640a5906ce6b543.ctex"]
 
 [params]
 
