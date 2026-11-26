@@ -382,7 +382,7 @@ func test_no_reaction_before_hit():
 	var vs := _with_source()
 	_scrub(vs[0], vs[1], HIT - 0.05)
 	assert_eq(vs[0].enemy_sprite().modulate, Color.WHITE)
-	assert_eq(vs[0].enemy_sprite().offset, Vector2(0, -200))
+	assert_eq(vs[0].enemy_sprite().offset, SpritePivot.foot_offset(vs[0].enemy_sprite().sprite_frames))
 
 func test_flash_right_after_hit_then_back():
 	var vs := _with_source()
@@ -396,7 +396,7 @@ func test_knockback_pushes_away_then_returns():
 	_scrub(vs[0], vs[1], HIT + 0.01)
 	assert_gt(vs[0].enemy_sprite().offset.x, 0.0)  # 적은 오른쪽 — 공격자 반대쪽으로 밀림
 	_scrub(vs[0], vs[1], 0.69)
-	assert_eq(vs[0].enemy_sprite().offset, Vector2(0, -200))
+	assert_eq(vs[0].enemy_sprite().offset, SpritePivot.foot_offset(vs[0].enemy_sprite().sprite_frames))
 
 func test_card_override_flash_time_in_view():
 	# 연출 씬 루트의 카드별 값이 창에도 들어간다 (번쩍임을 길게)
