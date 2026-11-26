@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-MCPRuntime="*uid://b4fws1txgk01y"
 StageRun="*res://Scripts/stage/stage_run.gd"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]
 
@@ -31,7 +31,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/board_shape_editor/plugin.cfg", "res://addons/card_importer/plugin.cfg", "res://addons/godot_mcp_editor/plugin.cfg", "res://addons/godot_mcp_runtime/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/performance_stage_view/plugin.cfg")
+enabled=PackedStringArray("res://addons/board_shape_editor/plugin.cfg", "res://addons/card_importer/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/performance_stage_view/plugin.cfg")
 
 [gui]
 

@@ -12,7 +12,7 @@
 - Language: GDScript
 - Platform: Windows (d3d12)
 - 실행 파일: `C:\Users\User\Desktop\Godot_v4.7.2-stable_win64.exe`
-- MCP: GoPeak (`addons/godot_mcp_editor`, `godot_mcp_runtime`, `auto_reload`) — 에디터 브리지 포트 6505
+- MCP: **Godot AI v4.4.2** (`addons/godot_ai`, 2026-11-26 GoPeak 대신, uv 필요) — 서버 127.0.0.1:8000/9500, 클라이언트는 독의 Configure 가 만든 `godot-ai attach` (stdio). 씬·노드 편집은 에디터 undo 로 들어가고 인스턴스 override·여러 번 나눈 호출도 안전(복사본에서 확인). **스크립트 리소스(`CardData`·`UnitData` 등 .tres) 수정은 못 함**(`set_properties` 는 엔진 기본 리소스만). GoPeak 애드온(`godot_mcp_editor`·`godot_mcp_runtime`)은 폴더만 남기고 꺼 둠
 - 테스트: GUT 9.7.1 (`addons/gut`). 실행:
   `Godot_v4.7.2-stable_win64_console.exe --headless --path . --import` 후
   `... --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit`
@@ -112,7 +112,7 @@ res://
     characters/<이름>/  enemies/<이름>/  ui/  backgrounds/  vfx/  fonts/<글꼴>/ (OFL.txt 라이선스 같이)
     backgrounds/battle/ (전투 배경 그림)  backgrounds/screens/ (타이틀·사무소 등 화면 배경, 씬 이름으로: title, office, `_void` = 공허판)
   Art_src/       # 원본 작업 파일 (.aseprite, .psd) — .gdignore 로 Godot 이 무시
-  addons/        # 플러그인 (GUT, GoPeak, card_importer) — 플러그인 스크립트는 여기 그대로
+  addons/        # 플러그인 (GUT, Godot AI, card_importer) — 플러그인 스크립트는 여기 그대로
   tests/         # GUT 테스트 (Scripts/ 와 같은 기능별 폴더)
   docs/          # 설계·계획·진행 상황
 ```
@@ -125,7 +125,7 @@ res://
 ## Godot 에디터 우선 원칙 (필수)
 - **Godot 에디터에서 만들 수 있는 것은 무조건 에디터 자산으로 만든다.** 노드·UI 배치·스타일은 `.tscn` 씬 안의 노드로, 게임 데이터(카드·상태·장비·유닛)는 `.tres` 리소스로 만든다
 - 스크립트에서 노드를 `new()`/`add_child()`로 조립하지 않는다. 예외: 데이터 개수만큼 반복 생성하는 항목(카드 목록 등) — 이때도 틀은 씬으로 만들고 instantiate/duplicate 한다
-- Godot 에디터가 켜져 있으면 GoPeak MCP 에디터 도구로 씬·노드를 추가하고, 안 되면 (에디터를 끈 상태에서) Godot 이 직접 `.tscn`/`.tres` 를 저장하게 한다 (손으로 텍스트 작성 금지)
+- Godot 에디터가 켜져 있으면 Godot AI MCP 도구로 씬·노드를 추가하고, 안 되면 (에디터를 끈 상태에서) Godot 이 직접 `.tscn`/`.tres` 를 저장하게 한다 (손으로 텍스트 작성 금지)
 - 순수 로직(전투 계산 등 `RefCounted`)과 테스트 코드는 예외
 
 ## 주석 원칙 (필수, 테스트 코드 제외)
@@ -144,8 +144,8 @@ res://
 
 ## 에디터 켜짐 중 작업 규칙 (필수 — 2026-11-04 에디터 크래시 2회 원인)
 - 에디터가 켜져 있으면 바깥에서 `res://` 의 `.tscn`/`.tres`/폴더를 쓰거나 옮기거나 지우지 않는다. 리소스는 MCP 로 에디터 안에서 만든다
-- MCP 로 안 되는 것(리소스 안에 리소스 넣기, 파일 이동 등)은 에디터를 끈 상태에서 하거나, 인스펙터 작업 순서를 안내한다
-- 테스트·헤드리스 스크립트는 프로젝트 **복사본**에서 실행한다 (같은 프로젝트로 `--import` 하면 에디터가 둘이 되어 `.godot` 캐시가 충돌). 복사본에서는 MCP 플러그인·MCPRuntime 을 끄고 `--log-file` 로 로그를 따로 둔다
+- MCP 로 안 되는 것(스크립트 리소스 .tres 수정 등)은 에디터를 끈 상태에서 하거나, 인스펙터 작업 순서를 안내한다
+- 테스트·헤드리스 스크립트는 프로젝트 **복사본**에서 실행한다 (같은 프로젝트로 `--import` 하면 에디터가 둘이 되어 `.godot` 캐시가 충돌). 복사본에서는 MCP 플러그인(`godot_ai`)과 그 autoload `_mcp_game_helper` 를 끄고 `--log-file` 로 로그를 따로 둔다
 
 ## Workflow
 - **진행 상황은 `docs/progress.md` 에 기록한다** (팀 공유용, 커밋함). 작업 단계가 끝날 때마다 갱신
