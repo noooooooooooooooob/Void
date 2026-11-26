@@ -35,7 +35,7 @@ extends Resource
 ## 이 상태를 가진 동안 적용되는 스탯 보정
 @export var modifiers: Array[StatModifier] = []
 ## 카드 대체: { 원본 CardData: 대체 CardData }.
-## 이 상태를 가진 유닛이 원본 카드를 보거나 쓰면 대체 카드로 취급한다. (예: 혈갑: 공격태세 → 해체 카드가 피의 참격으로)
+## 이 상태를 가진 유닛이 원본 카드를 보거나 쓰면 대체 카드로 취급한다.
 @export var replacements: Dictionary = {}
 
 @export_group("전투 이펙트")
