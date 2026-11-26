@@ -26,7 +26,6 @@ script = ExtResource("4_wr1vq")
 name_ko = "갈라치기+"
 description_ko = "대상의 쉴드를 모두 제거하고 ATK 160%로 공격"
 sp = 2
-cost = 2
 keywords = PackedStringArray()
 effects = Array[ExtResource("3_52ucf")]([SubResource("Resource_27ssf"), SubResource("Resource_k5040")])
 
@@ -37,7 +36,6 @@ deck_id = "46zsw2bbgq4wyb3th9u7"
 name_ko = "갈라치기"
 description_ko = "대상의 쉴드를 모두 제거하고 ATK 120%로 공격"
 sp = 2
-cost = 2
 keywords = PackedStringArray()
 upgrades = Array[ExtResource("4_wr1vq")]([SubResource("Resource_no7xc")])
 effects = Array[ExtResource("3_52ucf")]([SubResource("Resource_52ucf"), SubResource("Resource_wr1vq")])
