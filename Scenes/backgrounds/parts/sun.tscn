@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://ieoms802e1ll"]
+
+[ext_resource type="Script" uid="uid://bxsqibsdemx37" path="res://Scripts/backgrounds/sky_body.gd" id="1_jy24o"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_2bwqy"]
+blend_mode = 1
+light_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_jy24o"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(1, 1, 1, 0.6, 1, 1, 1, 0.2, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_2bwqy"]
+gradient = SubResource("Gradient_jy24o")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_6dnv3"]
+light_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_783i3"]
+offsets = PackedFloat32Array(0, 0.92, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_kc6vi"]
+gradient = SubResource("Gradient_783i3")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[node name="Sun" type="Node2D" unique_id=662062533 groups=["mood_sky_body"]]
+script = ExtResource("1_jy24o")
+
+[node name="Glow" type="Sprite2D" parent="." unique_id=2046553089]
+light_mask = 0
+material = SubResource("CanvasItemMaterial_2bwqy")
+texture = SubResource("GradientTexture2D_2bwqy")
+
+[node name="Disc" type="Sprite2D" parent="." unique_id=971513988]
+light_mask = 0
+material = SubResource("CanvasItemMaterial_6dnv3")
+texture = SubResource("GradientTexture2D_kc6vi")

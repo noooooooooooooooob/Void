@@ -30,3 +30,42 @@ func test_mood_light_defaults_match_old_look():
 	assert_almost_eq(l.texture_scale, 6.0, 0.001)
 	assert_eq(l.color, Color(1, 0.62, 0.3))
 	assert_eq((l.get_node("Halo") as Sprite2D).scale, Vector2(0.7, 0.7))
+
+const SUN := "res://Scenes/backgrounds/parts/sun.tscn"
+const MOON := "res://Scenes/backgrounds/parts/moon.tscn"
+
+func test_sky_body_parts():
+	for p in [SUN, MOON]:
+		var s = load(p).instantiate()
+		add_child_autofree(s)
+		assert_true(s is SkyBody)
+		assert_true(s.is_in_group("mood_sky_body"))
+		assert_eq((s.get_node("Disc") as CanvasItem).light_mask, 0)
+		assert_eq((s.get_node("Glow") as CanvasItem).light_mask, 0)
+
+func test_sky_body_size_and_color():
+	var s = load(SUN).instantiate()
+	add_child_autofree(s)
+	s.body_size = 200.0
+	s.body_color = Color(1, 0, 0)
+	var d := s.get_node("Disc") as Sprite2D
+	assert_almost_eq(d.texture.get_width() * d.scale.x, 200.0, 0.5)
+	assert_eq(d.modulate, Color(1, 0, 0))
+
+func test_sun_and_moon_defaults_differ():
+	var sun = load(SUN).instantiate()
+	var moon = load(MOON).instantiate()
+	add_child_autofree(sun)
+	add_child_autofree(moon)
+	assert_gt(sun.body_color.r, sun.body_color.b)    # 해는 따뜻한 색
+	assert_gt(moon.body_color.b, moon.body_color.r)  # 달은 차가운 색
+
+func test_sky_body_emits_moved():
+	var s = load(SUN).instantiate()
+	add_child_autofree(s)
+	watch_signals(s)
+	s.position = Vector2(100, 50)
+	await wait_physics_frames(1)
+	assert_signal_emitted(s, "moved")
+	s.visible = false
+	assert_signal_emit_count(s, "moved", 2)
