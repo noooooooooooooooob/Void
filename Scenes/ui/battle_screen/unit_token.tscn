@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://budhdb1xcvkfq" path="res://Scripts/ui/unit_token.gd" id="1_0og7g"]
 
 [node name="UnitToken" type="Control" unique_id=89544387]
+z_index = 1
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 3
 anchors_preset = 0
