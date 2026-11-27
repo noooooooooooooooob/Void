@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bdkb4lvbm8n5j" path="res://Scripts/battle/battle_slot.gd" id="1_r251t"]
 [ext_resource type="Resource" uid="uid://b0dqweeokxjet" path="res://entities/units/hongyeon.tres" id="2_y2g4p"]
-[ext_resource type="PackedScene" uid="uid://goar44l5p1ya" path="res://Scenes/backgrounds/mountain_shrine.tscn" id="3_2pcsf"]
 [ext_resource type="Resource" uid="uid://b1mvfbsokntdu" path="res://entities/units/bram_welburn.tres" id="3_xt4bk"]
+[ext_resource type="PackedScene" uid="uid://di2o04446jwjf" path="res://Scenes/backgrounds/shrine_garden.tscn" id="4_xt4bk"]
 [ext_resource type="Script" uid="uid://eybl28yfjnt7" path="res://Scripts/battle/battle_data.gd" id="5_82yrc"]
 [ext_resource type="Resource" uid="uid://wd6aq4poynop" path="res://entities/units/enemies/mountain_shrine/cracked_komainu.tres" id="5_xt4bk"]
 [ext_resource type="Resource" uid="uid://ntd1ccyrn87x" path="res://entities/units/enemies/mountain_shrine/paper_lantern.tres" id="6_82yrc"]
@@ -38,4 +38,4 @@ metadata/_custom_type_script = "uid://bdkb4lvbm8n5j"
 script = ExtResource("5_82yrc")
 allies = Array[ExtResource("1_r251t")]([SubResource("Resource_5xjpn"), SubResource("Resource_82yrc")])
 enemies = Array[ExtResource("1_r251t")]([SubResource("Resource_wnmxg"), SubResource("Resource_c7fog"), SubResource("Resource_piwkk")])
-background = ExtResource("3_2pcsf")
+background = ExtResource("4_xt4bk")
