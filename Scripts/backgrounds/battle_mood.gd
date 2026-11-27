@@ -47,7 +47,7 @@ const FILL_DISTANCE := 4000.0
 		fill_energy = v
 		_apply()
 ## 보조광이 오는 쪽 (도, 화면 가운데 기준). 0 = 오른쪽, -90 = 위, 180 = 왼쪽
-@export_range(-180.0, 180.0, 1.0) var fill_angle := -120.0:
+@export_range(-180.0, 180.0, 1.0) var fill_angle := -45.0:
 	set(v):
 		fill_angle = v
 		_apply()
