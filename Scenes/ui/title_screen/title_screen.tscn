@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://db7hom27tei3u" path="res://Art/ui/main_menu/save_card_plate.svg" id="10_gkr08"]
 [ext_resource type="Script" uid="uid://cqd2sempb66eu" path="res://Scripts/ui/notice_label.gd" id="10_rgbmc"]
 [ext_resource type="PackedScene" uid="uid://dfrdutfsf8fei" path="res://Scenes/ui/title_screen/main_menu_item.tscn" id="10_yukm4"]
+[ext_resource type="PackedScene" uid="uid://hnrjvqpehfxa" path="res://Scenes/ui/settings_panel/settings_panel.tscn" id="15_s7roi"]
 
 [node name="TitleScreen" type="Control" unique_id=1423069208]
 layout_mode = 3
@@ -356,3 +357,9 @@ offset_bottom = 1004.0
 theme_type_variation = &"StatusText"
 horizontal_alignment = 1
 script = ExtResource("10_rgbmc")
+
+[node name="SettingsPanel" parent="." unique_id=1102423267 instance=ExtResource("15_s7roi")]
+unique_name_in_owner = true
+layout_mode = 1
+grow_horizontal = 2
+grow_vertical = 2

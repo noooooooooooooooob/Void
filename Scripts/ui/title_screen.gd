@@ -5,7 +5,7 @@ extends Control
 ##
 ## - TITLE 상태: 가운데 로고 + "PRESS ANY KEY" 깜빡임. 아무 키·클릭 → MENU 상태
 ## - MENU 상태: 로고가 왼쪽 위로 움직이고 메뉴 6줄이 나타남. ↑↓/W·S 이동, Enter/Space 실행, ESC → TITLE 상태
-## - 메뉴: 이어하기·불러오기(저장 기능 전까지 비활성) / 새 게임 → 사무소 / 설정·제작진 → "준비 중" / 종료
+## - 메뉴: 이어하기·불러오기(저장 기능 전까지 비활성) / 새 게임 → 사무소 / 설정 → 설정 창(%SettingsPanel) / 제작진 → "준비 중" / 종료
 
 ## 화면 상태
 enum State { TITLE, MENU }
@@ -119,7 +119,10 @@ func activate(index: int) -> void:
 				push_warning("TitleScreen: office_scene 이 비어 있어요")
 				return
 			get_tree().change_scene_to_packed(office_scene)
-		Item.SETTINGS, Item.CREDITS:
+		Item.SETTINGS:
+			# 설정 창 (화면 모드·창 크기, 2026-11-28)
+			%SettingsPanel.open()
+		Item.CREDITS:
 			# 아직 화면이 없다 (설계 비목표)
 			%Notice.show_text("준비 중입니다")
 		Item.QUIT:

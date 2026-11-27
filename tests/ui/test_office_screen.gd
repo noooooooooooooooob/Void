@@ -115,3 +115,8 @@ func test_map_button_opens_void_map_panel():
 	assert_eq(o.open_index, 1)
 	assert_true(_panels(o)[1].visible)
 	assert_false(_panels(o)[0].visible)
+
+func test_settings_button_opens_panel():
+	var o := _office()
+	o.get_node("%SettingsButton").pressed.emit()
+	assert_true(o.get_node("%SettingsPanel").visible)

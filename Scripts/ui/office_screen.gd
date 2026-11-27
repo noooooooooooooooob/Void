@@ -6,7 +6,7 @@ extends Control
 ## - 왼쪽 레일 메뉴(%RailMenu 의 RailMenuItem 7개)를 누르면 같은 순서의 패널(%Panels 의 OfficePanel 7개)이 열린다
 ## - 한 번에 패널 하나. 같은 메뉴를 다시 누르거나 ESC·닫기 → 닫힘, 다른 메뉴 → 바로 바뀜
 ## - 숫자키 1~7 로도 연다
-## - 오른쪽 위 자금 HUD, 설정·하루 마치기 버튼(아직 "준비 중")
+## - 오른쪽 위 자금 HUD, 설정 버튼(설정 창 %SettingsPanel 열기), 하루 마치기 버튼(아직 "준비 중")
 ## - 의뢰 게시판 패널 안의 게시판(%RequestsBoard, requests_board.tscn): "의뢰 수락" → StageRun.start_request,
 ##   "지도에서 보기" → 공허 지도 패널 (2026-11-24, 그전의 임시 버튼 "시험 의뢰 출발"을 대신함)
 
@@ -43,7 +43,7 @@ func _ready() -> void:
 		_panels[i].close_requested.connect(close_panel)
 		_panels[i].close(false)
 	# 2. 버튼들
-	%SettingsButton.pressed.connect(func(): %Notice.show_text("설정은 준비 중입니다"))
+	%SettingsButton.pressed.connect(%SettingsPanel.open)
 	%EndDayButton.pressed.connect(func(): %Notice.show_text("하루 마치기는 준비 중입니다"))
 	# 의뢰 게시판 (씬에 아직 안 넣었으면 건너뜀)
 	var board := get_node_or_null("%RequestsBoard") as RequestsBoard

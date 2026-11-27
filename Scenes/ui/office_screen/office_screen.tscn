@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://bv41n43ujd5h6" path="res://Scenes/ui/office_screen/rail_menu_item.tscn" id="10_q3eep"]
 [ext_resource type="Texture2D" uid="uid://bxod6sjo3lx3c" path="res://Art/ui/office/settings_button.svg" id="11_okekv"]
 [ext_resource type="FontFile" uid="uid://c13si8xashwfm" path="res://Art/fonts/noto_sans_kr/noto_sans_kr_medium.otf" id="12_6l8h4"]
+[ext_resource type="PackedScene" uid="uid://hnrjvqpehfxa" path="res://Scenes/ui/settings_panel/settings_panel.tscn" id="18_mraar"]
 
 [node name="OfficeScreen" type="Control" unique_id=607673499]
 layout_mode = 3
@@ -465,3 +466,9 @@ offset_bottom = 1024.0
 theme_type_variation = &"StatusText"
 horizontal_alignment = 1
 script = ExtResource("3_xc16o")
+
+[node name="SettingsPanel" parent="." unique_id=1102423267 instance=ExtResource("18_mraar")]
+unique_name_in_owner = true
+layout_mode = 1
+grow_horizontal = 2
+grow_vertical = 2

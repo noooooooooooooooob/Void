@@ -96,7 +96,8 @@ func test_e_key_activates_cursor_item():
 	var t := _title()
 	t.show_menu()
 	t.move_cursor(1)  # 새 게임 → 불러오기(비활성) 건너뛰고 설정
-	assert_eq(t.cursor, Item.SETTINGS)
+	t.move_cursor(1)  # → 제작진 (아직 "준비 중")
+	assert_eq(t.cursor, Item.CREDITS)
 	t._unhandled_input(_key(KEY_E))
 	assert_eq(t.get_node("%Notice").text, "준비 중입니다")
 
@@ -104,5 +105,21 @@ func test_enter_key_activates_cursor_item():
 	var t := _title()
 	t.show_menu()
 	t.move_cursor(1)
+	t.move_cursor(1)
 	t._unhandled_input(_key(KEY_ENTER))
 	assert_eq(t.get_node("%Notice").text, "준비 중입니다")
+
+func test_settings_opens_panel():
+	var t := _title()
+	t.show_menu()
+	t.activate(Item.SETTINGS)
+	assert_true(t.get_node("%SettingsPanel").visible)
+
+func test_esc_closes_panel_only():
+	var t := _title()
+	t.show_menu()
+	t.activate(Item.SETTINGS)
+	# 직접 호출 말고 실제 입력 전달 순서로 (패널이 먼저 받아 막아야 한다)
+	get_viewport().push_input(_key(KEY_ESCAPE))
+	assert_false(t.get_node("%SettingsPanel").visible)
+	assert_eq(t.state, TitleScreen.State.MENU)
