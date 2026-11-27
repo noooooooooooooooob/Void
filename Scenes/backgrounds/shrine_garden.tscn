@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://pjodwky47h6j" path="res://Scenes/backgrounds/parts/mood_haze.gdshader" id="2_s5611"]
 [ext_resource type="Texture2D" uid="uid://cle7lb2ltpmvh" path="res://Art/backgrounds/battle/shrine_garden_far.png" id="3_etc4o"]
 [ext_resource type="Texture2D" uid="uid://dydkbxpaqb0ip" path="res://Art/backgrounds/battle/shrine_garden_near.png" id="4_4u1ja"]
+[ext_resource type="PackedScene" uid="uid://d0iydf5748bff" path="res://Scenes/backgrounds/parts/light_rays.tscn" id="5_s5611"]
 [ext_resource type="PackedScene" uid="uid://cg1enfaofbv44" path="res://Scenes/backgrounds/parts/lantern_light.tscn" id="5_tj34o"]
 [ext_resource type="PackedScene" uid="uid://tcjg0q1pr2y1" path="res://Scenes/backgrounds/parts/ground_fog.tscn" id="6_5wf45"]
 [ext_resource type="PackedScene" uid="uid://c5yxjecsyp5ug" path="res://Scenes/ui/battle_screen/battle_board.tscn" id="7_20d21"]
@@ -11,7 +12,7 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_v8p1j"]
 resource_local_to_scene = true
 shader = ExtResource("2_s5611")
-shader_parameter/haze = Color(0.35, 0.4, 0.6, 1)
+shader_parameter/haze = Color(1, 0.62, 0.4, 1)
 shader_parameter/amount = 0.35
 shader_parameter/blur = 1.5
 
@@ -25,7 +26,14 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="BattleMood" parent="." unique_id=1230135772 instance=ExtResource("1_v8p1j")]
+darkness = Color(0.95, 0.74, 0.6, 1)
+sky_top = Color(0.25, 0.2, 0.4, 1)
+sky_bottom = Color(1, 0.6, 0.35, 1)
+fill_color = Color(1, 0.7, 0.45, 1)
+fill_energy = 0.5
+vignette = 0.45
 haze_targets = Array[NodePath]([NodePath("../FarLayer")])
+haze_color = Color(1, 0.62, 0.4, 1)
 haze_material = SubResource("ShaderMaterial_v8p1j")
 
 [node name="FarLayer" type="TextureRect" parent="." unique_id=1759906676]
@@ -48,13 +56,18 @@ texture = ExtResource("4_4u1ja")
 expand_mode = 1
 stretch_mode = 6
 
+[node name="LightRays" parent="." unique_id=956297431 instance=ExtResource("5_s5611")]
+
 [node name="LanternL" parent="." unique_id=2021930565 instance=ExtResource("5_tj34o")]
 position = Vector2(143.5, 465.1)
+energy = 1.0
 
 [node name="LanternR" parent="." unique_id=2071396968 instance=ExtResource("5_tj34o")]
 position = Vector2(1791.4, 459.3)
+energy = 1.0
 
 [node name="GroundFog" parent="." unique_id=886416631 instance=ExtResource("6_5wf45")]
+modulate = Color(0.7, 0.5, 0.45, 0.25)
 position = Vector2(0, 700)
 
 [node name="Ally Board" parent="." unique_id=1544493984 instance=ExtResource("7_20d21")]

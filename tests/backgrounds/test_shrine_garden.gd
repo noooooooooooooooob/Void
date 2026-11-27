@@ -33,3 +33,10 @@ func test_has_ally_and_enemy_boards():
 			sides.append(c.side)
 	sides.sort()
 	assert_eq(sides, [BattleTypes.Side.ALLY, BattleTypes.Side.ENEMY])
+
+# 노을 무드 (2026-11-27 사용자 결정: 시험 mood_grid 오른쪽 아래 느낌)
+func test_dusk_mood_and_rays():
+	var mood := bg.get_child(0) as BattleMood
+	assert_gt(mood.sky_bottom.r, mood.sky_bottom.b)   # 하늘 아래가 주황
+	assert_gt(mood.darkness.r, 0.8)                     # 밤처럼 어둡지 않음
+	assert_true(bg.get_node("LightRays") is Node2D)

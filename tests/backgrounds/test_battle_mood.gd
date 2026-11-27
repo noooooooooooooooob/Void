@@ -115,3 +115,15 @@ func test_ground_fog_part():
 	assert_true(f.texture is NoiseTexture2D)
 	assert_almost_eq(f.modulate.a, 0.25, 0.001)
 	assert_not_null(f.material as ShaderMaterial)
+
+func test_light_rays_part():
+	var r := load("res://Scenes/backgrounds/parts/light_rays.tscn").instantiate() as Node2D
+	autofree(r)
+	assert_not_null(r)
+	var mat := r.material as CanvasItemMaterial
+	assert_eq(mat.blend_mode, CanvasItemMaterial.BLEND_MODE_ADD)
+	assert_eq(mat.light_mode, CanvasItemMaterial.LIGHT_MODE_UNSHADED)
+	var beams := r.get_children().filter(func(c): return c is Polygon2D)
+	assert_gte(beams.size(), 3)
+	for b in beams:
+		assert_true(b.use_parent_material)
