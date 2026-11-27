@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 StageRun="*res://Scripts/stage/stage_run.gd"
 _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
+GameSettings="*res://Scripts/settings/game_settings.gd"
 
 [display]
 
