@@ -121,3 +121,22 @@ func test_zero_length_beam_is_safe():
 	assert_eq((r.get_node("Beam1") as Polygon2D).polygon.size(), 0)
 	r.source = Vector2(1700, 100)
 	assert_eq((r.get_node("Beam1") as Polygon2D).polygon.size(), 4)
+
+const FOG := "res://Scenes/backgrounds/parts/ground_fog.tscn"
+
+# 배경 씬에 안개를 둘 넣었을 때 재질이 따로여야 한 쪽 속도를 바꿔도 다른 쪽이 안 바뀐다
+func test_fog_group_and_material_not_shared():
+	var holder := Node2D.new()
+	var f1: Node = load(FOG).instantiate()
+	var f2: Node = load(FOG).instantiate()
+	holder.add_child(f1)
+	holder.add_child(f2)
+	f1.owner = holder
+	f2.owner = holder
+	var scene := PackedScene.new()
+	scene.pack(holder)
+	holder.free()
+	var inst := scene.instantiate()
+	add_child_autofree(inst)
+	assert_true(inst.get_child(0).is_in_group("mood_fog"))
+	assert_ne(inst.get_child(0).material, inst.get_child(1).material)

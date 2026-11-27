@@ -2,7 +2,8 @@
 
 [ext_resource type="Shader" uid="uid://do2hteepwquv3" path="res://Scenes/backgrounds/parts/ground_fog.gdshader" id="1_rnmmg"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ej8lg"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rnmmg"]
+resource_local_to_scene = true
 shader = ExtResource("1_rnmmg")
 shader_parameter/speed = 0.01
 shader_parameter/edge = 0.35
@@ -17,10 +18,10 @@ height = 256
 noise = SubResource("FastNoiseLite_e0nkq")
 seamless = true
 
-[node name="GroundFog" type="Sprite2D" unique_id=886416631]
+[node name="GroundFog" type="Sprite2D" unique_id=886416631 groups=["mood_fog"]]
 modulate = Color(0.55, 0.6, 0.8, 0.25)
 texture_repeat = 2
-material = SubResource("ShaderMaterial_ej8lg")
+material = SubResource("ShaderMaterial_rnmmg")
 scale = Vector2(1.875, 1.5)
 texture = SubResource("NoiseTexture2D_1qb4c")
 centered = false
