@@ -93,7 +93,7 @@ func _unit(s: BattleScreen, name: String) -> BattleUnit:
 	return null
 
 func _hp_text(s: BattleScreen, u: BattleUnit) -> String:
-	return s._tokens[u].get_node("%Hp").text
+	return s._rows[u].get_node("%Hp").text   # 그림 밑 글자는 없어서 옆 상태 패널로 본다
 
 func _use(s: BattleScreen, name: String) -> void:
 	var i := _index_of(s, name)
@@ -209,21 +209,17 @@ func test_actor_walks_back_home_before_cleanup():
 	assert_gt(far, 100.0)  # 대상까지 갔다가
 	assert_almost_eq(last.x, home.x, 5.0)  # 지워지기 직전에는 거의 제자리 (마지막 한 프레임 차이)
 
-func test_hit_shakes_target_sprite_and_ui():
+func test_hit_shakes_target_sprite():
 	var s := _screen()
 	var foe := _unit(s, "적A")
-	var box: Control = s._tokens[foe].ui_box()
 	var sprite: AnimatedSprite2D = s._tokens[foe].sprite()
-	var box_home := box.position
 	var sprite_home := sprite.position
 	_use(s, "연출타격")
 	await wait_for_signal(_queue(s).hit, 1.0)
 	await wait_frames(2)
-	assert_ne(box.position, box_home)
 	assert_ne(sprite.position, sprite_home)
 	await wait_for_signal(_queue(s).drained, 2.0)
 	await wait_seconds(0.3)
-	assert_eq(box.position, box_home)
 	assert_eq(sprite.position, sprite_home)
 
 func test_hit_shakes_screen_and_plays_sound():

@@ -67,16 +67,12 @@ func test_grid_cell_marks():
 	c.set_mark(GridCell.Mark.TARGET)
 	assert_ne(c.mark_color(), none)
 
-func test_unit_token_shows_hp_block_and_dims_when_dead():
+# 그림 밑 이름·HP·방어도 글자는 뺐다 (2026-11-27 사용자 결정 — 어두운 무드에서 같이 어두워져서). HP 는 옆 상태 패널에
+func test_unit_token_has_no_label_box_and_dims_when_dead():
 	var t: UnitToken = _scene("res://Scenes/ui/battle_screen/unit_token.tscn")
 	var u := _unit()
 	t.set_unit(u)
-	assert_eq(t.get_node("%Hp").text, "45/45")
-	assert_eq(t.get_node("%Name").text, "시험용 적 A")
-	u.block = 6
-	t.refresh()
-	assert_true(t.get_node("%Block").visible)
-	assert_eq(t.get_node("%Block").text, "6")
+	assert_null(t.get_node_or_null("Box"))
 	u.alive = false
 	t.refresh()
 	assert_lt(t.modulate.a, 1.0)

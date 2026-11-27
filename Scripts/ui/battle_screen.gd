@@ -56,7 +56,7 @@ extends Control
 @export var hit_sound: AudioStream
 ## hit 때 화면 흔들림 세기 (픽셀). 카드 연출 씬의 hit_shake 가 0 이상이면 그것
 @export var hit_shake := 6.0
-## hit 때 대상 캐릭터 그림·캐릭터 UI 흔들림 세기 (픽셀, 공통값만)
+## hit 때 대상 캐릭터 그림 흔들림 세기 (픽셀, 공통값만)
 @export var hit_unit_shake := 4.0
 ## 흔들림이 약해지며 멈추는 데 걸리는 시간 (초)
 @export var shake_time := 0.2
@@ -645,7 +645,7 @@ func _on_step_results(step: PerformanceStep) -> void:
 			_rows[u].show_state(step.state[u])
 
 
-## 연출의 hit 키: 대상들의 맞는 반응 (설계 5장 — 캐릭터 그림·화면·캐릭터 UI 흔들림, 피격 이펙트, 효과음).
+## 연출의 hit 키: 대상들의 맞는 반응 (설계 5장 — 캐릭터 그림·화면 흔들림, 피격 이펙트, 효과음).
 ## 숫자는 띄우지 않는다 (결과는 show_results 때). 카드 연출 씬에 값이 있으면 공통값 대신 그것을 쓴다.
 func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 	var fx: PackedScene = perf.hit_effect if perf.hit_effect else hit_effect
@@ -661,13 +661,12 @@ func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 	var f_time := perf.flash_time if perf.flash_time >= 0.0 else flash_time
 	var jitter := perf.pitch_jitter if perf.pitch_jitter >= 0.0 else pitch_jitter
 	var from: UnitToken = _tokens.get(step.actor)
-	# 1. 대상마다: 캐릭터 그림·UI 흔들림, 대상 위치에 이펙트
+	# 1. 대상마다: 캐릭터 그림 흔들림, 대상 위치에 이펙트
 	for u in step.hit_targets():
 		var t: UnitToken = _tokens.get(u)
 		if t == null:
 			continue
 		Shaker.shake(t.sprite(), unit_shake, s_time, _fx_rng)
-		Shaker.shake(t.ui_box(), unit_shake, s_time, _fx_rng)
 		_flash(t.sprite(), f_color, f_time)
 		t.play_hit()
 		if from and u != step.actor:

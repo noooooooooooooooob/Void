@@ -49,7 +49,7 @@ const PERFORM := &"perform"
 @export var knockback := -1.0
 ## 넉백 뒤 제자리로 돌아오는 시간 (초). 0 미만이면 공통값
 @export var knockback_return := -1.0
-## hit 때 대상 캐릭터 그림·캐릭터 UI 흔들림 세기 (픽셀). 0 미만이면 공통값
+## hit 때 대상 캐릭터 그림 흔들림 세기 (픽셀). 0 미만이면 공통값
 @export var hit_unit_shake := -1.0
 ## hit 흔들림(화면·대상)이 이어지는 시간 (초). 0 미만이면 공통값
 @export var shake_time := -1.0

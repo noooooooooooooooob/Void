@@ -34,35 +34,3 @@ texture_filter = 1
 [node name="EffectFront" type="AnimatedSprite2D" parent="Sprite" unique_id=1339158298]
 visible = false
 texture_filter = 1
-
-[node name="Box" type="VBoxContainer" parent="." unique_id=1740090346]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-alignment = 1
-
-[node name="Name" type="Label" parent="Box" unique_id=1674242616]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "이름"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Hp" type="Label" parent="Box" unique_id=1055487105]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "45/45"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Block" type="Label" parent="Box" unique_id=1237649675]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.49803922, 0.72156864, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "0"
-horizontal_alignment = 1
-vertical_alignment = 1
