@@ -12,9 +12,6 @@
 [ext_resource type="Resource" uid="uid://bwwjccfn24hbc" path="res://items/consumables/분노 포션.tres" id="7_hxvqh"]
 [ext_resource type="Resource" uid="uid://2i21cekyg8p1" path="res://items/consumables/쉴드 포션.tres" id="8_8gv40"]
 [ext_resource type="PackedScene" uid="uid://dcesqstjti4i6" path="res://Scenes/ui/battle_screen/item_slot.tscn" id="8_yl6x5"]
-[ext_resource type="Script" uid="uid://dfgy5fwg8m8ri" path="res://Scripts/ui/bag_panel.gd" id="10_yp0aa"]
-[ext_resource type="Script" uid="uid://c6qyuebwpxrt" path="res://Scripts/ui/target_arrow.gd" id="12_hxvqh"]
-[ext_resource type="Script" uid="uid://kx27ja1gd2aw" path="res://Scripts/ui/item_slot.gd" id="14_8gv40"]
 
 [node name="BattleScreen" type="Control" unique_id=1934429999]
 layout_mode = 3
@@ -70,329 +67,6 @@ theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 4
 
-[node name="RoundLabel" type="Label" parent="." unique_id=1453502877]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 400.0
-offset_top = 24.0
-offset_right = 600.0
-offset_bottom = 64.0
-theme_override_font_sizes/font_size = 28
-text = "라운드 1"
-
-[node name="TurnQueue" type="HBoxContainer" parent="." unique_id=1621226067]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 560.0
-offset_top = 16.0
-offset_right = 1360.0
-offset_bottom = 106.0
-mouse_filter = 2
-theme_override_constants/separation = 8
-alignment = 1
-
-[node name="TurnBanner" type="Label" parent="." unique_id=1372178030]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 560.0
-offset_top = 116.0
-offset_right = 1360.0
-offset_bottom = 148.0
-theme_override_colors/font_color = Color(0.7882353, 0.654902, 1, 1)
-theme_override_font_sizes/font_size = 22
-text = "내 차례"
-horizontal_alignment = 1
-
-[node name="AllyPanel" type="VBoxContainer" parent="." unique_id=2036162735]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 24.0
-offset_top = 160.0
-offset_right = 344.0
-offset_bottom = 520.0
-theme_override_constants/separation = 8
-
-[node name="EnemyPanel" type="VBoxContainer" parent="." unique_id=5592723]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 1576.0
-offset_top = 160.0
-offset_right = 1896.0
-offset_bottom = 520.0
-theme_override_constants/separation = 8
-
-[node name="Log" type="Label" parent="." unique_id=321385293]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 24.0
-offset_top = 540.0
-offset_right = 364.0
-offset_bottom = 730.0
-theme_override_colors/font_color = Color(0.72156864, 0.69803923, 0.76862746, 1)
-theme_override_font_sizes/font_size = 15
-autowrap_mode = 3
-clip_text = true
-
-[node name="Hand" type="HBoxContainer" parent="." unique_id=911220440]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 380.0
-offset_top = 740.0
-offset_right = 1540.0
-offset_bottom = 1060.0
-mouse_filter = 2
-theme_override_constants/separation = 8
-alignment = 1
-
-[node name="BottomLeft" type="VBoxContainer" parent="." unique_id=1594822253]
-layout_mode = 0
-offset_left = 40.0
-offset_top = 860.0
-offset_right = 340.0
-offset_bottom = 1040.0
-
-[node name="SpLabel" type="Label" parent="BottomLeft" unique_id=318964261]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "SP 3 / 3"
-
-[node name="MoveLabel" type="Label" parent="BottomLeft" unique_id=1462058895]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "이동력 2"
-
-[node name="DeckLabel" type="Label" parent="BottomLeft" unique_id=1733630217]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "덱 5"
-
-[node name="BottomRight" type="VBoxContainer" parent="." unique_id=324942099]
-layout_mode = 0
-offset_left = 1600.0
-offset_top = 840.0
-offset_right = 1880.0
-offset_bottom = 1040.0
-
-[node name="DiscardLabel" type="Label" parent="BottomRight" unique_id=1772374787]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "버린 카드 0"
-horizontal_alignment = 2
-
-[node name="ExileLabel" type="Label" parent="BottomRight" unique_id=474284963]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "제외 0"
-horizontal_alignment = 2
-
-[node name="MoveButton" type="Button" parent="BottomRight" unique_id=251225310]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-toggle_mode = true
-text = "이동"
-
-[node name="BagButton" type="Button" parent="BottomRight" unique_id=1742137371]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "가방 0/5"
-
-[node name="EndTurnButton" type="Button" parent="BottomRight" unique_id=892697868]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 64)
-layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "차례 종료"
-
-[node name="WorldFront" type="Control" parent="." unique_id=1623109874]
-unique_name_in_owner = true
-anchors_preset = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="PerformanceLayer" type="Control" parent="WorldFront" unique_id=874589522]
-unique_name_in_owner = true
-anchors_preset = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="FloatLayer" type="Control" parent="WorldFront" unique_id=393838644]
-unique_name_in_owner = true
-anchors_preset = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="BagPanel" type="PanelContainer" parent="." unique_id=1869143465 instance=ExtResource("6_78nqw")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 0
-offset_left = 1060.0
-offset_top = 600.0
-offset_right = 1880.0
-offset_bottom = 730.0
-script = ExtResource("10_yp0aa")
-
-[node name="TargetArrow" type="Node2D" parent="." unique_id=1135533263 instance=ExtResource("3_h06ft")]
-unique_name_in_owner = true
-top_level = true
-z_index = 100
-script = ExtResource("12_hxvqh")
-
-[node name="ResultOverlay" type="ColorRect" parent="." unique_id=910010746]
-unique_name_in_owner = true
-visible = false
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0, 0, 0, 0.6)
-
-[node name="Box" type="VBoxContainer" parent="ResultOverlay" unique_id=1968046533]
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 24
-alignment = 1
-
-[node name="ResultLabel" type="Label" parent="ResultOverlay/Box" unique_id=50768377]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 96
-text = "승리"
-horizontal_alignment = 1
-
-[node name="RewardList" type="VBoxContainer" parent="ResultOverlay/Box" unique_id=540267460]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="RewardTemplate" type="Button" parent="ResultOverlay/Box/RewardList" unique_id=2047996242]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(480, 64)
-layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "보상"
-
-[node name="DropBox" type="VBoxContainer" parent="ResultOverlay/Box" unique_id=1719494287]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="DropLabel" type="Label" parent="ResultOverlay/Box/DropBox" unique_id=154083761]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "가방이 가득 찼어요 — 바꿀 칸을 고르세요"
-horizontal_alignment = 1
-
-[node name="DropSlots" type="HBoxContainer" parent="ResultOverlay/Box/DropBox" unique_id=1625059042]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 8
-alignment = 1
-
-[node name="Slot0" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=685467998 instance=ExtResource("8_yl6x5")]
-custom_minimum_size = Vector2(150, 84)
-layout_mode = 2
-script = ExtResource("14_8gv40")
-
-[node name="Slot1" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=993027061 instance=ExtResource("8_yl6x5")]
-custom_minimum_size = Vector2(150, 84)
-layout_mode = 2
-script = ExtResource("14_8gv40")
-
-[node name="Slot2" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=270287327 instance=ExtResource("8_yl6x5")]
-custom_minimum_size = Vector2(150, 84)
-layout_mode = 2
-script = ExtResource("14_8gv40")
-
-[node name="Slot3" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=1460131112 instance=ExtResource("8_yl6x5")]
-custom_minimum_size = Vector2(150, 84)
-layout_mode = 2
-script = ExtResource("14_8gv40")
-
-[node name="Slot4" type="PanelContainer" parent="ResultOverlay/Box/DropBox/DropSlots" unique_id=667572604 instance=ExtResource("8_yl6x5")]
-custom_minimum_size = Vector2(150, 84)
-layout_mode = 2
-script = ExtResource("14_8gv40")
-
-[node name="DropButtons" type="HBoxContainer" parent="ResultOverlay/Box/DropBox" unique_id=1960784437]
-layout_mode = 2
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="SkipButton" type="Button" parent="ResultOverlay/Box/DropBox/DropButtons" unique_id=1962193590]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 60)
-layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "취소"
-
-[node name="RestartButton" type="Button" parent="ResultOverlay/Box" unique_id=696030292]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(280, 72)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "다시 하기"
-
-[node name="CardPick" type="PanelContainer" parent="ResultOverlay" unique_id=1356348610]
-unique_name_in_owner = true
-visible = false
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Margin" type="MarginContainer" parent="ResultOverlay/CardPick" unique_id=612441608]
-layout_mode = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
-
-[node name="Box" type="VBoxContainer" parent="ResultOverlay/CardPick/Margin" unique_id=794888094]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="CardPickTitle" type="Label" parent="ResultOverlay/CardPick/Margin/Box" unique_id=620870539]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "카드 1장을 고르세요"
-horizontal_alignment = 1
-
-[node name="CardPickRow" type="HBoxContainer" parent="ResultOverlay/CardPick/Margin/Box" unique_id=1531057949]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="CardPickSkip" type="Button" parent="ResultOverlay/CardPick/Margin/Box" unique_id=1262200650]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 60)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 26
-text = "넘어가기"
-
 [node name="EnemyTimer" type="Timer" parent="." unique_id=136294226]
 unique_name_in_owner = true
 one_shot = true
@@ -404,9 +78,320 @@ script = ExtResource("4_5dyec")
 [node name="HitSound" type="AudioStreamPlayer" parent="." unique_id=256951789]
 unique_name_in_owner = true
 
-[node name="BackButton" type="Button" parent="." unique_id=1324800908]
+[node name="UiLayer" type="CanvasLayer" parent="." unique_id=241261196]
+layer = 2
+follow_viewport_enabled = true
+
+[node name="RoundLabel" type="Label" parent="UiLayer" unique_id=1453502877]
 unique_name_in_owner = true
+offset_left = 400.0
+offset_top = 24.0
+offset_right = 600.0
+offset_bottom = 64.0
+theme_override_font_sizes/font_size = 28
+text = "라운드 1"
+
+[node name="TurnQueue" type="HBoxContainer" parent="UiLayer" unique_id=1621226067]
+unique_name_in_owner = true
+offset_left = 560.0
+offset_top = 16.0
+offset_right = 1360.0
+offset_bottom = 106.0
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="TurnBanner" type="Label" parent="UiLayer" unique_id=1372178030]
+unique_name_in_owner = true
+offset_left = 560.0
+offset_top = 116.0
+offset_right = 1360.0
+offset_bottom = 148.0
+theme_override_colors/font_color = Color(0.7882353, 0.654902, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "내 차례"
+horizontal_alignment = 1
+
+[node name="AllyPanel" type="VBoxContainer" parent="UiLayer" unique_id=2036162735]
+unique_name_in_owner = true
+offset_left = 24.0
+offset_top = 160.0
+offset_right = 344.0
+offset_bottom = 520.0
+theme_override_constants/separation = 8
+
+[node name="EnemyPanel" type="VBoxContainer" parent="UiLayer" unique_id=5592723]
+unique_name_in_owner = true
+offset_left = 1576.0
+offset_top = 160.0
+offset_right = 1896.0
+offset_bottom = 520.0
+theme_override_constants/separation = 8
+
+[node name="Log" type="Label" parent="UiLayer" unique_id=321385293]
+unique_name_in_owner = true
+offset_left = 24.0
+offset_top = 540.0
+offset_right = 364.0
+offset_bottom = 730.0
+theme_override_colors/font_color = Color(0.72156864, 0.69803923, 0.76862746, 1)
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+clip_text = true
+
+[node name="Hand" type="HBoxContainer" parent="UiLayer" unique_id=911220440]
+unique_name_in_owner = true
+offset_left = 380.0
+offset_top = 740.0
+offset_right = 1540.0
+offset_bottom = 1060.0
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="BottomLeft" type="VBoxContainer" parent="UiLayer" unique_id=1594822253]
+offset_left = 40.0
+offset_top = 860.0
+offset_right = 340.0
+offset_bottom = 1040.0
+
+[node name="SpLabel" type="Label" parent="UiLayer/BottomLeft" unique_id=318964261]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "SP 3 / 3"
+
+[node name="MoveLabel" type="Label" parent="UiLayer/BottomLeft" unique_id=1462058895]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "이동력 2"
+
+[node name="DeckLabel" type="Label" parent="UiLayer/BottomLeft" unique_id=1733630217]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "덱 5"
+
+[node name="BottomRight" type="VBoxContainer" parent="UiLayer" unique_id=324942099]
+offset_left = 1600.0
+offset_top = 840.0
+offset_right = 1880.0
+offset_bottom = 1040.0
+
+[node name="DiscardLabel" type="Label" parent="UiLayer/BottomRight" unique_id=1772374787]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "버린 카드 0"
+horizontal_alignment = 2
+
+[node name="ExileLabel" type="Label" parent="UiLayer/BottomRight" unique_id=474284963]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "제외 0"
+horizontal_alignment = 2
+
+[node name="MoveButton" type="Button" parent="UiLayer/BottomRight" unique_id=251225310]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+toggle_mode = true
+text = "이동"
+
+[node name="BagButton" type="Button" parent="UiLayer/BottomRight" unique_id=1742137371]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "가방 0/5"
+
+[node name="EndTurnButton" type="Button" parent="UiLayer/BottomRight" unique_id=892697868]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "차례 종료"
+
+[node name="FrontLayer" type="CanvasLayer" parent="." unique_id=1689466342]
+layer = 3
+follow_viewport_enabled = true
+
+[node name="WorldFront" type="Control" parent="FrontLayer" unique_id=1623109874]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="PerformanceLayer" type="Control" parent="FrontLayer/WorldFront" unique_id=874589522]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="FloatLayer" type="Control" parent="FrontLayer/WorldFront" unique_id=393838644]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="OverlayLayer" type="CanvasLayer" parent="." unique_id=1324711204]
+layer = 4
+follow_viewport_enabled = true
+
+[node name="BagPanel" parent="OverlayLayer" unique_id=1869143465 instance=ExtResource("6_78nqw")]
+unique_name_in_owner = true
+visible = false
+offset_left = 1060.0
+offset_top = 600.0
+offset_right = 1880.0
+offset_bottom = 730.0
+
+[node name="TargetArrow" parent="OverlayLayer" unique_id=1135533263 instance=ExtResource("3_h06ft")]
+unique_name_in_owner = true
+
+[node name="ResultOverlay" type="ColorRect" parent="OverlayLayer" unique_id=910010746]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="Box" type="VBoxContainer" parent="OverlayLayer/ResultOverlay" unique_id=1968046533]
 layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="ResultLabel" type="Label" parent="OverlayLayer/ResultOverlay/Box" unique_id=50768377]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 96
+text = "승리"
+horizontal_alignment = 1
+
+[node name="RewardList" type="VBoxContainer" parent="OverlayLayer/ResultOverlay/Box" unique_id=540267460]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RewardTemplate" type="Button" parent="OverlayLayer/ResultOverlay/Box/RewardList" unique_id=2047996242]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(480, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "보상"
+
+[node name="DropBox" type="VBoxContainer" parent="OverlayLayer/ResultOverlay/Box" unique_id=1719494287]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DropLabel" type="Label" parent="OverlayLayer/ResultOverlay/Box/DropBox" unique_id=154083761]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "가방이 가득 찼어요 — 바꿀 칸을 고르세요"
+horizontal_alignment = 1
+
+[node name="DropSlots" type="HBoxContainer" parent="OverlayLayer/ResultOverlay/Box/DropBox" unique_id=1625059042]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Slot0" parent="OverlayLayer/ResultOverlay/Box/DropBox/DropSlots" unique_id=685467998 instance=ExtResource("8_yl6x5")]
+layout_mode = 2
+
+[node name="Slot1" parent="OverlayLayer/ResultOverlay/Box/DropBox/DropSlots" unique_id=993027061 instance=ExtResource("8_yl6x5")]
+layout_mode = 2
+
+[node name="Slot2" parent="OverlayLayer/ResultOverlay/Box/DropBox/DropSlots" unique_id=270287327 instance=ExtResource("8_yl6x5")]
+layout_mode = 2
+
+[node name="Slot3" parent="OverlayLayer/ResultOverlay/Box/DropBox/DropSlots" unique_id=1460131112 instance=ExtResource("8_yl6x5")]
+layout_mode = 2
+
+[node name="Slot4" parent="OverlayLayer/ResultOverlay/Box/DropBox/DropSlots" unique_id=667572604 instance=ExtResource("8_yl6x5")]
+layout_mode = 2
+
+[node name="DropButtons" type="HBoxContainer" parent="OverlayLayer/ResultOverlay/Box/DropBox" unique_id=1960784437]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="SkipButton" type="Button" parent="OverlayLayer/ResultOverlay/Box/DropBox/DropButtons" unique_id=1962193590]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "취소"
+
+[node name="RestartButton" type="Button" parent="OverlayLayer/ResultOverlay/Box" unique_id=696030292]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(280, 72)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "다시 하기"
+
+[node name="CardPick" type="PanelContainer" parent="OverlayLayer/ResultOverlay" unique_id=1356348610]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="OverlayLayer/ResultOverlay/CardPick" unique_id=612441608]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="Box" type="VBoxContainer" parent="OverlayLayer/ResultOverlay/CardPick/Margin" unique_id=794888094]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="CardPickTitle" type="Label" parent="OverlayLayer/ResultOverlay/CardPick/Margin/Box" unique_id=620870539]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "카드 1장을 고르세요"
+horizontal_alignment = 1
+
+[node name="CardPickRow" type="HBoxContainer" parent="OverlayLayer/ResultOverlay/CardPick/Margin/Box" unique_id=1531057949]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="CardPickSkip" type="Button" parent="OverlayLayer/ResultOverlay/CardPick/Margin/Box" unique_id=1262200650]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 26
+text = "넘어가기"
+
+[node name="BackButton" type="Button" parent="OverlayLayer" unique_id=1324800908]
+unique_name_in_owner = true
 offset_left = 24.0
 offset_top = 24.0
 offset_right = 184.0

@@ -15,47 +15,49 @@ script = ExtResource("1_idxin")
 [node name="BattleScreen" parent="." unique_id=1934429999 instance=ExtResource("2_rxv47")]
 layout_mode = 1
 
-[node name="Panel" type="PanelContainer" parent="." unique_id=2008041832]
-layout_mode = 0
+[node name="PanelLayer" type="CanvasLayer" parent="." unique_id=957472342]
+layer = 10
+
+[node name="Panel" type="PanelContainer" parent="PanelLayer" unique_id=2008041832]
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 16.0
 offset_bottom = 16.0
 
-[node name="Row" type="HBoxContainer" parent="Panel" unique_id=280008477]
+[node name="Row" type="HBoxContainer" parent="PanelLayer/Panel" unique_id=280008477]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="CardLabel" type="Label" parent="Panel/Row" unique_id=393823324]
+[node name="CardLabel" type="Label" parent="PanelLayer/Panel/Row" unique_id=393823324]
 layout_mode = 2
 text = "카드"
 
-[node name="CardList" type="OptionButton" parent="Panel/Row" unique_id=1310005059]
+[node name="CardList" type="OptionButton" parent="PanelLayer/Panel/Row" unique_id=1310005059]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TargetLabel" type="Label" parent="Panel/Row" unique_id=1010881004]
+[node name="TargetLabel" type="Label" parent="PanelLayer/Panel/Row" unique_id=1010881004]
 layout_mode = 2
 text = "대상"
 
-[node name="TargetList" type="OptionButton" parent="Panel/Row" unique_id=277416689]
+[node name="TargetList" type="OptionButton" parent="PanelLayer/Panel/Row" unique_id=277416689]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="Panel/Row" unique_id=1897321504]
+[node name="PlayButton" type="Button" parent="PanelLayer/Panel/Row" unique_id=1897321504]
 unique_name_in_owner = true
 layout_mode = 2
 text = "▶ 재생"
 
-[node name="LoopCheck" type="CheckBox" parent="Panel/Row" unique_id=1460856002]
+[node name="LoopCheck" type="CheckBox" parent="PanelLayer/Panel/Row" unique_id=1460856002]
 unique_name_in_owner = true
 layout_mode = 2
 text = "반복"
 
-[node name="SpeedLabel" type="Label" parent="Panel/Row" unique_id=72053776]
+[node name="SpeedLabel" type="Label" parent="PanelLayer/Panel/Row" unique_id=72053776]
 layout_mode = 2
 text = "속도"
 
-[node name="SpeedList" type="OptionButton" parent="Panel/Row" unique_id=2068657094]
+[node name="SpeedList" type="OptionButton" parent="PanelLayer/Panel/Row" unique_id=2068657094]
 unique_name_in_owner = true
 layout_mode = 2

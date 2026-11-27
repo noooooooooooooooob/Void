@@ -337,11 +337,11 @@ func test_card_pick_blocks_result_box_and_focuses_first_card():
 	s._on_finished(BattleTypes.Side.ALLY)
 	s.click_item()   # 바꿀 칸 고르기가 열린 채로 카드 창을 연다
 	s.open_card_pick()
-	assert_false(s.get_node("ResultOverlay/Box").visible)   # 계속·다른 줄을 누를 수 없음
+	assert_false(s.get_node("%ResultOverlay/Box").visible)   # 계속·다른 줄을 누를 수 없음
 	assert_false(s.get_node("%DropBox").visible)
 	assert_true(s.get_node("%CardPickRow").get_child(0).get_node("%Button").has_focus())
 	s.close_card_pick()
-	assert_true(s.get_node("ResultOverlay/Box").visible)
+	assert_true(s.get_node("%ResultOverlay/Box").visible)
 
 func test_win_focuses_first_reward_row_not_continue():
 	# 스페이스/엔터 한 번에 "계속"이 눌려 보상을 다 잃지 않게 (리뷰 2026-11-19)
@@ -389,7 +389,7 @@ func test_cancel_closes_card_pick_then_swap():
 	s.open_card_pick()
 	s.cancel()   # ESC·우클릭
 	assert_false(s.get_node("%CardPick").visible)
-	assert_true(s.get_node("ResultOverlay/Box").visible)
+	assert_true(s.get_node("%ResultOverlay/Box").visible)
 	assert_true("카드 추가" in _rows(s))
 	s.click_item()
 	s.cancel()

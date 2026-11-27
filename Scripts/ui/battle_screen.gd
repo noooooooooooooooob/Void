@@ -154,7 +154,7 @@ var reward: BattleReward = null
 @onready var _card_pick: Control = %CardPick                # 카드 보상 고르기 창
 @onready var _card_pick_row: HBoxContainer = %CardPickRow   # 카드 후보 칸들
 @onready var _card_pick_skip: Button = %CardPickSkip        # 카드 고르기 창 닫기 (보상 줄은 남음)
-@onready var _result_box: Control = $ResultOverlay/Box       # 결과 글자·보상 목록·계속 버튼 묶음 (카드 고르기 창이 열리면 숨김)
+@onready var _result_box: Control = %ResultOverlay/Box       # 결과 글자·보상 목록·계속 버튼 묶음 (카드 고르기 창이 열리면 숨김)
 @onready var _skip_button: Button = %SkipButton
 @onready var _enemy_timer: Timer = %EnemyTimer
 @onready var _perf_layer: Control = %PerformanceLayer
@@ -186,6 +186,7 @@ var _cam0 := Transform2D.IDENTITY  # 그 연출의 시작 카메라 자세
 var _cam_base := Transform2D.IDENTITY  # 그 연출이 시작할 때의 월드 변환 (앞 연출이 덜 돌아왔어도 튀지 않게)
 var _cam_return := 0.2  # 그 연출이 끝난 뒤 카메라가 돌아오는 시간 (초)
 var _cam_tween: Tween  # 카메라 복귀 tween
+var _screen_shake: Tween  # 화면 흔들기 tween (_shake_screen)
 var _fx_rng := RandomNumberGenerator.new()  # 흔들림·음높이·아이템 드랍 판정용 난수. 전투 rng 와 따로 (전투 결과 재현에 영향 없게)
 
 
@@ -677,7 +678,7 @@ func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 			if e is Node2D or e is Control:
 				e.global_position = t.get_global_rect().get_center()
 	# 2. 화면 전체 흔들림
-	Shaker.shake(self, screen, s_time, _fx_rng)
+	_shake_screen(screen, s_time)
 	# 3. 효과음 (음높이는 매번 조금씩 다르게)
 	if snd:
 		_hit_sound.stream = snd
@@ -793,12 +794,12 @@ func _emphasize(step: PerformanceStep) -> void:
 	var slow := perf.hitstop_speed if perf and perf.hitstop_speed >= 0.0 else hitstop_speed
 	# 1. 쓰러뜨림: 흔들림 세기·시간, 슬로우모션 시간 모두 kill_boost 배 (쓰러뜨림과 치명타가 겹치면 쓰러뜨림만)
 	if not step.killed().is_empty():
-		Shaker.shake(self, screen * kill_boost, s_time * kill_boost, _fx_rng)
+		_shake_screen(screen * kill_boost, s_time * kill_boost)
 		if perf:
 			_hitstop(perf, step.hit_targets(), stop * kill_boost, slow)
 	# 2. 치명타: 흔들림 세기 crit_shake_boost 배, 슬로우모션 시간 crit_hitstop_boost 배
 	elif not step.crit_targets().is_empty():
-		Shaker.shake(self, screen * crit_shake_boost, s_time, _fx_rng)
+		_shake_screen(screen * crit_shake_boost, s_time)
 		if perf:
 			_hitstop(perf, step.hit_targets(), stop * crit_hitstop_boost, slow)
 
@@ -1246,6 +1247,31 @@ func _return_camera() -> void:
 	_cam_tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	_cam_tween.tween_method(func(k: float): _set_world_xform(from.interpolate_with(Transform2D.IDENTITY, k)),
 		0.0, 1.0, maxf(_cam_return, 0.01))
+
+
+## 화면 전체를 strength 픽셀 세기로 time 초 동안 흔든다 (Shaker 와 같은 모양: 무작위 방향, 점점 약해져 원래 자리로).
+## 루트가 아니라 뷰포트의 canvas_transform 을 흔든다: 전투 화면은 CanvasLayer 로 나뉘어 있고(전투 무드 1단계),
+## UI·연출·덮개 층은 follow_viewport 라서 이것을 따라 같이 흔들린다. 층마다 좌표가 어긋나지 않는다.
+## 흔드는 도중에 또 흔들면 앞의 흔들기를 멈추고 새로 시작한다.
+func _shake_screen(strength: float, time: float) -> void:
+	if not is_inside_tree() or strength <= 0.0 or time <= 0.0:
+		return
+	var vp := get_viewport()
+	if _screen_shake and _screen_shake.is_valid():
+		_screen_shake.kill()
+	_screen_shake = create_tween()
+	_screen_shake.tween_method(func(t: float):
+		var left := strength * (1.0 - t)
+		vp.canvas_transform = Transform2D(0.0, Vector2(_fx_rng.randf_range(-left, left), _fx_rng.randf_range(-left, left))),
+		0.0, 1.0, time)
+	_screen_shake.finished.connect(func(): vp.canvas_transform = Transform2D.IDENTITY)
+
+
+## 흔드는 도중에 화면이 닫히면(씬 전환·도주) 뷰포트가 어긋난 채로 남지 않게 되돌린다
+func _exit_tree() -> void:
+	if _screen_shake and _screen_shake.is_valid():
+		_screen_shake.kill()
+		get_viewport().canvas_transform = Transform2D.IDENTITY
 
 
 ## 월드 묶음 둘(World·WorldFront)에 같은 변환을 넣는다

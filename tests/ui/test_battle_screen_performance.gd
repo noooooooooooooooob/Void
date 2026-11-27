@@ -229,11 +229,10 @@ func test_hit_shakes_target_sprite_and_ui():
 func test_hit_shakes_screen_and_plays_sound():
 	var s := _screen()
 	s.hit_sound = AudioStreamWAV.new()
-	var home := s.position
 	_use(s, "연출타격")
 	await wait_for_signal(_queue(s).hit, 1.0)
 	await wait_frames(2)
-	assert_ne(s.position, home)
+	assert_ne(s.get_viewport().canvas_transform.origin, Vector2.ZERO)
 	var snd: AudioStreamPlayer = s.get_node("%HitSound")
 	assert_eq(snd.stream, s.hit_sound)
 	assert_almost_eq(snd.pitch_scale, 1.0, s.pitch_jitter + 0.001)
@@ -435,11 +434,10 @@ func test_bigger_damage_bigger_number():
 func test_kill_adds_extra_screen_shake_at_results():
 	var s := _screen(_data(10, null, _perf([[0.1, "show_results", []]], 0.3)))
 	s.hit_shake = 6.0
-	var home := s.position
 	_use(s, "연출타격")
 	await wait_for_signal(_queue(s).step_results, 1.0)
 	await wait_frames(2)
-	assert_ne(s.position, home)
+	assert_ne(s.get_viewport().canvas_transform.origin, Vector2.ZERO)
 
 # 강조 (2026-11-21): 쓰러뜨림·치명타 모두 슬로우모션, 기준은 카드별 값이 있으면 그것
 func _results_perf(props := {}) -> PackedScene:
