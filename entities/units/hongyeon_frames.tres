@@ -1,65 +1,65 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://clsjvjhaikvkc"]
 
-[ext_resource type="Texture2D" uid="uid://cse6ph0pfvuwt" path="res://Art/characters/hongyeon/hongyeon_idle.png" id="1_4xhur"]
+[ext_resource type="Texture2D" uid="uid://cuh46q166wrwo" path="res://Art/characters/hongyeon/hongyeon_idle_canvas.tres" id="1_i77dn"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_jamgu"]
-atlas = ExtResource("1_4xhur")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ncuat"]
+atlas = ExtResource("1_i77dn")
 region = Rect2(0, 0, 128, 128)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_jtdox"]
-atlas = ExtResource("1_4xhur")
+[sub_resource type="AtlasTexture" id="AtlasTexture_bgqdh"]
+atlas = ExtResource("1_i77dn")
 region = Rect2(128, 0, 128, 128)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6cc3g"]
-atlas = ExtResource("1_4xhur")
+[sub_resource type="AtlasTexture" id="AtlasTexture_a71gp"]
+atlas = ExtResource("1_i77dn")
 region = Rect2(256, 0, 128, 128)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_bn4wt"]
-atlas = ExtResource("1_4xhur")
+[sub_resource type="AtlasTexture" id="AtlasTexture_3kmro"]
+atlas = ExtResource("1_i77dn")
 region = Rect2(384, 0, 128, 128)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_qjvh5"]
-atlas = ExtResource("1_4xhur")
+[sub_resource type="AtlasTexture" id="AtlasTexture_k6wn1"]
+atlas = ExtResource("1_i77dn")
 region = Rect2(512, 0, 128, 128)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ryqc6"]
-atlas = ExtResource("1_4xhur")
+[sub_resource type="AtlasTexture" id="AtlasTexture_1dvt3"]
+atlas = ExtResource("1_i77dn")
 region = Rect2(640, 0, 128, 128)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_uhli7"]
-atlas = ExtResource("1_4xhur")
+[sub_resource type="AtlasTexture" id="AtlasTexture_d7f0e"]
+atlas = ExtResource("1_i77dn")
 region = Rect2(768, 0, 128, 128)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_jav3i"]
-atlas = ExtResource("1_4xhur")
+[sub_resource type="AtlasTexture" id="AtlasTexture_pcovc"]
+atlas = ExtResource("1_i77dn")
 region = Rect2(896, 0, 128, 128)
 
 [resource]
 animations = [{
 "frames": [{
 "duration": 3.0,
-"texture": SubResource("AtlasTexture_jamgu")
+"texture": SubResource("AtlasTexture_ncuat")
 }, {
 "duration": 3.0,
-"texture": SubResource("AtlasTexture_jtdox")
+"texture": SubResource("AtlasTexture_bgqdh")
 }, {
 "duration": 3.0,
-"texture": SubResource("AtlasTexture_6cc3g")
+"texture": SubResource("AtlasTexture_a71gp")
 }, {
 "duration": 3.0,
-"texture": SubResource("AtlasTexture_bn4wt")
+"texture": SubResource("AtlasTexture_3kmro")
 }, {
 "duration": 3.0,
-"texture": SubResource("AtlasTexture_qjvh5")
+"texture": SubResource("AtlasTexture_k6wn1")
 }, {
 "duration": 3.0,
-"texture": SubResource("AtlasTexture_ryqc6")
+"texture": SubResource("AtlasTexture_1dvt3")
 }, {
 "duration": 3.0,
-"texture": SubResource("AtlasTexture_uhli7")
+"texture": SubResource("AtlasTexture_d7f0e")
 }, {
 "duration": 3.0,
-"texture": SubResource("AtlasTexture_jav3i")
+"texture": SubResource("AtlasTexture_pcovc")
 }],
 "loop": 1,
 "name": &"idle",

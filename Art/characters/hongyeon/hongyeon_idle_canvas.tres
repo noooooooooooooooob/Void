@@ -1,0 +1,10 @@
+[gd_resource type="CanvasTexture" format=3 uid="uid://cuh46q166wrwo"]
+
+[ext_resource type="Texture2D" uid="uid://cse6ph0pfvuwt" path="res://Art/characters/hongyeon/hongyeon_idle.png" id="1_rhqts"]
+[ext_resource type="Texture2D" uid="uid://do6wclbsoklit" path="res://Art/characters/hongyeon/hongyeon_idle_normal.png" id="2_dh0wx"]
+[ext_resource type="Texture2D" uid="uid://bvqro56xek0cj" path="res://Art/characters/hongyeon/hongyeon_idle_specular.png" id="3_m65e4"]
+
+[resource]
+diffuse_texture = ExtResource("1_rhqts")
+normal_texture = ExtResource("2_dh0wx")
+specular_texture = ExtResource("3_m65e4")
