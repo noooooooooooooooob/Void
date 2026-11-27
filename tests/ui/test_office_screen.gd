@@ -120,3 +120,16 @@ func test_settings_button_opens_panel():
 	var o := _office()
 	o.get_node("%SettingsButton").pressed.emit()
 	assert_true(o.get_node("%SettingsPanel").visible)
+
+func test_settings_panel_keeps_keyboard_focus_inside():
+	var o := _office()
+	o.open_panel(0)  # 뒤에 닫기 버튼이 있는 패널을 열어 둔 상태
+	var p: Control = o.get_node("%SettingsPanel")
+	p.open()
+	for n in ["%ModeOption", "%SizeOption", "%CloseButton"]:
+		var c: Control = p.get_node(n)
+		assert_true(p.is_ancestor_of(c.find_next_valid_focus()), n + " Tab")
+		assert_true(p.is_ancestor_of(c.find_prev_valid_focus()), n + " Shift+Tab")
+		for side in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
+			var nb := c.find_valid_focus_neighbor(side)
+			assert_true(nb == null or p.is_ancestor_of(nb), "%s side %d" % [n, side])

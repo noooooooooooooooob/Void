@@ -51,3 +51,10 @@ func test_window_mode_maps_to_display_server():
 	assert_eq(d.window_mode(), DisplayServer.WINDOW_MODE_WINDOWED)
 	d.mode = DisplaySettings.Mode.FULLSCREEN
 	assert_eq(d.window_mode(), DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+func test_load_non_string_mode_falls_back():
+	var cfg := ConfigFile.new()
+	cfg.set_value("display", "mode", 1)
+	var e := DisplaySettings.load_from(cfg)
+	assert_not_null(e)
+	assert_eq(e.mode, DisplaySettings.Mode.WINDOW)

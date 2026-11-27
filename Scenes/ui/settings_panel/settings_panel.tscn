@@ -57,6 +57,12 @@ text = "화면 모드"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../../CloseButton")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../SizeOption")
+focus_next = NodePath("../SizeOption")
+focus_previous = NodePath("../../CloseButton")
 
 [node name="SizeLabel" type="Label" parent="Dim/Box/Margin/Rows/Grid" unique_id=783764910]
 layout_mode = 2
@@ -66,10 +72,22 @@ text = "창 크기"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../ModeOption")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../../CloseButton")
+focus_next = NodePath("../../CloseButton")
+focus_previous = NodePath("../ModeOption")
 
 [node name="CloseButton" type="Button" parent="Dim/Box/Margin/Rows" unique_id=280848528]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath("../Grid/SizeOption")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath("../Grid/ModeOption")
+focus_next = NodePath("../Grid/ModeOption")
+focus_previous = NodePath("../Grid/SizeOption")
 theme_type_variation = &"GhostButton"
 text = "닫기  ESC"

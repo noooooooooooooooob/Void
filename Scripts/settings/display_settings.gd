@@ -51,11 +51,12 @@ func save_to(cfg: ConfigFile) -> void:
 ## cfg 에서 값을 읽어 새 DisplaySettings 로. 없거나 이상한 값은 기본값 (깨진 파일로 멈추지 않게)
 static func load_from(cfg: ConfigFile) -> DisplaySettings:
 	var d := DisplaySettings.new()
-	# 1. 모드: 아는 이름만 받는다
+	# 1. 모드: 아는 이름(문자열)만 받는다. 숫자 등 다른 타입은 String 과 비교하면 오류라 먼저 거른다
 	var m = cfg.get_value(SECTION, "mode", "")
-	for key in MODE_NAMES:
-		if MODE_NAMES[key] == m:
-			d.mode = key
+	if m is String:
+		for key in MODE_NAMES:
+			if MODE_NAMES[key] == m:
+				d.mode = key
 	# 2. 크기: 둘 다 양의 정수일 때만 받는다 (목록에 없는 크기도 받아 두고, 적용할 때 clamp_to)
 	var w = cfg.get_value(SECTION, "width", 0)
 	var h = cfg.get_value(SECTION, "height", 0)
