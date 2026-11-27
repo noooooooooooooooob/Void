@@ -65,3 +65,13 @@ func test_load_non_string_mode_falls_back():
 	var e := DisplaySettings.load_from(cfg)
 	assert_not_null(e)
 	assert_eq(e.mode, DisplaySettings.Mode.WINDOW)
+
+func test_window_position_centers_when_it_fits():
+	# 사용 영역 1920×1040, 창 1280×720, 제목 표시줄 30 → 제목 표시줄까지 합친 높이로 가운데
+	var pos := DisplaySettings.window_position(Rect2i(0, 0, 1920, 1040), Vector2i(1280, 720), 30)
+	assert_eq(pos, Vector2i(320, 30 + (1040 - 750) / 2))
+
+func test_window_position_keeps_title_bar_on_screen_when_too_tall():
+	# 1920×1080 창이 1920×1040 영역보다 크면 제목 표시줄이 화면 위에 걸치게 맨 위에 붙인다
+	var pos := DisplaySettings.window_position(Rect2i(0, 0, 1920, 1040), Vector2i(1920, 1080), 30)
+	assert_eq(pos, Vector2i(0, 30))

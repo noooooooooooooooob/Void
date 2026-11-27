@@ -27,7 +27,7 @@ var mode: Mode = Mode.WINDOW
 var window_size: Vector2i = DEFAULT_SIZE
 
 
-## 모니터 사용 가능 영역(screen)에 들어가는 창 크기 목록. 하나도 안 들어가면 가장 작은 크기 하나
+## 모니터 해상도(screen)에 들어가는 창 크기 목록. 하나도 안 들어가면 가장 작은 크기 하나
 static func sizes_fitting(screen: Vector2i) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
 	for s in SIZES:
@@ -67,6 +67,14 @@ static func load_from(cfg: ConfigFile) -> DisplaySettings:
 	if w is int and h is int and w > 0 and h > 0:
 		d.window_size = Vector2i(w, h)
 	return d
+
+
+## 창 내용 영역(제목 표시줄 아래)의 왼쪽 위 위치. area = 모니터 사용 가능 영역(작업 표시줄 뺀 곳), size = 창 내용 크기,
+## title_h = 제목 표시줄 높이. 제목 표시줄까지 합쳐 가운데에 놓고, 영역보다 크면 제목 표시줄이 화면 안에 남게 맨 위에 붙인다
+## (예: 1080p 모니터의 1920×1080 창 — 아래쪽이 작업 표시줄에 조금 가려진다)
+static func window_position(area: Rect2i, size: Vector2i, title_h: int) -> Vector2i:
+	var free := area.size - Vector2i(size.x, size.y + title_h)
+	return area.position + Vector2i(maxi(free.x / 2, 0), title_h + maxi(free.y / 2, 0))
 
 
 ## Godot 창 모드 값으로 바꾼다

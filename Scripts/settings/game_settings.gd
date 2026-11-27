@@ -41,15 +41,17 @@ func save_settings() -> void:
 func apply() -> void:
 	if Engine.is_embedded_in_editor() or DisplayServer.get_name() == "headless":
 		return
-	# 1. 저장된 창 크기가 지금 모니터보다 크면 들어가는 가장 큰 크기로
+	# 1. 저장된 창 크기가 지금 모니터 해상도보다 크면 들어가는 가장 큰 크기로
+	#    (사용자 결정: 작업 표시줄 뺀 영역이 아니라 모니터 전체 기준 — 1080p 모니터에서도 1920×1080 창)
 	var screen := DisplayServer.window_get_current_screen()
-	display.clamp_to(DisplayServer.screen_get_usable_rect(screen).size)
-	# 2. 모드 적용. 창이면 크기를 바꾸고 화면 가운데로
+	display.clamp_to(DisplayServer.screen_get_size(screen))
+	# 2. 모드 적용. 창이면 크기를 바꾸고, 제목 표시줄까지 합쳐 사용 영역 가운데로 (넘치면 맨 위)
 	DisplayServer.window_set_mode(display.window_mode())
 	if display.mode == DisplaySettings.Mode.WINDOW:
 		DisplayServer.window_set_size(display.window_size)
+		var title_h := DisplayServer.window_get_size_with_decorations().y - DisplayServer.window_get_size().y
 		var area := DisplayServer.screen_get_usable_rect(screen)
-		DisplayServer.window_set_position(area.position + (area.size - display.window_size) / 2)
+		DisplayServer.window_set_position(DisplaySettings.window_position(area, display.window_size, title_h))
 
 
 ## 화면 모드를 바꾼다 → 적용 → 저장 → display_changed

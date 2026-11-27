@@ -53,9 +53,9 @@ func close() -> void:
 func _refresh() -> void:
 	var d: DisplaySettings = GameSettings.display
 	_mode_option.select(d.mode)
-	# 창 크기 목록: 지금 모니터 사용 가능 영역에 들어가는 것만, 고른 값은 메타데이터(Vector2i)로
+	# 창 크기 목록: 지금 모니터 해상도에 들어가는 것만 (작업 표시줄 포함 전체 기준), 고른 값은 메타데이터(Vector2i)로
 	_size_option.clear()
-	var screen := DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen()).size
+	var screen := DisplayServer.screen_get_size(DisplayServer.window_get_current_screen())
 	for s in DisplaySettings.sizes_fitting(screen):
 		_size_option.add_item("%d × %d" % [s.x, s.y])
 		_size_option.set_item_metadata(_size_option.item_count - 1, s)
