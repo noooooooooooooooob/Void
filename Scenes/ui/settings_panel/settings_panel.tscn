@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://hnrjvqpehfxa"]
+
+[ext_resource type="Script" uid="uid://ctuhxydhueypj" path="res://Scripts/ui/settings_panel.gd" id="1_p4vm0"]
+
+[node name="SettingsPanel" type="Control" unique_id=1102423267]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_p4vm0")
+
+[node name="Dim" type="ColorRect" parent="." unique_id=778504441]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="Box" type="PanelContainer" parent="Dim" unique_id=676658060]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="Dim/Box" unique_id=1764014982]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 32
+
+[node name="Rows" type="VBoxContainer" parent="Dim/Box/Margin" unique_id=1974484217]
+layout_mode = 2
+theme_override_constants/separation = 28
+
+[node name="Title" type="Label" parent="Dim/Box/Margin/Rows" unique_id=555050271]
+layout_mode = 2
+theme_type_variation = &"PanelTitle"
+text = "설정"
+
+[node name="Grid" type="GridContainer" parent="Dim/Box/Margin/Rows" unique_id=1677270798]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 32
+theme_override_constants/v_separation = 18
+columns = 2
+
+[node name="ModeLabel" type="Label" parent="Dim/Box/Margin/Rows/Grid" unique_id=1878494398]
+layout_mode = 2
+text = "화면 모드"
+
+[node name="ModeOption" type="OptionButton" parent="Dim/Box/Margin/Rows/Grid" unique_id=933247429]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SizeLabel" type="Label" parent="Dim/Box/Margin/Rows/Grid" unique_id=783764910]
+layout_mode = 2
+text = "창 크기"
+
+[node name="SizeOption" type="OptionButton" parent="Dim/Box/Margin/Rows/Grid" unique_id=1176631443]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="Dim/Box/Margin/Rows" unique_id=280848528]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+theme_type_variation = &"GhostButton"
+text = "닫기  ESC"
