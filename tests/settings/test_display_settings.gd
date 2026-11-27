@@ -4,11 +4,18 @@ extends GutTest
 func test_sizes_fitting_1080p_screen():
 	# 작업 표시줄 때문에 사용 가능 영역은 1920×1040 같은 값
 	assert_eq(DisplaySettings.sizes_fitting(Vector2i(1920, 1040)),
-		[Vector2i(1280, 720), Vector2i(1600, 900)] as Array[Vector2i])
+		[Vector2i(1280, 720), Vector2i(1366, 768), Vector2i(1440, 810), Vector2i(1536, 864),
+		Vector2i(1600, 900)] as Array[Vector2i])
 
-func test_sizes_fitting_big_screen_has_all_three():
+func test_sizes_fitting_big_screen_has_all_16_9_sizes():
 	assert_eq(DisplaySettings.sizes_fitting(Vector2i(3840, 2160)),
-		[Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080)] as Array[Vector2i])
+		[Vector2i(1280, 720), Vector2i(1366, 768), Vector2i(1440, 810), Vector2i(1536, 864),
+		Vector2i(1600, 900), Vector2i(1920, 1080)] as Array[Vector2i])
+
+func test_sizes_fitting_laptop_768_screen():
+	# 1366×768 노트북 (작업 표시줄 빼면 1366×728)
+	assert_eq(DisplaySettings.sizes_fitting(Vector2i(1366, 728)),
+		[Vector2i(1280, 720)] as Array[Vector2i])
 
 func test_sizes_fitting_tiny_screen_keeps_smallest():
 	assert_eq(DisplaySettings.sizes_fitting(Vector2i(1024, 600)),

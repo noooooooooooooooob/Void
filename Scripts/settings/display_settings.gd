@@ -7,8 +7,12 @@ extends RefCounted
 ## 화면 모드. WINDOW = 창, FULLSCREEN = 테두리 없는 전체화면 (모니터 해상도 그대로)
 enum Mode { WINDOW, FULLSCREEN }
 
-## 고를 수 있는 창 크기 (작은 것부터). 사용자 결정: 1920×1080 까지
-const SIZES: Array[Vector2i] = [Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080)]
+## 고를 수 있는 창 크기 (작은 것부터). 사용자 결정: 16:9 만, 1920×1080 까지
+## (1366×768 은 정확히 16:9 는 아니지만 노트북 표준 해상도라 넣음 — 차이는 expand 가 흡수)
+const SIZES: Array[Vector2i] = [
+	Vector2i(1280, 720), Vector2i(1366, 768), Vector2i(1440, 810),
+	Vector2i(1536, 864), Vector2i(1600, 900), Vector2i(1920, 1080),
+]
 ## 설정 파일이 없거나 값이 이상할 때의 창 크기 (project.godot 의 window override 와 같음)
 const DEFAULT_SIZE := Vector2i(1600, 900)
 
