@@ -76,3 +76,9 @@ func test_performance_draws_in_world_above_units():
 # 피격 이펙트는 밝게 남도록 앞쪽 층(3층)에
 func test_hit_effects_on_front_layer():
 	assert_eq(_layer("%EffectLayer"), 3)
+
+# 설정 창은 모든 층 위에 뜨고, 화면 흔들기에 같이 흔들리지 않는다
+func test_settings_layer_on_top_and_still():
+	var l := s.get_node("SettingsLayer") as CanvasLayer
+	assert_gt(l.layer, 4)
+	assert_false(l.follow_viewport_enabled)

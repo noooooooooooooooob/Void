@@ -1,7 +1,7 @@
 class_name SettingsPanel
 extends Control
-## 설정 창. 씬: `Scenes/ui/settings_panel/settings_panel.tscn`. 타이틀·사무소 화면에 하나씩 인스턴스로 들어가 있고
-## 각 화면의 "설정" 버튼이 open() 을 부른다.
+## 설정 창. 씬: `Scenes/ui/settings_panel/settings_panel.tscn`. 타이틀·사무소·전투 화면에 하나씩 인스턴스로 들어가 있고
+## 타이틀·사무소는 "설정" 버튼이, 전투는 취소할 게 없을 때의 ESC 가 open() 을 부른다 (전투에선 pause_game 켬).
 ## - 화면 모드(창 / 전체화면)와 창 크기를 고르면 GameSettings 가 바로 적용하고 바로 저장한다
 ## - 창 크기 목록은 지금 모니터에 들어가는 것만. 전체화면일 때는 창 크기를 못 고른다
 ## - 닫기 버튼·ESC 로 닫힘. 열려 있는 동안 뒤 화면은 키 입력을 받지 않는다
@@ -9,6 +9,10 @@ extends Control
 
 ## 창이 닫힌 뒤
 signal closed
+
+## 켜면 창이 떠 있는 동안 게임을 일시정지한다 (전투 화면: 창 뒤에서 적 차례가 진행되지 않게).
+## 창 자체는 씬 루트의 process_mode = ALWAYS 라 멈춘 동안에도 입력을 받는다
+@export var pause_game := false
 
 ## %ModeOption 의 줄 순서 = DisplaySettings.Mode 값 (0 창, 1 전체화면)
 const MODE_TEXTS := ["창", "전체화면"]
@@ -41,11 +45,15 @@ func open() -> void:
 	_refresh()
 	show()
 	_mode_option.grab_focus()
+	if pause_game:
+		get_tree().paused = true
 
 
-## 창을 숨기고 closed 를 보낸다
+## 창을 숨기고 (pause_game 이면 일시정지를 풀고) closed 를 보낸다
 func close() -> void:
 	hide()
+	if pause_game:
+		get_tree().paused = false
 	closed.emit()
 
 

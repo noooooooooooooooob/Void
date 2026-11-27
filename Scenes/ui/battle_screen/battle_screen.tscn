@@ -12,6 +12,7 @@
 [ext_resource type="Resource" uid="uid://bwwjccfn24hbc" path="res://items/consumables/분노 포션.tres" id="7_hxvqh"]
 [ext_resource type="Resource" uid="uid://2i21cekyg8p1" path="res://items/consumables/쉴드 포션.tres" id="8_8gv40"]
 [ext_resource type="PackedScene" uid="uid://dcesqstjti4i6" path="res://Scenes/ui/battle_screen/item_slot.tscn" id="8_yl6x5"]
+[ext_resource type="PackedScene" uid="uid://hnrjvqpehfxa" path="res://Scenes/ui/settings_panel/settings_panel.tscn" id="13_yl6x5"]
 
 [node name="BattleScreen" type="Control" unique_id=1934429999]
 layout_mode = 3
@@ -233,6 +234,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
 [node name="EffectLayer" type="Control" parent="FrontLayer/WorldFront" unique_id=1688367641]
@@ -407,3 +410,12 @@ offset_bottom = 68.0
 focus_mode = 0
 theme_type_variation = &"GhostButton"
 text = "←  사무소로"
+
+[node name="SettingsLayer" type="CanvasLayer" parent="." unique_id=230055396]
+layer = 10
+
+[node name="SettingsPanel" parent="SettingsLayer" unique_id=1102423267 instance=ExtResource("13_yl6x5")]
+unique_name_in_owner = true
+grow_horizontal = 2
+grow_vertical = 2
+pause_game = true

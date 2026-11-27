@@ -78,3 +78,20 @@ func test_close_button_closes():
 	p.open()
 	p.get_node("%CloseButton").pressed.emit()
 	assert_false(p.visible)
+
+func test_pause_game_pauses_tree_while_open():
+	var p := _panel()
+	p.pause_game = true
+	p.open()
+	assert_true(get_tree().paused)
+	p.close()
+	assert_false(get_tree().paused)
+
+func test_no_pause_by_default():
+	var p := _panel()
+	p.open()
+	assert_false(get_tree().paused)
+	p.close()
+
+func test_panel_runs_while_paused():
+	assert_eq(_panel().process_mode, Node.PROCESS_MODE_ALWAYS)

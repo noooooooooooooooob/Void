@@ -361,30 +361,33 @@ func select_item(index: int) -> bool:
 
 
 ## 취소 (우클릭 / ESC). 순서: 이동 모드 → 고른 아이템 → (고른 카드가 없으면) 열린 가방 닫기 → 고른 카드 내려놓기.
-func cancel() -> void:
+## 무언가 취소했으면 true, 취소할 게 없었으면 false (ESC 는 이때 설정 창을 연다)
+func cancel() -> bool:
 	# 결과 창: 카드 고르기 창 → 바꿀 칸 고르기 순서로 닫는다 (보상 줄은 남음)
 	if _card_pick.visible:
 		close_card_pick()
-		return
+		return true
 	if _drop_box.visible:
 		skip_drop()
-		return
+		return true
 	if _move_mode:
 		_move_mode = false
 		refresh()
-		return
+		return true
 	if selected_item >= 0:
 		selected_item = -1
 		_dragging_item = false
 		refresh()
-		return
+		return true
 	if selected == null and is_bag_open():
 		toggle_bag()
-		return
+		return true
+	var had_card := selected != null
 	selected = null
 	selected_index = -1
 	_dragging = false
 	refresh()
+	return had_card
 
 
 ## 차례 종료 버튼
@@ -1202,7 +1205,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		cancel()
 	elif event.is_action_pressed("ui_cancel"):
-		cancel()
+		# 취소할 게 없으면 설정 창 (창이 떠 있는 동안 전투 일시정지, 우클릭은 열지 않음)
+		if not cancel():
+			%SettingsPanel.open()
 	elif event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and _dragging:
 		_release_drag(get_global_mouse_position())
 	elif event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and _dragging_item:

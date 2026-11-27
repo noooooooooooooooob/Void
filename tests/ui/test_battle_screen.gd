@@ -429,3 +429,33 @@ func test_melee_card_short_drag_returns_card():
 	assert_eq(front.hp, 45)
 	assert_null(s.selected)
 	assert_eq(s.session.active.hand.size(), 5)
+
+func _esc() -> InputEventAction:
+	var e := InputEventAction.new()
+	e.action = "ui_cancel"
+	e.pressed = true
+	return e
+
+func test_esc_with_nothing_to_cancel_opens_settings_and_pauses():
+	var s := _screen()
+	s._unhandled_input(_esc())
+	var p: SettingsPanel = s.get_node("%SettingsPanel")
+	assert_true(p.visible)
+	assert_true(get_tree().paused, "설정 창이 떠 있는 동안 전투를 멈춘다")
+	p.close()
+	assert_false(get_tree().paused)
+
+func test_esc_with_card_selected_only_drops_card():
+	var s := _screen()
+	s.select_card(_index_of(s, "사격"))
+	s._unhandled_input(_esc())
+	assert_null(s.selected)
+	assert_false(s.get_node("%SettingsPanel").visible)
+
+func test_right_click_never_opens_settings():
+	var s := _screen()
+	var e := InputEventMouseButton.new()
+	e.button_index = MOUSE_BUTTON_RIGHT
+	e.pressed = true
+	s._unhandled_input(e)
+	assert_false(s.get_node("%SettingsPanel").visible)
