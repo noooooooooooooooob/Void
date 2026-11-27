@@ -38,6 +38,9 @@ haze_targets = Array[NodePath]([NodePath("../FarLayer")])
 haze_color = Color(1, 0.62, 0.4, 1)
 haze_material = SubResource("ShaderMaterial_etc4o")
 
+[node name="Sun" parent="." unique_id=662062533 instance=ExtResource("4_tj34o")]
+position = Vector2(1650, 120)
+
 [node name="FarLayer" type="TextureRect" parent="." unique_id=1759906676]
 light_mask = 0
 material = SubResource("ShaderMaterial_etc4o")
@@ -48,9 +51,6 @@ mouse_filter = 2
 texture = ExtResource("3_etc4o")
 expand_mode = 1
 stretch_mode = 6
-
-[node name="Sun" parent="." unique_id=662062533 instance=ExtResource("4_tj34o")]
-position = Vector2(1650, 120)
 
 [node name="NearLayer" type="TextureRect" parent="." unique_id=1069128218]
 layout_mode = 0

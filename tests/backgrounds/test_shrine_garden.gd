@@ -52,8 +52,9 @@ func test_mood_owns_part_values():
 
 func test_sun_drives_rays():
 	var sun := bg.get_node("Sun") as SkyBody
-	assert_gt(sun.get_index(), bg.get_node("FarLayer").get_index())   # 먼 산 그림이 화면 전체를 덮어서 그 앞
-	assert_lt(sun.get_index(), bg.get_node("NearLayer").get_index())
+	# 해는 제일 뒤 (무드의 하늘 바로 앞, 먼 산 뒤 — 먼 산 그림의 하늘은 투명). 2026-11-27 사용자 결정
+	assert_eq(sun.get_index(), 1)
+	assert_lt(sun.get_index(), bg.get_node("FarLayer").get_index())
 	var rays := bg.get_node("LightRays") as MoodRays
 	assert_true(rays.has_source)
 	assert_eq(rays.source, sun.global_position)
