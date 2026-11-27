@@ -69,3 +69,55 @@ func test_sky_body_emits_moved():
 	assert_signal_emitted(s, "moved")
 	s.visible = false
 	assert_signal_emit_count(s, "moved", 2)
+
+const RAYS := "res://Scenes/backgrounds/parts/light_rays.tscn"
+
+func _beams(r: Node) -> Array:
+	return r.get_children().filter(func(c): return c is Polygon2D)
+
+func test_beams_start_at_source_and_land_at_position():
+	var r = load(RAYS).instantiate()
+	add_child_autofree(r)
+	assert_true(r is MoodRays)
+	assert_true(r.is_in_group("mood_rays"))
+	r.source = Vector2(1700, 100)
+	r.has_source = true
+	for b in _beams(r):
+		var poly: PackedVector2Array = b.polygon
+		assert_eq(poly.size(), 4)
+		var near_mid: Vector2 = b.to_global((poly[0] + poly[1]) / 2)
+		var far_mid: Vector2 = b.to_global((poly[2] + poly[3]) / 2)
+		assert_almost_eq(near_mid.distance_to(Vector2(1700, 100)), 0.0, 0.5)
+		assert_almost_eq(far_mid.distance_to(b.global_position), 0.0, 0.5)
+		assert_almost_eq(poly[0].distance_to(poly[1]), r.width_near, 0.5)
+		assert_almost_eq(poly[2].distance_to(poly[3]), r.width_far, 0.5)
+		assert_almost_eq(b.vertex_colors[0].a, 1.0, 0.001)
+		assert_almost_eq(b.vertex_colors[1].a, 1.0, 0.001)
+		assert_almost_eq(b.vertex_colors[2].a, 0.0, 0.001)
+		assert_almost_eq(b.vertex_colors[3].a, 0.0, 0.001)
+
+func test_landings_kept_from_old_shape():
+	var r = load(RAYS).instantiate()
+	add_child_autofree(r)
+	assert_eq(r.get_node("Beam1").position, Vector2(1100, 1000))
+	assert_eq(r.get_node("Beam2").position, Vector2(840, 1000))
+	assert_eq(r.get_node("Beam3").position, Vector2(580, 1000))
+	assert_eq(r.get_node("Beam4").position, Vector2(320, 1000))
+
+func test_no_source_points_straight_down():
+	var r = load(RAYS).instantiate()
+	add_child_autofree(r)
+	r.has_source = false
+	var b := r.get_node("Beam1") as Polygon2D
+	var near_mid: Vector2 = (b.polygon[0] + b.polygon[1]) / 2
+	assert_almost_eq(near_mid.x, 0.0, 0.5)
+	assert_lt(near_mid.y, -500.0)
+
+func test_zero_length_beam_is_safe():
+	var r = load(RAYS).instantiate()
+	add_child_autofree(r)
+	r.source = (r.get_node("Beam1") as Node2D).global_position
+	r.has_source = true
+	assert_eq((r.get_node("Beam1") as Polygon2D).polygon.size(), 0)
+	r.source = Vector2(1700, 100)
+	assert_eq((r.get_node("Beam1") as Polygon2D).polygon.size(), 4)

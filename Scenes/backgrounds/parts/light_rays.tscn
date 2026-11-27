@@ -1,38 +1,45 @@
 [gd_scene format=3 uid="uid://d0iydf5748bff"]
 
+[ext_resource type="Script" uid="uid://c38kc80gylpxs" path="res://Scripts/backgrounds/mood_rays.gd" id="1_1j6wf"]
 [ext_resource type="Texture2D" uid="uid://b4npkglikk2a5" path="res://Scenes/backgrounds/parts/light_beam.tres" id="1_4s58e"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_1j6wf"]
 blend_mode = 1
 light_mode = 1
 
-[node name="LightRays" type="Node2D" unique_id=956297431]
+[node name="LightRays" type="Node2D" unique_id=956297431 groups=["mood_rays"]]
+modulate = Color(1, 0.8, 0.55, 0.4)
 material = SubResource("CanvasItemMaterial_1j6wf")
+script = ExtResource("1_1j6wf")
 
 [node name="Beam1" type="Polygon2D" parent="." unique_id=789234741]
 use_parent_material = true
+position = Vector2(1100, 1000)
 texture = ExtResource("1_4s58e")
-polygon = PackedVector2Array(1700, -50, 1790, -50, 1190, 1000, 1010, 1000)
+polygon = PackedVector2Array(-55, -1000, 55, -1000, 125, 0, -125, 0)
 uv = PackedVector2Array(0, 0, 64, 0, 64, 4, 0, 4)
-vertex_colors = PackedColorArray(1, 0.8, 0.55, 0.4, 1, 0.8, 0.55, 0.4, 1, 0.8, 0.55, 0, 1, 0.8, 0.55, 0)
+vertex_colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0)
 
 [node name="Beam2" type="Polygon2D" parent="." unique_id=1515768308]
 use_parent_material = true
+position = Vector2(840, 1000)
 texture = ExtResource("1_4s58e")
-polygon = PackedVector2Array(1440, -50, 1570, -50, 970, 1000, 710, 1000)
+polygon = PackedVector2Array(-55, -1000, 55, -1000, 125, 0, -125, 0)
 uv = PackedVector2Array(0, 0, 64, 0, 64, 4, 0, 4)
-vertex_colors = PackedColorArray(1, 0.8, 0.55, 0.4, 1, 0.8, 0.55, 0.4, 1, 0.8, 0.55, 0, 1, 0.8, 0.55, 0)
+vertex_colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0)
 
 [node name="Beam3" type="Polygon2D" parent="." unique_id=81071689]
 use_parent_material = true
+position = Vector2(580, 1000)
 texture = ExtResource("1_4s58e")
-polygon = PackedVector2Array(1180, -50, 1350, -50, 750, 1000, 410, 1000)
+polygon = PackedVector2Array(-55, -1000, 55, -1000, 125, 0, -125, 0)
 uv = PackedVector2Array(0, 0, 64, 0, 64, 4, 0, 4)
-vertex_colors = PackedColorArray(1, 0.8, 0.55, 0.4, 1, 0.8, 0.55, 0.4, 1, 0.8, 0.55, 0, 1, 0.8, 0.55, 0)
+vertex_colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0)
 
 [node name="Beam4" type="Polygon2D" parent="." unique_id=1534761932]
 use_parent_material = true
+position = Vector2(320, 1000)
 texture = ExtResource("1_4s58e")
-polygon = PackedVector2Array(920, -50, 1130, -50, 530, 1000, 110, 1000)
+polygon = PackedVector2Array(-55, -1000, 55, -1000, 125, 0, -125, 0)
 uv = PackedVector2Array(0, 0, 64, 0, 64, 4, 0, 4)
-vertex_colors = PackedColorArray(1, 0.8, 0.55, 0.4, 1, 0.8, 0.55, 0.4, 1, 0.8, 0.55, 0, 1, 0.8, 0.55, 0)
+vertex_colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0)
