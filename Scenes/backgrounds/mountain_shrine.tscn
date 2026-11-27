@@ -3,6 +3,17 @@
 [ext_resource type="Texture2D" uid="uid://k7kvyqli8ga3" path="res://Art/backgrounds/battle/mountain_shrine_terrace.png" id="1_u8l2e"]
 [ext_resource type="PackedScene" uid="uid://c5yxjecsyp5ug" path="res://Scenes/ui/battle_screen/battle_board.tscn" id="2_u8l2e"]
 
+[sub_resource type="Gradient" id="Gradient_u8l2e"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_2vm7y"]
+gradient = SubResource("Gradient_u8l2e")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
 [node name="MountainShrine" type="Control" unique_id=796481465]
 layout_mode = 3
 anchors_preset = 15
@@ -340,6 +351,14 @@ offset_left = 652.7894
 offset_top = 657.9207
 offset_right = 911.7901
 offset_bottom = 801.8021
+
+[node name="CharacterLight" type="PointLight2D" parent="." unique_id=923201154]
+position = Vector2(450, 250)
+energy = 0.5
+range_item_cull_mask = 2
+texture = SubResource("GradientTexture2D_2vm7y")
+texture_scale = 6.0
+height = 150.0
 
 [editable path="Ally Board"]
 [editable path="Enemy Board"]

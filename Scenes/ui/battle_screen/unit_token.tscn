@@ -20,6 +20,7 @@ color = Color(0.47843137, 0.18431373, 0.22745098, 1)
 
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=249696371]
 unique_name_in_owner = true
+light_mask = 3
 position = Vector2(50, 50)
 scale = Vector2(0.2, 0.2)
 offset = Vector2(0, -200)

@@ -1,37 +1,37 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://clsjvjhaikvkc"]
 
-[ext_resource type="Texture2D" uid="uid://cuh46q166wrwo" path="res://Art/characters/hongyeon/hongyeon_idle_canvas.tres" id="1_i77dn"]
+[ext_resource type="Texture2D" uid="uid://cuh46q166wrwo" path="res://Art/characters/hongyeon/hongyeon_idle_canvas.tres" id="1_4xhur"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ncuat"]
-atlas = ExtResource("1_i77dn")
+atlas = ExtResource("1_4xhur")
 region = Rect2(0, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bgqdh"]
-atlas = ExtResource("1_i77dn")
+atlas = ExtResource("1_4xhur")
 region = Rect2(128, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a71gp"]
-atlas = ExtResource("1_i77dn")
+atlas = ExtResource("1_4xhur")
 region = Rect2(256, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3kmro"]
-atlas = ExtResource("1_i77dn")
+atlas = ExtResource("1_4xhur")
 region = Rect2(384, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k6wn1"]
-atlas = ExtResource("1_i77dn")
+atlas = ExtResource("1_4xhur")
 region = Rect2(512, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1dvt3"]
-atlas = ExtResource("1_i77dn")
+atlas = ExtResource("1_4xhur")
 region = Rect2(640, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_d7f0e"]
-atlas = ExtResource("1_i77dn")
+atlas = ExtResource("1_4xhur")
 region = Rect2(768, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pcovc"]
-atlas = ExtResource("1_i77dn")
+atlas = ExtResource("1_4xhur")
 region = Rect2(896, 0, 128, 128)
 
 [resource]
