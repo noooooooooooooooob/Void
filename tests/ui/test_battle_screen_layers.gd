@@ -66,3 +66,13 @@ func _abs_z(n: CanvasItem) -> int:
 			break
 		c = c.get_parent()
 	return z
+
+# 카드 연출(행위자 복사본)은 월드 층에서 어둠·조명을 받고, 유닛보다 위에 그려진다 (2026-11-27 사용자 결정 A)
+func test_performance_draws_in_world_above_units():
+	assert_eq(_layer("%PerformanceLayer"), 0)
+	var tok: CanvasItem = s._tokens.values()[0]
+	assert_gt(_abs_z(s.get_node("%PerformanceLayer")), _abs_z(tok))
+
+# 피격 이펙트는 밝게 남도록 앞쪽 층(3층)에
+func test_hit_effects_on_front_layer():
+	assert_eq(_layer("%EffectLayer"), 3)

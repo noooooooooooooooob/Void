@@ -67,6 +67,14 @@ theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 4
 
+[node name="PerformanceLayer" type="Control" parent="World" unique_id=874589522]
+unique_name_in_owner = true
+z_index = 2
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
 [node name="EnemyTimer" type="Timer" parent="." unique_id=136294226]
 unique_name_in_owner = true
 one_shot = true
@@ -227,7 +235,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="PerformanceLayer" type="Control" parent="FrontLayer/WorldFront" unique_id=874589522]
+[node name="EffectLayer" type="Control" parent="FrontLayer/WorldFront" unique_id=1688367641]
 unique_name_in_owner = true
 anchors_preset = 0
 anchor_right = 1.0

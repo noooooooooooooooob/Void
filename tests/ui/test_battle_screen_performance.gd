@@ -254,7 +254,7 @@ func test_hit_spawns_effect_on_target():
 	fx.free()
 	var s := _screen()
 	s.hit_effect = fx_scene
-	var layer := s.get_node("%PerformanceLayer")
+	var layer := s.get_node("%EffectLayer")
 	_use(s, "연출타격")
 	var before := layer.get_child_count()
 	await wait_for_signal(_queue(s).hit, 1.0)
@@ -637,3 +637,14 @@ func test_screen_scale_authoring_keeps_root_at_one():
 	var perf: CardPerformance = s.get_node("%PerformanceLayer").get_child(0)
 	assert_almost_eq(perf.global_scale, sprite.global_scale / Vector2(0.2, 0.2), Vector2(0.001, 0.001))
 	assert_almost_eq(perf.get_node("%Actor").global_scale, sprite.global_scale, Vector2(0.001, 0.001))
+
+# 연출 행위자는 진짜 유닛 그림과 같은 빛 층을 받는다 (캐릭터 보조광은 2번 층만 비춤)
+func test_actor_gets_unit_light_mask():
+	var s := _screen(_data(45, null, _perf_x([[0.0, 0.0], [0.2, 0.0]], 0.3)))
+	await wait_process_frames(2)
+	var hero_sprite: CanvasItem = s._tokens[s.session.active].sprite()
+	_use(s, "연출타격")
+	await wait_frames(2)
+	var actor: CanvasItem = s.get_node("%PerformanceLayer").get_child(0).get_node("%Actor")
+	assert_eq(actor.light_mask, hero_sprite.light_mask)
+	assert_eq(actor.light_mask & 2, 2)

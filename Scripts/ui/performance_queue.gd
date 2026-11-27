@@ -81,6 +81,10 @@ func _start(step: PerformanceStep) -> void:
 		_perf.global_position = PerformanceSpace.root_position(_sprite.global_position, _perf.home_position(), s)
 		_sprite_was_visible = _sprite.visible
 		_sprite.visible = false
+		# 행위자 복사본도 진짜 그림과 같은 빛 층을 받게 (캐릭터 보조광은 2번 층만 비춤 — 전투 무드)
+		var actor := _perf.get_node_or_null(^"%Actor") as CanvasItem
+		if actor:
+			actor.light_mask = _sprite.light_mask
 	# 2. Target 을 기준 대상 그림 자리에 (대상이 없거나 자신이면 에디터에서 짠 거리 그대로 — 설계 2장)
 	var target: UnitToken = token_of.call(step.target) if step.target and step.target != step.actor and token_of.is_valid() else null
 	if target and target.sprite():

@@ -157,10 +157,13 @@ var reward: BattleReward = null
 @onready var _result_box: Control = %ResultOverlay/Box       # 결과 글자·보상 목록·계속 버튼 묶음 (카드 고르기 창이 열리면 숨김)
 @onready var _skip_button: Button = %SkipButton
 @onready var _enemy_timer: Timer = %EnemyTimer
+## 카드 연출 씬을 띄우는 곳. 월드(0층) 안, 유닛(z 1)보다 위(z 2) — 행위자 복사본도 어둠·조명·노말맵을 받게 (2026-11-27 사용자 결정)
 @onready var _perf_layer: Control = %PerformanceLayer
+## 피격 이펙트를 띄우는 곳. 앞쪽 층(3층)이라 어둠을 안 받고 밝게 보인다
+@onready var _fx_layer: Control = %EffectLayer
 ## 연출 카메라가 움직이는 월드 묶음 (배경·격자). UI 는 여기에 없어서 고정된다
 @onready var _world: Control = %World
-## 연출 카메라가 움직이는 앞쪽 월드 묶음 (연출·숫자 레이어). World 와 같은 변환을 받는다 — 그리기 순서를 지키려고 둘로 나눔
+## 연출 카메라가 움직이는 앞쪽 월드 묶음 (피격 이펙트·숫자 레이어, 3층). World 와 같은 변환을 받는다 — UI 위에 밝게 그리려고 둘로 나눔
 @onready var _world_front: Control = %WorldFront
 @onready var _queue: PerformanceQueue = %PerformanceQueue
 @onready var _hit_sound: AudioStreamPlayer = %HitSound
@@ -673,7 +676,7 @@ func _on_hit(step: PerformanceStep, perf: CardPerformance) -> void:
 			_knockback(t.sprite(), signf(t.get_global_rect().get_center().x - from.get_global_rect().get_center().x), push, push_back)
 		if fx:
 			var e: Node = fx.instantiate()
-			_perf_layer.add_child(e)
+			_fx_layer.add_child(e)
 			if e is Node2D or e is Control:
 				e.global_position = t.get_global_rect().get_center()
 	# 2. 화면 전체 흔들림
@@ -1232,8 +1235,8 @@ func _update_camera() -> void:
 	if perf == null or perf != _cam_perf:
 		_return_camera()
 		return
-	# 연출 루트 좌표 → 월드 묶음 좌표 (WorldFront 기준이라 월드 자신의 변환이 섞이지 않는다)
-	var t := _world_front.get_global_transform().affine_inverse() * perf.get_global_transform()
+	# 연출 루트 좌표 → 월드 묶음 좌표 (연출은 World 안에 있으므로 World 기준이라야 월드 자신의 변환이 섞이지 않는다)
+	var t := _world.get_global_transform().affine_inverse() * perf.get_global_transform()
 	_set_world_xform(_cam_base * CameraMath.world_xform(t, _cam0, perf.camera_xform()))
 
 
