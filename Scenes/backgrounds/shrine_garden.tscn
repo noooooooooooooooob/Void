@@ -40,6 +40,8 @@ haze_material = SubResource("ShaderMaterial_etc4o")
 
 [node name="Sun" parent="." unique_id=662062533 instance=ExtResource("4_tj34o")]
 position = Vector2(1650, 120)
+body_size = 47.0
+glow_strength = 1.0
 
 [node name="FarLayer" type="TextureRect" parent="." unique_id=1759906676]
 light_mask = 0
@@ -69,7 +71,7 @@ energy = 1.0
 brightness = 1.0
 
 [node name="LanternR" parent="." unique_id=2071396968 instance=ExtResource("5_tj34o")]
-position = Vector2(1791.4, 459.3)
+position = Vector2(1791, 459)
 energy = 1.0
 brightness = 1.0
 
