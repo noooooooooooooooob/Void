@@ -22,10 +22,16 @@ signal pressed(side: int, cell: Vector2i)
 ## custom_corners 가 바뀌었을 때. 격자판이 받아서 칸을 다시 배치한다
 signal custom_corners_changed
 
-## 칸 바탕색
+## 칸 바탕색. cell_texture 가 있으면 그림 색(곱하기)으로 쓴다 — 흰색이면 그림 그대로
 @export var fill_color: Color = Color(0.16470589, 0.15294118, 0.2, 1):
 	set(value):
 		fill_color = value
+		queue_redraw()
+
+## 칸 그림 (2026-11-27 사용자 추가 Art/ui/grid_cell.png). 칸 모양(사각형)대로 펴서 그린다. 비우면 fill_color 로 채움
+@export var cell_texture: Texture2D:
+	set(value):
+		cell_texture = value
 		queue_redraw()
 
 ## 표시 종류별 덧칠 색 (씬 인스펙터에서 바꿀 수 있다)
@@ -97,6 +103,11 @@ func center() -> Vector2:
 	return sum / quad.size()
 
 
+## 칸 그림의 네 꼭짓점 uv (왼쪽 위부터 시계 방향 = quad 꼭짓점 순서). 그림을 사각형 모양대로 펴서 그린다
+static func quad_uvs() -> PackedVector2Array:
+	return PackedVector2Array([Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)])
+
+
 ## 지금 모양을 색으로 채울 수 있는지. 꼭짓점이 꼬이거나 일직선이면 false.
 func can_fill() -> bool:
 	return quad.is_empty() or not Geometry2D.triangulate_polygon(quad).is_empty()
@@ -106,7 +117,10 @@ func _draw() -> void:
 	# 1. 기본 격자: 네모
 	if quad.is_empty():
 		var rect := Rect2(Vector2.ZERO, size)
-		draw_rect(rect, fill_color)
+		if cell_texture:
+			draw_texture_rect(cell_texture, rect, false, fill_color)
+		else:
+			draw_rect(rect, fill_color)
 		draw_rect(rect, _mark_color)
 		return
 	# 2. 꼬인 모양은 채울 수 없으니 외곽선만 그린다 (드래그 도중에 생길 수 있음)
@@ -115,8 +129,11 @@ func _draw() -> void:
 		outline.append(quad[0])
 		draw_polyline(outline, fill_color, 2.0)
 		return
-	# 3. 사각형을 채우고 표시 색을 덧칠한다
-	draw_colored_polygon(quad, fill_color)
+	# 3. 사각형을 그림(없으면 바탕색)으로 채우고 표시 색을 덧칠한다
+	if cell_texture and quad.size() == 4:
+		draw_colored_polygon(quad, fill_color, quad_uvs(), cell_texture)
+	else:
+		draw_colored_polygon(quad, fill_color)
 	if _mark_color.a > 0.0:
 		draw_colored_polygon(quad, _mark_color)
 

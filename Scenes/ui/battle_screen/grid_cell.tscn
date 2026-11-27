@@ -1,9 +1,12 @@
 [gd_scene format=3 uid="uid://djk0rr812mnud"]
 
 [ext_resource type="Script" uid="uid://66gnsd2p1jbi" path="res://Scripts/ui/grid_cell.gd" id="1_0sqyp"]
+[ext_resource type="Texture2D" uid="uid://cfet6pxugb5ch" path="res://Art/ui/grid_cell.png" id="2_odf5u"]
 
 [node name="GridCell" type="Control" unique_id=230895616]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_0sqyp")
+fill_color = Color(1, 1, 1, 1)
+cell_texture = ExtResource("2_odf5u")
