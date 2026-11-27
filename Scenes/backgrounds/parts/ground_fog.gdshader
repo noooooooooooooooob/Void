@@ -1,12 +1,13 @@
 // 바닥 안개 (ground_fog.tscn). 노이즈 텍스처를 가로로 천천히 흘려서 안개가 움직이는 것처럼 보이게 한다.
 // 색·진하기는 노드 modulate (색 = rgb, 진하기 = a). 노이즈는 어디가 진한지만 정한다.
 // 텍스처는 seamless 이고 노드의 texture_repeat 가 켜져 있어야 이어진다.
-// - speed: 초당 흐르는 양 (UV 단위, 음수면 반대 방향)
+// - speed: 초당 흐르는 양 (UV 단위, 음수면 반대 방향, 노드마다 따로)
 // - edge: 위·아래 가장자리를 부드럽게 사라지게 하는 폭 (UV 단위)
 shader_type canvas_item;
 render_mode unshaded;
 
-uniform float speed = 0.01;
+// 노드마다 따로 (instance uniform) — BattleMood 가 set_instance_shader_parameter 로 넣는다. 재질은 부품 하나를 같이 씀
+instance uniform float speed = 0.01;
 uniform float edge : hint_range(0.0, 0.5) = 0.35;
 
 varying vec4 tint; // 노드 modulate

@@ -3,9 +3,7 @@
 [ext_resource type="Shader" uid="uid://do2hteepwquv3" path="res://Scenes/backgrounds/parts/ground_fog.gdshader" id="1_rnmmg"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rnmmg"]
-resource_local_to_scene = true
 shader = ExtResource("1_rnmmg")
-shader_parameter/speed = 0.01
 shader_parameter/edge = 0.35
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_e0nkq"]

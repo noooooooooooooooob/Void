@@ -7,7 +7,7 @@ extends Node2D
 ##
 ## 자식: Glow (Sprite2D, 더하기 헤일로) / Disc (Sprite2D, 원반). 둘 다 빛을 안 받는다 (light_mask 0, unshaded).
 
-## 옮겨졌거나 보이기/숨기기가 바뀜. BattleMood 가 받아 빛줄기를 다시 맞춘다
+## 옮겨졌거나 보이기/숨기기가 바뀌었거나 트리에서 빠짐. BattleMood 가 받아 빛줄기를 다시 맞춘다
 signal moved
 
 ## Disc 텍스처 원래 크기 (px). body_size 를 배율로 바꿀 때 쓴다
@@ -39,7 +39,10 @@ func _ready() -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_TRANSFORM_CHANGED or what == NOTIFICATION_VISIBILITY_CHANGED:
+	# 트리에서 빠질 때(지움·옮김)도 알려야 빛줄기가 없는 해를 계속 가리키지 않는다.
+	# 받는 쪽(BattleMood)은 한 프레임 뒤에 다시 맞춘다 (빠지는 중에는 아직 트리·그룹에 있음)
+	if what == NOTIFICATION_TRANSFORM_CHANGED or what == NOTIFICATION_VISIBILITY_CHANGED \
+			or what == NOTIFICATION_EXIT_TREE:
 		moved.emit()
 
 

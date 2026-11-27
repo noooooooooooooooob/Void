@@ -124,19 +124,16 @@ func test_zero_length_beam_is_safe():
 
 const FOG := "res://Scenes/backgrounds/parts/ground_fog.tscn"
 
-# 배경 씬에 안개를 둘 넣었을 때 재질이 따로여야 한 쪽 속도를 바꿔도 다른 쪽이 안 바뀐다
-func test_fog_group_and_material_not_shared():
-	var holder := Node2D.new()
-	var f1: Node = load(FOG).instantiate()
-	var f2: Node = load(FOG).instantiate()
-	holder.add_child(f1)
-	holder.add_child(f2)
-	f1.owner = holder
-	f2.owner = holder
-	var scene := PackedScene.new()
-	scene.pack(holder)
-	holder.free()
-	var inst := scene.instantiate()
-	add_child_autofree(inst)
-	assert_true(inst.get_child(0).is_in_group("mood_fog"))
-	assert_ne(inst.get_child(0).material, inst.get_child(1).material)
+# 안개 속도는 인스턴스 셰이더 값이라 재질은 하나를 같이 쓴다 (리뷰 Important 2: 배경 씬에 재질 사본이 저장되지 않게)
+func test_fog_group_and_shared_material_with_instance_speed():
+	var f1: Sprite2D = load(FOG).instantiate()
+	var f2: Sprite2D = load(FOG).instantiate()
+	add_child_autofree(f1)
+	add_child_autofree(f2)
+	assert_true(f1.is_in_group("mood_fog"))
+	assert_eq(f1.material, f2.material)
+	assert_false(f1.material.resource_local_to_scene)
+	f1.set_instance_shader_parameter("speed", 0.05)
+	f2.set_instance_shader_parameter("speed", -0.03)
+	assert_almost_eq(f1.get_instance_shader_parameter("speed"), 0.05, 0.0001)
+	assert_almost_eq(f2.get_instance_shader_parameter("speed"), -0.03, 0.0001)

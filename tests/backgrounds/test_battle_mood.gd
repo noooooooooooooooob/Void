@@ -169,7 +169,7 @@ func test_rays_color_strength_and_fog():
 	m.fog_speed = -0.02
 	assert_eq(r.modulate, Color(0.5, 0.6, 1.0, 1.5))
 	assert_eq(f.modulate, Color(0.1, 0.2, 0.3, 0.4))
-	assert_almost_eq(f.material.get_shader_parameter("speed"), -0.02, 0.0001)
+	assert_almost_eq(f.get_instance_shader_parameter("speed"), -0.02, 0.0001)
 
 func test_rays_follow_first_visible_sky_body():
 	var r = load(RAYS).instantiate()
@@ -196,3 +196,17 @@ func test_rays_follow_first_visible_sky_body():
 func test_bloom_threshold():
 	m.bloom_threshold = 1.2
 	assert_almost_eq((m.get_node("Glow") as WorldEnvironment).environment.glow_hdr_threshold, 1.2, 0.001)
+
+# 리뷰 Important 1: 해를 지우면 빛줄기가 없는 해를 계속 가리키면 안 됨
+func test_removing_sky_body_reaims_rays():
+	var r = load(RAYS).instantiate()
+	root.add_child(r)
+	var sun = load(SUN).instantiate()
+	root.add_child(sun)
+	sun.position = Vector2(1700, 100)
+	await wait_physics_frames(2)
+	assert_true(r.has_source)
+	root.remove_child(sun)
+	sun.free()
+	await wait_physics_frames(2)
+	assert_false(r.has_source)

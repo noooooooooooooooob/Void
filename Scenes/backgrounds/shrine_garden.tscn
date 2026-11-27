@@ -9,20 +9,13 @@
 [ext_resource type="PackedScene" uid="uid://cg1enfaofbv44" path="res://Scenes/backgrounds/parts/lantern_light.tscn" id="5_tj34o"]
 [ext_resource type="PackedScene" uid="uid://tcjg0q1pr2y1" path="res://Scenes/backgrounds/parts/ground_fog.tscn" id="6_5wf45"]
 [ext_resource type="PackedScene" uid="uid://c5yxjecsyp5ug" path="res://Scenes/ui/battle_screen/battle_board.tscn" id="7_20d21"]
-[ext_resource type="Shader" uid="uid://do2hteepwquv3" path="res://Scenes/backgrounds/parts/ground_fog.gdshader" id="9_5wf45"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_20d21"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_etc4o"]
 resource_local_to_scene = true
 shader = ExtResource("2_s5611")
 shader_parameter/haze = Color(1, 0.62, 0.4, 1)
 shader_parameter/amount = 0.35
 shader_parameter/blur = 1.5
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_v1g0x"]
-resource_local_to_scene = true
-shader = ExtResource("9_5wf45")
-shader_parameter/speed = 0.01
-shader_parameter/edge = 0.35
 
 [node name="ShrineGarden" type="Control" unique_id=1773737141]
 layout_mode = 3
@@ -43,11 +36,11 @@ fog_color = Color(0.7, 0.5, 0.45, 1)
 vignette = 0.45
 haze_targets = Array[NodePath]([NodePath("../FarLayer")])
 haze_color = Color(1, 0.62, 0.4, 1)
-haze_material = SubResource("ShaderMaterial_20d21")
+haze_material = SubResource("ShaderMaterial_etc4o")
 
 [node name="FarLayer" type="TextureRect" parent="." unique_id=1759906676]
 light_mask = 0
-material = SubResource("ShaderMaterial_20d21")
+material = SubResource("ShaderMaterial_etc4o")
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -82,7 +75,7 @@ brightness = 1.0
 
 [node name="GroundFog" parent="." unique_id=886416631 instance=ExtResource("6_5wf45")]
 modulate = Color(0.7, 0.5, 0.45, 0.25)
-material = SubResource("ShaderMaterial_v1g0x")
+instance_shader_parameters/speed = 0.01
 position = Vector2(0, 700)
 
 [node name="Ally Board" parent="." unique_id=1544493984 instance=ExtResource("7_20d21")]

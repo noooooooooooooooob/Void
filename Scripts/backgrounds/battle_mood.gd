@@ -233,12 +233,10 @@ func _apply_parts() -> void:
 	for l in _parts(LIGHT_GROUP):
 		l.mood_brightness_scale = light_scale
 		l.mood_halo_scale = halo_scale
-	# 안개: 색·진하기 = modulate, 속도 = 셰이더 (재질은 인스턴스마다 따로, local_to_scene)
+	# 안개: 색·진하기 = modulate, 속도 = 인스턴스 셰이더 값 (재질은 부품 것 하나를 같이 써서 배경 씬에 사본이 안 생김)
 	for f in _parts(FOG_GROUP):
 		(f as CanvasItem).modulate = Color(fog_color.r, fog_color.g, fog_color.b, fog_density)
-		var mat := (f as CanvasItem).material as ShaderMaterial
-		if mat:
-			mat.set_shader_parameter("speed", fog_speed)
+		(f as CanvasItem).set_instance_shader_parameter("speed", fog_speed)
 	_apply_rays()
 
 
@@ -249,8 +247,8 @@ func _apply_rays() -> void:
 		return
 	var body: SkyBody = null
 	for b in _parts(SKY_BODY_GROUP):
-		if not b.moved.is_connected(_apply_rays):
-			b.moved.connect(_apply_rays)
+		if not b.moved.is_connected(_on_sky_body_moved):
+			b.moved.connect(_on_sky_body_moved)
 		if body == null and (b as CanvasItem).is_visible_in_tree():
 			body = b
 	for r in _parts(RAYS_GROUP):
@@ -260,6 +258,12 @@ func _apply_rays() -> void:
 			r.has_source = true
 		else:
 			r.has_source = false
+
+
+## 해·달이 옮겨지거나 숨겨지거나 빠짐 → 한 프레임 뒤에 빛줄기를 다시 맞춘다.
+## 빠지는 중(EXIT_TREE)에는 그 해가 아직 트리에 있어 바로 맞추면 다시 잡히기 때문
+func _on_sky_body_moved() -> void:
+	_apply_rays.call_deferred()
 
 
 ## 부모 아래에서 그룹 g 에 든 노드들 (트리 순서). 실행 중 추가된 노드도 찾도록 owner 를 따지지 않는다

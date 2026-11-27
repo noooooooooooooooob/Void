@@ -57,3 +57,9 @@ func test_sun_drives_rays():
 	var rays := bg.get_node("LightRays") as MoodRays
 	assert_true(rays.has_source)
 	assert_eq(rays.source, sun.global_position)
+
+# 리뷰 Important 2: 안개 재질 사본이 배경 씬에 저장되지 않음 (부품 원본 조정이 그대로 전해짐)
+func test_fog_uses_part_material():
+	var part: Sprite2D = load("res://Scenes/backgrounds/parts/ground_fog.tscn").instantiate()
+	autofree(part)
+	assert_eq(bg.get_node("GroundFog").material, part.material)
