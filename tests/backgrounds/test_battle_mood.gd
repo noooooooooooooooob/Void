@@ -127,3 +127,72 @@ func test_light_rays_part():
 	assert_gte(beams.size(), 3)
 	for b in beams:
 		assert_true(b.use_parent_material)
+
+# --- 부품 슬라이더 (2026-11-27 A) ---
+const RAYS := "res://Scenes/backgrounds/parts/light_rays.tscn"
+const SUN := "res://Scenes/backgrounds/parts/sun.tscn"
+const MOON := "res://Scenes/backgrounds/parts/moon.tscn"
+
+func test_light_and_halo_scale_reach_mood_lights():
+	var l = load(LANTERN).instantiate()
+	root.add_child(l)
+	m.light_scale = 0.5
+	m.halo_scale = 2.0
+	assert_almost_eq(l.mood_brightness_scale, 0.5, 0.001)
+	assert_almost_eq(l.mood_halo_scale, 2.0, 0.001)
+
+func test_parts_added_later_get_values():
+	m.light_scale = 0.3
+	var l = load(LANTERN).instantiate()
+	root.add_child(l)
+	await wait_physics_frames(1)
+	assert_almost_eq(l.mood_brightness_scale, 0.3, 0.001)
+
+func test_parts_outside_background_untouched():
+	var other := Node.new()
+	add_child_autofree(other)
+	var l = load(LANTERN).instantiate()
+	other.add_child(l)
+	m.light_scale = 0.3
+	await wait_physics_frames(1)
+	assert_almost_eq(l.mood_brightness_scale, 1.0, 0.001)
+
+func test_rays_color_strength_and_fog():
+	var r = load(RAYS).instantiate()
+	root.add_child(r)
+	var f = load(FOG).instantiate()
+	root.add_child(f)
+	m.rays_color = Color(0.5, 0.6, 1.0)
+	m.rays_strength = 1.5
+	m.fog_color = Color(0.1, 0.2, 0.3)
+	m.fog_density = 0.4
+	m.fog_speed = -0.02
+	assert_eq(r.modulate, Color(0.5, 0.6, 1.0, 1.5))
+	assert_eq(f.modulate, Color(0.1, 0.2, 0.3, 0.4))
+	assert_almost_eq(f.material.get_shader_parameter("speed"), -0.02, 0.0001)
+
+func test_rays_follow_first_visible_sky_body():
+	var r = load(RAYS).instantiate()
+	root.add_child(r)
+	var sun = load(SUN).instantiate()
+	root.add_child(sun)
+	sun.position = Vector2(1700, 100)
+	var moon = load(MOON).instantiate()
+	root.add_child(moon)
+	moon.position = Vector2(300, 150)
+	await wait_physics_frames(2)
+	assert_true(r.has_source)
+	assert_eq(r.source, Vector2(1700, 100))
+	sun.visible = false
+	await wait_physics_frames(2)
+	assert_eq(r.source, Vector2(300, 150))
+	moon.position = Vector2(400, 120)
+	await wait_physics_frames(2)
+	assert_eq(r.source, Vector2(400, 120))
+	moon.visible = false
+	await wait_physics_frames(2)
+	assert_false(r.has_source)
+
+func test_bloom_threshold():
+	m.bloom_threshold = 1.2
+	assert_almost_eq((m.get_node("Glow") as WorldEnvironment).environment.glow_hdr_threshold, 1.2, 0.001)

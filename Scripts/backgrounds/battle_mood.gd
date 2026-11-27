@@ -13,6 +13,8 @@ extends Node2D
 ## - PostLayer/Post (CanvasLayer 1 의 화면 셰이더): 비네트·냉난 대비. 1층이라 월드에만 걸림
 ## - Glow (WorldEnvironment): 빛 번짐. background_canvas_max_layer = 1 이라 UI 층(2~4)은 안 번짐
 ## - haze_targets 의 노드들: 공기원근 셰이더(haze_material)를 건다 (먼 배경 그림)
+## - 배경 씬(부모) 안 부품: 빛나는 물품(MoodLight) 밝기·헤일로 배율, 빛줄기(MoodRays) 색·세기와 해·달(SkyBody) 위치,
+##   바닥 안개 색·진하기·속도. 그룹으로 찾고, 나중에 추가된 부품도 받는다 (설계 2026-11-27-battle-mood-sliders-design.md)
 
 ## 화면 가운데 (기준 해상도 1920×1080). 보조광 위치의 기준
 const SCREEN_CENTER := Vector2(960, 540)
@@ -52,6 +54,47 @@ const FILL_DISTANCE := 4000.0
 		fill_angle = v
 		_apply()
 
+@export_group("빛나는 물품")
+## 배경 안 빛나는 물품(MoodLight, 그룹 mood_light) 전부의 밝기 배율. 물품마다 정한 밝기에 곱한다 (0 = 모두 끔)
+@export_range(0.0, 3.0, 0.05) var light_scale := 1.0:
+	set(v):
+		light_scale = v
+		_apply()
+## 빛나는 물품 헤일로 세기 배율 (0 = 헤일로 없음)
+@export_range(0.0, 3.0, 0.05) var halo_scale := 1.0:
+	set(v):
+		halo_scale = v
+		_apply()
+
+@export_group("빛줄기")
+## 빛줄기(MoodRays, 그룹 mood_rays) 색. 빛줄기는 배경 안 보이는 해·달(SkyBody) 중 첫 번째에서 뻗는다
+@export var rays_color := Color(1, 0.8, 0.55):
+	set(v):
+		rays_color = v
+		_apply()
+## 빛줄기 세기 (modulate 알파, 더하기라 HDR 에서 1 을 넘으면 더 밝다. 0 = 안 보임)
+@export_range(0.0, 3.0, 0.01) var rays_strength := 0.4:
+	set(v):
+		rays_strength = v
+		_apply()
+
+@export_group("안개")
+## 바닥 안개(그룹 mood_fog) 색
+@export var fog_color := Color(0.55, 0.6, 0.8):
+	set(v):
+		fog_color = v
+		_apply()
+## 안개 진하기 (0 = 안 보임, 1 = 가장 진함)
+@export_range(0.0, 1.0, 0.01) var fog_density := 0.25:
+	set(v):
+		fog_density = v
+		_apply()
+## 안개 흐르는 속도 (초당 UV, 음수면 반대 방향)
+@export_range(-0.1, 0.1, 0.001) var fog_speed := 0.01:
+	set(v):
+		fog_speed = v
+		_apply()
+
 @export_group("화면")
 ## 비네트 (화면 가장자리 어둡게, 0~1)
 @export_range(0.0, 1.0, 0.01) var vignette := 0.6:
@@ -77,6 +120,11 @@ const FILL_DISTANCE := 4000.0
 @export_range(0.0, 2.0, 0.05) var bloom := 0.8:
 	set(v):
 		bloom = v
+		_apply()
+## 빛 번짐 문턱 (이 밝기를 넘는 곳만 번짐, glow_hdr_threshold). 낮을수록 많이 번진다
+@export_range(0.0, 2.0, 0.05) var bloom_threshold := 0.9:
+	set(v):
+		bloom_threshold = v
 		_apply()
 
 @export_group("공기원근")
@@ -104,8 +152,37 @@ const FILL_DISTANCE := 4000.0
 @export var haze_material: ShaderMaterial
 
 
+## 배경 부품 그룹 (부품 씬이 들어 있음)
+const LIGHT_GROUP := &"mood_light"
+const SKY_BODY_GROUP := &"mood_sky_body"
+const RAYS_GROUP := &"mood_rays"
+const FOG_GROUP := &"mood_fog"
+
+
 func _ready() -> void:
 	_apply()
+
+
+func _enter_tree() -> void:
+	# 나중에 배경에 놓은 부품(에디터에서 추가, 실행 중 추가)도 값을 받게 한다
+	if not get_tree().node_added.is_connected(_on_node_added):
+		get_tree().node_added.connect(_on_node_added)
+
+
+func _exit_tree() -> void:
+	if get_tree().node_added.is_connected(_on_node_added):
+		get_tree().node_added.disconnect(_on_node_added)
+
+
+func _on_node_added(n: Node) -> void:
+	var scope := get_parent()
+	if scope == null or not scope.is_ancestor_of(n):
+		return
+	for g in [LIGHT_GROUP, SKY_BODY_GROUP, RAYS_GROUP, FOG_GROUP]:
+		if n.is_in_group(g):
+			# 부품이 아직 준비 전이라 한 프레임 뒤에 넣는다
+			_apply_parts.call_deferred()
+			return
 
 
 ## 지금 값을 자식 노드·공기원근 대상에 넣는다. 준비 전(씬 로드 중 setter)에는 건너뛰고 _ready 에서 한 번에 넣는다
@@ -134,6 +211,7 @@ func _apply() -> void:
 	var env := ($Glow as WorldEnvironment).environment
 	env.glow_enabled = bloom > 0.0
 	env.glow_intensity = bloom
+	env.glow_hdr_threshold = bloom_threshold
 	# 6. 공기원근: 재질 값 넣고 대상에 건다
 	if haze_material:
 		haze_material.set_shader_parameter("haze", haze_color)
@@ -143,3 +221,51 @@ func _apply() -> void:
 			var t := get_node_or_null(p) as CanvasItem if not p.is_empty() else null
 			if t and t.material != haze_material:
 				t.material = haze_material
+	# 7. 배경 부품 (빛나는 물품·빛줄기·안개)
+	_apply_parts()
+
+
+## 배경 씬(이 노드의 부모) 안 부품에 장면 값을 넣는다. 다른 씬의 같은 그룹 부품은 건드리지 않는다
+func _apply_parts() -> void:
+	if not is_inside_tree() or get_parent() == null:
+		return
+	# 빛나는 물품: 배율만 (색·밝기는 물품마다)
+	for l in _parts(LIGHT_GROUP):
+		l.mood_brightness_scale = light_scale
+		l.mood_halo_scale = halo_scale
+	# 안개: 색·진하기 = modulate, 속도 = 셰이더 (재질은 인스턴스마다 따로, local_to_scene)
+	for f in _parts(FOG_GROUP):
+		(f as CanvasItem).modulate = Color(fog_color.r, fog_color.g, fog_color.b, fog_density)
+		var mat := (f as CanvasItem).material as ShaderMaterial
+		if mat:
+			mat.set_shader_parameter("speed", fog_speed)
+	_apply_rays()
+
+
+## 빛줄기를 보이는 해·달 중 트리 순서 첫 번째에 맞춘다. 없으면 똑바로 아래로.
+## 해·달이 옮겨지거나 숨겨지면(moved) 다시 부른다
+func _apply_rays() -> void:
+	if not is_inside_tree() or get_parent() == null:
+		return
+	var body: SkyBody = null
+	for b in _parts(SKY_BODY_GROUP):
+		if not b.moved.is_connected(_apply_rays):
+			b.moved.connect(_apply_rays)
+		if body == null and (b as CanvasItem).is_visible_in_tree():
+			body = b
+	for r in _parts(RAYS_GROUP):
+		(r as CanvasItem).modulate = Color(rays_color.r, rays_color.g, rays_color.b, rays_strength)
+		if body:
+			r.source = body.global_position
+			r.has_source = true
+		else:
+			r.has_source = false
+
+
+## 부모 아래에서 그룹 g 에 든 노드들 (트리 순서). 실행 중 추가된 노드도 찾도록 owner 를 따지지 않는다
+func _parts(g: StringName) -> Array[Node]:
+	var out: Array[Node] = []
+	for n in get_parent().find_children("*", "", true, false):
+		if n.is_in_group(g):
+			out.append(n)
+	return out
