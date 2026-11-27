@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://di2o04446jwjf"]
+
+[ext_resource type="PackedScene" uid="uid://dw0lxjr2gejlx" path="res://Scenes/backgrounds/parts/battle_mood.tscn" id="1_v8p1j"]
+[ext_resource type="Shader" uid="uid://pjodwky47h6j" path="res://Scenes/backgrounds/parts/mood_haze.gdshader" id="2_s5611"]
+[ext_resource type="Texture2D" uid="uid://cle7lb2ltpmvh" path="res://Art/backgrounds/battle/shrine_garden_far.png" id="3_etc4o"]
+[ext_resource type="Texture2D" uid="uid://dydkbxpaqb0ip" path="res://Art/backgrounds/battle/shrine_garden_near.png" id="4_4u1ja"]
+[ext_resource type="PackedScene" uid="uid://cg1enfaofbv44" path="res://Scenes/backgrounds/parts/lantern_light.tscn" id="5_tj34o"]
+[ext_resource type="PackedScene" uid="uid://tcjg0q1pr2y1" path="res://Scenes/backgrounds/parts/ground_fog.tscn" id="6_5wf45"]
+[ext_resource type="PackedScene" uid="uid://c5yxjecsyp5ug" path="res://Scenes/ui/battle_screen/battle_board.tscn" id="7_20d21"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v8p1j"]
+resource_local_to_scene = true
+shader = ExtResource("2_s5611")
+shader_parameter/haze = Color(0.35, 0.4, 0.6, 1)
+shader_parameter/amount = 0.35
+shader_parameter/blur = 1.5
+
+[node name="ShrineGarden" type="Control" unique_id=1773737141]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BattleMood" parent="." unique_id=1230135772 instance=ExtResource("1_v8p1j")]
+haze_targets = Array[NodePath]([NodePath("../FarLayer")])
+haze_material = SubResource("ShaderMaterial_v8p1j")
+
+[node name="FarLayer" type="TextureRect" parent="." unique_id=1759906676]
+light_mask = 0
+material = SubResource("ShaderMaterial_v8p1j")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("3_etc4o")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="NearLayer" type="TextureRect" parent="." unique_id=1069128218]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("4_4u1ja")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LanternL" parent="." unique_id=2021930565 instance=ExtResource("5_tj34o")]
+position = Vector2(143.5, 465.1)
+
+[node name="LanternR" parent="." unique_id=2071396968 instance=ExtResource("5_tj34o")]
+position = Vector2(1791.4, 459.3)
+
+[node name="GroundFog" parent="." unique_id=886416631 instance=ExtResource("6_5wf45")]
+position = Vector2(0, 700)
+
+[node name="Ally Board" parent="." unique_id=1544493984 instance=ExtResource("7_20d21")]
+layout_mode = 0
+offset_left = 186.0
+offset_top = 124.0
+offset_right = 826.0
+offset_bottom = 764.0
+corners = PackedVector2Array(216.39636, 455.50342, 715.85266, 455.50342, 700.06134, 806.5649, -90.13693, 806.5649)
+
+[node name="Enemy Board" parent="." unique_id=24904799 instance=ExtResource("7_20d21")]
+layout_mode = 0
+offset_left = 1001.0
+offset_top = 122.0
+offset_right = 1641.0
+offset_bottom = 762.0
+side = 1
+corners = PackedVector2Array(17.147339, 457.50342, 516.60364, 457.50342, 822.13696, 808.5649, 32.93866, 808.5649)

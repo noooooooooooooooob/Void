@@ -28,15 +28,19 @@ func test_sky_colors_go_to_gradient():
 	assert_eq(g.get_color(0), Color.RED)
 	assert_eq(g.get_color(g.get_point_count() - 1), Color.BLUE)
 
+# 보조광은 PointLight2D: DirectionalLight2D 는 range_item_cull_mask 를 무시하고 배경까지 비춘다 (2026-11-27 시험으로 확인)
 func test_fill_light_values():
 	m.fill_color = Color(0.5, 0.6, 0.7)
 	m.fill_energy = 1.3
 	m.fill_angle = 30.0
-	var l := m.get_node("CharacterFill") as DirectionalLight2D
+	var l := m.get_node("CharacterFill") as PointLight2D
+	assert_not_null(l)
 	assert_eq(l.color, Color(0.5, 0.6, 0.7))
 	assert_almost_eq(l.energy, 1.3, 0.001)
-	assert_almost_eq(l.rotation, deg_to_rad(30.0), 0.001)
 	assert_eq(l.range_item_cull_mask, 2)
+	# 빛이 오는 쪽 = 화면 가운데에서 fill_angle 방향으로 멀리
+	assert_almost_eq((l.position - BattleMood.SCREEN_CENTER).angle(), deg_to_rad(30.0), 0.001)
+	assert_gt(l.position.distance_to(BattleMood.SCREEN_CENTER), 2000.0)
 
 func test_screen_effect_values():
 	m.vignette = 0.25

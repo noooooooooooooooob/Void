@@ -7,10 +7,17 @@ extends Node2D
 ## 값은 자식 노드에 들어간다:
 ## - Sky (TextureRect, 세로 그라데이션): 맨 뒤 하늘. 배경 그림의 하늘이 투명하면 이것이 보인다
 ## - Darkness (CanvasModulate): 월드 층(0층) 전체를 어둡게. UI 는 다른 층이라 안 어두워짐
-## - CharacterFill (DirectionalLight2D, 커링 마스크 2): 캐릭터만 비추는 보조광. 어두운 장면에서도 캐릭터가 보이고 노말맵 음영이 산다
+## - CharacterFill (PointLight2D, 커링 마스크 2): 캐릭터만 비추는 보조광. 어두운 장면에서도 캐릭터가 보이고 노말맵 음영이 산다.
+##   멀리(FILL_DISTANCE) 둔 아주 큰 점광이라 화면 안에서는 한 방향 빛처럼 보인다.
+##   DirectionalLight2D 를 안 쓰는 이유: range_item_cull_mask 를 무시하고 배경까지 비춘다 (2026-11-27 시험으로 확인)
 ## - PostLayer/Post (CanvasLayer 1 의 화면 셰이더): 비네트·냉난 대비. 1층이라 월드에만 걸림
 ## - Glow (WorldEnvironment): 빛 번짐. background_canvas_max_layer = 1 이라 UI 층(2~4)은 안 번짐
 ## - haze_targets 의 노드들: 공기원근 셰이더(haze_material)를 건다 (먼 배경 그림)
+
+## 화면 가운데 (기준 해상도 1920×1080). 보조광 위치의 기준
+const SCREEN_CENTER := Vector2(960, 540)
+## 보조광을 화면 가운데에서 떨어뜨려 두는 거리 (픽셀). 멀수록 캐릭터마다 빛 방향이 같아진다
+const FILL_DISTANCE := 4000.0
 
 ## 월드를 어둡게 하는 색 (흰색 = 그대로). 배경·캐릭터에 곱해지고, 빛을 받은 곳만 다시 밝아진다
 @export var darkness := Color(0.32, 0.36, 0.55):
@@ -39,8 +46,8 @@ extends Node2D
 	set(v):
 		fill_energy = v
 		_apply()
-## 보조광 방향 (도). DirectionalLight2D 의 회전이라 빛이 오는 쪽이 바뀐다
-@export_range(-180.0, 180.0, 1.0) var fill_angle := -45.0:
+## 보조광이 오는 쪽 (도, 화면 가운데 기준). 0 = 오른쪽, -90 = 위, 180 = 왼쪽
+@export_range(-180.0, 180.0, 1.0) var fill_angle := -120.0:
 	set(v):
 		fill_angle = v
 		_apply()
@@ -112,11 +119,11 @@ func _apply() -> void:
 	g.set_color(0, sky_top)
 	g.set_color(g.get_point_count() - 1, sky_bottom)
 	# 3. 캐릭터 보조광
-	var fill := $CharacterFill as DirectionalLight2D
+	var fill := $CharacterFill as PointLight2D
 	fill.color = fill_color
 	fill.energy = fill_energy
 	fill.enabled = fill_energy > 0.0
-	fill.rotation = deg_to_rad(fill_angle)
+	fill.position = SCREEN_CENTER + Vector2.from_angle(deg_to_rad(fill_angle)) * FILL_DISTANCE
 	# 4. 화면 효과 (비네트·냉난 대비)
 	var post := $PostLayer/Post.material as ShaderMaterial
 	post.set_shader_parameter("vignette", vignette)

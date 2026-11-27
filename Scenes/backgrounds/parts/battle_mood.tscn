@@ -22,6 +22,12 @@ width = 4
 height = 256
 fill_to = Vector2(0, 1)
 
+[sub_resource type="Gradient" id="Gradient_g8ypy"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_serr3"]
+gradient = SubResource("Gradient_g8ypy")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_37juj"]
 resource_local_to_scene = true
 shader = ExtResource("3_slirb")
@@ -42,6 +48,7 @@ glow_hdr_threshold = 0.9
 
 [node name="BattleMood" type="Node2D" unique_id=1230135772]
 script = ExtResource("1_g8ypy")
+fill_angle = -45.0
 haze_material = SubResource("ShaderMaterial_dq2mn")
 
 [node name="Sky" type="TextureRect" parent="." unique_id=1423434267]
@@ -54,11 +61,13 @@ expand_mode = 1
 [node name="Darkness" type="CanvasModulate" parent="." unique_id=264942143]
 color = Color(0.32, 0.36, 0.55, 1)
 
-[node name="CharacterFill" type="DirectionalLight2D" parent="." unique_id=1824503629]
-rotation = -0.785398
+[node name="CharacterFill" type="PointLight2D" parent="." unique_id=851439605]
 color = Color(0.75, 0.8, 1, 1)
 energy = 0.9
 range_item_cull_mask = 2
+texture = SubResource("GradientTexture2D_serr3")
+texture_scale = 200.0
+height = 1500.0
 
 [node name="PostLayer" type="CanvasLayer" parent="." unique_id=1583347388]
 
