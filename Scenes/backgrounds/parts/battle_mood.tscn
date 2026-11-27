@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://dw0lxjr2gejlx"]
+
+[ext_resource type="Script" uid="uid://cs1fkrugg8tut" path="res://Scripts/backgrounds/battle_mood.gd" id="1_g8ypy"]
+[ext_resource type="Shader" uid="uid://pjodwky47h6j" path="res://Scenes/backgrounds/parts/mood_haze.gdshader" id="2_serr3"]
+[ext_resource type="Shader" uid="uid://cg13tyapqns3i" path="res://Scenes/backgrounds/parts/mood_post.gdshader" id="3_slirb"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dq2mn"]
+resource_local_to_scene = true
+shader = ExtResource("2_serr3")
+shader_parameter/haze = Color(0.35, 0.4, 0.6, 1)
+shader_parameter/amount = 0.35
+shader_parameter/blur = 1.5
+
+[sub_resource type="Gradient" id="Gradient_yfxf6"]
+resource_local_to_scene = true
+colors = PackedColorArray(0.03, 0.04, 0.1, 1, 0.15, 0.17, 0.3, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_qbvv7"]
+resource_local_to_scene = true
+gradient = SubResource("Gradient_yfxf6")
+width = 4
+height = 256
+fill_to = Vector2(0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_37juj"]
+resource_local_to_scene = true
+shader = ExtResource("3_slirb")
+shader_parameter/vignette = 0.6
+shader_parameter/split = 0.6
+shader_parameter/cool = Color(0.88, 0.95, 1, 1)
+shader_parameter/warm = Color(1, 0.95, 0.82, 1)
+
+[sub_resource type="Environment" id="Environment_nv3rk"]
+resource_local_to_scene = true
+background_mode = 3
+background_canvas_max_layer = 1
+glow_enabled = true
+glow_intensity = 0.8
+glow_bloom = 0.05
+glow_blend_mode = 0
+glow_hdr_threshold = 0.9
+
+[node name="BattleMood" type="Node2D" unique_id=1230135772]
+script = ExtResource("1_g8ypy")
+haze_material = SubResource("ShaderMaterial_dq2mn")
+
+[node name="Sky" type="TextureRect" parent="." unique_id=1423434267]
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_qbvv7")
+expand_mode = 1
+
+[node name="Darkness" type="CanvasModulate" parent="." unique_id=264942143]
+color = Color(0.32, 0.36, 0.55, 1)
+
+[node name="CharacterFill" type="DirectionalLight2D" parent="." unique_id=1824503629]
+rotation = -0.785398
+color = Color(0.75, 0.8, 1, 1)
+energy = 0.9
+range_item_cull_mask = 2
+
+[node name="PostLayer" type="CanvasLayer" parent="." unique_id=1583347388]
+
+[node name="Post" type="ColorRect" parent="PostLayer" unique_id=1904224294]
+material = SubResource("ShaderMaterial_37juj")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Glow" type="WorldEnvironment" parent="." unique_id=1388456428]
+environment = SubResource("Environment_nv3rk")

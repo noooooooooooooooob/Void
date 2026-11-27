@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://tcjg0q1pr2y1"]
+
+[ext_resource type="Shader" uid="uid://do2hteepwquv3" path="res://Scenes/backgrounds/parts/ground_fog.gdshader" id="1_rnmmg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ej8lg"]
+shader = ExtResource("1_rnmmg")
+shader_parameter/speed = 0.01
+shader_parameter/edge = 0.35
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_e0nkq"]
+frequency = 0.008
+fractal_octaves = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1qb4c"]
+width = 1024
+height = 256
+noise = SubResource("FastNoiseLite_e0nkq")
+seamless = true
+
+[node name="GroundFog" type="Sprite2D" unique_id=886416631]
+modulate = Color(0.55, 0.6, 0.8, 0.25)
+texture_repeat = 2
+material = SubResource("ShaderMaterial_ej8lg")
+scale = Vector2(1.875, 1.5)
+texture = SubResource("NoiseTexture2D_1qb4c")
+centered = false

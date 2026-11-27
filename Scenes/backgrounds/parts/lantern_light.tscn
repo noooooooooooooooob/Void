@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cg1enfaofbv44"]
+
+[sub_resource type="Gradient" id="Gradient_x6ovn"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fbs7x"]
+gradient = SubResource("Gradient_x6ovn")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_148ae"]
+blend_mode = 1
+light_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_j75ta"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ujjvl"]
+gradient = SubResource("Gradient_j75ta")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[node name="LanternLight" type="PointLight2D" unique_id=2021930565]
+color = Color(1, 0.62, 0.3, 1)
+energy = 2.2
+texture = SubResource("GradientTexture2D_fbs7x")
+texture_scale = 6.0
+height = 25.0
+
+[node name="Halo" type="Sprite2D" parent="." unique_id=1717497962]
+modulate = Color(1.4, 0.85, 0.4, 0.6)
+material = SubResource("CanvasItemMaterial_148ae")
+scale = Vector2(0.7, 0.7)
+texture = SubResource("GradientTexture2D_ujjvl")
