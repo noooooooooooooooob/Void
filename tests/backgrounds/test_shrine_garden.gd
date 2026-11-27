@@ -40,3 +40,20 @@ func test_dusk_mood_and_rays():
 	assert_gt(mood.sky_bottom.r, mood.sky_bottom.b)   # 하늘 아래가 주황
 	assert_gt(mood.darkness.r, 0.8)                     # 밤처럼 어둡지 않음
 	assert_true(bg.get_node("LightRays") is Node2D)
+
+# 무드 슬라이더 (2026-11-27 A): 석등·안개 값은 무드가 쥐고, 빛줄기는 해에서 뻗는다
+func test_mood_owns_part_values():
+	var mood := bg.get_child(0) as BattleMood
+	assert_almost_eq((bg.get_node("LanternL") as MoodLight).brightness, 1.0, 0.001)
+	assert_almost_eq((bg.get_node("LanternR") as MoodLight).brightness, 1.0, 0.001)
+	assert_eq(mood.fog_color, Color(0.7, 0.5, 0.45))
+	assert_almost_eq(mood.fog_density, 0.25, 0.001)
+	assert_eq(bg.get_node("GroundFog").modulate, Color(0.7, 0.5, 0.45, 0.25))
+
+func test_sun_drives_rays():
+	var sun := bg.get_node("Sun") as SkyBody
+	assert_gt(sun.get_index(), bg.get_node("FarLayer").get_index())   # 먼 산 그림이 화면 전체를 덮어서 그 앞
+	assert_lt(sun.get_index(), bg.get_node("NearLayer").get_index())
+	var rays := bg.get_node("LightRays") as MoodRays
+	assert_true(rays.has_source)
+	assert_eq(rays.source, sun.global_position)
