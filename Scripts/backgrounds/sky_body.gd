@@ -15,6 +15,8 @@ const DISC_TEXTURE_SIZE := 128.0
 ## 헤일로 크기 = 원반 지름 × 이 값
 const GLOW_RATIO := 4.0
 
+## 달이면 true (moon.tscn). 하루 순환에서 해는 낮, 달은 밤에 하늘을 지난다 (BattleMood)
+@export var is_moon := false
 ## 원반·헤일로 색
 @export var body_color := Color(1, 0.75, 0.45):
 	set(v):

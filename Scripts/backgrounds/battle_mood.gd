@@ -175,6 +175,10 @@ const FILL_DISTANCE := 4000.0
 	set(v):
 		time_of_day = v
 		_apply_time()
+## 게임 중 시각이 흐르는지 (끄면 time_of_day 에 고정). 에디터에서는 켜 있어도 흐르지 않는다
+@export var time_flows := true
+## 하루 한 바퀴(24시간)에 걸리는 실제 시간 (초). 0 이하면 흐르지 않음
+@export_range(1.0, 3600.0, 1.0) var day_length_sec := 240.0
 
 
 ## 배경 부품 그룹 (부품 씬이 들어 있음)
@@ -184,6 +188,11 @@ const RAYS_GROUP := &"mood_rays"
 const FOG_GROUP := &"mood_fog"
 ## BattleMood 자신의 그룹. 배경 씬 밖(전투 화면의 유닛·연출)의 그림자가 이 그룹으로 무드를 찾는다
 const GROUP := &"battle_mood"
+## 해가 뜨는·지는 시각. 해는 SUNRISE~SUNSET, 달은 SUNSET~다음 SUNRISE 동안 하늘을 지난다
+const SUNRISE := 6.0
+const SUNSET := 18.0
+## 부모가 Control 이 아닐 때 쓰는 화면 크기 (배치 기준 해상도)
+const BASE_SCREEN := Vector2(1920, 1080)
 
 var _sky_body: SkyBody      # 기억해 둔 보이는 해·달 (sky_body)
 var _sky_dirty := true      # true 면 다음 sky_body() 에서 다시 찾는다
@@ -205,6 +214,41 @@ func _apply_time() -> void:
 		set(k, v[k])
 	_batch = false
 	_apply()
+	_place_sky_bodies(v[&"sun_color"])
+
+
+## 시각 흐름: 게임 중에만 (에디터에서 흐르면 시각이 씬 파일에 계속 바뀌어 저장됨)
+func _process(delta: float) -> void:
+	if Engine.is_editor_hint() or not time_flows or day_length_sec <= 0.0:
+		return
+	time_of_day = fposmod(time_of_day + delta * 24.0 / day_length_sec, 24.0)
+
+
+## 해·달 위치. 하늘을 지나는 동안 화면 위 가장자리를 왼쪽 밖(x = -지름/2) → 오른쪽 밖(x = 화면 너비 + 지름/2) 으로 가고,
+## y = -지름/6 이라 원반의 1/3 만 화면 안에 보인다 (사용자 결정). 자기 시간이 아니면 null (안 보임)
+static func body_position(hour: float, is_moon: bool, screen: Vector2, diameter: float) -> Variant:
+	var start := SUNSET if is_moon else SUNRISE
+	var span := fposmod(SUNRISE - SUNSET, 24.0) if is_moon else SUNSET - SUNRISE
+	var t := fposmod(hour - start, 24.0) / span
+	if t > 1.0:
+		return null
+	var r := diameter * 0.5
+	return Vector2(lerpf(-r, screen.x + r, t), -diameter / 6.0)
+
+
+## 배경 안 해·달을 지금 시각 자리에 놓고, 자기 시간이 아니면 숨긴다. 해 원반 색 = 프리셋 보간값
+func _place_sky_bodies(sun_color: Color) -> void:
+	if not is_inside_tree() or get_parent() == null:
+		return
+	var screen := (get_parent() as Control).size if get_parent() is Control else BASE_SCREEN
+	for b in _parts(SKY_BODY_GROUP):
+		var body := b as SkyBody
+		var pos = body_position(time_of_day, body.is_moon, screen, body.body_size)
+		body.visible = pos != null
+		if pos != null:
+			body.position = pos
+		if not body.is_moon:
+			body.body_color = sun_color
 
 
 ## 프리셋들을 시각 hour 에서 섞은 값. 키 = TimeOfDayPreset.BLEND_KEYS + sun_color.
