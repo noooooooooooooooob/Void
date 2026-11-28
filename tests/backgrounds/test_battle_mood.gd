@@ -229,3 +229,33 @@ func test_sky_body_skips_hidden():
 	assert_eq(m.sky_body(), b)
 	b.visible = false
 	assert_null(m.sky_body())
+
+# 보이는 해·달은 기억해 두고 바뀔 때만 다시 찾는다 (2026-11-28) — 바뀌는 경우마다 바로 맞는지
+func test_sky_body_after_changes():
+	assert_null(m.sky_body())
+	var a = load(SUN).instantiate()
+	root.add_child(a)
+	assert_eq(m.sky_body(), a)          # 새로 들어온 해
+	a.visible = false
+	assert_null(m.sky_body())           # 숨김
+	a.visible = true
+	assert_eq(m.sky_body(), a)          # 다시 보임
+	var b = load(SUN).instantiate()
+	root.add_child(b)
+	root.move_child(b, 0)
+	assert_eq(m.sky_body(), b)          # 트리 순서 첫 번째가 바뀜
+	root.remove_child(b)
+	assert_eq(m.sky_body(), a)          # 빠짐
+	b.free()
+	a.queue_free()
+	await wait_process_frames(1)
+	assert_null(m.sky_body())           # 지워짐
+
+func test_sky_body_after_reorder():
+	var a = load(SUN).instantiate()
+	var b = load(SUN).instantiate()
+	root.add_child(a)
+	root.add_child(b)
+	assert_eq(m.sky_body(), a)
+	root.move_child(b, 0)
+	assert_eq(m.sky_body(), b)

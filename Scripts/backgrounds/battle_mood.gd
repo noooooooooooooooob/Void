@@ -172,6 +172,9 @@ const FOG_GROUP := &"mood_fog"
 ## BattleMood 자신의 그룹. 배경 씬 밖(전투 화면의 유닛·연출)의 그림자가 이 그룹으로 무드를 찾는다
 const GROUP := &"battle_mood"
 
+var _sky_body: SkyBody      # 기억해 둔 보이는 해·달 (sky_body)
+var _sky_dirty := true      # true 면 다음 sky_body() 에서 다시 찾는다
+
 
 func _ready() -> void:
 	_apply()
@@ -195,6 +198,8 @@ func _on_node_added(n: Node) -> void:
 		return
 	for g in [LIGHT_GROUP, SKY_BODY_GROUP, RAYS_GROUP, FOG_GROUP]:
 		if n.is_in_group(g):
+			if g == SKY_BODY_GROUP:
+				_sky_dirty = true  # 새 해·달 → 보이는 해를 다시 찾게
 			# 부품이 아직 준비 전이라 한 프레임 뒤에 넣는다
 			_apply_parts.call_deferred()
 			return
@@ -260,9 +265,6 @@ func _apply_parts() -> void:
 func _apply_rays() -> void:
 	if not is_inside_tree() or get_parent() == null:
 		return
-	for b in _parts(SKY_BODY_GROUP):
-		if not b.moved.is_connected(_on_sky_body_moved):
-			b.moved.connect(_on_sky_body_moved)
 	var body := sky_body()
 	for r in _parts(RAYS_GROUP):
 		(r as CanvasItem).modulate = Color(rays_color.r, rays_color.g, rays_color.b, rays_strength)
@@ -273,19 +275,29 @@ func _apply_rays() -> void:
 			r.has_source = false
 
 
-## 배경 씬(부모) 안 보이는 해·달 중 트리 순서 첫 번째. 없으면 null. 빛줄기와 그림자 방향의 기준
+## 배경 씬(부모) 안 보이는 해·달 중 트리 순서 첫 번째. 없으면 null. 빛줄기와 그림자 방향의 기준.
+## 그림자가 매 프레임 부르므로 찾은 결과를 기억해 두고, 해·달이 바뀌었을 때(moved·새 부품)만 다시 찾는다
 func sky_body() -> SkyBody:
 	if not is_inside_tree() or get_parent() == null:
 		return null
-	for b in _parts(SKY_BODY_GROUP):
-		if (b as CanvasItem).is_visible_in_tree():
-			return b
-	return null
+	# 기억해 둔 해가 지워졌거나 빠졌거나 숨겨졌으면 다시 찾는다 (빠지는 중에 찾아 둔 경우 등)
+	if not _sky_dirty and _sky_body != null and (not is_instance_valid(_sky_body) 			or not _sky_body.is_inside_tree() or not _sky_body.is_visible_in_tree()):
+		_sky_dirty = true
+	if _sky_dirty:
+		_sky_dirty = false
+		_sky_body = null
+		for b in _parts(SKY_BODY_GROUP):
+			if not b.moved.is_connected(_on_sky_body_moved):
+				b.moved.connect(_on_sky_body_moved)
+			if _sky_body == null and (b as CanvasItem).is_visible_in_tree():
+				_sky_body = b
+	return _sky_body
 
 
 ## 해·달이 옮겨지거나 숨겨지거나 빠짐 → 한 프레임 뒤에 빛줄기를 다시 맞춘다.
 ## 빠지는 중(EXIT_TREE)에는 그 해가 아직 트리에 있어 바로 맞추면 다시 잡히기 때문
 func _on_sky_body_moved() -> void:
+	_sky_dirty = true
 	_apply_rays.call_deferred()
 
 

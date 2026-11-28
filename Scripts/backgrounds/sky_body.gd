@@ -44,6 +44,17 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSFORM_CHANGED or what == NOTIFICATION_VISIBILITY_CHANGED \
 			or what == NOTIFICATION_EXIT_TREE:
 		moved.emit()
+	# 형제 사이 순서가 바뀌어도 알린다 — "트리 순서 첫 번째 해"가 바뀔 수 있음 (부모의 child_order_changed)
+	if what == NOTIFICATION_ENTER_TREE:
+		if not get_parent().child_order_changed.is_connected(_on_order_changed):
+			get_parent().child_order_changed.connect(_on_order_changed)
+	elif what == NOTIFICATION_EXIT_TREE:
+		if get_parent().child_order_changed.is_connected(_on_order_changed):
+			get_parent().child_order_changed.disconnect(_on_order_changed)
+
+
+func _on_order_changed() -> void:
+	moved.emit()
 
 
 ## 값을 원반·헤일로에 넣는다. 준비 전에는 건너뛰고 _ready 에서 넣는다
