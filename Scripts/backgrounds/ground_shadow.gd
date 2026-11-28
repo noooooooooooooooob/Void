@@ -20,14 +20,28 @@ const NO_MOOD_FADE := 0.6
 const NO_MOOD_TILT := 0.5
 
 
+var _mood: BattleMood  # 값을 읽는 무드 (찾아 둔 것, 빠지면 다시 찾음)
+
+
 func _process(_delta: float) -> void:
+	# 1. 대상의 지금 그림을 복사
 	sync_from_target()
 	var parent := get_parent() as Node2D
 	if parent == null:
 		return
-	# 그림자 값: 지금은 BattleMood 없이 기본값 (해 없음 → 발밑에 짧게)
-	transform = shadow_basis(parent.global_position, null, NO_MOOD_LENGTH, NO_MOOD_TILT)
-	_set_look(NO_MOOD_COLOR, NO_MOOD_FADE)
+	# 2. 무드 값 (없으면 기본값, 해 없음 → 발밑에 짧게)
+	if not is_instance_valid(_mood) or not _mood.is_inside_tree():
+		_mood = get_tree().get_first_node_in_group(BattleMood.GROUP) as BattleMood
+	if _mood == null:
+		transform = shadow_basis(parent.global_position, null, NO_MOOD_LENGTH, NO_MOOD_TILT)
+		_set_look(NO_MOOD_COLOR, NO_MOOD_FADE)
+		return
+	# 3. 해·달이 있으면 그 반대쪽으로 길게, 없으면 짧게
+	var body := _mood.sky_body()
+	var source: Variant = body.global_position if body else null
+	var length := _mood.shadow_length if body else _mood.shadow_no_sun_length
+	transform = shadow_basis(parent.global_position, source, length, _mood.shadow_tilt)
+	_set_look(_mood.shadow_color, _mood.shadow_fade)
 
 
 ## 그림자 변환. 그림 안 높이 h 인 점(대상 기준 (x, -h))이 발밑에서 h × length × d 만큼 떨어진 바닥 점으로 간다.

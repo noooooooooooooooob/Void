@@ -151,12 +151,26 @@ const FILL_DISTANCE := 4000.0
 ## 공기원근 셰이더 재질 (mood_haze.gdshader). 대상들이 이 하나를 같이 쓴다. 씬마다 따로(local to scene)
 @export var haze_material: ShaderMaterial
 
+@export_group("그림자")
+## 바닥 그림자 색 (알파 = 진하기). 유닛·물체의 GroundShadow 가 매 프레임 읽는다 (설계 2026-11-28-ground-shadow-design.md)
+@export var shadow_color := Color(0, 0, 0, 0.55)
+## 그림자 길이 = 대상 키 × 이 값 (해·달이 있을 때)
+@export_range(0.0, 3.0, 0.05) var shadow_length := 1.2
+## 그림자 끝이 옅어지는 정도 (0 = 끝까지 같음, 1 = 끝에서 사라짐)
+@export_range(0.0, 1.0, 0.01) var shadow_fade := 0.7
+## 바닥 기울기: 그림자의 화면 세로 방향을 이만큼 누른다 (1 = 안 누름, 작을수록 바닥이 눕혀 보임)
+@export_range(0.1, 1.0, 0.01) var shadow_tilt := 0.5
+## 해·달이 없을 때 그림자 길이 (발밑에 똑바로 앞으로 짧게)
+@export_range(0.0, 1.0, 0.01) var shadow_no_sun_length := 0.2
+
 
 ## 배경 부품 그룹 (부품 씬이 들어 있음)
 const LIGHT_GROUP := &"mood_light"
 const SKY_BODY_GROUP := &"mood_sky_body"
 const RAYS_GROUP := &"mood_rays"
 const FOG_GROUP := &"mood_fog"
+## BattleMood 자신의 그룹. 배경 씬 밖(전투 화면의 유닛·연출)의 그림자가 이 그룹으로 무드를 찾는다
+const GROUP := &"battle_mood"
 
 
 func _ready() -> void:
@@ -164,6 +178,7 @@ func _ready() -> void:
 
 
 func _enter_tree() -> void:
+	add_to_group(GROUP)
 	# 나중에 배경에 놓은 부품(에디터에서 추가, 실행 중 추가)도 값을 받게 한다
 	if not get_tree().node_added.is_connected(_on_node_added):
 		get_tree().node_added.connect(_on_node_added)
@@ -245,12 +260,10 @@ func _apply_parts() -> void:
 func _apply_rays() -> void:
 	if not is_inside_tree() or get_parent() == null:
 		return
-	var body: SkyBody = null
 	for b in _parts(SKY_BODY_GROUP):
 		if not b.moved.is_connected(_on_sky_body_moved):
 			b.moved.connect(_on_sky_body_moved)
-		if body == null and (b as CanvasItem).is_visible_in_tree():
-			body = b
+	var body := sky_body()
 	for r in _parts(RAYS_GROUP):
 		(r as CanvasItem).modulate = Color(rays_color.r, rays_color.g, rays_color.b, rays_strength)
 		if body:
@@ -258,6 +271,16 @@ func _apply_rays() -> void:
 			r.has_source = true
 		else:
 			r.has_source = false
+
+
+## 배경 씬(부모) 안 보이는 해·달 중 트리 순서 첫 번째. 없으면 null. 빛줄기와 그림자 방향의 기준
+func sky_body() -> SkyBody:
+	if not is_inside_tree() or get_parent() == null:
+		return null
+	for b in _parts(SKY_BODY_GROUP):
+		if (b as CanvasItem).is_visible_in_tree():
+			return b
+	return null
 
 
 ## 해·달이 옮겨지거나 숨겨지거나 빠짐 → 한 프레임 뒤에 빛줄기를 다시 맞춘다.

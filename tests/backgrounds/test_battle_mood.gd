@@ -210,3 +210,22 @@ func test_removing_sky_body_reaims_rays():
 	sun.free()
 	await wait_physics_frames(2)
 	assert_false(r.has_source)
+
+# 그림자 (2026-11-28): 슬라이더 기본값, 그림자가 찾을 그룹
+func test_shadow_defaults_and_group():
+	assert_true(m.is_in_group("battle_mood"))
+	assert_eq(m.shadow_color, Color(0, 0, 0, 0.55))
+	assert_almost_eq(m.shadow_length, 1.2, 0.001)
+	assert_almost_eq(m.shadow_fade, 0.7, 0.001)
+	assert_almost_eq(m.shadow_tilt, 0.5, 0.001)
+	assert_almost_eq(m.shadow_no_sun_length, 0.2, 0.001)
+
+func test_sky_body_skips_hidden():
+	var a = load(SUN).instantiate()
+	var b = load(SUN).instantiate()
+	root.add_child(a)
+	root.add_child(b)
+	a.visible = false
+	assert_eq(m.sky_body(), b)
+	b.visible = false
+	assert_null(m.sky_body())

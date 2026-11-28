@@ -82,3 +82,49 @@ func test_no_mood_defaults():
 	assert_eq(s.light_mask, 0)
 	assert_true(s.show_behind_parent)
 	assert_true(s.is_in_group("mood_shadow"))
+
+
+# BattleMood 연결: 해 반대쪽으로, 값은 무드에서
+const MOOD := "res://Scenes/backgrounds/parts/battle_mood.tscn"
+const SUN := "res://Scenes/backgrounds/parts/sun.tscn"
+
+## 부모 아래 무드 + 해(1500,300) + 발밑 (500,800) 의 그림. [무드, 해, 그림자]
+func _scene() -> Array:
+	var root := Node2D.new()
+	add_child_autofree(root)
+	var m = load(MOOD).instantiate()
+	root.add_child(m)
+	var sun = load(SUN).instantiate()
+	sun.position = Vector2(1500, 300)
+	root.add_child(sun)
+	var a := AnimatedSprite2D.new()
+	a.sprite_frames = _frames()
+	a.position = Vector2(500, 800)
+	root.add_child(a)
+	var s: GroundShadow = load(SHADOW).instantiate()
+	a.add_child(s)
+	return [m, sun, s]
+
+
+func test_follows_sun():
+	var p := _scene()
+	await wait_process_frames(2)
+	var want := GroundShadow.shadow_basis(Vector2(500, 800), Vector2(1500, 300), 1.2, 0.5)
+	assert_almost_eq(p[2].transform.y, want.y, Vector2(0.001, 0.001))
+	assert_eq(p[2].get_instance_shader_parameter(&"shadow_color"), Color(0, 0, 0, 0.55))
+	assert_almost_eq(float(p[2].get_instance_shader_parameter(&"fade")), 0.7, 0.001)
+
+
+func test_hidden_sun_short_shadow():
+	var p := _scene()
+	p[1].visible = false
+	await wait_process_frames(2)
+	assert_almost_eq(p[2].transform.y, Vector2(0, -0.2), Vector2(0.001, 0.001))
+
+
+func test_mood_values_follow():
+	var p := _scene()
+	p[0].shadow_length = 2.0
+	await wait_process_frames(2)
+	var want := GroundShadow.shadow_basis(Vector2(500, 800), Vector2(1500, 300), 2.0, 0.5)
+	assert_almost_eq(p[2].transform.y, want.y, Vector2(0.001, 0.001))
