@@ -39,7 +39,8 @@ func _process(_delta: float) -> void:
 	# 3. 해·달이 있으면 그 반대쪽으로 길게, 없으면 짧게
 	var body := _mood.sky_body()
 	var source: Variant = body.global_position if body else null
-	var length := _mood.shadow_length if body else _mood.shadow_no_sun_length
+	# 해·달이 궤도 끝에 가까우면(하루 순환) 해 없을 때 길이 쪽으로 줄어든다 — 6·18시에 방향이 바뀌어도 튀지 않게
+	var length := lerpf(_mood.shadow_no_sun_length, _mood.shadow_length, _mood.sky_factor()) if body 			else _mood.shadow_no_sun_length
 	transform = shadow_basis(parent.global_position, source, length, _mood.shadow_tilt)
 	_set_look(_mood.shadow_color, _mood.shadow_fade)
 

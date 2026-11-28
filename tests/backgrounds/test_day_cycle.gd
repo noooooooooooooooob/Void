@@ -61,10 +61,12 @@ func test_no_presets_keeps_inspector_values():
 # 해·달 궤도: 화면 위 가장자리, 원반 1/3 만 보임 (y = -지름/6)
 func test_body_position_sun():
 	var s := Vector2(1920, 1080)
-	assert_eq(BattleMood.body_position(6.0, false, s, 120.0), Vector2(-60, -20))
+	assert_eq(BattleMood.body_position(9.0, false, s, 120.0), Vector2(450, -20))
 	assert_eq(BattleMood.body_position(12.0, false, s, 120.0), Vector2(960, -20))
-	assert_eq(BattleMood.body_position(18.0, false, s, 120.0), Vector2(1980, -20))
 	assert_null(BattleMood.body_position(0.0, false, s, 120.0))
+	# 궤도 양 끝(원반이 화면 밖에 완전히 나간 자리)은 하늘에 없는 것으로 (2026-11-28 리뷰: 6·18시 뒤집힘)
+	assert_null(BattleMood.body_position(6.0, false, s, 120.0))
+	assert_null(BattleMood.body_position(18.0, false, s, 120.0))
 
 
 func test_body_position_moon():
@@ -127,3 +129,38 @@ func test_no_body_on_screen():
 	p[2].free()
 	p[0].time_of_day = 0.0
 	assert_null(p[0].sky_body())
+
+
+# 6·18시 경계: 끝으로 갈수록 해·달 세기가 0 으로 → 그림자가 짧아졌다가 반대쪽에서 다시 길어진다 (한 프레임에 뒤집히지 않게)
+func test_sky_factor_fades_at_edges():
+	var p := _sky_scene()
+	p[0].time_of_day = 12.0
+	assert_almost_eq(p[0].sky_factor(), 1.0, 0.001)
+	p[0].time_of_day = 17.94
+	assert_lt(p[0].sky_factor(), 0.1)
+	p[0].time_of_day = 18.0
+	assert_null(p[0].sky_body())
+
+
+func test_shadow_shrinks_near_edge():
+	var p := _sky_scene()
+	var a := AnimatedSprite2D.new()
+	a.position = Vector2(500, 800)
+	p[0].get_parent().add_child(a)
+	var sh: GroundShadow = load("res://Scenes/backgrounds/parts/ground_shadow.tscn").instantiate()
+	a.add_child(sh)
+	p[0].time_of_day = 17.99
+	await wait_process_frames(2)
+	# 거의 끝 → 길이 ≈ 해 없을 때 길이(0.2)
+	assert_lt(sh.transform.y.length(), 0.3)
+
+
+# 인스펙터에서 빈 칸만 있는 프리셋 목록 → 오류 없이 인스펙터 값 그대로
+func test_null_only_presets_ignored():
+	var m = load(MOOD).instantiate()
+	add_child_autofree(m)
+	m.darkness = Color(0.1, 0.2, 0.3)
+	var arr: Array[TimeOfDayPreset] = [null]
+	m.presets = arr
+	m.time_of_day = 5.0
+	assert_eq(m.darkness, Color(0.1, 0.2, 0.3))

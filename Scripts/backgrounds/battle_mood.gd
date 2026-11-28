@@ -193,9 +193,12 @@ const SUNRISE := 6.0
 const SUNSET := 18.0
 ## 부모가 Control 이 아닐 때 쓰는 화면 크기 (배치 기준 해상도)
 const BASE_SCREEN := Vector2(1920, 1080)
+## 궤도 양 끝에서 해·달 세기가 0 → 1 로 오르는 구간 (궤도 비율). 0.1 = 앞뒤 10% (하루 240초면 약 12초)
+const EDGE_FADE := 0.1
 
 var _sky_body: SkyBody      # 기억해 둔 보이는 해·달 (sky_body)
 var _sky_dirty := true      # true 면 다음 sky_body() 에서 다시 찾는다
+var _sky_factor := 1.0     # 지금 해·달 세기 (sky_factor)
 var _batch := false        # true 동안은 값 setter 가 _apply 를 부르지 않음 (시간대 값을 한꺼번에 넣을 때)
 
 
@@ -209,12 +212,14 @@ func _apply_time() -> void:
 	if presets.is_empty():
 		return
 	var v := blend_presets(presets, time_of_day)
+	if v.is_empty():
+		return  # 빈 칸만 있는 목록 (인스펙터에서 칸만 늘린 상태)
 	_batch = true
 	for k in TimeOfDayPreset.BLEND_KEYS:
 		set(k, v[k])
 	_batch = false
+	_place_sky_bodies(v[&"sun_color"])  # 해·달 세기(sky_factor)가 빛줄기에 쓰여서 먼저
 	_apply()
-	_place_sky_bodies(v[&"sun_color"])
 
 
 ## 시각 흐름: 게임 중에만 (에디터에서 흐르면 시각이 씬 파일에 계속 바뀌어 저장됨)
@@ -227,13 +232,26 @@ func _process(delta: float) -> void:
 ## 해·달 위치. 하늘을 지나는 동안 화면 위 가장자리를 왼쪽 밖(x = -지름/2) → 오른쪽 밖(x = 화면 너비 + 지름/2) 으로 가고,
 ## y = -지름/6 이라 원반의 1/3 만 화면 안에 보인다 (사용자 결정). 자기 시간이 아니면 null (안 보임)
 static func body_position(hour: float, is_moon: bool, screen: Vector2, diameter: float) -> Variant:
-	var start := SUNSET if is_moon else SUNRISE
-	var span := fposmod(SUNRISE - SUNSET, 24.0) if is_moon else SUNSET - SUNRISE
-	var t := fposmod(hour - start, 24.0) / span
-	if t > 1.0:
+	var t := body_progress(hour, is_moon)
+	if t < 0.0:
 		return null
 	var r := diameter * 0.5
 	return Vector2(lerpf(-r, screen.x + r, t), -diameter / 6.0)
+
+
+## 해·달이 궤도를 지나간 정도 (0~1, 왼쪽 → 오른쪽). 하늘에 없으면 -1.
+## 양 끝(0·1)은 원반이 화면 밖에 완전히 나간 자리라 없는 것으로 친다 — 6·18시에 해와 달이 동시에 기준이 되어 그림자가 뒤집히지 않게
+static func body_progress(hour: float, is_moon: bool) -> float:
+	var start := SUNSET if is_moon else SUNRISE
+	var span := fposmod(SUNRISE - SUNSET, 24.0) if is_moon else SUNSET - SUNRISE
+	var t := fposmod(hour - start, 24.0) / span
+	return t if t > 0.0 and t < 1.0 else -1.0
+
+
+## 지금 해·달의 세기 (0~1). 궤도 끝 EDGE_FADE 구간에서 0 으로 줄어 그림자는 짧게·빛줄기는 약하게 넘어간다.
+## 시간대를 안 쓰는 배경(프리셋 없음)은 늘 1
+func sky_factor() -> float:
+	return _sky_factor if not presets.is_empty() else 1.0
 
 
 ## 배경 안 해·달을 지금 시각 자리에 놓고, 자기 시간이 아니면 숨긴다. 해 원반 색 = 프리셋 보간값
@@ -241,12 +259,15 @@ func _place_sky_bodies(sun_color: Color) -> void:
 	if not is_inside_tree() or get_parent() == null:
 		return
 	var screen := (get_parent() as Control).size if get_parent() is Control else BASE_SCREEN
+	_sky_factor = 0.0
 	for b in _parts(SKY_BODY_GROUP):
 		var body := b as SkyBody
 		var pos = body_position(time_of_day, body.is_moon, screen, body.body_size)
 		body.visible = pos != null
 		if pos != null:
 			body.position = pos
+			var t := body_progress(time_of_day, body.is_moon)
+			_sky_factor = maxf(_sky_factor, clampf(minf(t, 1.0 - t) / EDGE_FADE, 0.0, 1.0))
 		if not body.is_moon:
 			body.body_color = sun_color
 
@@ -363,7 +384,7 @@ func _apply_rays() -> void:
 		return
 	var body := sky_body()
 	for r in _parts(RAYS_GROUP):
-		(r as CanvasItem).modulate = Color(rays_color.r, rays_color.g, rays_color.b, rays_strength)
+		(r as CanvasItem).modulate = Color(rays_color.r, rays_color.g, rays_color.b, rays_strength * sky_factor())
 		if body:
 			r.source = body.global_position
 			r.has_source = true
