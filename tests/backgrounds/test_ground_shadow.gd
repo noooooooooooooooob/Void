@@ -137,3 +137,10 @@ func test_unit_token_has_shadow():
 	var sprite: Node = t.get_node("%Sprite")
 	var shadows := sprite.get_children().filter(func(n): return n is GroundShadow)
 	assert_eq(shadows.size(), 1)
+
+
+# 쓰러진 유닛(토큰 modulate.a 0.35)이나 페이드되는 대상의 그림자도 같이 흐려지게: 셰이더가 들어온 COLOR.a(텍스처 × modulate)를 쓴다.
+# 헤드리스는 그림을 실제로 그리지 않아 셰이더 코드로 확인한다
+func test_shader_keeps_modulate_alpha():
+	var code: String = (load("res://Scenes/backgrounds/parts/ground_shadow.gdshader") as Shader).code
+	assert_string_contains(code, "shadow_color.a * COLOR.a")

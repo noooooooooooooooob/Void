@@ -19,7 +19,7 @@ void vertex() {
 }
 
 void fragment() {
-	float a = texture(TEXTURE, UV).a;
+	// COLOR.a = 텍스처 알파 × 물려받은 modulate 알파 — 쓰러진 유닛(토큰 흐리게)·페이드되는 대상의 그림자도 같이 흐려지게
 	float t = clamp((foot_y - local_y) / max(foot_y - top_y, 0.001), 0.0, 1.0);
-	COLOR = vec4(shadow_color.rgb, shadow_color.a * a * (1.0 - fade * t));
+	COLOR = vec4(shadow_color.rgb, shadow_color.a * COLOR.a * (1.0 - fade * t));
 }
