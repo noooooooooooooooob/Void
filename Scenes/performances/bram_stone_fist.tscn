@@ -116,14 +116,14 @@ position = Vector2(180, 0)
 
 [node name="Preview" type="Sprite2D" parent="Target" unique_id=1244510842]
 modulate = Color(1, 0.6, 0.6, 0.5)
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.14, 0.14)
 texture = ExtResource("2_j2uut")
 offset = Vector2(0, -681)
 flip_h = true
 
 [node name="Actor" type="AnimatedSprite2D" parent="." unique_id=879024434]
 unique_name_in_owner = true
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.14, 0.14)
 sprite_frames = ExtResource("2_gmvyg")
 animation = &"idle"
 offset = Vector2(0, -200)
