@@ -37,6 +37,10 @@ vignette = 0.45
 haze_targets = Array[NodePath]([NodePath("../FarLayer")])
 haze_color = Color(1, 0.62, 0.4, 1)
 haze_material = SubResource("ShaderMaterial_etc4o")
+shadow_color = Color(0.08, 0.03, 0.06, 0.6)
+shadow_length = 1.0
+shadow_fade = 0.5
+shadow_tilt = 1.5
 
 [node name="Sun" parent="." unique_id=662062533 instance=ExtResource("4_tj34o")]
 position = Vector2(1650, 120)

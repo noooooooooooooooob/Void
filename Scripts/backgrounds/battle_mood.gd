@@ -158,8 +158,8 @@ const FILL_DISTANCE := 4000.0
 @export_range(0.0, 3.0, 0.05) var shadow_length := 1.2
 ## 그림자 끝이 옅어지는 정도 (0 = 끝까지 같음, 1 = 끝에서 사라짐)
 @export_range(0.0, 1.0, 0.01) var shadow_fade := 0.7
-## 바닥 기울기: 그림자의 화면 세로 방향을 이만큼 누른다 (1 = 안 누름, 작을수록 바닥이 눕혀 보임)
-@export_range(0.1, 1.0, 0.01) var shadow_tilt := 0.5
+## 바닥 기울기: 그림자 방향의 화면 세로 성분에 곱한다 (1 = 그대로, 작을수록 옆으로 눕고 클수록 앞(화면 아래)으로 선다)
+@export_range(0.1, 2.0, 0.01) var shadow_tilt := 0.5
 ## 해·달이 없을 때 그림자 길이 (발밑에 똑바로 앞으로 짧게)
 @export_range(0.0, 1.0, 0.01) var shadow_no_sun_length := 0.2
 
