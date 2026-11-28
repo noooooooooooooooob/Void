@@ -404,3 +404,28 @@ func test_swap_label_names_incoming_item():
 	s._on_finished(BattleTypes.Side.ALLY)
 	s.click_item()
 	assert_eq(s.get_node("%DropLabel").text, "가방이 가득 찼어요 — [드랍약] 대신 버릴 칸을 고르세요")
+
+# 하루 순환 (2026-11-28): 의뢰 전투는 시작 시각이 무작위, 그 밖은 배경에 정한 시각
+func _mood(s: BattleScreen) -> BattleMood:
+	return s.find_children("*", "BattleMood", true, false)[0]
+
+func _scene_hour(s: BattleScreen) -> float:
+	var bg: BattleMood = s.battle_data.background.instantiate().find_children("*", "BattleMood", true, false)[0]
+	var h := bg.time_of_day
+	bg.get_parent().free()
+	return h
+
+func test_stage_battle_starts_at_random_time():
+	_enter_battle_node()
+	seed(1)
+	var hours := []
+	for i in 3:
+		var s := _screen()
+		hours.append(_mood(s).time_of_day)
+	var base := _scene_hour(_screen())
+	assert_true(hours.any(func(h): return absf(h - base) > 0.01))
+	assert_ne(hours[0], hours[1])
+
+func test_outside_run_keeps_scene_time():
+	var s := _screen()
+	assert_almost_eq(_mood(s).time_of_day, _scene_hour(s), 0.01)

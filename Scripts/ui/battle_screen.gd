@@ -233,7 +233,13 @@ func _ready() -> void:
 		battle_seed = randi()
 	# 배경 씬은 전투 데이터마다 다르다. 없으면 뒤의 단색만 보인다
 	if battle_data and battle_data.background:
-		_bg_layer.add_child(battle_data.background.instantiate())
+		var bg := battle_data.background.instantiate()
+		_bg_layer.add_child(bg)
+		# 하루 순환: 의뢰 전투는 시작 시각이 무작위 (순수 그래픽 — 전역 randf 라 전투 시드와 무관).
+		# 그 밖(F6 시험 전투)은 배경에 정한 시각 그대로
+		if _stage_mode:
+			for m in bg.find_children("*", "BattleMood", true, false):
+				(m as BattleMood).time_of_day = randf() * 24.0
 	if battle_data == null:
 		push_warning("BattleScreen: battle_data 가 비어 있어요")
 		return
