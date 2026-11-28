@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="TimeOfDayPreset" format=3 uid="uid://ctl4mgc8bn6ew"]
+
+[ext_resource type="Script" uid="uid://kfqlce5jc3r8" path="res://Scripts/backgrounds/time_of_day_preset.gd" id="1_iyflh"]
+
+[resource]
+script = ExtResource("1_iyflh")
+darkness = Color(1, 0.98, 0.94, 1)
+sky_top = Color(0.25, 0.45, 0.85, 1)
+sky_bottom = Color(0.75, 0.85, 0.95, 1)
+sun_color = Color(1, 0.95, 0.8, 1)
+fill_color = Color(1, 0.97, 0.9, 1)
+fill_energy = 0.3
+light_scale = 0.3
+halo_scale = 0.3
+rays_color = Color(1, 0.95, 0.8, 1)
+rays_strength = 0.15
+fog_color = Color(0.85, 0.88, 0.92, 1)
+fog_density = 0.12
+vignette = 0.25
+split_tone = 0.3
+bloom = 0.4
+bloom_threshold = 1.1
+haze_color = Color(0.75, 0.82, 0.92, 1)
+haze_amount = 0.25
+shadow_color = Color(0.05, 0.05, 0.1, 0.65)
+shadow_length = 0.4
+shadow_fade = 0.4

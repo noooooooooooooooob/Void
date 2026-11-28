@@ -1,3 +1,4 @@
+@tool
 class_name TimeOfDayPreset
 extends Resource
 ## 시간대 프리셋 (낮·노을·저녁·밤 등). 그 시각에 장면 무드가 어떤 값인지 묶어 둔 데이터.
