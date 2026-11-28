@@ -3,19 +3,24 @@
 [ext_resource type="PackedScene" uid="uid://dw0lxjr2gejlx" path="res://Scenes/backgrounds/parts/battle_mood.tscn" id="1_v8p1j"]
 [ext_resource type="Shader" uid="uid://pjodwky47h6j" path="res://Scenes/backgrounds/parts/mood_haze.gdshader" id="2_s5611"]
 [ext_resource type="Texture2D" uid="uid://cle7lb2ltpmvh" path="res://Art/backgrounds/battle/shrine_garden_far.png" id="3_etc4o"]
+[ext_resource type="Script" uid="uid://kfqlce5jc3r8" path="res://Scripts/backgrounds/time_of_day_preset.gd" id="3_tj34o"]
 [ext_resource type="Texture2D" uid="uid://dydkbxpaqb0ip" path="res://Art/backgrounds/battle/shrine_garden_near.png" id="4_4u1ja"]
 [ext_resource type="PackedScene" uid="uid://c6ukbhguuqu65" path="res://Scenes/backgrounds/parts/moon.tscn" id="4_5wf45"]
+[ext_resource type="Resource" uid="uid://ctl4mgc8bn6ew" path="res://moods/time_of_day/day.tres" id="4_20d21"]
 [ext_resource type="PackedScene" uid="uid://ieoms802e1ll" path="res://Scenes/backgrounds/parts/sun.tscn" id="4_tj34o"]
+[ext_resource type="Resource" uid="uid://cggxnx2rsuht5" path="res://moods/time_of_day/shrine_garden/dusk.tres" id="5_20d21"]
 [ext_resource type="PackedScene" uid="uid://d0iydf5748bff" path="res://Scenes/backgrounds/parts/light_rays.tscn" id="5_s5611"]
 [ext_resource type="PackedScene" uid="uid://cg1enfaofbv44" path="res://Scenes/backgrounds/parts/lantern_light.tscn" id="5_tj34o"]
 [ext_resource type="PackedScene" uid="uid://tcjg0q1pr2y1" path="res://Scenes/backgrounds/parts/ground_fog.tscn" id="6_5wf45"]
+[ext_resource type="Resource" uid="uid://fnfyf28x6bu4" path="res://moods/time_of_day/evening.tres" id="6_v1g0x"]
+[ext_resource type="Resource" uid="uid://bx345r02fd37q" path="res://moods/time_of_day/night.tres" id="7_2gk7c"]
 [ext_resource type="PackedScene" uid="uid://c5yxjecsyp5ug" path="res://Scenes/ui/battle_screen/battle_board.tscn" id="7_20d21"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_20d21"]
 resource_local_to_scene = true
 shader = ExtResource("2_s5611")
-shader_parameter/haze = Color(1, 0.62, 0.4, 1)
-shader_parameter/amount = 0.35
+shader_parameter/haze = Color(0.9791667, 0.63666666, 0.44333336, 1)
+shader_parameter/amount = 0.3416666666666667
 shader_parameter/blur = 1.5
 
 [node name="ShrineGarden" type="Control" unique_id=1773737141]
@@ -28,28 +33,40 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="BattleMood" parent="." unique_id=1230135772 instance=ExtResource("1_v8p1j")]
-darkness = Color(0.95, 0.74, 0.6, 1)
-sky_top = Color(0.25, 0.2, 0.4, 1)
-sky_bottom = Color(1, 0.6, 0.35, 1)
-fill_color = Color(1, 0.7, 0.45, 1)
-fill_energy = 0.5
-fog_color = Color(0.7, 0.5, 0.45, 1)
-vignette = 0.45
+darkness = Color(0.95416665, 0.76, 0.62833333, 1)
+sky_top = Color(0.25, 0.22083333, 0.4375, 1)
+sky_bottom = Color(0.9791667, 0.62083334, 0.39999998, 1)
+fill_color = Color(1, 0.72249997, 0.48749998, 1)
+fill_energy = 0.48333333333333334
+light_scale = 0.9416666666666667
+halo_scale = 0.9416666666666667
+rays_color = Color(1, 0.8125, 0.5708333, 1)
+rays_strength = 0.37916666666666665
+fog_color = Color(0.7125, 0.53166664, 0.48916665, 1)
+fog_density = 0.23916666666666667
+vignette = 0.43333333333333335
+split_tone = 0.575
+bloom = 0.7666666666666667
+bloom_threshold = 0.9166666666666667
 haze_targets = Array[NodePath]([NodePath("../FarLayer")])
-haze_color = Color(1, 0.62, 0.4, 1)
+haze_color = Color(0.9791667, 0.63666666, 0.44333336, 1)
+haze_amount = 0.3416666666666667
 haze_material = SubResource("ShaderMaterial_20d21")
-shadow_color = Color(0.08, 0.03, 0.06, 0.6)
-shadow_length = 1.0
-shadow_fade = 0.5
+shadow_color = Color(0.0775, 0.031666666, 0.06333333, 0.6041667)
+shadow_length = 0.95
+shadow_fade = 0.4916666666666667
 shadow_tilt = 1.5
+presets = Array[ExtResource("3_tj34o")]([ExtResource("4_20d21"), ExtResource("5_20d21"), ExtResource("6_v1g0x"), ExtResource("7_2gk7c")])
 time_of_day = 17.5
 
 [node name="Sun" parent="." unique_id=662062533 instance=ExtResource("4_tj34o")]
-position = Vector2(1650, 120)
+position = Vector2(1861.5416, -7.8333335)
+body_color = Color(1, 0.76666665, 0.47916666, 1)
 body_size = 47.0
 glow_strength = 1.0
 
 [node name="Moon" parent="." unique_id=1525796647 instance=ExtResource("4_5wf45")]
+visible = false
 
 [node name="FarLayer" type="TextureRect" parent="." unique_id=1759906676]
 light_mask = 0
@@ -72,19 +89,20 @@ expand_mode = 1
 stretch_mode = 6
 
 [node name="LightRays" parent="." unique_id=956297431 instance=ExtResource("5_s5611")]
+modulate = Color(1, 0.8125, 0.5708333, 0.37916666)
 
 [node name="LanternL" parent="." unique_id=2021930565 instance=ExtResource("5_tj34o")]
 position = Vector2(143.5, 465.1)
-energy = 1.0
+energy = 0.94166666
 brightness = 1.0
 
 [node name="LanternR" parent="." unique_id=2071396968 instance=ExtResource("5_tj34o")]
 position = Vector2(1791, 459)
-energy = 1.0
+energy = 0.94166666
 brightness = 1.0
 
 [node name="GroundFog" parent="." unique_id=886416631 instance=ExtResource("6_5wf45")]
-modulate = Color(0.7, 0.5, 0.45, 0.25)
+modulate = Color(0.7125, 0.53166664, 0.48916665, 0.23916666)
 instance_shader_parameters/speed = 0.01
 position = Vector2(0, 700)
 

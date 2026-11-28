@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bdkb4lvbm8n5j" path="res://Scripts/battle/battle_slot.gd" id="1_gk2eb"]
 [ext_resource type="Resource" uid="uid://b0dqweeokxjet" path="res://entities/units/hongyeon.tres" id="2_gk2eb"]
 [ext_resource type="Resource" uid="uid://b1mvfbsokntdu" path="res://entities/units/bram_welburn.tres" id="3_4vj6y"]
-[ext_resource type="PackedScene" uid="uid://goar44l5p1ya" path="res://Scenes/backgrounds/mountain_shrine.tscn" id="4_fiyhm"]
+[ext_resource type="PackedScene" uid="uid://di2o04446jwjf" path="res://Scenes/backgrounds/shrine_garden.tscn" id="4_gk2eb"]
 [ext_resource type="Resource" uid="uid://y0jambaxxf4u" path="res://entities/units/test/test_enemy_a.tres" id="5_upfhu"]
 [ext_resource type="Resource" uid="uid://cq8wrkbmrw82u" path="res://entities/units/test/test_enemy_b.tres" id="6_lgagm"]
 [ext_resource type="Script" uid="uid://eybl28yfjnt7" path="res://Scripts/battle/battle_data.gd" id="7_ulb68"]
@@ -32,5 +32,5 @@ cell = Vector2i(2, 2)
 script = ExtResource("7_ulb68")
 allies = Array[ExtResource("1_gk2eb")]([SubResource("Resource_fcyid"), SubResource("Resource_18tx5")])
 enemies = Array[ExtResource("1_gk2eb")]([SubResource("Resource_ufynu"), SubResource("Resource_dpwov")])
-background = ExtResource("4_fiyhm")
+background = ExtResource("4_gk2eb")
 shard_reward = 50

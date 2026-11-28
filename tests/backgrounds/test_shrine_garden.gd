@@ -46,9 +46,18 @@ func test_mood_owns_part_values():
 	var mood := bg.get_child(0) as BattleMood
 	assert_almost_eq((bg.get_node("LanternL") as MoodLight).brightness, 1.0, 0.001)
 	assert_almost_eq((bg.get_node("LanternR") as MoodLight).brightness, 1.0, 0.001)
-	assert_eq(mood.fog_color, Color(0.7, 0.5, 0.45))
-	assert_almost_eq(mood.fog_density, 0.25, 0.001)
-	assert_eq(bg.get_node("GroundFog").modulate, Color(0.7, 0.5, 0.45, 0.25))
+	# 안개 값은 하루 순환(2026-11-28)으로 시각마다 섞이므로 고정 숫자 대신 무드 → 안개로 그대로 가는지만
+	var fog: Color = bg.get_node("GroundFog").modulate
+	assert_eq(fog, Color(mood.fog_color.r, mood.fog_color.g, mood.fog_color.b, mood.fog_density))
+
+# 하루 순환 (2026-11-28): 프리셋 4개, 신사 정원 전용 노을, 시작 17.5시, 달 있음
+func test_day_cycle_setup():
+	var mood := bg.get_child(0) as BattleMood
+	assert_eq(mood.presets.size(), 4)
+	assert_eq(mood.presets[1].resource_path, "res://moods/time_of_day/shrine_garden/dusk.tres")
+	assert_almost_eq(mood.time_of_day, 17.5, 0.001)
+	assert_true((bg.get_node("Moon") as SkyBody).is_moon)
+	assert_eq((load("res://battles/boss_battle.tres") as BattleData).background.resource_path, "res://Scenes/backgrounds/shrine_garden.tscn")
 
 func test_sun_drives_rays():
 	var sun := bg.get_node("Sun") as SkyBody
