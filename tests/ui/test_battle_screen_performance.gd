@@ -648,3 +648,13 @@ func test_actor_gets_unit_light_mask():
 	var actor: CanvasItem = s.get_node("%PerformanceLayer").get_child(0).get_node("%Actor")
 	assert_eq(actor.light_mask, hero_sprite.light_mask)
 	assert_eq(actor.light_mask & 2, 2)
+
+# 바닥 그림자 (2026-11-28): 연출 Actor 에도 그림자가 붙는다 (원래 그림은 연출 중 숨겨짐)
+func test_actor_gets_shadow():
+	var s := _screen(_data(45, null, _perf_x([[0.0, 0.0], [0.2, 0.0], [0.3, 200.0]], 0.4)))
+	await wait_process_frames(2)
+	_use(s, "연출타격")
+	await wait_frames(2)
+	var actor: Node2D = s.get_node("%PerformanceLayer").get_child(0).get_node("%Actor")
+	var shadows := actor.get_children().filter(func(n): return n is GroundShadow)
+	assert_eq(shadows.size(), 1)

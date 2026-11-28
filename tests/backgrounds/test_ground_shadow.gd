@@ -128,3 +128,12 @@ func test_mood_values_follow():
 	await wait_process_frames(2)
 	var want := GroundShadow.shadow_basis(Vector2(500, 800), Vector2(1500, 300), 2.0, 0.5)
 	assert_almost_eq(p[2].transform.y, want.y, Vector2(0.001, 0.001))
+
+
+# 전투 유닛 그림에 그림자가 하나 붙어 있다
+func test_unit_token_has_shadow():
+	var t: Node = load("res://Scenes/ui/battle_screen/unit_token.tscn").instantiate()
+	add_child_autofree(t)
+	var sprite: Node = t.get_node("%Sprite")
+	var shadows := sprite.get_children().filter(func(n): return n is GroundShadow)
+	assert_eq(shadows.size(), 1)

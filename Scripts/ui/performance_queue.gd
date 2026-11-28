@@ -21,6 +21,9 @@ signal drained()
 ## 연출이 끝난 뒤 원래 칸으로 돌아가는 기본 시간 (초). 연출 씬의 return_time 이 0 이상이면 그 값
 @export var default_return_time := 0.2
 
+## 연출 Actor 에 붙일 바닥 그림자 부품 (원래 그림은 연출 중 숨겨지므로 — 설계 2026-11-28-ground-shadow-design.md)
+const SHADOW_SCENE := preload("res://Scenes/backgrounds/parts/ground_shadow.tscn")
+
 ## 연출 씬을 올려 둘 레이어 (전투 화면이 _ready 에서 넣음)
 var layer: Control
 ## BattleUnit → UnitToken 을 돌려주는 함수 (전투 화면이 _ready 에서 넣음). 없는 유닛이면 null
@@ -85,6 +88,10 @@ func _start(step: PerformanceStep) -> void:
 		var actor := _perf.get_node_or_null(^"%Actor") as CanvasItem
 		if actor:
 			actor.light_mask = _sprite.light_mask
+	# 1-1. Actor 에 바닥 그림자 (연출 씬에 이미 있으면 그대로). 연출 씬과 같이 지워진다
+	var actor_node := _perf.get_node_or_null(^"%Actor")
+	if actor_node and not actor_node.get_children().any(func(n): return n is GroundShadow):
+		actor_node.add_child(SHADOW_SCENE.instantiate())
 	# 2. Target 을 기준 대상 그림 자리에 (대상이 없거나 자신이면 에디터에서 짠 거리 그대로 — 설계 2장)
 	var target: UnitToken = token_of.call(step.target) if step.target and step.target != step.actor and token_of.is_valid() else null
 	if target and target.sprite():

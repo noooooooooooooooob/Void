@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ds1tdywryk7ut"]
 
 [ext_resource type="Script" uid="uid://budhdb1xcvkfq" path="res://Scripts/ui/unit_token.gd" id="1_0og7g"]
+[ext_resource type="PackedScene" uid="uid://de8s3vudw7x71" path="res://Scenes/backgrounds/parts/ground_shadow.tscn" id="2_o6ofm"]
 
 [node name="UnitToken" type="Control" unique_id=89544387]
 z_index = 1
@@ -24,6 +25,14 @@ unique_name_in_owner = true
 light_mask = 3
 position = Vector2(50, 50)
 scale = Vector2(0.14, 0.14)
+offset = Vector2(0, -200)
+
+[node name="Shadow" parent="Sprite" unique_id=340994710 instance=ExtResource("2_o6ofm")]
+instance_shader_parameters/fade = 0.6
+instance_shader_parameters/foot_y = 0.0
+instance_shader_parameters/shadow_color = Color(0, 0, 0, 0.5)
+instance_shader_parameters/top_y = -1.0
+scale = Vector2(1, -0.2)
 offset = Vector2(0, -200)
 
 [node name="EffectBehind" type="AnimatedSprite2D" parent="Sprite" unique_id=1026875407]
