@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://de8s3vudw7x71"]
+
+[ext_resource type="Shader" uid="uid://ce4vqecx5g3dn" path="res://Scenes/backgrounds/parts/ground_shadow.gdshader" id="1_v1tmx"]
+[ext_resource type="Script" uid="uid://c3wwanyq3ymij" path="res://Scripts/backgrounds/ground_shadow.gd" id="2_p0hsu"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rcerl"]
+shader = ExtResource("1_v1tmx")
+
+[node name="GroundShadow" type="Sprite2D" unique_id=340994710 groups=["mood_shadow"]]
+show_behind_parent = true
+light_mask = 0
+material = SubResource("ShaderMaterial_rcerl")
+script = ExtResource("2_p0hsu")
