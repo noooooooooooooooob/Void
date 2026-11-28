@@ -86,7 +86,7 @@ offset_left = 186.0
 offset_top = 124.0
 offset_right = 826.0
 offset_bottom = 764.0
-corners = PackedVector2Array(216.39636, 455.50342, 715.85266, 455.50342, 700.06134, 806.5649, -90.13693, 806.5649)
+corners = PackedVector2Array(277.35675, 486.98737, 715.85266, 486.98737, 700.06134, 806.5649, -90.13693, 806.5649)
 
 [node name="Enemy Board" parent="." unique_id=24904799 instance=ExtResource("7_20d21")]
 layout_mode = 0
@@ -95,4 +95,4 @@ offset_top = 122.0
 offset_right = 1641.0
 offset_bottom = 762.0
 side = 1
-corners = PackedVector2Array(17.147339, 457.50342, 516.60364, 457.50342, 822.13696, 808.5649, 32.93866, 808.5649)
+corners = PackedVector2Array(17.147339, 488.98737, 455.64325, 488.98737, 822.13696, 808.5649, 32.93866, 808.5649)

@@ -23,7 +23,7 @@ color = Color(0.47843137, 0.18431373, 0.22745098, 1)
 unique_name_in_owner = true
 light_mask = 3
 position = Vector2(50, 50)
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.14, 0.14)
 offset = Vector2(0, -200)
 
 [node name="EffectBehind" type="AnimatedSprite2D" parent="Sprite" unique_id=1026875407]
