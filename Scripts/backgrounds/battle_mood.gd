@@ -163,6 +163,19 @@ const FILL_DISTANCE := 4000.0
 ## 해·달이 없을 때 그림자 길이 (발밑에 똑바로 앞으로 짧게)
 @export_range(0.0, 1.0, 0.01) var shadow_no_sun_length := 0.2
 
+@export_group("시간대")
+## 이 배경이 쓰는 시간대 프리셋 (TimeOfDayPreset). 기본은 공유 프리셋 4개(moods/time_of_day/), 배경만 다르게 하려면
+## 그 시간대 프리셋을 복제해 고친 것으로 바꿔 끼운다. 비면 시간대를 안 쓰고 위 인스펙터 값 그대로 (설계 2026-11-28-day-cycle-design.md)
+@export var presets: Array[TimeOfDayPreset] = []:
+	set(v):
+		presets = v
+		_apply_time()
+## 지금 시각 (0~24시). 앞뒤 프리셋 값을 섞어 위 값들에 넣는다. 에디터에서 끌어 시간대를 미리 본다
+@export_range(0.0, 24.0, 0.01) var time_of_day := 18.0:
+	set(v):
+		time_of_day = v
+		_apply_time()
+
 
 ## 배경 부품 그룹 (부품 씬이 들어 있음)
 const LIGHT_GROUP := &"mood_light"
@@ -174,10 +187,49 @@ const GROUP := &"battle_mood"
 
 var _sky_body: SkyBody      # 기억해 둔 보이는 해·달 (sky_body)
 var _sky_dirty := true      # true 면 다음 sky_body() 에서 다시 찾는다
+var _batch := false        # true 동안은 값 setter 가 _apply 를 부르지 않음 (시간대 값을 한꺼번에 넣을 때)
 
 
 func _ready() -> void:
 	_apply()
+	_apply_time()
+
+
+## 지금 시각의 프리셋 보간값을 무드 값에 한꺼번에 넣고 한 번만 반영한다. 프리셋이 없으면 아무것도 안 함
+func _apply_time() -> void:
+	if presets.is_empty():
+		return
+	var v := blend_presets(presets, time_of_day)
+	_batch = true
+	for k in TimeOfDayPreset.BLEND_KEYS:
+		set(k, v[k])
+	_batch = false
+	_apply()
+
+
+## 프리셋들을 시각 hour 에서 섞은 값. 키 = TimeOfDayPreset.BLEND_KEYS + sun_color.
+## 시각 순으로 앞(hour 이하 중 마지막)·뒤(hour 초과 중 첫째) 프리셋을 선형 보간하고, 24시를 넘어 이어진다 (밤 → 낮).
+## 프리셋이 하나면 그 값, 없으면 빈 사전
+static func blend_presets(list: Array[TimeOfDayPreset], hour: float) -> Dictionary:
+	var ps := list.filter(func(p): return p != null)
+	if ps.is_empty():
+		return {}
+	ps.sort_custom(func(a, b): return a.hour < b.hour)
+	# 앞 = hour 이하 중 마지막 (없으면 맨 끝 = 전날), 뒤 = 그다음 (끝이면 맨 처음 = 다음날)
+	var i := ps.size() - 1
+	for j in ps.size():
+		if ps[j].hour <= hour:
+			i = j
+	var a: TimeOfDayPreset = ps[i]
+	var b: TimeOfDayPreset = ps[(i + 1) % ps.size()]
+	var span := fposmod(b.hour - a.hour, 24.0)
+	var t := fposmod(hour - a.hour, 24.0) / span if span > 0.0 else 0.0
+	var out := {}
+	for k in TimeOfDayPreset.BLEND_KEYS + [&"sun_color"]:
+		var x = a.get(k)
+		var y = b.get(k)
+		out[k] = x.lerp(y, t) if x is Color else lerpf(x, y, t)
+	return out
 
 
 func _enter_tree() -> void:
@@ -207,7 +259,7 @@ func _on_node_added(n: Node) -> void:
 
 ## 지금 값을 자식 노드·공기원근 대상에 넣는다. 준비 전(씬 로드 중 setter)에는 건너뛰고 _ready 에서 한 번에 넣는다
 func _apply() -> void:
-	if not is_node_ready():
+	if not is_node_ready() or _batch:
 		return
 	# 1. 어둠
 	($Darkness as CanvasModulate).color = darkness
